@@ -24,11 +24,11 @@ public interface TypeES<T> extends Type<T>{
     
     boolean isInstantiable();
     
-    Serializable createInstance();
+    T createInstance();
     
-    Class getMetamodelClass();
+    Class<? extends Type<T>> getMetamodelClass();
     
-    Collection<Type> getSuperTypes();
+    Collection<TypeES<? super T>> getSuperTypes();
     
-    Collection<Type> getSubTypes();
+    Collection<TypeES<? extends T>> getSubTypes();
 }

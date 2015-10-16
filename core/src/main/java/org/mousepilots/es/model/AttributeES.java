@@ -16,7 +16,12 @@ public interface AttributeES<X, Y> extends Attribute<X, Y>
     
     boolean isReadOnly();
     
-    boolean isRelation();
+    boolean isAssociation(AssocationTypeES type);
     
-    boolean isRelationshipOwner();
+    AssociationES getAssociation(AssocationTypeES type);
+
+    @Override
+    public MemberES getJavaMember();
+    
+//    Wrapper<Y> wrap(Y value); Mogelijk tijdens de implementatie terughalen.
 }
