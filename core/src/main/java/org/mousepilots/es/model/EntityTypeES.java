@@ -1,11 +1,15 @@
 package org.mousepilots.es.model;
 
-import javax.persistence.metamodel.Bindable;
 import javax.persistence.metamodel.EntityType;
 
 /**
- *
- * @author clevenro
+ * Instances of the type {@link EntityTypeES} represent entity types.
+ * @param <T> The represented entity type.
+ * @see IdentifiableTypeES
+ * @see EntityType
+ * @see BindableES
+ * @author Roy Cleven
+ * @version 1.0, 19-10-2015
  */
 public interface EntityTypeES<T> extends IdentifiableTypeES<T>, EntityType<T>, BindableES<T> {
     

@@ -1,15 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.mousepilots.es.model;
 
 import javax.persistence.metamodel.ManagedType;
 
 /**
- *
- * @author clevenro
+ * Instances of the type {@link ManagedTypeES} represent entity, mapped
+ * superclass, and embeddable types.
+ * @param <T> The represented type.
+ * @see TypeES
+ * @see ManagedType
+ * @author Roy Cleven
+ * @version 1.0, 19-10-2015
  */
 public interface ManagedTypeES<T> extends TypeES<T>,ManagedType<T>{
     
