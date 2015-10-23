@@ -1,14 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.mousepilots.es.model;
 
 /**
- *
- * @author ernsteni
+ * Enum to define the different types of associations.
+ * @author Nicky Ernste
+ * @version 1.0, 19-10-2015
  */
 public enum AssocationTypeES {
-    KEY, VALUE;
+    /**
+     * Indicates this association type is a Key.
+     */
+    KEY,
+    /**
+     * Indicates this association type is a Value.
+     */
+    VALUE;
 }
