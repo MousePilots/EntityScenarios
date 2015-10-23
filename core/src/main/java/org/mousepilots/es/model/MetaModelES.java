@@ -8,8 +8,11 @@ package org.mousepilots.es.model;
 import javax.persistence.metamodel.Metamodel;
 
 /**
- *
- * @author clevenro
+ * Provides access to the metamodel of persistent
+ * entities in the persistence unit.
+ * @author Roy Cleven
+ * @version 1.0, 19-10-2015
+ * @see Metamodel
  */
 public interface MetaModelES extends Metamodel{
     
