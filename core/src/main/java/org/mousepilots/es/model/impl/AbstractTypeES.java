@@ -1,38 +1,58 @@
 package org.mousepilots.es.model.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
  * @version 1.0, 3-11-2015
+ * @param <T>
  */
 public abstract class AbstractTypeES<T> implements TypeES<T> {
 
+    private final String javaClassName;
+    private final String name;
+    private final int ordinal;
+    private final boolean instantiable;
+    private final Type.PersistenceType persistenceType;
+    private final Class<T> javaType;
+
+    protected AbstractTypeES(String javaClassName, String name, int ordinal, boolean instantiable, PersistenceType persistenceType, Class<T> javaType) {
+        this.javaClassName = javaClassName;
+        this.name = name;
+        this.ordinal = ordinal;
+        this.instantiable = instantiable;
+        this.persistenceType = persistenceType;
+        this.javaType = javaType;
+    }
+
     @Override
     public String getJavaClassName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return javaClassName;
     }
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return name;
     }
 
     @Override
     public int getOrdinal() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ordinal;
     }
 
     @Override
     public boolean isInstantiable() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return instantiable;
     }
 
     @Override
     public T createInstance() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return (isInstantiable()) ? MetamodelUtilES.createInstance(getJavaType()) : null;
     }
 
     @Override
@@ -42,7 +62,7 @@ public abstract class AbstractTypeES<T> implements TypeES<T> {
 
     @Override
     public Collection<TypeES<? super T>> getSuperTypes() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return MetamodelUtilES.getSuperTypes(getJavaType());
     }
 
     @Override
@@ -52,11 +72,11 @@ public abstract class AbstractTypeES<T> implements TypeES<T> {
 
     @Override
     public PersistenceType getPersistenceType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return persistenceType;
     }
 
     @Override
     public Class<T> getJavaType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }    
+        return javaType;
+    }
 }

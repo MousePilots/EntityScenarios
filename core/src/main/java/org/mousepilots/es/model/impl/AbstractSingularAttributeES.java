@@ -1,5 +1,7 @@
 package org.mousepilots.es.model.impl;
 
+import java.util.EnumMap;
+import java.util.Map;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
@@ -14,44 +16,61 @@ import org.mousepilots.es.model.SingularAttributeES;
  */
 public abstract class AbstractSingularAttributeES<X, T> implements SingularAttributeES<X, T> {
 
+    private boolean generated;
+    private Generator generator;
+    private boolean readOnly;
+    private boolean associated;
+    private AssociationES association;
+    private MemberES member;
+    private String name;
+    private PersistentAttributeType persistenceType;
+    private Class<T> javaType;
+    private boolean collection;
+    private boolean id;
+    private boolean version;
+    private boolean optional;
+    private Type<T> type;
+    private BindableType bindableType;
+    private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
+    
     @Override
     public boolean isGenerated() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return generated;
     }
 
     @Override
     public Generator getGenerator() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return generator;
     }
 
     @Override
     public boolean isReadOnly() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return readOnly;
     }
 
     @Override
     public boolean isAssociation(AssociationTypeES type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return associations.containsKey(type);
     }
 
     @Override
     public AssociationES getAssociation(AssociationTypeES type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return associations.get(type);
     }
 
     @Override
     public MemberES getJavaMember() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return member;
     }
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return name;
     }
 
     @Override
     public PersistentAttributeType getPersistentAttributeType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return persistenceType;
     }
 
     @Override
@@ -61,22 +80,22 @@ public abstract class AbstractSingularAttributeES<X, T> implements SingularAttri
 
     @Override
     public Class<T> getJavaType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return javaType;
     }
 
     @Override
     public boolean isAssociation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return associated;
     }
 
     @Override
     public boolean isCollection() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return collection;
     }
 
     @Override
     public BindableType getBindableType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return bindableType;
     }
 
     @Override
@@ -86,21 +105,21 @@ public abstract class AbstractSingularAttributeES<X, T> implements SingularAttri
 
     @Override
     public boolean isId() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return id;
     }
 
     @Override
     public boolean isVersion() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return version;
     }
 
     @Override
     public boolean isOptional() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return optional;
     }
 
     @Override
     public Type<T> getType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return type;
     }    
 }

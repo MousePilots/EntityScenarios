@@ -1,6 +1,8 @@
 package org.mousepilots.es.model.impl;
 
+import java.util.EnumMap;
 import java.util.Map;
+import java.util.Set;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
@@ -14,34 +16,42 @@ import org.mousepilots.es.model.MemberES;
  */
 public abstract class AbstractMapAttributeES<T, K, V> implements MapAttributeES<T, K, V> {
 
+    private boolean readOnly;
+    private boolean associated;
+    private MemberES member;
+    private String name;
+    private PersistentAttributeType persistenceType;
+    private Class<Map<K,V>> javaType;
+    private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
+    
     @Override
     public boolean isReadOnly() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return readOnly;
     }
 
     @Override
     public boolean isAssociation(AssociationTypeES type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return associations.containsKey(type);
     }
 
     @Override
     public AssociationES getAssociation(AssociationTypeES type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return associations.get(type);
     }
 
     @Override
     public MemberES getJavaMember() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return member;
     }
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return name;
     }
 
     @Override
     public PersistentAttributeType getPersistentAttributeType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return persistenceType;
     }
 
     @Override
@@ -51,7 +61,7 @@ public abstract class AbstractMapAttributeES<T, K, V> implements MapAttributeES<
 
     @Override
     public Class<Map<K, V>> getJavaType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return javaType;
     }
 
     @Override
@@ -61,12 +71,12 @@ public abstract class AbstractMapAttributeES<T, K, V> implements MapAttributeES<
 
     @Override
     public boolean isCollection() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true; //idk
     }
 
     @Override
     public CollectionType getCollectionType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return CollectionType.MAP;
     }
 
     @Override
@@ -76,7 +86,7 @@ public abstract class AbstractMapAttributeES<T, K, V> implements MapAttributeES<
 
     @Override
     public BindableType getBindableType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return BindableType.PLURAL_ATTRIBUTE;
     }
 
     @Override
