@@ -5,7 +5,7 @@ package org.mousepilots.es.model;
  * @author Nicky Ernste
  * @version 1.0, 19-10-2015
  */
-public enum AssocationTypeES {
+public enum AssociationTypeES {
     /**
      * Indicates this association type is a Key.
      */
