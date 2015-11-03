@@ -22,19 +22,19 @@ public interface AttributeES<T, TA> extends Attribute<T, TA>
     
     /**
      * Check if {@code this} attribute is an association based on the {@link AssociationTypeES}.
-     * @param type The {@link AssocationTypeES} type for the association to check.
+     * @param type The {@link AssociationTypeES} type for the association to check.
      * @return {@code true} if {@code this} attribute is an association of the specified {@code type}.
      * {@code false} otherwise.
      */
-    boolean isAssociation(AssocationTypeES type);
+    boolean isAssociation(AssociationTypeES type);
     
     /**
-     * Get the {@link AssocationES} for {@code this} attribute of the specified {@link AssocationTypeES}.
-     * @param type The {@link AssocationTypeES} for the {@link AssociationES} to get.
-     * @return The {@link AssociationES} for {@code this} attribute for the specified {@link AssocationTypeES} if any.
+     * Get the {@link AssocationES} for {@code this} attribute of the specified {@link AssociationTypeES}.
+     * @param type The {@link AssociationTypeES} for the {@link AssociationES} to get.
+     * @return The {@link AssociationES} for {@code this} attribute for the specified {@link AssociationTypeES} if any.
      * Otherwise {@code null} is returned.
      */
-    AssociationES getAssociation(AssocationTypeES type);
+    AssociationES getAssociation(AssociationTypeES type);
 
     /**
      * Get the {@link MemberES} for the represented attribute.

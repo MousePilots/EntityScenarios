@@ -12,7 +12,7 @@ public interface AssociationES {
      * @return A value of the {@link AssociationTypeES} indicating the type of
      * {@code this} association.
      */
-    AssocationTypeES getAssociationType();
+    AssociationTypeES getAssociationType();
     
     /**
      * Get the {@link AttributeES} that is the source of {@code this} association.
