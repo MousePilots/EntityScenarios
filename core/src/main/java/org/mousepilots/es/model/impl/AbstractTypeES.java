@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.TypeES;
 
@@ -21,13 +22,13 @@ public abstract class AbstractTypeES<T> implements TypeES<T> {
     private final Type.PersistenceType persistenceType;
     private final Class<T> javaType;
 
-    protected AbstractTypeES(String javaClassName, String name, int ordinal, boolean instantiable, PersistenceType persistenceType, Class<T> javaType) {
+    protected AbstractTypeES(String javaClassName, String name, int ordinal, PersistenceType persistenceType, Class<T> javaType) {
         this.javaClassName = javaClassName;
         this.name = name;
         this.ordinal = ordinal;
-        this.instantiable = instantiable;
-        this.persistenceType = persistenceType;
         this.javaType = javaType;
+        this.instantiable = MetamodelUtilES.isInstantiable(this.javaType);
+        this.persistenceType = persistenceType;
     }
 
     @Override

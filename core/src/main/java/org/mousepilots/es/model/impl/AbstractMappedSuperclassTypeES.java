@@ -52,14 +52,7 @@ public abstract class AbstractMappedSuperclassTypeES<T> implements MappedSupercl
 
     @Override
     public T createInstance() {
-        try {
-            return (isInstantiable()) ? getJavaType().newInstance() : null;
-        } catch (InstantiationException ex) {
-            Logger.getLogger(AbstractTypeES.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(AbstractTypeES.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
+        return (isInstantiable()) ? MetamodelUtilES.createInstance(getJavaType()) : null;
     }
 
     @Override
@@ -69,17 +62,7 @@ public abstract class AbstractMappedSuperclassTypeES<T> implements MappedSupercl
 
     @Override
     public Collection<TypeES<? super T>> getSuperTypes() {
-        Collection<TypeES<? super T>> supers;
-        supers = new ArrayList<>();
-
-        Class<? super T> superclass = getJavaType();
-
-        do {
-            superclass = superclass.getSuperclass();
-            //use superclass to create TypeES then add to supers
-        } while (superclass != Object.class);
-
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return MetamodelUtilES.getSuperTypes(getJavaType());
     }
 
     @Override
