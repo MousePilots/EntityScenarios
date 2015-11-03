@@ -1,6 +1,9 @@
 package org.mousepilots.es.model.impl;
 
+import java.util.Collection;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
@@ -14,34 +17,51 @@ import org.mousepilots.es.model.MemberES;
  */
 public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T, E> {
 
+    private final String attributeName;
+    private final boolean isReadOnly;
+    private final PersistentAttributeType persistentAttributeType;
+    private final MemberES javaMember;
+    private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
+    private final Class<E> elementType;
+    private final Class<Collection<E>> collectionType;
+
+    public AbstractListAttributeES(String attributeName, boolean isReadOnly, PersistentAttributeType persistentAttributeType, MemberES javaMember, Class<E> elementType, Class<Collection<E>> collectionType) {
+        this.attributeName = attributeName;
+        this.isReadOnly = isReadOnly;
+        this.persistentAttributeType = persistentAttributeType;
+        this.javaMember = javaMember;
+        this.elementType = elementType;
+        this.collectionType = collectionType;
+    }
+    
     @Override
     public boolean isReadOnly() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return isReadOnly;
     }
 
     @Override
     public boolean isAssociation(AssociationTypeES type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return associations.containsKey(type);
     }
 
     @Override
     public AssociationES getAssociation(AssociationTypeES type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return associations.get(type);
     }
 
     @Override
     public MemberES getJavaMember() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return javaMember;
     }
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return attributeName;
     }
 
     @Override
     public PersistentAttributeType getPersistentAttributeType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return persistentAttributeType;
     }
 
     @Override
@@ -51,7 +71,7 @@ public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T
 
     @Override
     public Class<List<E>> getJavaType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getJavaType();
     }
 
     @Override
@@ -61,12 +81,12 @@ public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T
 
     @Override
     public boolean isCollection() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true;
     }
 
     @Override
     public CollectionType getCollectionType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return CollectionType.LIST;
     }
 
     @Override
@@ -76,11 +96,11 @@ public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T
 
     @Override
     public BindableType getBindableType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return BindableType.PLURAL_ATTRIBUTE;
     }
 
     @Override
     public Class<E> getBindableJavaType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return elementType;
     }    
 }

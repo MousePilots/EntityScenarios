@@ -15,7 +15,15 @@ public abstract class AbstractBindableES<T> implements BindableES<T> {
 
     @Override
     public Class<T> getBindableJavaType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        switch (getBindableType()){
+            case PLURAL_ATTRIBUTE:
+                //Return element type
+                break;
+            default:
+                //Return entity type.
+                break;
+        }
+        return null;
     }
     
 }
