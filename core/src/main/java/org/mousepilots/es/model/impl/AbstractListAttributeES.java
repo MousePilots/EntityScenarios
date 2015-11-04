@@ -5,6 +5,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
@@ -103,7 +104,7 @@ public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T
     @Override
     public Class<E> getBindableJavaType() {
         return elementType;
-    }
+    }    
 
     @Override
     public int hashCode() {

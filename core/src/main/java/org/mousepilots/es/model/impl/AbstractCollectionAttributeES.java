@@ -26,7 +26,6 @@ public abstract class AbstractCollectionAttributeES<T, E> implements CollectionA
     private final Class<E> elementType;
     private final Class<Collection<E>> collectionType;
 
-
     public AbstractCollectionAttributeES(String name, boolean isReadOnly, PersistentAttributeType persistentAttributeType, MemberES javaMember, Class<E> elementType, Class<Collection<E>> collectionType) {
         this.name = name;
         this.isReadOnly = isReadOnly;
@@ -99,7 +98,7 @@ public abstract class AbstractCollectionAttributeES<T, E> implements CollectionA
     @Override
     public Class<E> getBindableJavaType() {
         return elementType;
-    }
+    }    
 
     @Override
     public int hashCode() {
