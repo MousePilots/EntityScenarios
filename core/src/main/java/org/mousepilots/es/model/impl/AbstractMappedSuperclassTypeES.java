@@ -1,7 +1,10 @@
 package org.mousepilots.es.model.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.IdentifiableType;
@@ -20,29 +23,36 @@ import org.mousepilots.es.model.TypeES;
  */
 public abstract class AbstractMappedSuperclassTypeES<T> implements MappedSuperclassTypeES<T> {
 
+    private String javaClassName;
+    private String name;
+    private int ordinal;
+    private boolean instantiable;
+    private Type.PersistenceType persistenceType;
+    private Class<T> javaType;
+
     @Override
     public String getJavaClassName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return javaClassName;
     }
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return name;
     }
 
     @Override
     public int getOrdinal() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ordinal;
     }
 
     @Override
     public boolean isInstantiable() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return instantiable;
     }
 
     @Override
     public T createInstance() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return (isInstantiable()) ? MetamodelUtilES.createInstance(getJavaType()) : null;
     }
 
     @Override
@@ -52,7 +62,7 @@ public abstract class AbstractMappedSuperclassTypeES<T> implements MappedSupercl
 
     @Override
     public Collection<TypeES<? super T>> getSuperTypes() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return MetamodelUtilES.getSuperTypes(getJavaType());
     }
 
     @Override
@@ -62,12 +72,12 @@ public abstract class AbstractMappedSuperclassTypeES<T> implements MappedSupercl
 
     @Override
     public PersistenceType getPersistenceType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return persistenceType;
     }
 
     @Override
     public Class<T> getJavaType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return javaType;
     }
 
     @Override
@@ -253,5 +263,5 @@ public abstract class AbstractMappedSuperclassTypeES<T> implements MappedSupercl
     @Override
     public Type<?> getIdType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }    
+    }
 }

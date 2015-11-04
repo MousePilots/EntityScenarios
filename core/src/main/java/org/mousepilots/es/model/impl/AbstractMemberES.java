@@ -1,5 +1,7 @@
 package org.mousepilots.es.model.impl;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.mousepilots.es.model.MemberES;
 
 /**
@@ -8,14 +10,17 @@ import org.mousepilots.es.model.MemberES;
  */
 public abstract class AbstractMemberES implements MemberES {
 
+    private Map<Object,Object> instanceValues = new HashMap<>();
+    private String name;
+    
     @Override
     public <T> T get(Object instance) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return (instanceValues.containsKey(instance)) ? (T) instanceValues.get(instance) : null;
     }
 
     @Override
     public void set(Object instance, Object value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        instanceValues.put(instance, value);
     }
 
     @Override
@@ -25,7 +30,7 @@ public abstract class AbstractMemberES implements MemberES {
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return name;
     }
 
     @Override
