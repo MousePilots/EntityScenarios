@@ -1,5 +1,6 @@
 package org.mousepilots.es.model.impl;
 
+import java.util.Objects;
 import org.mousepilots.es.model.AssociationTypeES;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AttributeES;
@@ -46,4 +47,26 @@ public abstract class AbstractAssociationES implements AssociationES {
         //TODO use information for the annotation processor to determine if the relationship is bidirectional.
         return false;
     }    
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 37 * hash + Objects.hashCode(this.sourceAttribute);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractAssociationES other = (AbstractAssociationES) obj;
+        if (!Objects.equals(this.sourceAttribute, other.sourceAttribute)) {
+            return false;
+        }
+        return true;
+    }
 }

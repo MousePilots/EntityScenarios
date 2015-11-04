@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
@@ -17,7 +18,7 @@ import org.mousepilots.es.model.MemberES;
  */
 public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T, E> {
 
-    private final String attributeName;
+    private final String name;
     private final boolean isReadOnly;
     private final PersistentAttributeType persistentAttributeType;
     private final MemberES javaMember;
@@ -25,8 +26,8 @@ public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T
     private final Class<E> elementType;
     private final Class<Collection<E>> collectionType;
 
-    public AbstractListAttributeES(String attributeName, boolean isReadOnly, PersistentAttributeType persistentAttributeType, MemberES javaMember, Class<E> elementType, Class<Collection<E>> collectionType) {
-        this.attributeName = attributeName;
+    public AbstractListAttributeES(String name, boolean isReadOnly, PersistentAttributeType persistentAttributeType, MemberES javaMember, Class<E> elementType, Class<Collection<E>> collectionType) {
+        this.name = name;
         this.isReadOnly = isReadOnly;
         this.persistentAttributeType = persistentAttributeType;
         this.javaMember = javaMember;
@@ -56,7 +57,7 @@ public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T
 
     @Override
     public String getName() {
-        return attributeName;
+        return name;
     }
 
     @Override
@@ -103,4 +104,30 @@ public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T
     public Class<E> getBindableJavaType() {
         return elementType;
     }    
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 83 * hash + Objects.hashCode(this.name);
+        hash = 83 * hash + Objects.hashCode(this.elementType);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractListAttributeES<?, ?> other = (AbstractListAttributeES<?, ?>) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.elementType, other.elementType)) {
+            return false;
+        }
+        return true;
+    }
 }

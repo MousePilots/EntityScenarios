@@ -2,6 +2,7 @@ package org.mousepilots.es.model.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,15 +24,15 @@ import org.mousepilots.es.model.TypeES;
  */
 public abstract class AbstractEntityTypeES<T> implements EntityTypeES<T>{
 
-    private final String javaClassName, typeName;
+    private final String javaClassName, name;
     private final int ordinal;
     private final PersistenceType persistanceType;
     private final Class<T> javaType;
     private final boolean isInstantiable;
 
-    public AbstractEntityTypeES(String javaClassName, String typeName, int ordinal, PersistenceType persistanceType, Class<T> javaType, boolean isInstantiable) {
+    public AbstractEntityTypeES(String javaClassName, String name, int ordinal, PersistenceType persistanceType, Class<T> javaType, boolean isInstantiable) {
         this.javaClassName = javaClassName;
-        this.typeName = typeName;
+        this.name = name;
         this.ordinal = ordinal;
         this.persistanceType = persistanceType;
         this.javaType = javaType;
@@ -45,7 +46,7 @@ public abstract class AbstractEntityTypeES<T> implements EntityTypeES<T>{
 
     @Override
     public String getName() {
-        return typeName;
+        return name;
     }
 
     @Override
@@ -299,4 +300,30 @@ public abstract class AbstractEntityTypeES<T> implements EntityTypeES<T>{
     public Class<T> getBindableJavaType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }    
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 11 * hash + Objects.hashCode(this.name);
+        hash = 11 * hash + this.ordinal;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractEntityTypeES<?> other = (AbstractEntityTypeES<?>) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (this.ordinal != other.ordinal) {
+            return false;
+        }
+        return true;
+    }
 }

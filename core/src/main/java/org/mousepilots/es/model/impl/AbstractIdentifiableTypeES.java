@@ -1,6 +1,7 @@
 package org.mousepilots.es.model.impl;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.CollectionAttribute;
@@ -20,15 +21,15 @@ import org.mousepilots.es.model.TypeES;
  */
 public abstract class AbstractIdentifiableTypeES<T> implements IdentifiableTypeES<T>{
 
-    private final String javaClassName, typeName;
+    private final String javaClassName, name;
     private final int ordinal;
     private final PersistenceType persistanceType;
     private final Class<T> javaType;
     private final boolean isInstantiable;
 
-    public AbstractIdentifiableTypeES(String javaClassName, String typeName, int ordinal, PersistenceType persistanceType, Class<T> javaType, boolean isInstantiable) {
+    public AbstractIdentifiableTypeES(String javaClassName, String name, int ordinal, PersistenceType persistanceType, Class<T> javaType, boolean isInstantiable) {
         this.javaClassName = javaClassName;
-        this.typeName = typeName;
+        this.name = name;
         this.ordinal = ordinal;
         this.persistanceType = persistanceType;
         this.javaType = javaType;
@@ -42,7 +43,7 @@ public abstract class AbstractIdentifiableTypeES<T> implements IdentifiableTypeE
 
     @Override
     public String getName() {
-        return typeName;
+        return name;
     }
 
     @Override
@@ -271,4 +272,30 @@ public abstract class AbstractIdentifiableTypeES<T> implements IdentifiableTypeE
     public Type<?> getIdType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }    
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.name);
+        hash = 29 * hash + this.ordinal;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractIdentifiableTypeES<?> other = (AbstractIdentifiableTypeES<?>) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (this.ordinal != other.ordinal) {
+            return false;
+        }
+        return true;
+    }
 }
