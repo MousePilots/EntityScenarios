@@ -14,6 +14,6 @@ import javax.persistence.metamodel.PluralAttribute;
  * @see AttributeES
  * @see PluralAttribute
  */
-public interface PluralAttributeES<X, C, E> extends AttributeES<X, C>, PluralAttribute<X, C, E> {
+public interface PluralAttributeES<X, C, E> extends AttributeES<X, C>, PluralAttribute<X, C, E>, BindableES<E> {
 
 }
