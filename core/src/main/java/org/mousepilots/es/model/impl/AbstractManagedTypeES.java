@@ -25,13 +25,13 @@ public abstract class AbstractManagedTypeES<T> implements ManagedTypeES<T> {
     private final Class<T> javaType;
     private final boolean isInstantiable;
 
-    public AbstractManagedTypeES(String javaClassName, String typeName, int ordinal, PersistenceType persistanceType, Class<T> javaType, boolean isInstantiable) {
+    public AbstractManagedTypeES(String javaClassName, String typeName, int ordinal, PersistenceType persistanceType, Class<T> javaType) {
         this.javaClassName = javaClassName;
         this.typeName = typeName;
         this.ordinal = ordinal;
         this.persistanceType = persistanceType;
         this.javaType = javaType;
-        this.isInstantiable = isInstantiable;
+        this.isInstantiable = MetamodelUtilES.isInstantiable(javaType);
     }
     
     @Override
@@ -56,8 +56,7 @@ public abstract class AbstractManagedTypeES<T> implements ManagedTypeES<T> {
 
     @Override
     public T createInstance() {
-        //TODO Use util method.
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return (isInstantiable()) ? MetamodelUtilES.createInstance(getJavaType()) : null;
     }
 
     @Override
@@ -67,8 +66,7 @@ public abstract class AbstractManagedTypeES<T> implements ManagedTypeES<T> {
 
     @Override
     public Collection<TypeES<? super T>> getSuperTypes() {
-        //TODO Use util method.
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return MetamodelUtilES.getSuperTypes(getJavaType());
     }
 
     @Override

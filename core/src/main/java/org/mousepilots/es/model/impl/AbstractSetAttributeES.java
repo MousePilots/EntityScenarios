@@ -9,7 +9,6 @@ import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
-import org.mousepilots.es.model.Generator;
 import org.mousepilots.es.model.MemberES;
 import org.mousepilots.es.model.SetAttributeES;
 

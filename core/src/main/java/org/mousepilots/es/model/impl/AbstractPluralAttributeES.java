@@ -3,7 +3,6 @@ package org.mousepilots.es.model.impl;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;

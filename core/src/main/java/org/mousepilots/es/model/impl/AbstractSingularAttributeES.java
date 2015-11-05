@@ -149,6 +149,4 @@ public abstract class AbstractSingularAttributeES<X, T> implements SingularAttri
         }
         return true;
     }
-    
-    
 }

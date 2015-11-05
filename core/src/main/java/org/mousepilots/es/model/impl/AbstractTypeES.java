@@ -1,11 +1,7 @@
 package org.mousepilots.es.model.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.TypeES;
 
@@ -107,5 +103,4 @@ public abstract class AbstractTypeES<T> implements TypeES<T> {
         }
         return true;
     }
-    
 }
