@@ -21,11 +21,16 @@ public class MetamodelUtilESTest {
     //TODO Uncomment this test when the implementation of the getSuperTypes method is completed.
     //@Test
     public void testGetSuperTypes() {
+        //Positive Tests.
         Collection<TypeES<? super Manager>> superTypes = MetamodelUtilES.getSuperTypes(Manager.class);
         Assert.assertEquals("There are not 2 super types", 2, superTypes.size());
         TypeES<? super Manager>[] superTypeArr = (TypeES<? super Manager>[])superTypes.toArray();
         Assert.assertEquals("First super type is not Employee", "Employee", superTypeArr[0].getJavaClassName());
         Assert.assertEquals("Second super type is not Person", "Person", superTypeArr[1].getJavaClassName());
+        
+        //Negative Tests.
+        superTypes = MetamodelUtilES.getSuperTypes(Person.class);
+        Assert.assertEquals("Person has a super type other than Object!", 0, superTypes.size());
     }
 
     /**

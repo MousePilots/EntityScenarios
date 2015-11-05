@@ -52,9 +52,7 @@ public class DescendingLongGeneratorTest {
         generator.generate();
         generator.generate();
         generator.generate();
-        if (generator.generate() == Long.MAX_VALUE) {
-            fail("The generated id is still Long.MAX_VALUE!");
-        }
+        assertFalse("The generated id is still Long.MAX_VALUE!", generator.generate() == Long.MAX_VALUE);
         generator.reset();
         assertEquals("Generated id was not Long.MAX_VALUE", expResult, result);
     }    
