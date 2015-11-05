@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.TypeES;
 
 /**
@@ -20,10 +21,11 @@ public class MetamodelUtilES {
 
         do {
             superclass = superclass.getSuperclass();
-            //use superclass to create TypeES then add to supers
+            supers.add(new AbstractTypeES(superclass.getName(), superclass.getSimpleName(), 6, Type.PersistenceType.ENTITY, superclass) {
+            });
         } while (superclass != Object.class);
-
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        return supers;
     }
 
     public static <T> T createInstance(Class<T> clazz) {
