@@ -2,6 +2,7 @@ package org.mousepilots.es.model.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.mousepilots.es.model.MemberES;
 
 /**
@@ -41,5 +42,33 @@ public abstract class AbstractMemberES implements MemberES {
     @Override
     public boolean isSynthetic() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }    
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + Objects.hashCode(this.instanceValues);
+        hash = 47 * hash + Objects.hashCode(this.name);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractMemberES other = (AbstractMemberES) obj;
+        if (!Objects.equals(this.instanceValues, other.instanceValues)) {
+            return false;
+        }
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

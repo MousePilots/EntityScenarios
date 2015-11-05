@@ -2,6 +2,7 @@ package org.mousepilots.es.model.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -80,4 +81,31 @@ public abstract class AbstractTypeES<T> implements TypeES<T> {
     public Class<T> getJavaType() {
         return javaType;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + Objects.hashCode(this.name);
+        hash = 89 * hash + this.ordinal;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractTypeES<?> other = (AbstractTypeES<?>) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (this.ordinal != other.ordinal) {
+            return false;
+        }
+        return true;
+    }
+    
 }

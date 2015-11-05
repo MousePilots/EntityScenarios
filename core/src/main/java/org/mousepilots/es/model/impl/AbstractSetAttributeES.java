@@ -2,6 +2,7 @@ package org.mousepilots.es.model.impl;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.PluralAttribute;
@@ -94,5 +95,33 @@ public abstract class AbstractSetAttributeES<T, E> implements SetAttributeES<T, 
     @Override
     public Class<E> getBindableJavaType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }    
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 71 * hash + Objects.hashCode(this.name);
+        hash = 71 * hash + Objects.hashCode(this.javaType);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractSetAttributeES<?, ?> other = (AbstractSetAttributeES<?, ?>) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.javaType, other.javaType)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }
