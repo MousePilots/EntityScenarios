@@ -19,28 +19,44 @@ import org.mousepilots.es.model.TypeES;
  */
 public abstract class AbstractManagedTypeES<T> implements ManagedTypeES<T> {
 
+    private final String javaClassName, typeName;
+    private final int ordinal;
+    private final PersistenceType persistanceType;
+    private final Class<T> javaType;
+    private final boolean isInstantiable;
+
+    public AbstractManagedTypeES(String javaClassName, String typeName, int ordinal, PersistenceType persistanceType, Class<T> javaType, boolean isInstantiable) {
+        this.javaClassName = javaClassName;
+        this.typeName = typeName;
+        this.ordinal = ordinal;
+        this.persistanceType = persistanceType;
+        this.javaType = javaType;
+        this.isInstantiable = isInstantiable;
+    }
+    
     @Override
     public String getJavaClassName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return javaClassName;
     }
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return typeName;
     }
 
     @Override
     public int getOrdinal() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ordinal;
     }
 
     @Override
     public boolean isInstantiable() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return isInstantiable;
     }
 
     @Override
     public T createInstance() {
+        //TODO Use util method.
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -51,6 +67,7 @@ public abstract class AbstractManagedTypeES<T> implements ManagedTypeES<T> {
 
     @Override
     public Collection<TypeES<? super T>> getSuperTypes() {
+        //TODO Use util method.
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -61,12 +78,12 @@ public abstract class AbstractManagedTypeES<T> implements ManagedTypeES<T> {
 
     @Override
     public PersistenceType getPersistenceType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return persistanceType;
     }
 
     @Override
     public Class<T> getJavaType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return javaType;
     }
 
     @Override

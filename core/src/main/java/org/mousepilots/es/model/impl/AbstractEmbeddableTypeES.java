@@ -1,7 +1,10 @@
 package org.mousepilots.es.model.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.ListAttribute;
@@ -19,6 +22,21 @@ import org.mousepilots.es.model.TypeES;
  */
 public abstract class AbstractEmbeddableTypeES<T> implements EmbeddableTypeES<T> {
 
+    private final String javaClassName, typeName;
+    private final int ordinal;
+    private final PersistenceType persistanceType;
+    private final Class<T> javaType;
+    private final boolean isInstantiable;
+
+    public AbstractEmbeddableTypeES(String javaClassName, String typeName, int ordinal, PersistenceType persistanceType, Class<T> javaType, boolean isInstantiable) {
+        this.javaClassName = javaClassName;
+        this.typeName = typeName;
+        this.ordinal = ordinal;
+        this.persistanceType = persistanceType;
+        this.javaType = javaType;
+        this.isInstantiable = isInstantiable;
+    }
+    
     @Override
     public Set<Attribute<? super T, ?>> getAttributes() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -161,37 +179,44 @@ public abstract class AbstractEmbeddableTypeES<T> implements EmbeddableTypeES<T>
 
     @Override
     public PersistenceType getPersistenceType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return persistanceType;
     }
 
     @Override
     public Class<T> getJavaType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return javaType;
     }
 
     @Override
     public String getJavaClassName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return javaClassName;
     }
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return typeName;
     }
 
     @Override
     public int getOrdinal() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ordinal;
     }
 
     @Override
     public boolean isInstantiable() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return isInstantiable;
     }
 
     @Override
     public T createInstance() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (isInstantiable()) {
+            try {
+                return getJavaType().newInstance();
+            } catch (InstantiationException | IllegalAccessException ex) {
+                Logger.getLogger(AbstractBasicTypeES.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return null;
     }
 
     @Override
@@ -201,7 +226,17 @@ public abstract class AbstractEmbeddableTypeES<T> implements EmbeddableTypeES<T>
 
     @Override
     public Collection<TypeES<? super T>> getSuperTypes() {
+        Collection<TypeES<? super T>> supers;
+        supers = new ArrayList<>();
+        
+        Class<? super T> superclass = getJavaType();
+        
+        do{
+            superclass = superclass.getSuperclass();
+            //use superclass to create TypeES then add to supers
+        }while(superclass != Object.class);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     @Override

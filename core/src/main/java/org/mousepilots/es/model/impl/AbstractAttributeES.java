@@ -1,6 +1,5 @@
 package org.mousepilots.es.model.impl;
 
-import java.lang.reflect.Member;
 import java.util.EnumMap;
 import java.util.Map;
 import javax.persistence.metamodel.ManagedType;
@@ -18,13 +17,13 @@ public abstract class AbstractAttributeES<T, TA> implements AttributeES<T, TA>{
     private final String attributeName;
     private final boolean isReadOnly, isCollection;
     private final PersistentAttributeType persistentAttributeType;
-    private final Member javaMember;
+    private final MemberES javaMember;
     private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
     private final Class<TA> javaType;
     
     public AbstractAttributeES(String attributeName, boolean isReadOnly,
             boolean isCollection , PersistentAttributeType persistenAttributeType,
-            Member javaMember, Class<TA> javaType){
+            MemberES javaMember, Class<TA> javaType){
         this.attributeName = attributeName;
         this.isReadOnly = isReadOnly;
         this.isCollection = isCollection;
@@ -51,7 +50,7 @@ public abstract class AbstractAttributeES<T, TA> implements AttributeES<T, TA>{
     @Override
     public MemberES getJavaMember() {
         //Maybe not allowed to get the member from the constructor?
-        throw new UnsupportedOperationException("Not supported yet.");
+        return javaMember;
     }
 
     @Override
