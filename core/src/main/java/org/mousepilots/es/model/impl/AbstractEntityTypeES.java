@@ -1,10 +1,8 @@
 package org.mousepilots.es.model.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.SortedSet;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.IdentifiableType;
@@ -29,13 +27,13 @@ public abstract class AbstractEntityTypeES<T> implements EntityTypeES<T>{
     private final Class<T> javaType;
     private final boolean isInstantiable;
 
-    public AbstractEntityTypeES(String javaClassName, String typeName, int ordinal, PersistenceType persistanceType, Class<T> javaType, boolean isInstantiable) {
+    public AbstractEntityTypeES(String javaClassName, String typeName, int ordinal, PersistenceType persistanceType, Class<T> javaType) {
         this.javaClassName = javaClassName;
         this.typeName = typeName;
         this.ordinal = ordinal;
         this.persistanceType = persistanceType;
         this.javaType = javaType;
-        this.isInstantiable = isInstantiable;
+        this.isInstantiable = MetamodelUtilES.isInstantiable(javaType);
     }
     
     @Override
@@ -60,14 +58,7 @@ public abstract class AbstractEntityTypeES<T> implements EntityTypeES<T>{
 
     @Override
     public T createInstance() {
-        if (isInstantiable()) {
-            try {
-                return getJavaType().newInstance();
-            } catch (InstantiationException | IllegalAccessException ex) {
-                Logger.getLogger(AbstractBasicTypeES.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return null;
+        return (isInstantiable()) ? MetamodelUtilES.createInstance(getJavaType()) : null;
     }
 
     @Override
@@ -76,22 +67,12 @@ public abstract class AbstractEntityTypeES<T> implements EntityTypeES<T>{
     }
 
     @Override
-    public Collection<TypeES<? super T>> getSuperTypes() {
-        Collection<TypeES<? super T>> supers;
-        supers = new ArrayList<>();
-        
-        Class<? super T> superclass = getJavaType();
-        
-        do{
-            superclass = superclass.getSuperclass();
-            //use superclass to create TypeES then add to supers
-        }while(superclass != Object.class);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        
+    public SortedSet<TypeES<? super T>> getSuperTypes() {
+        return null;
     }
 
     @Override
-    public Collection<TypeES<? extends T>> getSubTypes() {
+    public SortedSet<TypeES<? extends T>> getSubTypes() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

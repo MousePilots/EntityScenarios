@@ -1,10 +1,9 @@
 package org.mousepilots.es.model.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.SortedSet;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.IdentifiableType;
@@ -61,12 +60,12 @@ public abstract class AbstractMappedSuperclassTypeES<T> implements MappedSupercl
     }
 
     @Override
-    public Collection<TypeES<? super T>> getSuperTypes() {
-        return MetamodelUtilES.getSuperTypes(getJavaType());
+    public SortedSet<TypeES<? super T>> getSuperTypes() {
+        return null;
     }
 
     @Override
-    public Collection<TypeES<? extends T>> getSubTypes() {
+    public SortedSet<TypeES<? extends T>> getSubTypes() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -263,5 +262,31 @@ public abstract class AbstractMappedSuperclassTypeES<T> implements MappedSupercl
     @Override
     public Type<?> getIdType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 31 * hash + Objects.hashCode(this.name);
+        hash = 31 * hash + this.ordinal;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractMappedSuperclassTypeES<?> other = (AbstractMappedSuperclassTypeES<?>) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (this.ordinal != other.ordinal) {
+            return false;
+        }
+        return true;
     }
 }

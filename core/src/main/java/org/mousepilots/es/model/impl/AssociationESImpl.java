@@ -1,5 +1,6 @@
 package org.mousepilots.es.model.impl;
 
+import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import org.mousepilots.es.model.AssociationTypeES;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AttributeES;
@@ -8,15 +9,21 @@ import org.mousepilots.es.model.AttributeES;
  * @author Nicky Ernste
  * @version 1.0, 3-11-2015
  */
-public abstract class AbstractAssociationES implements AssociationES {
+public class AssociationESImpl implements AssociationES {
     
     private final AttributeES sourceAttribute;
-    
-    public AbstractAssociationES(AttributeES sourceAttribute){
+    private final PersistentAttributeType persistentAttributeType;
+    private final AssociationES inverse;
+    private final boolean owner;
+
+    public AssociationESImpl(AttributeES sourceAttribute, PersistentAttributeType persistentAttributeType, AssociationES inverse, boolean owner) {
         if (sourceAttribute == null){
             throw new IllegalArgumentException("The source attribute cannot be null.");
         }
         this.sourceAttribute = sourceAttribute;
+        this.persistentAttributeType = persistentAttributeType;
+        this.inverse = inverse;
+        this.owner = owner;
     }
 
     @Override
@@ -31,19 +38,21 @@ public abstract class AbstractAssociationES implements AssociationES {
 
     @Override
     public AssociationES getInverse() {
-        //TODO use information for the annotation processor to determine the inverse relationship.
-        return null;
+        return inverse;
     }
 
     @Override
     public boolean isOwner() {
-        //TODO use information for the annotation processor to determine the owner of the relationship.
-        return false;
+        return owner;
     }
 
     @Override
     public boolean isBiDirectional() {
-        //TODO use information for the annotation processor to determine if the relationship is bidirectional.
-        return false;
-    }    
+        return inverse != null;
+    }
+
+    @Override
+    public PersistentAttributeType getPersistentAttributeType(){
+        return persistentAttributeType;
+    }
 }

@@ -1,6 +1,7 @@
 package org.mousepilots.es.model;
 
 import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.ManagedType;
 
 /**
  * Represents an attribute of a certain {@link TypeES}.
@@ -10,7 +11,7 @@ import javax.persistence.metamodel.Attribute;
  * @author Roy Cleven
  * @version 1.0, 19-10-2015
  */
-public interface AttributeES<T, TA> extends Attribute<T, TA>
+public interface AttributeES<T, TA> extends Attribute<T, TA>, Comparable<AttributeES>, HasOrdinal
 {
     /**
      * Check if {@code this} attribute is read only, meaning it only has
@@ -43,5 +44,9 @@ public interface AttributeES<T, TA> extends Attribute<T, TA>
     @Override
     public MemberES getJavaMember();
     
+    @Override
+    public ManagedTypeES<T> getDeclaringType();
+    
 //    Wrapper<Y> wrap(Y value); Mogelijk tijdens de implementatie terughalen.
+
 }

@@ -7,6 +7,7 @@ package org.mousepilots.es.model;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.SortedSet;
 import javax.persistence.metamodel.Type;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
@@ -19,7 +20,7 @@ import javax.persistence.MappedSuperclass;
  * @author Roy Cleven
  * @version 1.0, 19-10-2015
  */
-public interface TypeES<T> extends Type<T>{
+public interface TypeES<T> extends Type<T>, Comparable<TypeES>, HasOrdinal{
     
     /**
     * @return the fully qualified name of {@code T}'s class
@@ -30,12 +31,7 @@ public interface TypeES<T> extends Type<T>{
      * @return the unique name for {@code this}
      */
     String getName();
-    
-    /**
-     * @return ordinal representation of {@code this}
-     */
-    int getOrdinal();
-    
+        
     /**
      * @return {@code True} when the object is instantiable. {@code False} otherwise.
      */
@@ -55,10 +51,10 @@ public interface TypeES<T> extends Type<T>{
     /**
      * @return this type's super-types {@code s}, such that {@code s.getJavaType()} is a superclass of {@code this.getJavaType()}
      */
-    Collection<TypeES<? super T>> getSuperTypes();
+    SortedSet<TypeES<? super T>> getSuperTypes();
     
     /**
      * @return this type's sub-types {@code s}, such that {@code s.getJavaType()} is a subclass of {@code this.getJavaType()}
      */
-    Collection<TypeES<? extends T>> getSubTypes();
+    SortedSet<TypeES<? extends T>> getSubTypes();
 }

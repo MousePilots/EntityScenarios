@@ -4,6 +4,8 @@ import java.util.Set;
 import javax.persistence.metamodel.EmbeddableType;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.ManagedType;
+import javax.persistence.metamodel.Type;
+import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MetaModelES;
 
 /**
@@ -18,13 +20,13 @@ public abstract class AbstractMetaModelES implements MetaModelES {
     }
 
     @Override
-    public <X> ManagedType<X> managedType(Class<X> cls) {
+    public <X> ManagedTypeES<X> managedType(Class<X> cls) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public <X> EmbeddableType<X> embeddable(Class<X> cls) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -40,5 +42,5 @@ public abstract class AbstractMetaModelES implements MetaModelES {
     @Override
     public Set<EmbeddableType<?>> getEmbeddables() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }    
+    }
 }

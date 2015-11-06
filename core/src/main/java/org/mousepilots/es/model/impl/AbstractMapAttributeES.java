@@ -2,11 +2,11 @@ package org.mousepilots.es.model.impl;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Set;
-import javax.persistence.metamodel.ManagedType;
+import java.util.Objects;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
+import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MapAttributeES;
 import org.mousepilots.es.model.MemberES;
 
@@ -55,7 +55,7 @@ public abstract class AbstractMapAttributeES<T, K, V> implements MapAttributeES<
     }
 
     @Override
-    public ManagedType<T> getDeclaringType() {
+    public ManagedTypeES<T> getDeclaringType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -102,5 +102,32 @@ public abstract class AbstractMapAttributeES<T, K, V> implements MapAttributeES<
     @Override
     public Type<K> getKeyType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }    
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.name);
+        hash = 97 * hash + Objects.hashCode(this.javaType);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractMapAttributeES<?, ?, ?> other = (AbstractMapAttributeES<?, ?, ?>) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.javaType, other.javaType)) {
+            return false;
+        }
+        return true;
+    }
+    
 }

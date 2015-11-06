@@ -2,6 +2,7 @@ package org.mousepilots.es.model.impl;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.SortedSet;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.ListAttribute;
@@ -25,13 +26,13 @@ public abstract class AbstractManagedTypeES<T> implements ManagedTypeES<T> {
     private final Class<T> javaType;
     private final boolean isInstantiable;
 
-    public AbstractManagedTypeES(String javaClassName, String typeName, int ordinal, PersistenceType persistanceType, Class<T> javaType, boolean isInstantiable) {
+    public AbstractManagedTypeES(String javaClassName, String typeName, int ordinal, PersistenceType persistanceType, Class<T> javaType) {
         this.javaClassName = javaClassName;
         this.typeName = typeName;
         this.ordinal = ordinal;
         this.persistanceType = persistanceType;
         this.javaType = javaType;
-        this.isInstantiable = isInstantiable;
+        this.isInstantiable = MetamodelUtilES.isInstantiable(javaType);
     }
     
     @Override
@@ -56,8 +57,7 @@ public abstract class AbstractManagedTypeES<T> implements ManagedTypeES<T> {
 
     @Override
     public T createInstance() {
-        //TODO Use util method.
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return (isInstantiable()) ? MetamodelUtilES.createInstance(getJavaType()) : null;
     }
 
     @Override
@@ -66,13 +66,12 @@ public abstract class AbstractManagedTypeES<T> implements ManagedTypeES<T> {
     }
 
     @Override
-    public Collection<TypeES<? super T>> getSuperTypes() {
-        //TODO Use util method.
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public SortedSet<TypeES<? super T>> getSuperTypes() {
+        return null;
     }
 
     @Override
-    public Collection<TypeES<? extends T>> getSubTypes() {
+    public SortedSet<TypeES<? extends T>> getSubTypes() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
