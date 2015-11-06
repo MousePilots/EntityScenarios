@@ -1,5 +1,7 @@
 package org.mousepilots.es.model;
 
+import javax.persistence.metamodel.Attribute.PersistentAttributeType;
+
 /**
  * Class representing an association between two entities.
  * @author Nicky Ernste
@@ -39,5 +41,12 @@ public interface AssociationES {
      * @return {@code true} if this association is mapped on both sides.
      * {@code false} otherwise.
      */
-    boolean isBiDirectional();    
+    boolean isBiDirectional();
+    
+    /**
+     *  Return the persistent attribute type for the association.
+     *  This method is declared here becuase you can have an association from a key in a map.
+     *  @return persistent attribute type
+     */
+    PersistentAttributeType getPersistentAttributeType();
 }

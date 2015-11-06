@@ -4,11 +4,11 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
 import org.mousepilots.es.model.ListAttributeES;
+import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MemberES;
 
 /**
@@ -65,7 +65,7 @@ public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T
     }
 
     @Override
-    public ManagedType<T> getDeclaringType() {
+    public ManagedTypeES<T> getDeclaringType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

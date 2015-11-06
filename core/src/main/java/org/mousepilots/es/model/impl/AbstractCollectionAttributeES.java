@@ -8,6 +8,7 @@ import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
 import org.mousepilots.es.model.CollectionAttributeES;
+import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MemberES;
 
 /**
@@ -16,6 +17,7 @@ import org.mousepilots.es.model.MemberES;
  */
 public abstract class AbstractCollectionAttributeES<T, E> implements CollectionAttributeES<T, E> {
 
+    private final ManagedTypeES declaringType;
     private final String attributeName;
     private final boolean isReadOnly;
     private final PersistentAttributeType persistentAttributeType;
@@ -24,14 +26,15 @@ public abstract class AbstractCollectionAttributeES<T, E> implements CollectionA
     private final Class<E> elementType;
     private final Class<Collection<E>> collectionType;
 
-    public AbstractCollectionAttributeES(String attributeName, boolean isReadOnly, PersistentAttributeType persistentAttributeType, MemberES javaMember, Class<E> elementType, Class<Collection<E>> collectionType) {
+    public AbstractCollectionAttributeES(ManagedTypeES declaringType, String attributeName, boolean isReadOnly, PersistentAttributeType persistentAttributeType, MemberES javaMember, Class<E> elementType, Class<Collection<E>> collectionType) {
+        this.declaringType = declaringType;
         this.attributeName = attributeName;
         this.isReadOnly = isReadOnly;
         this.persistentAttributeType = persistentAttributeType;
         this.javaMember = javaMember;
         this.elementType = elementType;
         this.collectionType = collectionType;
-    }    
+    }  
     
     @Override
     public boolean isReadOnly() {
@@ -64,8 +67,8 @@ public abstract class AbstractCollectionAttributeES<T, E> implements CollectionA
     }
 
     @Override
-    public ManagedType<T> getDeclaringType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ManagedTypeES<T> getDeclaringType() {
+        return declaringType;
     }
 
     @Override

@@ -3,11 +3,11 @@ package org.mousepilots.es.model.impl;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
-import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
 import org.mousepilots.es.model.Generator;
+import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MemberES;
 import org.mousepilots.es.model.SingularAttributeES;
 
@@ -75,7 +75,7 @@ public abstract class AbstractSingularAttributeES<X, T> implements SingularAttri
     }
 
     @Override
-    public ManagedType<X> getDeclaringType() {
+    public ManagedTypeES<X> getDeclaringType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

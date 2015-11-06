@@ -21,8 +21,7 @@ public class MetamodelUtilES {
 
         do {
             superclass = superclass.getSuperclass();
-            supers.add(new AbstractTypeES(superclass.getName(), superclass.getSimpleName(), 6, Type.PersistenceType.ENTITY, superclass) {
-            });
+            
         } while (superclass != Object.class);
         
         return supers;
@@ -32,10 +31,10 @@ public class MetamodelUtilES {
         try {
             return clazz.newInstance();
         } catch (InstantiationException ex) {
-            Logger.getLogger(AbstractTypeES.class.getName()).log(Level.SEVERE, 
+            Logger.getLogger(TypeESImpl.class.getName()).log(Level.SEVERE, 
                     null, ex);
         } catch (IllegalAccessException ex) {
-            Logger.getLogger(AbstractTypeES.class.getName()).log(Level.SEVERE, 
+            Logger.getLogger(TypeESImpl.class.getName()).log(Level.SEVERE, 
                     null, ex);
         }
         return null;

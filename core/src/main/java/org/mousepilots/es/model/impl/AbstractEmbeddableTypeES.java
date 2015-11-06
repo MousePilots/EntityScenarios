@@ -2,6 +2,7 @@ package org.mousepilots.es.model.impl;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.SortedSet;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.ListAttribute;
@@ -215,12 +216,12 @@ public abstract class AbstractEmbeddableTypeES<T> implements EmbeddableTypeES<T>
     }
 
     @Override
-    public Collection<TypeES<? super T>> getSuperTypes() {
-        return MetamodelUtilES.getSuperTypes(getJavaType());
+    public SortedSet<TypeES<? super T>> getSuperTypes() {
+        return null;
     }
 
     @Override
-    public Collection<TypeES<? extends T>> getSubTypes() {
+    public SortedSet<TypeES<? extends T>> getSubTypes() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }    
 }

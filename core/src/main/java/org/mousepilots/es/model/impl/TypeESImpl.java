@@ -2,6 +2,8 @@ package org.mousepilots.es.model.impl;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.TypeES;
 
@@ -10,23 +12,29 @@ import org.mousepilots.es.model.TypeES;
  * @version 1.0, 3-11-2015
  * @param <T>
  */
-public abstract class AbstractTypeES<T> implements TypeES<T> {
+public class TypeESImpl<T> implements TypeES<T> {
 
     private final String javaClassName;
     private final String name;
     private final int ordinal;
     private final boolean instantiable;
-    private final Type.PersistenceType persistenceType;
+    private final PersistenceType persistenceType;
     private final Class<T> javaType;
+    private final Class<? extends Type<T>> metamodelClass;
+    private final SortedSet<TypeES<? super T>> superTypes;
+    private final SortedSet<TypeES<? extends T>> subTypes;
 
-    protected AbstractTypeES(String javaClassName, String name, int ordinal, PersistenceType persistenceType, Class<T> javaType) {
+    public TypeESImpl(String javaClassName, String name, int ordinal, boolean instantiable, PersistenceType persistenceType, Class<T> javaType, Class<? extends Type<T>> metamodelClass, Collection<TypeES<? super T>> superTypes, Collection<TypeES<? extends T>> subTypes) {
         this.javaClassName = javaClassName;
         this.name = name;
         this.ordinal = ordinal;
-        this.javaType = javaType;
-        this.instantiable = MetamodelUtilES.isInstantiable(this.javaType);
+        this.instantiable = instantiable;
         this.persistenceType = persistenceType;
-    }
+        this.javaType = javaType;
+        this.metamodelClass = metamodelClass;
+        this.superTypes = new TreeSet<>(superTypes);
+        this.subTypes = new TreeSet<>(subTypes);
+    }   
 
     @Override
     public String getJavaClassName() {
@@ -55,17 +63,17 @@ public abstract class AbstractTypeES<T> implements TypeES<T> {
 
     @Override
     public Class<? extends Type<T>> getMetamodelClass() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return metamodelClass;
     }
 
     @Override
-    public Collection<TypeES<? super T>> getSuperTypes() {
-        return MetamodelUtilES.getSuperTypes(getJavaType());
+    public SortedSet<TypeES<? super T>> getSuperTypes() {
+        return superTypes;
     }
 
     @Override
-    public Collection<TypeES<? extends T>> getSubTypes() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public SortedSet<TypeES<? extends T>> getSubTypes() {
+        return subTypes;
     }
 
     @Override
@@ -94,7 +102,7 @@ public abstract class AbstractTypeES<T> implements TypeES<T> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractTypeES<?> other = (AbstractTypeES<?>) obj;
+        final TypeESImpl<?> other = (TypeESImpl<?>) obj;
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
@@ -102,5 +110,10 @@ public abstract class AbstractTypeES<T> implements TypeES<T> {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int compareTo(TypeES o) {
+        return Integer.compare(ordinal, o.getOrdinal());
     }
 }
