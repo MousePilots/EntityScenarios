@@ -1,32 +1,45 @@
 package org.mousepilots.es.model.impl;
 
+import java.util.Collection;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
+import org.mousepilots.es.model.AttributeES;
+import org.mousepilots.es.model.ListAttributeES;
 import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MemberES;
-import org.mousepilots.es.model.PluralAttributeES;
 
 /**
  * @author Nicky Ernste
  * @version 1.0, 3-11-2015
  */
-public abstract class AbstractPluralAttributeES<T, C, E> implements PluralAttributeES<T, C, E> {
+public class ListAttributeESImpl<T, E> implements ListAttributeES<T, E> {
 
-    private boolean readOnly;
-    private boolean associated;
-    private MemberES member;
-    private String name;
-    private PersistentAttributeType persistenceType;
-    private Class<C> javaType;
+    private final String name;
+    private final boolean isReadOnly;
+    private final PersistentAttributeType persistentAttributeType;
+    private final MemberES javaMember;
     private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
-    
+    private final Class<E> elementType;
+    private final Class<Collection<E>> collectionType;
+
+    public ListAttributeESImpl(String name, boolean isReadOnly, PersistentAttributeType persistentAttributeType, MemberES javaMember, Class<E> elementType, Class<Collection<E>> collectionType) {
+        this.name = name;
+        this.isReadOnly = isReadOnly;
+        this.persistentAttributeType = persistentAttributeType;
+        this.javaMember = javaMember;
+        this.elementType = elementType;
+        this.collectionType = collectionType;
+    }
+
     @Override
     public boolean isReadOnly() {
-        return readOnly;
+        return isReadOnly;
     }
 
     @Override
@@ -41,7 +54,7 @@ public abstract class AbstractPluralAttributeES<T, C, E> implements PluralAttrib
 
     @Override
     public MemberES getJavaMember() {
-        return member;
+        return javaMember;
     }
 
     @Override
@@ -51,7 +64,7 @@ public abstract class AbstractPluralAttributeES<T, C, E> implements PluralAttrib
 
     @Override
     public PersistentAttributeType getPersistentAttributeType() {
-        return persistenceType;
+        return persistentAttributeType;
     }
 
     @Override
@@ -60,8 +73,8 @@ public abstract class AbstractPluralAttributeES<T, C, E> implements PluralAttrib
     }
 
     @Override
-    public Class<C> getJavaType() {
-        return javaType;
+    public Class<List<E>> getJavaType() {
+        return getJavaType();
     }
 
     @Override
@@ -76,7 +89,7 @@ public abstract class AbstractPluralAttributeES<T, C, E> implements PluralAttrib
 
     @Override
     public CollectionType getCollectionType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return CollectionType.LIST;
     }
 
     @Override
@@ -91,14 +104,14 @@ public abstract class AbstractPluralAttributeES<T, C, E> implements PluralAttrib
 
     @Override
     public Class<E> getBindableJavaType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return elementType;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 13 * hash + Objects.hashCode(this.name);
-        hash = 13 * hash + Objects.hashCode(this.javaType);
+        int hash = 3;
+        hash = 83 * hash + Objects.hashCode(this.name);
+        hash = 83 * hash + Objects.hashCode(this.elementType);
         return hash;
     }
 
@@ -110,15 +123,23 @@ public abstract class AbstractPluralAttributeES<T, C, E> implements PluralAttrib
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractPluralAttributeES<?, ?, ?> other = (AbstractPluralAttributeES<?, ?, ?>) obj;
+        final ListAttributeESImpl<?, ?> other = (ListAttributeESImpl<?, ?>) obj;
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
-        if (!Objects.equals(this.javaType, other.javaType)) {
+        if (!Objects.equals(this.elementType, other.elementType)) {
             return false;
         }
         return true;
     }
-    
-    
+
+    @Override
+    public int compareTo(AttributeES o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getOrdinal() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

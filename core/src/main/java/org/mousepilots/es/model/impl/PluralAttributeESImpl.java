@@ -1,44 +1,33 @@
 package org.mousepilots.es.model.impl;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
-import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
-import org.mousepilots.es.model.CollectionAttributeES;
+import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MemberES;
+import org.mousepilots.es.model.PluralAttributeES;
 
 /**
  * @author Nicky Ernste
  * @version 1.0, 3-11-2015
  */
-public abstract class AbstractCollectionAttributeES<T, E> implements CollectionAttributeES<T, E> {
+public class PluralAttributeESImpl<T, C, E> implements PluralAttributeES<T, C, E> {
 
-    private final String name;
-    private final boolean isReadOnly;
-    private final PersistentAttributeType persistentAttributeType;
-    private final MemberES javaMember;
+    private boolean readOnly;
+    private boolean associated;
+    private MemberES member;
+    private String name;
+    private PersistentAttributeType persistenceType;
+    private Class<C> javaType;
     private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
-    private final Class<E> elementType;
-    private final Class<Collection<E>> collectionType;
-
-
-    public AbstractCollectionAttributeES(String name, boolean isReadOnly, PersistentAttributeType persistentAttributeType, MemberES javaMember, Class<E> elementType, Class<Collection<E>> collectionType) {
-        this.name = name;
-        this.isReadOnly = isReadOnly;
-        this.persistentAttributeType = persistentAttributeType;
-        this.javaMember = javaMember;
-        this.elementType = elementType;
-        this.collectionType = collectionType;
-    }
 
     @Override
     public boolean isReadOnly() {
-        return isReadOnly;
+        return readOnly;
     }
 
     @Override
@@ -53,7 +42,7 @@ public abstract class AbstractCollectionAttributeES<T, E> implements CollectionA
 
     @Override
     public MemberES getJavaMember() {
-        return javaMember;
+        return member;
     }
 
     @Override
@@ -63,11 +52,17 @@ public abstract class AbstractCollectionAttributeES<T, E> implements CollectionA
 
     @Override
     public PersistentAttributeType getPersistentAttributeType() {
-        return persistentAttributeType;
+        return persistenceType;
     }
+
     @Override
-    public Class<Collection<E>> getJavaType() {
-        return collectionType;
+    public ManagedTypeES<T> getDeclaringType() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Class<C> getJavaType() {
+        return javaType;
     }
 
     @Override
@@ -82,12 +77,11 @@ public abstract class AbstractCollectionAttributeES<T, E> implements CollectionA
 
     @Override
     public CollectionType getCollectionType() {
-        return CollectionType.COLLECTION;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public Type<E> getElementType() {
-        //TODO Return elementType as a Type<E>.
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -98,14 +92,14 @@ public abstract class AbstractCollectionAttributeES<T, E> implements CollectionA
 
     @Override
     public Class<E> getBindableJavaType() {
-        return elementType;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 89 * hash + Objects.hashCode(this.name);
-        hash = 89 * hash + Objects.hashCode(this.elementType);
+        int hash = 7;
+        hash = 13 * hash + Objects.hashCode(this.name);
+        hash = 13 * hash + Objects.hashCode(this.javaType);
         return hash;
     }
 
@@ -117,13 +111,25 @@ public abstract class AbstractCollectionAttributeES<T, E> implements CollectionA
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractCollectionAttributeES<?, ?> other = (AbstractCollectionAttributeES<?, ?>) obj;
+        final PluralAttributeESImpl<?, ?, ?> other = (PluralAttributeESImpl<?, ?, ?>) obj;
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
-        if (!Objects.equals(this.elementType, other.elementType)) {
+        if (!Objects.equals(this.javaType, other.javaType)) {
             return false;
         }
         return true;
     }
+
+    @Override
+    public int compareTo(AttributeES o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getOrdinal() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+
 }

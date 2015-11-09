@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
-import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.TypeES;
 
 /**
@@ -46,10 +45,7 @@ public class MetamodelUtilES {
     public static <T> T createInstance(Class<T> clazz) {
         try {
             return clazz.newInstance();
-        } catch (InstantiationException ex) {
-            Logger.getLogger(TypeESImpl.class.getName()).log(Level.SEVERE,
-                    null, ex);
-        } catch (IllegalAccessException ex) {
+        } catch (InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(TypeESImpl.class.getName()).log(Level.SEVERE,
                     null, ex);
         }

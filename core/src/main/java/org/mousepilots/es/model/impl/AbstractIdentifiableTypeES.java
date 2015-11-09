@@ -270,7 +270,7 @@ public abstract class AbstractIdentifiableTypeES<T> implements IdentifiableTypeE
     @Override
     public Type<?> getIdType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    }    
 
     @Override
     public int hashCode() {

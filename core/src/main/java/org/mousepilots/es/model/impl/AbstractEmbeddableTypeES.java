@@ -1,6 +1,5 @@
 package org.mousepilots.es.model.impl;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;

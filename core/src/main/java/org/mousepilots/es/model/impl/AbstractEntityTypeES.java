@@ -29,7 +29,6 @@ public abstract class AbstractEntityTypeES<T> implements EntityTypeES<T>{
     private final boolean isInstantiable;
 
     public AbstractEntityTypeES(String javaClassName, String name, int ordinal, PersistenceType persistanceType, Class<T> javaType, boolean isInstantiable) {
-
         this.javaClassName = javaClassName;
         this.name = name;
         this.ordinal = ordinal;
@@ -281,7 +280,7 @@ public abstract class AbstractEntityTypeES<T> implements EntityTypeES<T>{
     @Override
     public Class<T> getBindableJavaType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    }    
 
     @Override
     public int hashCode() {

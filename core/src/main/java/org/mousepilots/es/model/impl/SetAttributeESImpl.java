@@ -3,26 +3,38 @@ package org.mousepilots.es.model.impl;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
+import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.ManagedTypeES;
-import org.mousepilots.es.model.MapAttributeES;
 import org.mousepilots.es.model.MemberES;
+import org.mousepilots.es.model.SetAttributeES;
 
 /**
  * @author Nicky Ernste
  * @version 1.0, 3-11-2015
  */
-public abstract class AbstractMapAttributeES<T, K, V> implements MapAttributeES<T, K, V> {
+public class SetAttributeESImpl<T, E> implements SetAttributeES<T, E> {
 
-    private boolean readOnly;
-    private boolean associated;
-    private MemberES member;
-    private String name;
-    private PersistentAttributeType persistenceType;
-    private Class<Map<K,V>> javaType;
+    private final boolean readOnly;
+    private final boolean associated;
+    private final MemberES member;
+    private final String name;
+    private final PersistentAttributeType persistenceType;
+    private final Class<Set<E>> javaType;
     private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
+
+    public SetAttributeESImpl(boolean readOnly, boolean associated, MemberES member, String name, PersistentAttributeType persistenceType, Class<Set<E>> javaType) {
+        this.readOnly = readOnly;
+        this.associated = associated;
+        this.member = member;
+        this.name = name;
+        this.persistenceType = persistenceType;
+        this.javaType = javaType;
+    }
     
     @Override
     public boolean isReadOnly() {
@@ -60,27 +72,27 @@ public abstract class AbstractMapAttributeES<T, K, V> implements MapAttributeES<
     }
 
     @Override
-    public Class<Map<K, V>> getJavaType() {
+    public Class<Set<E>> getJavaType() {
         return javaType;
     }
 
     @Override
     public boolean isAssociation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return associated;
     }
 
     @Override
     public boolean isCollection() {
-        return true; //idk
+        return true;
     }
 
     @Override
     public CollectionType getCollectionType() {
-        return CollectionType.MAP;
+        return PluralAttribute.CollectionType.SET;
     }
 
     @Override
-    public Type<V> getElementType() {
+    public Type<E> getElementType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -90,25 +102,15 @@ public abstract class AbstractMapAttributeES<T, K, V> implements MapAttributeES<
     }
 
     @Override
-    public Class<V> getBindableJavaType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Class<K> getKeyJavaType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Type<K> getKeyType() {
+    public Class<E> getBindableJavaType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.name);
-        hash = 97 * hash + Objects.hashCode(this.javaType);
+        hash = 71 * hash + Objects.hashCode(this.name);
+        hash = 71 * hash + Objects.hashCode(this.javaType);
         return hash;
     }
 
@@ -120,7 +122,7 @@ public abstract class AbstractMapAttributeES<T, K, V> implements MapAttributeES<
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractMapAttributeES<?, ?, ?> other = (AbstractMapAttributeES<?, ?, ?>) obj;
+        final SetAttributeESImpl<?, ?> other = (SetAttributeESImpl<?, ?>) obj;
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
@@ -129,5 +131,14 @@ public abstract class AbstractMapAttributeES<T, K, V> implements MapAttributeES<
         }
         return true;
     }
-    
+
+    @Override
+    public int compareTo(AttributeES o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getOrdinal() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

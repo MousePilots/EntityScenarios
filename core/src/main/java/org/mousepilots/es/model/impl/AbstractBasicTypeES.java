@@ -1,13 +1,10 @@
 package org.mousepilots.es.model.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.BasicTypeES;
-import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
@@ -68,7 +65,7 @@ public abstract class AbstractBasicTypeES<T> implements BasicTypeES<T> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    
+
     @Override
     public PersistenceType getPersistenceType() {
         return persistanceType;

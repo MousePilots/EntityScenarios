@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
+import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.Generator;
 import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MemberES;
@@ -15,24 +16,42 @@ import org.mousepilots.es.model.SingularAttributeES;
  * @author Nicky Ernste
  * @version 1.0, 3-11-2015
  */
-public abstract class AbstractSingularAttributeES<X, T> implements SingularAttributeES<X, T> {
+public class SingularAttributeESImpl<X, T> implements SingularAttributeES<X, T> {
 
-    private boolean generated;
-    private Generator generator;
-    private boolean readOnly;
-    private boolean associated;
-    private AssociationES association;
-    private MemberES member;
-    private String name;
-    private PersistentAttributeType persistenceType;
-    private Class<T> javaType;
-    private boolean collection;
-    private boolean id;
-    private boolean version;
-    private boolean optional;
-    private Type<T> type;
-    private BindableType bindableType;
+    private final boolean generated;
+    private final Generator generator;
+    private final boolean readOnly;
+    private final boolean associated;
+    private final AssociationES association;
+    private final MemberES member;
+    private final String name;
+    private final PersistentAttributeType persistenceType;
+    private final Class<T> javaType;
+    private final boolean collection;
+    private final boolean id;
+    private final boolean version;
+    private final boolean optional;
+    private final Type<T> type;
+    private final BindableType bindableType;
     private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
+
+    public SingularAttributeESImpl(boolean generated, Generator generator, boolean readOnly, boolean associated, AssociationES association, MemberES member, String name, PersistentAttributeType persistenceType, Class<T> javaType, boolean collection, boolean id, boolean version, boolean optional, Type<T> type, BindableType bindableType) {
+        this.generated = generated;
+        this.generator = generator;
+        this.readOnly = readOnly;
+        this.associated = associated;
+        this.association = association;
+        this.member = member;
+        this.name = name;
+        this.persistenceType = persistenceType;
+        this.javaType = javaType;
+        this.collection = collection;
+        this.id = id;
+        this.version = version;
+        this.optional = optional;
+        this.type = type;
+        this.bindableType = bindableType;
+    }
     
     @Override
     public boolean isGenerated() {
@@ -140,7 +159,7 @@ public abstract class AbstractSingularAttributeES<X, T> implements SingularAttri
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractSingularAttributeES<?, ?> other = (AbstractSingularAttributeES<?, ?>) obj;
+        final SingularAttributeESImpl<?, ?> other = (SingularAttributeESImpl<?, ?>) obj;
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
@@ -148,5 +167,15 @@ public abstract class AbstractSingularAttributeES<X, T> implements SingularAttri
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int compareTo(AttributeES o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getOrdinal() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
