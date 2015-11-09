@@ -1,13 +1,11 @@
 package org.mousepilots.es.model.impl;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import org.mousepilots.es.model.MemberES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 3-11-2015
+ * @version 1.0, 9-11-2015
  */
 public class PropertyMember implements MemberES {
 
@@ -24,7 +22,7 @@ public class PropertyMember implements MemberES {
         this.setter = setter;
         this.modifiers = modifiers;
     }
-    
+
     @Override
     public <T> T get(Object instance) {
         return (T) getter.invoke(instance);

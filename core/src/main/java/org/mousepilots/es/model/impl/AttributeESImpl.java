@@ -2,6 +2,7 @@ package org.mousepilots.es.model.impl;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import org.mousepilots.es.model.AssociationTypeES;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AttributeES;
@@ -10,31 +11,33 @@ import org.mousepilots.es.model.MemberES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 3-11-2015
+ * @version 1.0, 9-11-2015
+ * @param <T> The represented type that contains the attribute.
+ * @param <TA> The type of the represented attribute.
  */
 public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
-    
-    private final ManagedTypeES declaringType;
-    private final Class<TA> javaType;
-    private final String attributeName;
-    private final MemberES javaMember;
+
+    private final String name;
     private final PersistentAttributeType persistentAttributeType;
+    private final MemberES javaMember;
     private final int ordinal;
     private final boolean readOnly, collection, association;
+    private final ManagedTypeES declaringType;
     private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
+    private final Class<TA> javaType;
 
-    public AttributeESImpl(ManagedTypeES declaringType, Class<TA> javaType, String attributeName, MemberES javaMember, PersistentAttributeType persistentAttributeType, int ordinal, boolean readOnly, boolean collection, boolean association) {
-        this.declaringType = declaringType;
-        this.javaType = javaType;
-        this.attributeName = attributeName;
-        this.javaMember = javaMember;
+    public AttributeESImpl(String name, PersistentAttributeType persistentAttributeType, MemberES javaMember, int ordinal, boolean readOnly, boolean collection, boolean association, ManagedTypeES declaringType, Class<TA> javaType) {
+        this.name = name;
         this.persistentAttributeType = persistentAttributeType;
+        this.javaMember = javaMember;
         this.ordinal = ordinal;
         this.readOnly = readOnly;
         this.collection = collection;
         this.association = association;
+        this.declaringType = declaringType;
+        this.javaType = javaType;
     }
-    
+
     @Override
     public boolean isReadOnly() {
         return this.readOnly;
@@ -58,7 +61,7 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
 
     @Override
     public String getName() {
-        return this.attributeName;
+        return this.name;
     }
 
     @Override
@@ -94,5 +97,31 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
     @Override
     public int getOrdinal() {
         return ordinal;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + Objects.hashCode(this.name);
+        hash = 83 * hash + Objects.hashCode(this.javaType);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AttributeESImpl<?, ?> other = (AttributeESImpl<?, ?>) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.javaType, other.javaType)) {
+            return false;
+        }
+        return true;
     }
 }

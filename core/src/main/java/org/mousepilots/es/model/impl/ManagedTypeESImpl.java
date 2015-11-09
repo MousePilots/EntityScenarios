@@ -2,88 +2,26 @@ package org.mousepilots.es.model.impl;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.SortedSet;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.CollectionAttribute;
-import javax.persistence.metamodel.IdentifiableType;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.MapAttribute;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.Type;
-import org.mousepilots.es.model.EntityTypeES;
+import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 3-11-2015
+ * @version 1.0, 9-11-2015
+ * @param <T> The represented type.
  */
-public abstract class AbstractEntityTypeES<T> implements EntityTypeES<T>{
+public class ManagedTypeESImpl<T> extends TypeESImpl<T> implements ManagedTypeES<T> {
 
-    private final String javaClassName, typeName;
-    private final int ordinal;
-    private final PersistenceType persistanceType;
-    private final Class<T> javaType;
-    private final boolean isInstantiable;
-
-    public AbstractEntityTypeES(String javaClassName, String typeName, int ordinal, PersistenceType persistanceType, Class<T> javaType) {
-        this.javaClassName = javaClassName;
-        this.typeName = typeName;
-        this.ordinal = ordinal;
-        this.persistanceType = persistanceType;
-        this.javaType = javaType;
-        this.isInstantiable = MetamodelUtilES.isInstantiable(javaType);
-    }
-    
-    @Override
-    public String getJavaClassName() {
-        return javaClassName;
-    }
-
-    @Override
-    public String getName() {
-        return typeName;
-    }
-
-    @Override
-    public int getOrdinal() {
-        return ordinal;
-    }
-
-    @Override
-    public boolean isInstantiable() {
-        return isInstantiable;
-    }
-
-    @Override
-    public T createInstance() {
-        return (isInstantiable()) ? MetamodelUtilES.createInstance(getJavaType()) : null;
-    }
-
-    @Override
-    public Class<? extends Type<T>> getMetamodelClass() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public SortedSet<TypeES<? super T>> getSuperTypes() {
-        return null;
-    }
-
-    @Override
-    public SortedSet<TypeES<? extends T>> getSubTypes() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public PersistenceType getPersistenceType() {
-        return persistanceType;
-    }
-
-    @Override
-    public Class<T> getJavaType() {
-        return javaType;
+    public ManagedTypeESImpl(String javaClassName, String name, int ordinal, boolean instantiable, PersistenceType persistenceType, Class<T> javaType, Class<? extends Type<T>> metamodelClass, Collection<TypeES<? super T>> superTypes, Collection<TypeES<? extends T>> subTypes) {
+        super(javaClassName, name, ordinal, instantiable, persistenceType, javaType, metamodelClass, superTypes, subTypes);
     }
 
     @Override
@@ -225,59 +163,4 @@ public abstract class AbstractEntityTypeES<T> implements EntityTypeES<T>{
     public MapAttribute<T, ?, ?> getDeclaredMap(String name) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    @Override
-    public <Y> SingularAttribute<? super T, Y> getId(Class<Y> type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public <Y> SingularAttribute<T, Y> getDeclaredId(Class<Y> type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public <Y> SingularAttribute<? super T, Y> getVersion(Class<Y> type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public <Y> SingularAttribute<T, Y> getDeclaredVersion(Class<Y> type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public IdentifiableType<? super T> getSupertype() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean hasSingleIdAttribute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean hasVersionAttribute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Set<SingularAttribute<? super T, ?>> getIdClassAttributes() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Type<?> getIdType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public BindableType getBindableType() {
-        return BindableType.ENTITY_TYPE;
-    }
-
-    @Override
-    public Class<T> getBindableJavaType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }    
 }
