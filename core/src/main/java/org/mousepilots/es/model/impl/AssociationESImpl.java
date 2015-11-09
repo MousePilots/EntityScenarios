@@ -1,6 +1,7 @@
 package org.mousepilots.es.model.impl;
 
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
+import java.util.Objects;
 import org.mousepilots.es.model.AssociationTypeES;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AttributeES;
@@ -10,7 +11,7 @@ import org.mousepilots.es.model.AttributeES;
  * @version 1.0, 3-11-2015
  */
 public class AssociationESImpl implements AssociationES {
-    
+
     private final AttributeES sourceAttribute;
     private final PersistentAttributeType persistentAttributeType;
     private final AssociationES inverse;
@@ -54,5 +55,12 @@ public class AssociationESImpl implements AssociationES {
     @Override
     public PersistentAttributeType getPersistentAttributeType(){
         return persistentAttributeType;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 37 * hash + Objects.hashCode(this.sourceAttribute);
+        return hash;
     }
 }
