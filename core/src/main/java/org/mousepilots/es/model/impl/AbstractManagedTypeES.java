@@ -1,6 +1,7 @@
 package org.mousepilots.es.model.impl;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import javax.persistence.metamodel.Attribute;
@@ -20,21 +21,21 @@ import org.mousepilots.es.model.TypeES;
  */
 public abstract class AbstractManagedTypeES<T> implements ManagedTypeES<T> {
 
-    private final String javaClassName, typeName;
+    private final String javaClassName, name;
     private final int ordinal;
     private final PersistenceType persistanceType;
     private final Class<T> javaType;
     private final boolean isInstantiable;
 
-    public AbstractManagedTypeES(String javaClassName, String typeName, int ordinal, PersistenceType persistanceType, Class<T> javaType) {
+    public AbstractManagedTypeES(String javaClassName, String name, int ordinal, PersistenceType persistanceType, Class<T> javaType, boolean isInstantiable) {
         this.javaClassName = javaClassName;
-        this.typeName = typeName;
+        this.name = name;
         this.ordinal = ordinal;
         this.persistanceType = persistanceType;
         this.javaType = javaType;
         this.isInstantiable = MetamodelUtilES.isInstantiable(javaType);
     }
-    
+
     @Override
     public String getJavaClassName() {
         return javaClassName;
@@ -42,7 +43,7 @@ public abstract class AbstractManagedTypeES<T> implements ManagedTypeES<T> {
 
     @Override
     public String getName() {
-        return typeName;
+        return name;
     }
 
     @Override
@@ -223,5 +224,31 @@ public abstract class AbstractManagedTypeES<T> implements ManagedTypeES<T> {
     @Override
     public MapAttribute<T, ?, ?> getDeclaredMap(String name) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }    
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.name);
+        hash = 37 * hash + this.ordinal;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractManagedTypeES<?> other = (AbstractManagedTypeES<?>) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (this.ordinal != other.ordinal) {
+            return false;
+        }
+        return true;
+    }
 }
