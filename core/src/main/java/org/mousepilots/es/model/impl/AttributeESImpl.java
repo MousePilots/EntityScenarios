@@ -14,10 +14,8 @@ import org.mousepilots.es.model.MemberES;
  * @author Nicky Ernste
  * @version 1.0, 3-11-2015
  */
-<<<<<<< HEAD
 public abstract class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
 
-=======
 public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
 
     private final String name;
@@ -130,5 +128,4 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
         }
         return true;
     }
->>>>>>> Merge https://github.com/gizmo3399/EntityScenarios into gizmo3399-master
 }

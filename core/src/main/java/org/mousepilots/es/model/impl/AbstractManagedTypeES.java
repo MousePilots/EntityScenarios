@@ -224,7 +224,7 @@ public abstract class AbstractManagedTypeES<T> implements ManagedTypeES<T> {
     @Override
     public MapAttribute<T, ?, ?> getDeclaredMap(String name) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    }    
 
     @Override
     public int hashCode() {
