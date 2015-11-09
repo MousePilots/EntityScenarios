@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
+import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MemberES;
 import org.mousepilots.es.model.PluralAttributeES;
@@ -14,7 +15,7 @@ import org.mousepilots.es.model.PluralAttributeES;
  * @author Nicky Ernste
  * @version 1.0, 3-11-2015
  */
-public abstract class AbstractPluralAttributeES<T, C, E> implements PluralAttributeES<T, C, E> {
+public class PluralAttributeESImpl<T, C, E> implements PluralAttributeES<T, C, E> {
 
     private boolean readOnly;
     private boolean associated;
@@ -23,7 +24,7 @@ public abstract class AbstractPluralAttributeES<T, C, E> implements PluralAttrib
     private PersistentAttributeType persistenceType;
     private Class<C> javaType;
     private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
-    
+
     @Override
     public boolean isReadOnly() {
         return readOnly;
@@ -110,7 +111,7 @@ public abstract class AbstractPluralAttributeES<T, C, E> implements PluralAttrib
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractPluralAttributeES<?, ?, ?> other = (AbstractPluralAttributeES<?, ?, ?>) obj;
+        final PluralAttributeESImpl<?, ?, ?> other = (PluralAttributeESImpl<?, ?, ?>) obj;
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
@@ -119,6 +120,16 @@ public abstract class AbstractPluralAttributeES<T, C, E> implements PluralAttrib
         }
         return true;
     }
-    
-    
+
+    @Override
+    public int compareTo(AttributeES o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getOrdinal() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+
 }

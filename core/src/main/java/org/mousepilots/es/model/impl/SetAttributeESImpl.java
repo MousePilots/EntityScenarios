@@ -8,6 +8,7 @@ import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
+import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MemberES;
 import org.mousepilots.es.model.SetAttributeES;
@@ -16,15 +17,24 @@ import org.mousepilots.es.model.SetAttributeES;
  * @author Nicky Ernste
  * @version 1.0, 3-11-2015
  */
-public abstract class AbstractSetAttributeES<T, E> implements SetAttributeES<T, E> {
+public class SetAttributeESImpl<T, E> implements SetAttributeES<T, E> {
 
-    private boolean readOnly;
-    private boolean associated;
-    private MemberES member;
-    private String name;
-    private PersistentAttributeType persistenceType;
-    private Class<Set<E>> javaType;
+    private final boolean readOnly;
+    private final boolean associated;
+    private final MemberES member;
+    private final String name;
+    private final PersistentAttributeType persistenceType;
+    private final Class<Set<E>> javaType;
     private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
+
+    public SetAttributeESImpl(boolean readOnly, boolean associated, MemberES member, String name, PersistentAttributeType persistenceType, Class<Set<E>> javaType) {
+        this.readOnly = readOnly;
+        this.associated = associated;
+        this.member = member;
+        this.name = name;
+        this.persistenceType = persistenceType;
+        this.javaType = javaType;
+    }
     
     @Override
     public boolean isReadOnly() {
@@ -112,7 +122,7 @@ public abstract class AbstractSetAttributeES<T, E> implements SetAttributeES<T, 
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractSetAttributeES<?, ?> other = (AbstractSetAttributeES<?, ?>) obj;
+        final SetAttributeESImpl<?, ?> other = (SetAttributeESImpl<?, ?>) obj;
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
@@ -121,6 +131,14 @@ public abstract class AbstractSetAttributeES<T, E> implements SetAttributeES<T, 
         }
         return true;
     }
-    
-    
+
+    @Override
+    public int compareTo(AttributeES o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getOrdinal() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

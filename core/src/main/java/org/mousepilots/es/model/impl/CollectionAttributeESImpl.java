@@ -8,6 +8,7 @@ import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
+import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.CollectionAttributeES;
 import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MemberES;
@@ -16,8 +17,12 @@ import org.mousepilots.es.model.MemberES;
  * @author Nicky Ernste
  * @version 1.0, 3-11-2015
  */
-public abstract class AbstractCollectionAttributeES<T, E> implements CollectionAttributeES<T, E> {
+public class CollectionAttributeESImpl<T, E> implements CollectionAttributeES<T, E> {
 
+<<<<<<< HEAD
+=======
+    private final ManagedTypeES declaringType;
+>>>>>>> Merge https://github.com/gizmo3399/EntityScenarios into gizmo3399-master
     private final String name;
     private final boolean isReadOnly;
     private final PersistentAttributeType persistentAttributeType;
@@ -26,7 +31,12 @@ public abstract class AbstractCollectionAttributeES<T, E> implements CollectionA
     private final Class<E> elementType;
     private final Class<Collection<E>> collectionType;
 
+<<<<<<< HEAD
     public AbstractCollectionAttributeES(String name, boolean isReadOnly, PersistentAttributeType persistentAttributeType, MemberES javaMember, Class<E> elementType, Class<Collection<E>> collectionType) {
+=======
+    public CollectionAttributeESImpl(ManagedTypeES declaringType, String name, boolean isReadOnly, PersistentAttributeType persistentAttributeType, MemberES javaMember, Class<E> elementType, Class<Collection<E>> collectionType) {
+        this.declaringType = declaringType;
+>>>>>>> Merge https://github.com/gizmo3399/EntityScenarios into gizmo3399-master
         this.name = name;
         this.isReadOnly = isReadOnly;
         this.persistentAttributeType = persistentAttributeType;
@@ -98,7 +108,7 @@ public abstract class AbstractCollectionAttributeES<T, E> implements CollectionA
     @Override
     public Class<E> getBindableJavaType() {
         return elementType;
-    }    
+    }
 
     @Override
     public int hashCode() {
@@ -116,7 +126,7 @@ public abstract class AbstractCollectionAttributeES<T, E> implements CollectionA
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractCollectionAttributeES<?, ?> other = (AbstractCollectionAttributeES<?, ?>) obj;
+        final CollectionAttributeESImpl<?, ?> other = (CollectionAttributeESImpl<?, ?>) obj;
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
@@ -124,5 +134,15 @@ public abstract class AbstractCollectionAttributeES<T, E> implements CollectionA
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int compareTo(AttributeES o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getOrdinal() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
