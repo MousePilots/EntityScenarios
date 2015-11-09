@@ -1,0 +1,28 @@
+## Velocity Template.
+package $wvd.wrapperClassPackage;
+
+/**
+ * Wraps a value of type {@code $wvd.wrappedValueTypeParameter}.
+ */
+@javax.annotation.Generated(value = "org.mousepilots.es.maven.model.generator.plugin.MetaModelGeneratorMojo")
+public class $wvd.wrapperClassSimpleName extends org.mousepilots.es.shared.model.AbstractValueWrapper<$wvd.wrappedValueTypeParameter>{
+    
+    private $wvd.wrappedValueTypeParameter value;
+    
+    /**
+     * for GWT (de-)serialization
+     */
+    private ${wvd.wrapperClassSimpleName}() {
+        super();
+    }
+    
+    public ${wvd.wrapperClassSimpleName}($wvd.wrappedValueTypeParameter value) {
+        this.value=value;
+    }
+
+    @Override
+    public $wvd.wrappedValueTypeParameter getValue() {
+        return value;
+    }
+
+}
