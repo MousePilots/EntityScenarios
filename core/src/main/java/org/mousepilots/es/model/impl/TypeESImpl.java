@@ -9,8 +9,8 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 3-11-2015
- * @param <T>
+ * @version 1.0, 9-11-2015
+ * @param <T> The type of the represented object or attribute
  */
 public class TypeESImpl<T> implements TypeES<T> {
 
@@ -34,7 +34,7 @@ public class TypeESImpl<T> implements TypeES<T> {
         this.metamodelClass = metamodelClass;
         this.superTypes = new TreeSet<>(superTypes);
         this.subTypes = new TreeSet<>(subTypes);
-    }   
+    }
 
     @Override
     public String getJavaClassName() {

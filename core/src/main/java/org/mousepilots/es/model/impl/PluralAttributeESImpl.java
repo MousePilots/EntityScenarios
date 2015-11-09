@@ -1,135 +1,49 @@
 package org.mousepilots.es.model.impl;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Objects;
 import javax.persistence.metamodel.Type;
-import org.mousepilots.es.model.AssociationES;
-import org.mousepilots.es.model.AssociationTypeES;
-import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MemberES;
 import org.mousepilots.es.model.PluralAttributeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 3-11-2015
+ * @version 1.0, 9-11-2015
+ * @param <T> The type the represented collection belongs to
+ * @param <C> The type of the represented collection
+ * @param <E> The element type of the represented collection
  */
-public class PluralAttributeESImpl<T, C, E> implements PluralAttributeES<T, C, E> {
+public class PluralAttributeESImpl<T, C, E> extends AttributeESImpl<T, C> implements PluralAttributeES<T, C, E> {
 
-    private boolean readOnly;
-    private boolean associated;
-    private MemberES member;
-    private String name;
-    private PersistentAttributeType persistenceType;
-    private Class<C> javaType;
-    private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
+    private final CollectionType collectionType;
+    private final Type<E> elementType;
+    private final BindableType bindableType;
+    private final Class<E> bindableJavaType;
 
-    @Override
-    public boolean isReadOnly() {
-        return readOnly;
-    }
-
-    @Override
-    public boolean isAssociation(AssociationTypeES type) {
-        return associations.containsKey(type);
-    }
-
-    @Override
-    public AssociationES getAssociation(AssociationTypeES type) {
-        return associations.get(type);
-    }
-
-    @Override
-    public MemberES getJavaMember() {
-        return member;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public PersistentAttributeType getPersistentAttributeType() {
-        return persistenceType;
-    }
-
-    @Override
-    public ManagedTypeES<T> getDeclaringType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Class<C> getJavaType() {
-        return javaType;
-    }
-
-    @Override
-    public boolean isAssociation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean isCollection() {
-        return true;
+    public PluralAttributeESImpl(CollectionType collectionType, Type<E> elementType, BindableType bindableType, Class<E> bindableJavaType, String name, PersistentAttributeType persistentAttributeType, MemberES javaMember, int ordinal, boolean readOnly, boolean collection, boolean association, ManagedTypeES declaringType, Class<C> javaType) {
+        super(name, persistentAttributeType, javaMember, ordinal, readOnly, collection, association, declaringType, javaType);
+        this.collectionType = collectionType;
+        this.elementType = elementType;
+        this.bindableType = bindableType;
+        this.bindableJavaType = bindableJavaType;
     }
 
     @Override
     public CollectionType getCollectionType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return collectionType;
     }
 
     @Override
     public Type<E> getElementType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return elementType;
     }
 
     @Override
     public BindableType getBindableType() {
-        return BindableType.PLURAL_ATTRIBUTE;
+        return bindableType;
     }
 
     @Override
     public Class<E> getBindableJavaType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return bindableJavaType;
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 13 * hash + Objects.hashCode(this.name);
-        hash = 13 * hash + Objects.hashCode(this.javaType);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final PluralAttributeESImpl<?, ?, ?> other = (PluralAttributeESImpl<?, ?, ?>) obj;
-        if (!Objects.equals(this.name, other.name)) {
-            return false;
-        }
-        if (!Objects.equals(this.javaType, other.javaType)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public int compareTo(AttributeES o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int getOrdinal() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-
 }

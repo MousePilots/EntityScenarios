@@ -11,12 +11,13 @@ import org.mousepilots.es.model.MemberES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 3-11-2015
+ * @version 1.0, 9-11-2015
+ * @param <T> The represented type that contains the attribute.
+ * @param <TA> The type of the represented attribute.
  */
 public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
 
     private final String name;
-    private final boolean isReadOnly, isCollection;
     private final PersistentAttributeType persistentAttributeType;
     private final MemberES javaMember;
     private final int ordinal;
@@ -25,10 +26,8 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
     private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
     private final Class<TA> javaType;
 
-    public AttributeESImpl(String name, boolean isReadOnly, boolean isCollection, PersistentAttributeType persistentAttributeType, MemberES javaMember, int ordinal, boolean readOnly, boolean collection, boolean association, ManagedTypeES declaringType, Class<TA> javaType) {
+    public AttributeESImpl(String name, PersistentAttributeType persistentAttributeType, MemberES javaMember, int ordinal, boolean readOnly, boolean collection, boolean association, ManagedTypeES declaringType, Class<TA> javaType) {
         this.name = name;
-        this.isReadOnly = isReadOnly;
-        this.isCollection = isCollection;
         this.persistentAttributeType = persistentAttributeType;
         this.javaMember = javaMember;
         this.ordinal = ordinal;

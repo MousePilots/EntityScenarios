@@ -4,26 +4,26 @@ import org.mousepilots.es.model.BindableES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 3-11-2015
+ * @version 1.0, 9-11-2015
+ * @param <T> The type that will be bound.
  */
 public class BindableESImpl<T> implements BindableES<T> {
 
-    @Override
-    public Class<T> getBindableJavaType() {
-        switch (getBindableType()){
-            case PLURAL_ATTRIBUTE:
-                //Return element type
-                break;
-            default:
-                //Return entity type.
-                break;
-        }
-        return null;
+    private final BindableType bindableType;
+    private final Class<T> bindableJavaType;
+
+    public BindableESImpl(BindableType bindableType, Class<T> bindableJavaType) {
+        this.bindableType = bindableType;
+        this.bindableJavaType = bindableJavaType;
     }
 
     @Override
     public BindableType getBindableType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return bindableType;
     }
 
+    @Override
+    public Class<T> getBindableJavaType() {
+        return bindableJavaType;
+    }
 }
