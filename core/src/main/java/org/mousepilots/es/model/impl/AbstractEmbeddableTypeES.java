@@ -1,6 +1,5 @@
 package org.mousepilots.es.model.impl;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
@@ -224,7 +223,7 @@ public abstract class AbstractEmbeddableTypeES<T> implements EmbeddableTypeES<T>
     @Override
     public SortedSet<TypeES<? extends T>> getSubTypes() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }    
+    }
 
     @Override
     public int hashCode() {

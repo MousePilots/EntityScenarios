@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
-import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
@@ -19,28 +18,6 @@ import org.mousepilots.es.model.MemberES;
  */
 public class CollectionAttributeESImpl<T, E> implements CollectionAttributeES<T, E> {
 
-package org.mousepilots.es.model.impl;
-
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Objects;
-import javax.persistence.metamodel.ManagedType;
-import javax.persistence.metamodel.Type;
-import org.mousepilots.es.model.AssociationES;
-import org.mousepilots.es.model.AssociationTypeES;
-import org.mousepilots.es.model.AttributeES;
-import org.mousepilots.es.model.CollectionAttributeES;
-import org.mousepilots.es.model.ManagedTypeES;
-import org.mousepilots.es.model.MemberES;
-
-/**
- * @author Nicky Ernste
- * @version 1.0, 3-11-2015
- */
-public class CollectionAttributeESImpl<T, E> implements CollectionAttributeES<T, E> {
-
-
     private final String name;
     private final boolean isReadOnly;
     private final PersistentAttributeType persistentAttributeType;
@@ -48,20 +25,8 @@ public class CollectionAttributeESImpl<T, E> implements CollectionAttributeES<T,
     private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
     private final Class<E> elementType;
     private final Class<Collection<E>> collectionType;
+    private final ManagedTypeES declaringType;
 
-    private final String name;
-    private final boolean isReadOnly;
-    private final PersistentAttributeType persistentAttributeType;
-    private final MemberES javaMember;
-    private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
-    private final Class<E> elementType;
-    private final Class<Collection<E>> collectionType;
-
-
-    public AbstractCollectionAttributeES(String name, boolean isReadOnly, PersistentAttributeType persistentAttributeType, MemberES javaMember, Class<E> elementType, Class<Collection<E>> collectionType) {
-=======
-    public CollectionAttributeESImpl(ManagedTypeES declaringType, String name, boolean isReadOnly, PersistentAttributeType persistentAttributeType, MemberES javaMember, Class<E> elementType, Class<Collection<E>> collectionType) {
-        this.declaringType = declaringType;
     public CollectionAttributeESImpl(ManagedTypeES declaringType, String name, boolean isReadOnly, PersistentAttributeType persistentAttributeType, MemberES javaMember, Class<E> elementType, Class<Collection<E>> collectionType) {
         this.declaringType = declaringType;
         this.name = name;
@@ -170,6 +135,11 @@ public class CollectionAttributeESImpl<T, E> implements CollectionAttributeES<T,
 
     @Override
     public int getOrdinal() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ManagedTypeES<T> getDeclaringType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
