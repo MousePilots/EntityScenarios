@@ -9,6 +9,7 @@ import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
+import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.ListAttributeES;
 import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MemberES;
@@ -17,7 +18,7 @@ import org.mousepilots.es.model.MemberES;
  * @author Nicky Ernste
  * @version 1.0, 3-11-2015
  */
-public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T, E> {
+public class ListAttributeESImpl<T, E> implements ListAttributeES<T, E> {
 
     private final String name;
     private final boolean isReadOnly;
@@ -27,7 +28,7 @@ public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T
     private final Class<E> elementType;
     private final Class<Collection<E>> collectionType;
 
-    public AbstractListAttributeES(String name, boolean isReadOnly, PersistentAttributeType persistentAttributeType, MemberES javaMember, Class<E> elementType, Class<Collection<E>> collectionType) {
+    public ListAttributeESImpl(String name, boolean isReadOnly, PersistentAttributeType persistentAttributeType, MemberES javaMember, Class<E> elementType, Class<Collection<E>> collectionType) {
         this.name = name;
         this.isReadOnly = isReadOnly;
         this.persistentAttributeType = persistentAttributeType;
@@ -35,7 +36,7 @@ public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T
         this.elementType = elementType;
         this.collectionType = collectionType;
     }
-    
+
     @Override
     public boolean isReadOnly() {
         return isReadOnly;
@@ -104,7 +105,7 @@ public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T
     @Override
     public Class<E> getBindableJavaType() {
         return elementType;
-    }    
+    }
 
     @Override
     public int hashCode() {
@@ -122,7 +123,7 @@ public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractListAttributeES<?, ?> other = (AbstractListAttributeES<?, ?>) obj;
+        final ListAttributeESImpl<?, ?> other = (ListAttributeESImpl<?, ?>) obj;
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
@@ -130,5 +131,15 @@ public abstract class AbstractListAttributeES<T, E> implements ListAttributeES<T
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int compareTo(AttributeES o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getOrdinal() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
