@@ -1,1 +1,3 @@
 /core/target/
+/maven-model-generator-plugin/target/
+/meta-model-maven-plugin/target/

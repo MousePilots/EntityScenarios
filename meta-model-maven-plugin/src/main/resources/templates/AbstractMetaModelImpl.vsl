@@ -1,0 +1,39 @@
+## Velocity Template.
+package $package;
+
+import org.mousepilots.es.shared.impl.AbstractMetaModel;
+import org.mousepilots.es.shared.impl.AbstractType;
+import org.mousepilots.es.shared.model.Attribute;
+import org.mousepilots.es.shared.model.MetaModel;
+import org.mousepilots.es.shared.model.Type;
+
+
+/**
+ * Facilitates the lookup of all managed {@link Type}s and {@link Attribute}s of your meta model.
+ * Be sure to invoke {@link #init()} once before using generated classes or the EntityScenario api.
+ * This may be done in a {@code ServletContextListener} (server) or static initializer (e.g. GWT code)
+ * @author Jurjen van Geenen
+ */
+@javax.annotation.Generated(value = "org.mousepilots.es.maven.model.generator.plugin.MetaModelGeneratorMojo")
+public final class MetaModelImpl extends AbstractMetaModel{
+
+    public static final MetaModel INSTANCE = new MetaModelImpl(${typeDescriptors.size()}, ${attributeDescriptors.size()});
+
+    public static void init(){
+        
+    }
+    
+    private void registerTypes(){
+        #foreach($td in $typeDescriptors)
+        super.register((AbstractType) ${td.abstractDescriptorImplClassName}.INSTANCE );
+        #end
+    }
+    
+    private MetaModelImpl(int numberOfTypes, int numberOfAttributes) {
+        super(numberOfTypes, numberOfAttributes);
+        this.registerTypes();
+        super.onRegistrationsComplete();
+    }
+    
+   
+}
