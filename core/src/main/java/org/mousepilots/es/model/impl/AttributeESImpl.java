@@ -2,6 +2,8 @@ package org.mousepilots.es.model.impl;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
+import javax.persistence.metamodel.ManagedType;
 import org.mousepilots.es.model.AssociationTypeES;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AttributeES;
@@ -14,19 +16,23 @@ import org.mousepilots.es.model.MemberES;
  */
 public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
     
-    private final ManagedTypeES declaringType;
-    private final Class<TA> javaType;
-    private final String attributeName;
+    private final String name;
+    private final boolean isReadOnly, isCollection;
+    private final PersistentAttributeType persistentAttributeType;
     private final MemberES javaMember;
     private final PersistentAttributeType persistentAttributeType;
     private final int ordinal;
     private final boolean readOnly, collection, association;
     private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
-
-    public AttributeESImpl(ManagedTypeES declaringType, Class<TA> javaType, String attributeName, MemberES javaMember, PersistentAttributeType persistentAttributeType, int ordinal, boolean readOnly, boolean collection, boolean association) {
-        this.declaringType = declaringType;
-        this.javaType = javaType;
-        this.attributeName = attributeName;
+    private final Class<TA> javaType;
+    
+    public AbstractAttributeES(String name, boolean isReadOnly,
+            boolean isCollection , PersistentAttributeType persistenAttributeType,
+            MemberES javaMember, Class<TA> javaType){
+        this.name = name;
+        this.isReadOnly = isReadOnly;
+        this.isCollection = isCollection;
+        this.persistentAttributeType = persistenAttributeType;
         this.javaMember = javaMember;
         this.persistentAttributeType = persistentAttributeType;
         this.ordinal = ordinal;
@@ -58,7 +64,7 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
 
     @Override
     public String getName() {
-        return this.attributeName;
+        return this.name;
     }
 
     @Override
@@ -94,5 +100,31 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
     @Override
     public int getOrdinal() {
         return ordinal;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + Objects.hashCode(this.name);
+        hash = 83 * hash + Objects.hashCode(this.javaType);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractAttributeES<?, ?> other = (AbstractAttributeES<?, ?>) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.javaType, other.javaType)) {
+            return false;
+        }
+        return true;
     }
 }
