@@ -8,7 +8,7 @@ import org.mousepilots.es.model.AttributeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 3-11-2015
+ * @version 1.0, 9-11-2015
  */
 public class AssociationESImpl implements AssociationES {
 
@@ -62,5 +62,20 @@ public class AssociationESImpl implements AssociationES {
         int hash = 3;
         hash = 37 * hash + Objects.hashCode(this.sourceAttribute);
         return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AssociationESImpl other = (AssociationESImpl) obj;
+        if (!Objects.equals(this.sourceAttribute, other.sourceAttribute)) {
+            return false;
+        }
+        return true;
     }
 }
