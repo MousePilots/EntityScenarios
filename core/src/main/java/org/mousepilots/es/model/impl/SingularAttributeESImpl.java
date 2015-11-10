@@ -12,27 +12,33 @@ import org.mousepilots.es.model.SingularAttributeES;
  * @param <X> The type containing the represented attribute
  * @param <T> The type of the represented attribute
  */
-public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T> implements SingularAttributeES<X, T> {
+public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T>
+    implements SingularAttributeES<X, T> {
 
     private final boolean generated;
     private final Generator generator;
-    private final Class<T> bindableJavaType;
     private final boolean id;
     private final boolean version;
     private final boolean optional;
     private final Type<T> type;
-    private final BindableType bindableType;
+    private final BindableParameters<T> bindableParameters;
 
-    public SingularAttributeESImpl(boolean generated, Generator generator, Class<T> bindableJavaType, boolean id, boolean version, boolean optional, Type<T> type, BindableType bindableType, String name, PersistentAttributeType persistentAttributeType, MemberES javaMember, int ordinal, boolean readOnly, boolean collection, boolean association, ManagedTypeES declaringType, Class<T> javaType) {
-        super(name, persistentAttributeType, javaMember, ordinal, readOnly, collection, association, declaringType, javaType);
+    public SingularAttributeESImpl(boolean generated, Generator generator,
+            boolean id, boolean version, boolean optional, Type<T> type,
+            BindableParameters<T> bindableParameters,
+            AttributeTypeParameters<T> attributeTypeParameters,
+            PersistentAttributeType persistentAttributeType, MemberES javaMember,
+            boolean readOnly, boolean collection, boolean association,
+            ManagedTypeES declaringType) {
+        super(attributeTypeParameters, persistentAttributeType, javaMember,
+                readOnly, collection, association, declaringType);
         this.generated = generated;
         this.generator = generator;
-        this.bindableJavaType = bindableJavaType;
         this.id = id;
         this.version = version;
         this.optional = optional;
         this.type = type;
-        this.bindableType = bindableType;
+        this.bindableParameters = bindableParameters;
     }
 
     @Override
@@ -47,12 +53,12 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T> impleme
 
     @Override
     public BindableType getBindableType() {
-        return bindableType;
+        return bindableParameters.getBindableType();
     }
 
     @Override
     public Class<T> getBindableJavaType() {
-        return bindableJavaType;
+        return bindableParameters.getBindableJavaType();
     }
 
     @Override

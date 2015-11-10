@@ -13,13 +13,22 @@ import org.mousepilots.es.model.MemberES;
  * @param <K> The type of the key of the represented Map
  * @param <V> The type of the value of the represented Map
  */
-public class MapAttributeESImpl<T, K, V> extends PluralAttributeESImpl<T, Map<K, V>, V>implements MapAttributeES<T, K, V> {
+public class MapAttributeESImpl<T, K, V>
+    extends PluralAttributeESImpl<T, Map<K, V>, V>
+    implements MapAttributeES<T, K, V> {
 
     private final Class<K> keyJavaType;
     private final Type<K> keyType;
 
-    public MapAttributeESImpl(Class<K> keyJavaType, Type<K> keyType, Type<V> elementType, BindableType bindableType, Class<V> bindableJavaType, String name, PersistentAttributeType persistentAttributeType, MemberES javaMember, int ordinal, boolean readOnly, boolean collection, boolean association, ManagedTypeES declaringType, Class<Map<K, V>> javaType) {
-        super(CollectionType.MAP, elementType, bindableType, bindableJavaType, name, persistentAttributeType, javaMember, ordinal, readOnly, collection, association, declaringType, javaType);
+    public MapAttributeESImpl(Class<K> keyJavaType, Type<K> keyType,
+            Type<V> elementType, BindableParameters<V> bindableParameters,
+            AttributeTypeParameters<Map<K, V>> attributeTypeParameters,
+            PersistentAttributeType persistentAttributeType, MemberES javaMember,
+            boolean readOnly, boolean collection, boolean association,
+            ManagedTypeES declaringType) {
+        super(CollectionType.MAP, elementType, bindableParameters,
+                attributeTypeParameters, persistentAttributeType, javaMember,
+                readOnly, collection, association, declaringType);
         this.keyJavaType = keyJavaType;
         this.keyType = keyType;
     }

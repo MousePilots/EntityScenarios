@@ -15,7 +15,8 @@ public class PropertyMember implements MemberES {
     private final Setter setter;
     private final int modifiers;
 
-    public PropertyMember(Class<?> declaringClass, String name, Getter getter, Setter setter, int modifiers) {
+    public PropertyMember(Class<?> declaringClass, String name, Getter getter,
+            Setter setter, int modifiers) {
         this.declaringClass = declaringClass;
         this.name = name;
         this.getter = getter;

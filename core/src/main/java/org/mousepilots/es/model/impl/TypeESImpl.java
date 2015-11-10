@@ -1,9 +1,7 @@
 package org.mousepilots.es.model.impl;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.TypeES;
 
@@ -14,26 +12,26 @@ import org.mousepilots.es.model.TypeES;
  */
 public class TypeESImpl<T> implements TypeES<T> {
 
-    private final String javaClassName;
-    private final String name;
-    private final int ordinal;
-    private final boolean instantiable;
+    private final AttributeTypeParameters<T> attributeTypeParameters;
     private final PersistenceType persistenceType;
-    private final Class<T> javaType;
+    private final String javaClassName;
+    private final boolean instantiable;
     private final Class<? extends Type<T>> metamodelClass;
     private final SortedSet<TypeES<? super T>> superTypes;
     private final SortedSet<TypeES<? extends T>> subTypes;
 
-    public TypeESImpl(String javaClassName, String name, int ordinal, boolean instantiable, PersistenceType persistenceType, Class<T> javaType, Class<? extends Type<T>> metamodelClass, Collection<TypeES<? super T>> superTypes, Collection<TypeES<? extends T>> subTypes) {
-        this.javaClassName = javaClassName;
-        this.name = name;
-        this.ordinal = ordinal;
-        this.instantiable = instantiable;
+    public TypeESImpl(AttributeTypeParameters<T> attributeTypeParameters,
+            PersistenceType persistenceType, String javaClassName,
+            boolean instantiable, Class<? extends Type<T>> metamodelClass,
+            SortedSet<TypeES<? super T>> superTypes,
+            SortedSet<TypeES<? extends T>> subTypes) {
+        this.attributeTypeParameters = attributeTypeParameters;
         this.persistenceType = persistenceType;
-        this.javaType = javaType;
+        this.javaClassName = javaClassName;
+        this.instantiable = instantiable;
         this.metamodelClass = metamodelClass;
-        this.superTypes = new TreeSet<>(superTypes);
-        this.subTypes = new TreeSet<>(subTypes);
+        this.superTypes = superTypes;
+        this.subTypes = subTypes;
     }
 
     @Override
@@ -43,12 +41,12 @@ public class TypeESImpl<T> implements TypeES<T> {
 
     @Override
     public String getName() {
-        return name;
+        return attributeTypeParameters.getName();
     }
 
     @Override
     public int getOrdinal() {
-        return ordinal;
+        return attributeTypeParameters.getOrdinal();
     }
 
     @Override
@@ -58,7 +56,8 @@ public class TypeESImpl<T> implements TypeES<T> {
 
     @Override
     public T createInstance() {
-        return (isInstantiable()) ? MetamodelUtilES.createInstance(getJavaType()) : null;
+        return (isInstantiable())
+                ? MetamodelUtilES.createInstance(getJavaType()) : null;
     }
 
     @Override
@@ -83,14 +82,14 @@ public class TypeESImpl<T> implements TypeES<T> {
 
     @Override
     public Class<T> getJavaType() {
-        return javaType;
+        return attributeTypeParameters.getJavaType();
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 89 * hash + Objects.hashCode(this.name);
-        hash = 89 * hash + this.ordinal;
+        hash = 89 * hash + Objects.hashCode(getName());
+        hash = 89 * hash + getOrdinal();
         return hash;
     }
 
@@ -103,10 +102,10 @@ public class TypeESImpl<T> implements TypeES<T> {
             return false;
         }
         final TypeESImpl<?> other = (TypeESImpl<?>) obj;
-        if (!Objects.equals(this.name, other.name)) {
+        if (!Objects.equals(getName(), other.getName())) {
             return false;
         }
-        if (this.ordinal != other.ordinal) {
+        if (this.getOrdinal() != other.getOrdinal()) {
             return false;
         }
         return true;
@@ -114,6 +113,6 @@ public class TypeESImpl<T> implements TypeES<T> {
 
     @Override
     public int compareTo(TypeES o) {
-        return Integer.compare(ordinal, o.getOrdinal());
+        return Integer.compare(getOrdinal(), o.getOrdinal());
     }
 }

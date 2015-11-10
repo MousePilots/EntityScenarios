@@ -17,27 +17,27 @@ import org.mousepilots.es.model.MemberES;
  */
 public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
 
-    private final String name;
+    private final AttributeTypeParameters<TA> attributeTypeParameters;
     private final PersistentAttributeType persistentAttributeType;
     private final MemberES javaMember;
-    private final int ordinal;
     private final boolean readOnly, collection, association;
     private final ManagedTypeES declaringType;
-    private final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
-    private final Class<TA> javaType;
+    private final Map<AssociationTypeES, AssociationES> associations
+            = new EnumMap<>(AssociationTypeES.class);
 
-    public AttributeESImpl(String name, PersistentAttributeType persistentAttributeType, MemberES javaMember, int ordinal, boolean readOnly, boolean collection, boolean association, ManagedTypeES declaringType, Class<TA> javaType) {
-        this.name = name;
+    public AttributeESImpl(AttributeTypeParameters<TA> attributeTypeParameters,
+            PersistentAttributeType persistentAttributeType, MemberES javaMember,
+            boolean readOnly, boolean collection, boolean association,
+            ManagedTypeES declaringType) {
+        this.attributeTypeParameters = attributeTypeParameters;
         this.persistentAttributeType = persistentAttributeType;
         this.javaMember = javaMember;
-        this.ordinal = ordinal;
         this.readOnly = readOnly;
         this.collection = collection;
         this.association = association;
         this.declaringType = declaringType;
-        this.javaType = javaType;
     }
-
+    
     @Override
     public boolean isReadOnly() {
         return this.readOnly;
@@ -61,12 +61,12 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
 
     @Override
     public String getName() {
-        return this.name;
+        return attributeTypeParameters.getName();
     }
 
     @Override
     public PersistentAttributeType getPersistentAttributeType() {
-        return this.persistentAttributeType;
+        return persistentAttributeType;
     }
 
     @Override
@@ -76,7 +76,7 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
 
     @Override
     public Class<TA> getJavaType() {
-        return javaType;
+        return attributeTypeParameters.getJavaType();
     }
 
     @Override
@@ -91,19 +91,19 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
 
     @Override
     public int compareTo(AttributeES o) {
-        return Integer.compare(ordinal, o.getOrdinal());
+        return Integer.compare(getOrdinal(), o.getOrdinal());
     }
 
     @Override
     public int getOrdinal() {
-        return ordinal;
+        return attributeTypeParameters.getOrdinal();
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 83 * hash + Objects.hashCode(this.name);
-        hash = 83 * hash + Objects.hashCode(this.javaType);
+        hash = 83 * hash + Objects.hashCode(getName());
+        hash = 83 * hash + Objects.hashCode(getJavaType());
         return hash;
     }
 
@@ -116,10 +116,10 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
             return false;
         }
         final AttributeESImpl<?, ?> other = (AttributeESImpl<?, ?>) obj;
-        if (!Objects.equals(this.name, other.name)) {
+        if (!Objects.equals(getName(), other.getName())) {
             return false;
         }
-        if (!Objects.equals(this.javaType, other.javaType)) {
+        if (!Objects.equals(getJavaType(), other.getJavaType())) {
             return false;
         }
         return true;
