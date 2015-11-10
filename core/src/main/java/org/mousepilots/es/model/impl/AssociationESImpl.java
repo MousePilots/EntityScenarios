@@ -17,9 +17,12 @@ public class AssociationESImpl implements AssociationES {
     private final AssociationES inverse;
     private final boolean owner;
 
-    public AssociationESImpl(AttributeES sourceAttribute, PersistentAttributeType persistentAttributeType, AssociationES inverse, boolean owner) {
+    public AssociationESImpl(AttributeES sourceAttribute,
+            PersistentAttributeType persistentAttributeType,
+            AssociationES inverse, boolean owner) {
         if (sourceAttribute == null){
-            throw new IllegalArgumentException("The source attribute cannot be null.");
+            throw new IllegalArgumentException(
+                    "The source attribute cannot be null.");
         }
         this.sourceAttribute = sourceAttribute;
         this.persistentAttributeType = persistentAttributeType;
@@ -29,7 +32,8 @@ public class AssociationESImpl implements AssociationES {
 
     @Override
     public AssociationTypeES getAssociationType() {
-        return sourceAttribute.isAssociation(AssociationTypeES.KEY) ? AssociationTypeES.KEY : AssociationTypeES.VALUE;
+        return sourceAttribute.isAssociation(AssociationTypeES.KEY)
+                ? AssociationTypeES.KEY : AssociationTypeES.VALUE;
     }
 
     @Override

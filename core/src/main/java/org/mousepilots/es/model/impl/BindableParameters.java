@@ -1,29 +1,28 @@
 package org.mousepilots.es.model.impl;
 
-import org.mousepilots.es.model.BindableES;
+import javax.persistence.metamodel.Bindable.BindableType;
 
 /**
+ * This class takes the common bindable parameters and bundles them to
+ * save space in the constructors.
  * @author Nicky Ernste
- * @version 1.0, 9-11-2015
- * @param <T> The type that will be bound.
+ * @version 1.0, 10-11-2015
  */
-public class BindableESImpl<T> implements BindableES<T> {
-
+public class BindableParameters<T> {
+   
     private final BindableType bindableType;
     private final Class<T> bindableJavaType;
 
-    public BindableESImpl(BindableType bindableType,
+    public BindableParameters(BindableType bindableType,
             Class<T> bindableJavaType) {
         this.bindableType = bindableType;
         this.bindableJavaType = bindableJavaType;
     }
 
-    @Override
     public BindableType getBindableType() {
         return bindableType;
     }
 
-    @Override
     public Class<T> getBindableJavaType() {
         return bindableJavaType;
     }

@@ -12,9 +12,18 @@ import org.mousepilots.es.model.MemberES;
  * @param <T> The type the represented List belongs to.
  * @param <E> The element type of the represented List.
  */
-public class ListAttributeESImpl<T, E> extends PluralAttributeESImpl<T, List<E>, E> implements ListAttributeES<T, E> {
+public class ListAttributeESImpl<T, E>
+    extends PluralAttributeESImpl<T, List<E>, E>
+    implements ListAttributeES<T, E> {   
 
-    public ListAttributeESImpl(Type<E> elementType, BindableType bindableType, Class<E> bindableJavaType, String name, PersistentAttributeType persistentAttributeType, MemberES javaMember, int ordinal, boolean readOnly, boolean collection, boolean association, ManagedTypeES declaringType, Class<List<E>> javaType) {
-        super(CollectionType.LIST, elementType, bindableType, bindableJavaType, name, persistentAttributeType, javaMember, ordinal, readOnly, collection, association, declaringType, javaType);
+    public ListAttributeESImpl(Type<E> elementType,
+            BindableParameters<E> bindableParameters,
+            AttributeTypeParameters<List<E>> attributeTypeParameters,
+            PersistentAttributeType persistentAttributeType, MemberES javaMember,
+            boolean readOnly, boolean collection, boolean association,
+            ManagedTypeES declaringType) {
+        super(CollectionType.LIST, elementType, bindableParameters,
+                attributeTypeParameters, persistentAttributeType, javaMember,
+                readOnly, collection, association, declaringType);
     }
 }

@@ -12,9 +12,17 @@ import org.mousepilots.es.model.SetAttributeES;
  * @param <T> The type the represented Set belongs to
  * @param <E> The element type of the represented Set
  */
-public class SetAttributeESImpl<T, E> extends PluralAttributeESImpl<T, Set<E>, E>implements SetAttributeES<T, E> {
+public class SetAttributeESImpl<T, E>
+    extends PluralAttributeESImpl<T, Set<E>, E>implements SetAttributeES<T, E> {  
 
-    public SetAttributeESImpl(CollectionType collectionType, Type<E> elementType, BindableType bindableType, Class<E> bindableJavaType, String name, PersistentAttributeType persistentAttributeType, MemberES javaMember, int ordinal, boolean readOnly, boolean collection, boolean association, ManagedTypeES declaringType, Class<Set<E>> javaType) {
-        super(collectionType, elementType, bindableType, bindableJavaType, name, persistentAttributeType, javaMember, ordinal, readOnly, collection, association, declaringType, javaType);
+    public SetAttributeESImpl(Type<E> elementType,
+            BindableParameters<E> bindableParameters,
+            AttributeTypeParameters<Set<E>> attributeTypeParameters,
+            PersistentAttributeType persistentAttributeType, MemberES javaMember,
+            boolean readOnly, boolean collection, boolean association,
+            ManagedTypeES declaringType) {
+        super(CollectionType.SET, elementType, bindableParameters,
+                attributeTypeParameters, persistentAttributeType, javaMember,
+                readOnly, collection, association, declaringType);
     }
 }

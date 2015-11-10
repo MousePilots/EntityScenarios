@@ -12,19 +12,24 @@ import org.mousepilots.es.model.PluralAttributeES;
  * @param <C> The type of the represented collection
  * @param <E> The element type of the represented collection
  */
-public class PluralAttributeESImpl<T, C, E> extends AttributeESImpl<T, C> implements PluralAttributeES<T, C, E> {
+public class PluralAttributeESImpl<T, C, E> extends AttributeESImpl<T, C>
+    implements PluralAttributeES<T, C, E> {
 
     private final CollectionType collectionType;
     private final Type<E> elementType;
-    private final BindableType bindableType;
-    private final Class<E> bindableJavaType;
+    private final BindableParameters<E> bindableParameters;
 
-    public PluralAttributeESImpl(CollectionType collectionType, Type<E> elementType, BindableType bindableType, Class<E> bindableJavaType, String name, PersistentAttributeType persistentAttributeType, MemberES javaMember, int ordinal, boolean readOnly, boolean collection, boolean association, ManagedTypeES declaringType, Class<C> javaType) {
-        super(name, persistentAttributeType, javaMember, ordinal, readOnly, collection, association, declaringType, javaType);
+    public PluralAttributeESImpl(CollectionType collectionType,
+            Type<E> elementType, BindableParameters<E> bindableParameters,
+            AttributeTypeParameters<C> attributeTypeParameters,
+            PersistentAttributeType persistentAttributeType, MemberES javaMember,
+            boolean readOnly, boolean collection, boolean association,
+            ManagedTypeES declaringType) {
+        super(attributeTypeParameters, persistentAttributeType, javaMember,
+                readOnly, collection, association, declaringType);
         this.collectionType = collectionType;
         this.elementType = elementType;
-        this.bindableType = bindableType;
-        this.bindableJavaType = bindableJavaType;
+        this.bindableParameters = bindableParameters;
     }
 
     @Override
@@ -39,11 +44,11 @@ public class PluralAttributeESImpl<T, C, E> extends AttributeESImpl<T, C> implem
 
     @Override
     public BindableType getBindableType() {
-        return bindableType;
+        return bindableParameters.getBindableType();
     }
 
     @Override
     public Class<E> getBindableJavaType() {
-        return bindableJavaType;
+        return bindableParameters.getBindableJavaType();
     }
 }
