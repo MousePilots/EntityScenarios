@@ -1,8 +1,9 @@
 package org.mousepilots.es.model.impl;
 
+import org.mousepilots.es.model.impl.classparameters.AttributeParameters;
 import java.util.Map;
-import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.MapAttributeES;
+import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
@@ -16,10 +17,10 @@ public class MapAttributeESImpl<T, K, V>
     implements MapAttributeES<T, K, V> {
 
     private final Class<K> keyJavaType;
-    private final Type<K> keyType;
+    private final TypeES<K> keyType;
 
-    public MapAttributeESImpl(Class<K> keyJavaType, Type<K> keyType,
-            Type<V> elementType, BindableParameters<V> bindableParameters,
+    public MapAttributeESImpl(Class<K> keyJavaType, TypeES<K> keyType,
+            TypeES<V> elementType, BindableParameters<V> bindableParameters,
             AttributeParameters<Map<K, V>> attributeParameters) {
         super(CollectionType.MAP, elementType, bindableParameters,
                 attributeParameters);
@@ -33,7 +34,7 @@ public class MapAttributeESImpl<T, K, V>
     }
 
     @Override
-    public Type<K> getKeyType() {
+    public TypeES<K> getKeyType() {
         return keyType;
     }
 }

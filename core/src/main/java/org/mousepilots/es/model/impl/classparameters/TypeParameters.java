@@ -1,4 +1,4 @@
-package org.mousepilots.es.model.impl;
+package org.mousepilots.es.model.impl.classparameters;
 
 import java.util.SortedSet;
 import javax.persistence.metamodel.Type;

@@ -1,10 +1,13 @@
 package org.mousepilots.es.model.impl;
 
+import org.mousepilots.es.model.impl.classparameters.TypeParameters;
+import org.mousepilots.es.model.impl.classparameters.IdentifiableTypeParameters;
+import org.mousepilots.es.model.impl.classparameters.ManagedTypeParameters;
 import java.util.Set;
-import javax.persistence.metamodel.IdentifiableType;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.IdentifiableTypeES;
+import org.mousepilots.es.model.SingularAttributeES;
 
 /**
  * @author Nicky Ernste
@@ -25,32 +28,27 @@ public class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
     }
 
     @Override
-    public <Y> SingularAttribute<? super T, Y> getId(Class<Y> type) {
-        return (SingularAttribute<? super T, Y>) identifiableTypeParameters
+    public <Y> SingularAttributeES<? super T, Y> getId(Class<Y> type) {
+        return (SingularAttributeES<? super T, Y>) identifiableTypeParameters
                 .getId();
     }
 
     @Override
-    public <Y> SingularAttribute<T, Y> getDeclaredId(Class<Y> type) {
-        return (SingularAttribute<T, Y>) identifiableTypeParameters
+    public <Y> SingularAttributeES<T, Y> getDeclaredId(Class<Y> type) {
+        return (SingularAttributeES<T, Y>) identifiableTypeParameters
                 .getDeclaredId();
     }
 
     @Override
-    public <Y> SingularAttribute<? super T, Y> getVersion(Class<Y> type) {
-        return (SingularAttribute<? super T, Y>) identifiableTypeParameters
+    public <Y> SingularAttributeES<? super T, Y> getVersion(Class<Y> type) {
+        return (SingularAttributeES<? super T, Y>) identifiableTypeParameters
                 .getVersion();
     }
 
     @Override
-    public <Y> SingularAttribute<T, Y> getDeclaredVersion(Class<Y> type) {
-        return (SingularAttribute<T, Y>) identifiableTypeParameters
+    public <Y> SingularAttributeES<T, Y> getDeclaredVersion(Class<Y> type) {
+        return (SingularAttributeES<T, Y>) identifiableTypeParameters
                 .getDeclaredVersion();
-    }
-
-    @Override
-    public IdentifiableType<? super T> getSupertype() {
-        return identifiableTypeParameters.getSuperType();
     }
 
     @Override
@@ -71,5 +69,10 @@ public class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
     @Override
     public Type<?> getIdType() {
         return identifiableTypeParameters.getIdType();
+    }
+
+    @Override
+    public IdentifiableTypeES<? super T> getSupertype() {
+        return identifiableTypeParameters.getSuperType();
     }
 }

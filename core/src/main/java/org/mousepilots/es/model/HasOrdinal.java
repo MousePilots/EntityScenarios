@@ -1,13 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.mousepilots.es.model;
 
 /**
- *
- * @author clevenro
+ * Interface that applies that a class has an ordinal.
+ * @author Roy Cleven
+ * @version 1.0, 11-11-2015
  */
 public interface HasOrdinal {
 
@@ -15,5 +11,4 @@ public interface HasOrdinal {
      * @return ordinal representation of {@code this}
      */
     int getOrdinal();
-    
 }
