@@ -1,8 +1,9 @@
 package org.mousepilots.es.model.impl;
 
+import org.mousepilots.es.model.impl.classparameters.AttributeParameters;
 import java.util.List;
-import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.ListAttributeES;
+import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
@@ -14,7 +15,7 @@ public class ListAttributeESImpl<T, E>
     extends PluralAttributeESImpl<T, List<E>, E>
     implements ListAttributeES<T, E> {
 
-    public ListAttributeESImpl(Type<E> elementType,
+    public ListAttributeESImpl(TypeES<E> elementType,
             BindableParameters<E> bindableParameters,
             AttributeParameters<List<E>> attributeParameters) {
         super(CollectionType.LIST, elementType, bindableParameters,

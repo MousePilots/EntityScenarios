@@ -1,8 +1,10 @@
 package org.mousepilots.es.model.impl;
 
+import org.mousepilots.es.model.impl.classparameters.AttributeParameters;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.Generator;
 import org.mousepilots.es.model.SingularAttributeES;
+import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
@@ -18,11 +20,11 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T>
     private final boolean id;
     private final boolean version;
     private final boolean optional;
-    private final Type<T> type;
+    private final TypeES<T> type;
     private final BindableParameters<T> bindableParameters;
 
     public SingularAttributeESImpl(boolean generated, Generator generator,
-            boolean id, boolean version, boolean optional, Type<T> type,
+            boolean id, boolean version, boolean optional, TypeES<T> type,
             BindableParameters<T> bindableParameters,
             AttributeParameters<T> attributeParameters) {
         super(attributeParameters);
@@ -71,7 +73,7 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T>
     }
 
     @Override
-    public Type<T> getType() {
+    public TypeES<T> getType() {
         return type;
     }
 }

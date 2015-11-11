@@ -4,6 +4,8 @@ import java.util.Set;
 import javax.persistence.metamodel.EmbeddableType;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.ManagedType;
+import org.mousepilots.es.model.EmbeddableTypeES;
+import org.mousepilots.es.model.EntityTypeES;
 import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MetaModelES;
 
@@ -13,33 +15,59 @@ import org.mousepilots.es.model.MetaModelES;
  */
 public class MetaModelESImpl implements MetaModelES {
 
+    private final Set<ManagedType<?>> managedTypes;
+    private final Set<EntityType<?>> entities;
+    private final Set<EmbeddableType<?>> embeddables;
+
+    public MetaModelESImpl(Set<ManagedType<?>> managedTypes,
+            Set<EntityType<?>> entities, Set<EmbeddableType<?>> embeddables) {
+        this.managedTypes = managedTypes;
+        this.entities = entities;
+        this.embeddables = embeddables;
+    }
+
     @Override
-    public <X> EntityType<X> entity(Class<X> cls) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public <X> EntityTypeES<X> entity(Class<X> cls) {
+        for (EntityType entityType : entities){
+            if (entityType.getJavaType() == cls) {
+                return (EntityTypeES<X>)entityType;
+            }
+        }
+        return null;
     }
 
     @Override
     public <X> ManagedTypeES<X> managedType(Class<X> cls) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        for (ManagedType managedType : managedTypes){
+            if (managedType.getJavaType() == cls) {
+                return (ManagedTypeES<X>)managedType;
+            }
+        }
+        return null;
     }
 
     @Override
-    public <X> EmbeddableType<X> embeddable(Class<X> cls) {
-       throw new UnsupportedOperationException("Not supported yet.");
+    public <X> EmbeddableTypeES<X> embeddable(Class<X> cls) {
+       for (EmbeddableType embeddableType : embeddables){
+            if (embeddableType.getJavaType() == cls) {
+                return (EmbeddableTypeES<X>)embeddableType;
+            }
+        }
+        return null;
     }
 
     @Override
     public Set<ManagedType<?>> getManagedTypes() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return managedTypes;
     }
 
     @Override
     public Set<EntityType<?>> getEntities() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return entities;
     }
 
     @Override
     public Set<EmbeddableType<?>> getEmbeddables() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return embeddables;
     }
 }

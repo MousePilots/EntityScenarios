@@ -1,7 +1,8 @@
 package org.mousepilots.es.model.impl;
 
-import javax.persistence.metamodel.Type;
+import org.mousepilots.es.model.impl.classparameters.AttributeParameters;
 import org.mousepilots.es.model.PluralAttributeES;
+import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
@@ -14,11 +15,11 @@ public class PluralAttributeESImpl<T, C, E> extends AttributeESImpl<T, C>
     implements PluralAttributeES<T, C, E> {
 
     private final CollectionType collectionType;
-    private final Type<E> elementType;
+    private final TypeES<E> elementType;
     private final BindableParameters<E> bindableParameters;
 
     public PluralAttributeESImpl(CollectionType collectionType,
-            Type<E> elementType, BindableParameters<E> bindableParameters,
+            TypeES<E> elementType, BindableParameters<E> bindableParameters,
             AttributeParameters<C> attributeParameters) {
         super(attributeParameters);
         this.collectionType = collectionType;
@@ -32,7 +33,7 @@ public class PluralAttributeESImpl<T, C, E> extends AttributeESImpl<T, C>
     }
 
     @Override
-    public Type<E> getElementType() {
+    public TypeES<E> getElementType() {
         return elementType;
     }
 

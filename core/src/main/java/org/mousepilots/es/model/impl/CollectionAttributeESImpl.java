@@ -1,8 +1,9 @@
 package org.mousepilots.es.model.impl;
 
+import org.mousepilots.es.model.impl.classparameters.AttributeParameters;
 import java.util.Collection;
-import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.CollectionAttributeES;
+import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
@@ -14,7 +15,7 @@ public class CollectionAttributeESImpl<T, E>
     extends PluralAttributeESImpl<T, Collection<E>, E>
     implements CollectionAttributeES<T, E> {
 
-    public CollectionAttributeESImpl(Type<E> elementType,
+    public CollectionAttributeESImpl(TypeES<E> elementType,
             BindableParameters<E> bindableParameters,
             AttributeParameters<Collection<E>> attributeParameters) {
         super(CollectionType.COLLECTION, elementType, bindableParameters,

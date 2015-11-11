@@ -9,7 +9,7 @@ import java.lang.reflect.Member;
  * see Member
  */
 public interface MemberES extends Member {
-    
+
     /**
      * Gets the value for the specified instance.
      * @param <T> the expected class of the value
@@ -17,7 +17,7 @@ public interface MemberES extends Member {
      * @return the value for the specified instance, if no value was set returnvalue will be {@code null}
      */
     <T> T get(Object instance);
-    
+
     /**
      * Sets the given value for the given instance
      * @param instance the instance to which the value belongs

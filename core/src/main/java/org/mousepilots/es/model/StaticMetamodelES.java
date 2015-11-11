@@ -19,6 +19,7 @@ public @interface StaticMetamodelES {
 
     /**
      * Class being modeled by the annotated class.
+     * @return The class that is modeled by the annotated class.
      */
     Class<?> value();
 }

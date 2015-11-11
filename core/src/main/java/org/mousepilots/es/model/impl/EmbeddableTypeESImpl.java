@@ -1,5 +1,7 @@
 package org.mousepilots.es.model.impl;
 
+import org.mousepilots.es.model.impl.classparameters.TypeParameters;
+import org.mousepilots.es.model.impl.classparameters.ManagedTypeParameters;
 import org.mousepilots.es.model.EmbeddableTypeES;
 
 /**
