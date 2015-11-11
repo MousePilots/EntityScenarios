@@ -2,13 +2,11 @@ package org.mousepilots.es.model.impl;
 
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.Generator;
-import org.mousepilots.es.model.ManagedTypeES;
-import org.mousepilots.es.model.MemberES;
 import org.mousepilots.es.model.SingularAttributeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 9-11-2015
+ * @version 1.0, 11-11-2015
  * @param <X> The type containing the represented attribute
  * @param <T> The type of the represented attribute
  */
@@ -26,12 +24,8 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T>
     public SingularAttributeESImpl(boolean generated, Generator generator,
             boolean id, boolean version, boolean optional, Type<T> type,
             BindableParameters<T> bindableParameters,
-            AttributeTypeParameters<T> attributeTypeParameters,
-            PersistentAttributeType persistentAttributeType, MemberES javaMember,
-            boolean readOnly, boolean collection, boolean association,
-            ManagedTypeES declaringType) {
-        super(attributeTypeParameters, persistentAttributeType, javaMember,
-                readOnly, collection, association, declaringType);
+            AttributeParameters<T> attributeParameters) {
+        super(attributeParameters);
         this.generated = generated;
         this.generator = generator;
         this.id = id;

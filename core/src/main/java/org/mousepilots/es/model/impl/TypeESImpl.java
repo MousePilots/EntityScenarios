@@ -7,51 +7,40 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 9-11-2015
+ * @version 1.0, 11-11-2015
  * @param <T> The type of the represented object or attribute
  */
 public class TypeESImpl<T> implements TypeES<T> {
 
-    private final AttributeTypeParameters<T> attributeTypeParameters;
-    private final PersistenceType persistenceType;
-    private final String javaClassName;
-    private final boolean instantiable;
-    private final Class<? extends Type<T>> metamodelClass;
-    private final SortedSet<TypeES<? super T>> superTypes;
-    private final SortedSet<TypeES<? extends T>> subTypes;
+    private final TypeParameters<T> typeParameters;
 
-    public TypeESImpl(AttributeTypeParameters<T> attributeTypeParameters,
-            PersistenceType persistenceType, String javaClassName,
-            boolean instantiable, Class<? extends Type<T>> metamodelClass,
-            SortedSet<TypeES<? super T>> superTypes,
-            SortedSet<TypeES<? extends T>> subTypes) {
-        this.attributeTypeParameters = attributeTypeParameters;
-        this.persistenceType = persistenceType;
-        this.javaClassName = javaClassName;
-        this.instantiable = instantiable;
-        this.metamodelClass = metamodelClass;
-        this.superTypes = superTypes;
-        this.subTypes = subTypes;
+    public TypeESImpl(TypeParameters<T> typeParameters) {
+        this.typeParameters = typeParameters;
+        if (typeParameters == null
+                || typeParameters.getAttributeTypeParameters() == null) {
+            throw new IllegalArgumentException(
+                "The type parameters or attributeTypeParameters cannot be null");
+        }
     }
 
     @Override
     public String getJavaClassName() {
-        return javaClassName;
+        return typeParameters.getJavaClassName();
     }
 
     @Override
     public String getName() {
-        return attributeTypeParameters.getName();
+        return typeParameters.getAttributeTypeParameters().getName();
     }
 
     @Override
     public int getOrdinal() {
-        return attributeTypeParameters.getOrdinal();
+        return typeParameters.getAttributeTypeParameters().getOrdinal();
     }
 
     @Override
     public boolean isInstantiable() {
-        return instantiable;
+        return typeParameters.isInstantiable();
     }
 
     @Override
@@ -62,27 +51,27 @@ public class TypeESImpl<T> implements TypeES<T> {
 
     @Override
     public Class<? extends Type<T>> getMetamodelClass() {
-        return metamodelClass;
+        return typeParameters.getMetamodelClass();
     }
 
     @Override
     public SortedSet<TypeES<? super T>> getSuperTypes() {
-        return superTypes;
+        return typeParameters.getSuperTypes();
     }
 
     @Override
     public SortedSet<TypeES<? extends T>> getSubTypes() {
-        return subTypes;
+        return typeParameters.getSubTypes();
     }
 
     @Override
     public PersistenceType getPersistenceType() {
-        return persistenceType;
+        return typeParameters.getPersistenceType();
     }
 
     @Override
     public Class<T> getJavaType() {
-        return attributeTypeParameters.getJavaType();
+        return typeParameters.getAttributeTypeParameters().getJavaType();
     }
 
     @Override
