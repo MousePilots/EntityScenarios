@@ -1,182 +1,368 @@
 package org.mousepilots.es.model.impl;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.SortedSet;
 import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.CollectionAttribute;
-import javax.persistence.metamodel.ListAttribute;
-import javax.persistence.metamodel.MapAttribute;
 import javax.persistence.metamodel.PluralAttribute;
-import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
-import javax.persistence.metamodel.Type;
+import org.mousepilots.es.model.CollectionAttributeES;
+import org.mousepilots.es.model.ListAttributeES;
 import org.mousepilots.es.model.ManagedTypeES;
-import org.mousepilots.es.model.TypeES;
+import org.mousepilots.es.model.MapAttributeES;
+import org.mousepilots.es.model.SetAttributeES;
+import org.mousepilots.es.model.SingularAttributeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 9-11-2015
+ * @version 1.0, 11-11-2015
  * @param <T> The represented type.
  */
 public class ManagedTypeESImpl<T> extends TypeESImpl<T>
     implements ManagedTypeES<T> {
 
-    public ManagedTypeESImpl(AttributeTypeParameters<T> attributeTypeParameters,
-            PersistenceType persistenceType, String javaClassName,
-            boolean instantiable, Class<? extends Type<T>> metamodelClass,
-            SortedSet<TypeES<? super T>> superTypes,
-            SortedSet<TypeES<? extends T>> subTypes) {
-        super(attributeTypeParameters, persistenceType, javaClassName,
-                instantiable, metamodelClass, superTypes, subTypes);
-    }    
+    private final ManagedTypeParameters<T> managedTypeParameters;
+    private final Set<PluralAttribute<? super T, ?, ?>> pluralAttributes = new HashSet<>();
+    private final Set<PluralAttribute<T, ?, ?>> declaredPluralAttributes = new HashSet<>();
+
+    public ManagedTypeESImpl(ManagedTypeParameters<T> managedTypeParameters,
+            TypeParameters<T> typeParameters) {
+        super(typeParameters);
+        this.managedTypeParameters = managedTypeParameters;
+        pluralAttributes.addAll(this.managedTypeParameters.getCollectionAttributes());
+        pluralAttributes.addAll(this.managedTypeParameters.getSetAttributes());
+        pluralAttributes.addAll(this.managedTypeParameters.getMapAttributes());
+        pluralAttributes.addAll(this.managedTypeParameters.getListAttributes());
+        declaredPluralAttributes.addAll(this.managedTypeParameters.getDeclaredCollectionAttributes());
+        declaredPluralAttributes.addAll(this.managedTypeParameters.getDeclaredSetAttributes());
+        declaredPluralAttributes.addAll(this.managedTypeParameters.getDeclaredMapAttributes());
+        declaredPluralAttributes.addAll(this.managedTypeParameters.getDeclaredListAttributes());
+    }
 
     @Override
     public Set<Attribute<? super T, ?>> getAttributes() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return managedTypeParameters.getAttributes();
     }
 
     @Override
     public Set<Attribute<T, ?>> getDeclaredAttributes() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return managedTypeParameters.getDeclaredAttributes();
     }
 
     @Override
-    public <Y> SingularAttribute<? super T, Y> getSingularAttribute(
+    public <Y> SingularAttributeES<? super T, Y> getSingularAttribute(
             String name, Class<Y> type) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Set<SingularAttribute<? super T, ?>> singularAttributes
+                = managedTypeParameters.getSingularAttributes();
+        for (SingularAttribute<? super T, ?> att : singularAttributes) {
+            if (att.getName().equals(name) && type == att.getJavaType()) {
+                //Not sure if this will fail at runtime.
+                return (SingularAttributeES<? super T, Y>)att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public <Y> SingularAttribute<T, Y> getDeclaredSingularAttribute(
+    public <Y> SingularAttributeES<T, Y> getDeclaredSingularAttribute(
             String name, Class<Y> type) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Set<SingularAttribute<T, ?>> declaredSingularAttributes
+                = managedTypeParameters.getDeclaredSingularAttributes();
+        for (SingularAttribute<T, ?> att : declaredSingularAttributes) {
+            if (att.getName().equals(name) && type == att.getJavaType()) {
+                //Not sure if this will fail at runtime.
+                return (SingularAttributeES<T, Y>)att;
+            }
+        }
+        return null;
     }
 
     @Override
     public Set<SingularAttribute<? super T, ?>> getSingularAttributes() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return managedTypeParameters.getSingularAttributes();
     }
 
     @Override
     public Set<SingularAttribute<T, ?>> getDeclaredSingularAttributes() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return managedTypeParameters.getDeclaredSingularAttributes();
     }
 
     @Override
-    public <E> CollectionAttribute<? super T, E> getCollection(String name,
+    public <E> CollectionAttributeES<? super T, E> getCollection(String name,
             Class<E> elementType) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Set<CollectionAttributeES<? super T, ?>> collectionAttributes
+                = managedTypeParameters.getCollectionAttributes();
+        for (CollectionAttributeES<? super T, ?> att : collectionAttributes) {
+            if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
+                //Not sure if this will fail at runtime.
+                return (CollectionAttributeES<? super T, E>)att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public <E> CollectionAttribute<T, E> getDeclaredCollection(String name,
+    public <E> CollectionAttributeES<T, E> getDeclaredCollection(String name,
             Class<E> elementType) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Set<CollectionAttributeES<T, ?>> declaredCollectionAttributes
+                = managedTypeParameters.getDeclaredCollectionAttributes();
+        for (CollectionAttributeES<T, ?> att : declaredCollectionAttributes) {
+            if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
+                //Not sure if this will fail at runtime.
+                return (CollectionAttributeES<T, E>)att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public <E> SetAttribute<? super T, E> getSet(String name,
+    public <E> SetAttributeES<? super T, E> getSet(String name,
             Class<E> elementType) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Set<SetAttributeES<? super T, ?>> setAttributes
+                = managedTypeParameters.getSetAttributes();
+        for (SetAttributeES<? super T, ?> att : setAttributes) {
+            if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
+                //Not sure if this will fail at runtime.
+                return (SetAttributeES<? super T, E>)att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public <E> SetAttribute<T, E> getDeclaredSet(String name,
+    public <E> SetAttributeES<T, E> getDeclaredSet(String name,
             Class<E> elementType) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Set<SetAttributeES<T, ?>> declaredSetAttributes
+                = managedTypeParameters.getDeclaredSetAttributes();
+        for (SetAttributeES<T, ?> att : declaredSetAttributes) {
+            if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
+                //Not sure if this will fail at runtime.
+                return (SetAttributeES<T, E>)att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public <E> ListAttribute<? super T, E> getList(String name,
+    public <E> ListAttributeES<? super T, E> getList(String name,
             Class<E> elementType) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Set<ListAttributeES<? super T, ?>> listAttributes
+                = managedTypeParameters.getListAttributes();
+        for (ListAttributeES<? super T, ?> att : listAttributes) {
+            if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
+                //Not sure if this will fail at runtime.
+                return (ListAttributeES<? super T, E>)att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public <E> ListAttribute<T, E> getDeclaredList(String name,
+    public <E> ListAttributeES<T, E> getDeclaredList(String name,
             Class<E> elementType) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Set<ListAttributeES<T, ?>> declaredListAttributes
+                = managedTypeParameters.getDeclaredListAttributes();
+        for (ListAttributeES<T, ?> att : declaredListAttributes) {
+            if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
+                //Not sure if this will fail at runtime.
+                return (ListAttributeES<T, E>)att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public <K, V> MapAttribute<? super T, K, V> getMap(String name,
+    public <K, V> MapAttributeES<? super T, K, V> getMap(String name,
             Class<K> keyType, Class<V> valueType) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Set<MapAttributeES<? super T, ?, ?>> mapAttributes
+                = managedTypeParameters.getMapAttributes();
+        for (MapAttributeES<? super T, ?, ?> att : mapAttributes) {
+            if (att.getName().equals(name) && keyType == att.getKeyJavaType()
+                    && valueType == att.getElementType().getClass()) {
+                //Not sure if this will fail at runtime.
+                return (MapAttributeES<? super T, K, V>)att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public <K, V> MapAttribute<T, K, V> getDeclaredMap(String name,
+    public <K, V> MapAttributeES<T, K, V> getDeclaredMap(String name,
             Class<K> keyType, Class<V> valueType) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Set<MapAttributeES<T, ?, ?>> mapAttributes
+                = managedTypeParameters.getDeclaredMapAttributes();
+        for (MapAttributeES<T, ?, ?> att : mapAttributes) {
+            if (att.getName().equals(name) && keyType == att.getKeyJavaType()
+                    && valueType == att.getElementType().getClass()) {
+                //Not sure if this will fail at runtime.
+                return (MapAttributeES<T, K, V>)att;
+            }
+        }
+        return null;
     }
 
     @Override
     public Set<PluralAttribute<? super T, ?, ?>> getPluralAttributes() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return pluralAttributes;
     }
 
     @Override
     public Set<PluralAttribute<T, ?, ?>> getDeclaredPluralAttributes() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return declaredPluralAttributes;
     }
 
     @Override
     public Attribute<? super T, ?> getAttribute(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Set<Attribute<? super T, ?>> attributes
+                = managedTypeParameters.getAttributes();
+        for (Attribute<? super T, ?> att : attributes) {
+            if (att.getName().equals(name)) {
+                //Not sure if this will fail at runtime.
+                return att;
+            }
+        }
+        return null;
     }
 
     @Override
     public Attribute<T, ?> getDeclaredAttribute(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Set<Attribute<T, ?>> declaredAttributes
+                = managedTypeParameters.getDeclaredAttributes();
+        for (Attribute<T, ?> att : declaredAttributes) {
+            if (att.getName().equals(name)) {
+                //Not sure if this will fail at runtime.
+                return att;
+            }
+        }
+        return null;
     }
 
     @Override
     public SingularAttribute<? super T, ?> getSingularAttribute(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Set<SingularAttribute<? super T, ?>> singularAttributes
+                = managedTypeParameters.getSingularAttributes();
+        for (SingularAttribute<? super T, ?> att : singularAttributes) {
+            if (att.getName().equals(name)) {
+                //Not sure if this will fail at runtime.
+                return att;
+            }
+        }
+        return null;
     }
 
     @Override
     public SingularAttribute<T, ?> getDeclaredSingularAttribute(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Set<SingularAttribute<T, ?>> singularAttributes
+                = managedTypeParameters.getDeclaredSingularAttributes();
+        for (SingularAttribute<T, ?> att : singularAttributes) {
+            if (att.getName().equals(name)) {
+                //Not sure if this will fail at runtime.
+                return att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public CollectionAttribute<? super T, ?> getCollection(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public CollectionAttributeES<? super T, ?> getCollection(String name) {
+        Set<CollectionAttributeES<? super T, ?>> collectionAttributes
+                = managedTypeParameters.getCollectionAttributes();
+        for (CollectionAttributeES<? super T, ?> att : collectionAttributes) {
+            if (att.getName().equals(name)) {
+                //Not sure if this will fail at runtime.
+                return att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public CollectionAttribute<T, ?> getDeclaredCollection(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public CollectionAttributeES<T, ?> getDeclaredCollection(String name) {
+        Set<CollectionAttributeES<T, ?>> collectionAttributes
+                = managedTypeParameters.getDeclaredCollectionAttributes();
+        for (CollectionAttributeES<T, ?> att : collectionAttributes) {
+            if (att.getName().equals(name)) {
+                //Not sure if this will fail at runtime.
+                return att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public SetAttribute<? super T, ?> getSet(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public SetAttributeES<? super T, ?> getSet(String name) {
+        Set<SetAttributeES<? super T, ?>> setAttributes
+                = managedTypeParameters.getSetAttributes();
+        for (SetAttributeES<? super T, ?> att : setAttributes) {
+            if (att.getName().equals(name)) {
+                //Not sure if this will fail at runtime.
+                return att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public SetAttribute<T, ?> getDeclaredSet(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public SetAttributeES<T, ?> getDeclaredSet(String name) {
+        Set<SetAttributeES<T, ?>> declaredSetAttributes
+                = managedTypeParameters.getDeclaredSetAttributes();
+        for (SetAttributeES<T, ?> att : declaredSetAttributes) {
+            if (att.getName().equals(name)) {
+                //Not sure if this will fail at runtime.
+                return att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public ListAttribute<? super T, ?> getList(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public ListAttributeES<? super T, ?> getList(String name) {
+        Set<ListAttributeES<? super T, ?>> listAttributes
+                = managedTypeParameters.getListAttributes();
+        for (ListAttributeES<? super T, ?> att : listAttributes) {
+            if (att.getName().equals(name)) {
+                //Not sure if this will fail at runtime.
+                return att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public ListAttribute<T, ?> getDeclaredList(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public ListAttributeES<T, ?> getDeclaredList(String name) {
+        Set<ListAttributeES<T, ?>> declaredListAttributes
+                = managedTypeParameters.getDeclaredListAttributes();
+        for (ListAttributeES<T, ?> att : declaredListAttributes) {
+            if (att.getName().equals(name)) {
+                //Not sure if this will fail at runtime.
+                return att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public MapAttribute<? super T, ?, ?> getMap(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public MapAttributeES<? super T, ?, ?> getMap(String name) {
+        Set<MapAttributeES<? super T, ?, ?>> mapAttributes
+                = managedTypeParameters.getMapAttributes();
+        for (MapAttributeES<? super T, ?, ?> att : mapAttributes) {
+            if (att.getName().equals(name)) {
+                //Not sure if this will fail at runtime.
+                return att;
+            }
+        }
+        return null;
     }
 
     @Override
-    public MapAttribute<T, ?, ?> getDeclaredMap(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public MapAttributeES<T, ?, ?> getDeclaredMap(String name) {
+        Set<MapAttributeES<T, ?, ?>> declaredMapAttributes
+                = managedTypeParameters.getDeclaredMapAttributes();
+        for (MapAttributeES<T, ?, ?> att : declaredMapAttributes) {
+            if (att.getName().equals(name)) {
+                //Not sure if this will fail at runtime.
+                return att;
+            }
+        }
+        return null;
     }
 }

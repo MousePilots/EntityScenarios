@@ -1,7 +1,5 @@
 package org.mousepilots.es.model.impl;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Objects;
 import org.mousepilots.es.model.AssociationTypeES;
 import org.mousepilots.es.model.AssociationES;
@@ -11,82 +9,72 @@ import org.mousepilots.es.model.MemberES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 9-11-2015
+ * @version 1.0, 11-11-2015
  * @param <T> The represented type that contains the attribute.
  * @param <TA> The type of the represented attribute.
  */
 public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
 
-    private final AttributeTypeParameters<TA> attributeTypeParameters;
-    private final PersistentAttributeType persistentAttributeType;
-    private final MemberES javaMember;
-    private final boolean readOnly, collection, association;
-    private final ManagedTypeES declaringType;
-    private final Map<AssociationTypeES, AssociationES> associations
-            = new EnumMap<>(AssociationTypeES.class);
+    private final AttributeParameters<TA> attributeParameters;
 
-    public AttributeESImpl(AttributeTypeParameters<TA> attributeTypeParameters,
-            PersistentAttributeType persistentAttributeType, MemberES javaMember,
-            boolean readOnly, boolean collection, boolean association,
-            ManagedTypeES declaringType) {
-        this.attributeTypeParameters = attributeTypeParameters;
-        this.persistentAttributeType = persistentAttributeType;
-        this.javaMember = javaMember;
-        this.readOnly = readOnly;
-        this.collection = collection;
-        this.association = association;
-        this.declaringType = declaringType;
+    public AttributeESImpl(AttributeParameters<TA> attributeParameters) {
+        this.attributeParameters = attributeParameters;
+        if (attributeParameters == null
+                || attributeParameters.getAttributeTypeParameters() == null) {
+            throw new IllegalArgumentException(
+                "The attribute parameters or attribute type parameters cannot be null");
+        }
     }
-    
+
     @Override
     public boolean isReadOnly() {
-        return this.readOnly;
+        return attributeParameters.isReadOnly();
     }
 
     @Override
     public boolean isAssociation(AssociationTypeES type) {
-        return this.associations.containsKey(type);
+        return attributeParameters.getAssociations().containsKey(type);
     }
 
     @Override
     public AssociationES getAssociation(AssociationTypeES type) {
-        return this.associations.get(type);
+        return attributeParameters.getAssociations().get(type);
     }
 
     @Override
     public MemberES getJavaMember() {
         //Maybe not allowed to get the member from the constructor?
-        return javaMember;
+        return attributeParameters.getJavaMember();
     }
 
     @Override
     public String getName() {
-        return attributeTypeParameters.getName();
+        return attributeParameters.getAttributeTypeParameters().getName();
     }
 
     @Override
     public PersistentAttributeType getPersistentAttributeType() {
-        return persistentAttributeType;
+        return attributeParameters.getPersistentAttributeType();
     }
 
     @Override
     public ManagedTypeES<T> getDeclaringType() {
-        return declaringType;
+        return attributeParameters.getDeclaringType();
     }
 
     @Override
     public Class<TA> getJavaType() {
-        return attributeTypeParameters.getJavaType();
+        return attributeParameters.getAttributeTypeParameters().getJavaType();
     }
 
     @Override
     public boolean isAssociation() {
-        return association;
+        return attributeParameters.isAssociation();
     }
 
     @Override
     public boolean isCollection() {
-        return collection;
+        return attributeParameters.isCollection();
     }
 
     @Override
@@ -96,7 +84,7 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
 
     @Override
     public int getOrdinal() {
-        return attributeTypeParameters.getOrdinal();
+        return attributeParameters.getAttributeTypeParameters().getOrdinal();
     }
 
     @Override
