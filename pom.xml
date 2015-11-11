@@ -82,6 +82,7 @@
     <modules>
         <module>core</module>
         <module>meta-model-maven-plugin</module>
+        <module>server</module>
     </modules>
     
 </project>
