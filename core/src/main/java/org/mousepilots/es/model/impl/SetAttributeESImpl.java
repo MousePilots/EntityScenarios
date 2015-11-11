@@ -1,8 +1,9 @@
 package org.mousepilots.es.model.impl;
 
+import org.mousepilots.es.model.impl.classparameters.AttributeParameters;
 import java.util.Set;
-import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.SetAttributeES;
+import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
@@ -13,7 +14,7 @@ import org.mousepilots.es.model.SetAttributeES;
 public class SetAttributeESImpl<T, E>
     extends PluralAttributeESImpl<T, Set<E>, E>implements SetAttributeES<T, E> {
 
-    public SetAttributeESImpl(Type<E> elementType,
+    public SetAttributeESImpl(TypeES<E> elementType,
             BindableParameters<E> bindableParameters,
             AttributeParameters<Set<E>> attributeParameters) {
         super(CollectionType.SET, elementType, bindableParameters,

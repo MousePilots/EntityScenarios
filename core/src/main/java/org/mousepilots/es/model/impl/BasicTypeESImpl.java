@@ -1,5 +1,6 @@
 package org.mousepilots.es.model.impl;
 
+import org.mousepilots.es.model.impl.classparameters.TypeParameters;
 import org.mousepilots.es.model.BasicTypeES;
 
 /**

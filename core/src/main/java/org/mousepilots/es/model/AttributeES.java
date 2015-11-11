@@ -1,7 +1,6 @@
 package org.mousepilots.es.model;
 
 import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.ManagedType;
 
 /**
  * Represents an attribute of a certain {@link TypeES}.
@@ -20,7 +19,7 @@ public interface AttributeES<T, TA> extends Attribute<T, TA>, Comparable<Attribu
      * {@code false} otherwise.
      */
     boolean isReadOnly();
-    
+
     /**
      * Check if {@code this} attribute is an association based on the {@link AssociationTypeES}.
      * @param type The {@link AssociationTypeES} type for the association to check.
@@ -28,7 +27,7 @@ public interface AttributeES<T, TA> extends Attribute<T, TA>, Comparable<Attribu
      * {@code false} otherwise.
      */
     boolean isAssociation(AssociationTypeES type);
-    
+
     /**
      * Get the {@link AssocationES} for {@code this} attribute of the specified {@link AssociationTypeES}.
      * @param type The {@link AssociationTypeES} for the {@link AssociationES} to get.
@@ -43,10 +42,10 @@ public interface AttributeES<T, TA> extends Attribute<T, TA>, Comparable<Attribu
      */
     @Override
     public MemberES getJavaMember();
-    
+
     @Override
     public ManagedTypeES<T> getDeclaringType();
-    
+
 //    Wrapper<Y> wrap(Y value); Mogelijk tijdens de implementatie terughalen.
 
 }

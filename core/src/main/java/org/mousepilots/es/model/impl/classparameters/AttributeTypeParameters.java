@@ -1,4 +1,4 @@
-package org.mousepilots.es.model.impl;
+package org.mousepilots.es.model.impl.classparameters;
 
 /**
  * This class takes the most common attribute type parameters and bundles

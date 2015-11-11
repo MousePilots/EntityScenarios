@@ -1,5 +1,7 @@
 package org.mousepilots.es.model.impl;
 
+import org.mousepilots.es.model.impl.classparameters.TypeParameters;
+import org.mousepilots.es.model.impl.classparameters.ManagedTypeParameters;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.metamodel.Attribute;
