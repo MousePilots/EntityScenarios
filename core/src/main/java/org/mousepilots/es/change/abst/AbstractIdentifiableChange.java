@@ -22,23 +22,23 @@ public abstract class AbstractIdentifiableChange<I extends Serializable> extends
 {
 
 
-   protected AbstractIdentifiableChange()
+   public AbstractIdentifiableChange()
    {
       super();
    }
 
-   protected AbstractIdentifiableChange(IdentifiableTypeES type, I id)
+   public AbstractIdentifiableChange(IdentifiableTypeES type, I id)
    {
       super(type);
-//      AttributeES idAttribute = type.getId(type.getIdType().getJavaType());
-//      if (idAttribute == null)
-//      {
-//         throw new IllegalArgumentException(type + " is not identifiable");
-//      }
-//      if (id == null)
-//      {
-//         throw new IllegalArgumentException("id is a mandatory parameter");
-//      }
+      AttributeES idAttribute = type.getId(type.getIdType().getJavaType());
+      if (idAttribute == null)
+      {
+         throw new IllegalArgumentException(type + " is not identifiable");
+      }
+      if (id == null)
+      {
+         throw new IllegalArgumentException("id is a mandatory parameter");
+      }
    }
 
    @Override

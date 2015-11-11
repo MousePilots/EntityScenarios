@@ -17,14 +17,15 @@ import org.mousepilots.es.model.IdentifiableTypeES;
 public abstract class AbstractIdentifiableVersionedChange<I extends Serializable, V extends Serializable> extends AbstractIdentifiableChange<I> implements HasVersion<V>
 {
 
-   protected AbstractIdentifiableVersionedChange()
+   public AbstractIdentifiableVersionedChange()
    {
       super();
    }
 
-   protected AbstractIdentifiableVersionedChange(IdentifiableTypeES type, I id, V version)
+   public AbstractIdentifiableVersionedChange(IdentifiableTypeES type, I id, V version)
    {
       super(type, id);
+      //TODO FIX
 //      Attribute va = type.getVersion(type.get));
    }
 
