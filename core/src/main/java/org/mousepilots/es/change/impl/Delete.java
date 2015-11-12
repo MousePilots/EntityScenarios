@@ -8,7 +8,12 @@ import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.change.abst.AbstractIdentifiableVersionedChange;
 import org.mousepilots.es.model.IdentifiableTypeES;
 
-
+/**
+ * @author Jurjen van Geenen
+ * @author Roy Cleven
+ * @param <I>
+ * @param <V>
+ */
 public final class Delete<I extends Serializable, V extends Serializable> extends AbstractIdentifiableVersionedChange<I, V>
 {
 

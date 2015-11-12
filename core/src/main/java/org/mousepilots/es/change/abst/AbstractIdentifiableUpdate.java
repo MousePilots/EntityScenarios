@@ -11,6 +11,7 @@ import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.IdentifiableTypeES;
 
 /**
+ * @author Jurjen van Geenen
  * @author Roy Cleven
  * @param <I>
  * @param <V>
@@ -41,5 +42,4 @@ public abstract class AbstractIdentifiableUpdate<I extends Serializable, V exten
    {
       return CRUD.UPDATE;
    }
-
 }

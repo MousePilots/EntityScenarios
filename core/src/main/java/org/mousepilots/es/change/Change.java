@@ -11,6 +11,7 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  *
+ * @author Jurjen van Geenen
  * @author Roy Cleven
  */
 public interface Change extends Serializable

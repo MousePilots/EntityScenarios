@@ -6,7 +6,11 @@ import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.change.abst.AbstractIdentifiableChange;
 import org.mousepilots.es.model.IdentifiableTypeES;
 
-
+/**
+ * @author Jurjen van Geenen
+ * @author Roy Cleven
+ * @param <I>
+ */
 public final class Create<I extends Serializable> extends AbstractIdentifiableChange<I>
 {
 
@@ -37,5 +41,4 @@ public final class Create<I extends Serializable> extends AbstractIdentifiableCh
    {
       changeHandler.visit(this);
    }
-
 }
