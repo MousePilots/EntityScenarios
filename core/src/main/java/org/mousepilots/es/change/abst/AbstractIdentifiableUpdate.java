@@ -11,6 +11,7 @@ import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.IdentifiableTypeES;
 
 /**
+ * @author Jurjen van Geenen
  * @author Roy Cleven
  * @param <I>
  * @param <V>
@@ -25,7 +26,7 @@ public abstract class AbstractIdentifiableUpdate<I extends Serializable, V exten
       super();
    }
 
-   protected AbstractIdentifiableUpdate(AttributeES attribute, I id, V version)
+   public AbstractIdentifiableUpdate(AttributeES attribute, I id, V version)
    {
       super((IdentifiableTypeES)attribute.getDeclaringType(), id, version);
       this.attributeOrdinal = attribute.getOrdinal();
@@ -41,5 +42,4 @@ public abstract class AbstractIdentifiableUpdate<I extends Serializable, V exten
    {
       return CRUD.UPDATE;
    }
-
 }

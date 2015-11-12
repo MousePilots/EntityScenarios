@@ -10,6 +10,7 @@ import java.io.Serializable;
 import javax.persistence.Version;
 
 /**
+ * @author Jurjen van Geenen
  * @author Roy Cleven
  * @param <V> the {@link Version}-type
  */
@@ -19,5 +20,4 @@ public interface HasVersion<V extends Serializable>
     * @return the version
     */
    V getVersion();
-
 }

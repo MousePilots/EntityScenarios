@@ -11,40 +11,34 @@ import javax.persistence.Id;
 import org.mousepilots.es.change.HasId;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.IdentifiableTypeES;
-import org.mousepilots.es.model.TypeES;
-
+import org.mousepilots.es.model.Wrapper;
 
 /**
+ * @author Jurjen van Geenen
  * @author Roy Cleven
  * @param <I> the {@link Id}-type
  */
-public abstract class AbstractIdentifiableChange<I extends Serializable> extends AbstractChange implements HasId<I>
-{
+public abstract class AbstractIdentifiableChange<I extends Serializable> extends AbstractChange implements HasId<I> {
 
+    private Wrapper id;
 
-   protected AbstractIdentifiableChange()
-   {
-      super();
-   }
+    public AbstractIdentifiableChange() {
+        super();
+    }
 
-   protected AbstractIdentifiableChange(IdentifiableTypeES type, I id)
-   {
-      super(type);
-//      AttributeES idAttribute = type.getId(type.getIdType().getJavaType());
-//      if (idAttribute == null)
-//      {
-//         throw new IllegalArgumentException(type + " is not identifiable");
-//      }
-//      if (id == null)
-//      {
-//         throw new IllegalArgumentException("id is a mandatory parameter");
-//      }
-   }
+    public AbstractIdentifiableChange(IdentifiableTypeES type, I id) {
+        super(type);
+        AttributeES idAttribute = type.getId(type.getIdType().getJavaType());
+        if (idAttribute == null) {
+            throw new IllegalArgumentException(type + " is not identifiable");
+        }
+        if (id == null) {
+            throw new IllegalArgumentException("id is a mandatory parameter");
+        }
+    }
 
-   @Override
-   public final I getId()
-   {
-      return null;
-   }
-
+    @Override
+    public final I getId() {
+        return id == null ? null : (I) id.unwrap();
+    }
 }

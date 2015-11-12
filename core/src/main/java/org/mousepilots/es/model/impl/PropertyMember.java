@@ -75,9 +75,6 @@ public class PropertyMember implements MemberES {
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
-        if (!Objects.equals(this.declaringClass, other.declaringClass)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.declaringClass, other.declaringClass);
     }
 }

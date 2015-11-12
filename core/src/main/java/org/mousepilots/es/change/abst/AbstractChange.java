@@ -5,6 +5,7 @@ import org.mousepilots.es.change.Change;
 import org.mousepilots.es.model.TypeES;
 
 /**
+ * @author Jurjen van Geenen
  * @author Roy Cleven
  */
 public abstract class AbstractChange implements Change

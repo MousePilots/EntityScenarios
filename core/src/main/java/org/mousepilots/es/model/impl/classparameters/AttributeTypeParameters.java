@@ -5,6 +5,7 @@ package org.mousepilots.es.model.impl.classparameters;
  * them to save space in the constructors.
  * @author Nicky Ernste
  * @version 1.0, 10-11-2015
+ * @param <T>
  */
 public class AttributeTypeParameters<T> {
 
