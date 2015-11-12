@@ -7,6 +7,7 @@ import javax.persistence.metamodel.Bindable.BindableType;
  * save space in the constructors.
  * @author Nicky Ernste
  * @version 1.0, 10-11-2015
+ * @param <T>
  */
 public class BindableParameters<T> {
    

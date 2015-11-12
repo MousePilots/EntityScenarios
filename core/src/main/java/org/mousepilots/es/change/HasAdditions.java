@@ -5,6 +5,7 @@ import java.util.List;
 /**
  * @author Jurjen van Geenen
  * @author Roy Cleven
+ * @param <T>
  */
 public interface HasAdditions<T>
 {

@@ -9,6 +9,7 @@ import org.mousepilots.es.model.TypeES;
  * save space in the constructors.
  * @author Nicky Ernste
  * @version 1.0, 11-11-2015
+ * @param <T>
  */
 public class TypeParameters<T> {
 

@@ -13,6 +13,7 @@ import org.mousepilots.es.model.MemberES;
  * them to save space in the constructors.
  * @author Nicky Ernste
  * @version 1.0, 11-11-2015
+ * @param <TA>
  */
 public class AttributeParameters<TA> {
 
