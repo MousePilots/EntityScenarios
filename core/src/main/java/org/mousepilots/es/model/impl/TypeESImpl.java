@@ -1,6 +1,5 @@
 package org.mousepilots.es.model.impl;
 
-import org.mousepilots.es.model.impl.classparameters.TypeParameters;
 import java.util.Objects;
 import java.util.SortedSet;
 import javax.persistence.metamodel.Type;
@@ -8,72 +7,71 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 11-11-2015
+ * @version 1.0, 16-11-2015
  * @param <T> The type of the represented object or attribute
  */
 public class TypeESImpl<T> implements TypeES<T> {
 
-    private final TypeParameters<T> typeParameters;
+    private final String name;
+    private final int ordinal;
+    private final Class<T> javaType;
+    private final Type.PersistenceType persistenceType;
+    private final String javaClassName;
+    private final boolean instantiable;
+    private final Class<? extends Type<T>> metamodelClass;
+    private final SortedSet<TypeES<? super T>> superTypes;
+    private final SortedSet<TypeES<? extends T>> subTypes;
 
-    public TypeESImpl(TypeParameters<T> typeParameters) {
-        this.typeParameters = typeParameters;
-        if (typeParameters == null
-                || typeParameters.getAttributeTypeParameters() == null) {
-            throw new IllegalArgumentException(
-                "The type parameters or attributeTypeParameters cannot be null");
-        }
+    public TypeESImpl(String name, int ordinal, Class<T> javaType, PersistenceType persistenceType, String javaClassName, boolean instantiable, Class<? extends Type<T>> metamodelClass, SortedSet<TypeES<? super T>> superTypes, SortedSet<TypeES<? extends T>> subTypes) {
+        this.name = name;
+        this.ordinal = ordinal;
+        this.javaType = javaType;
+        this.persistenceType = persistenceType;
+        this.javaClassName = javaClassName;
+        this.instantiable = instantiable;
+        this.metamodelClass = metamodelClass;
+        this.superTypes = superTypes;
+        this.subTypes = subTypes;
     }
-
-    @Override
-    public String getJavaClassName() {
-        return typeParameters.getJavaClassName();
-    }
-
-    @Override
+@Override
     public String getName() {
-        return typeParameters.getAttributeTypeParameters().getName();
+        return name;
     }
-
-    @Override
+@Override
     public int getOrdinal() {
-        return typeParameters.getAttributeTypeParameters().getOrdinal();
+        return ordinal;
     }
-
-    @Override
+@Override
+    public Class<T> getJavaType() {
+        return javaType;
+    }
+@Override
+    public PersistenceType getPersistenceType() {
+        return persistenceType;
+    }
+@Override
+    public String getJavaClassName() {
+        return javaClassName;
+    }
+@Override
     public boolean isInstantiable() {
-        return typeParameters.isInstantiable();
+        return instantiable;
     }
-
-    @Override
-    public T createInstance() {
-        return (isInstantiable())
-                ? MetamodelUtilES.createInstance(getJavaType()) : null;
-    }
-
-    @Override
+@Override
     public Class<? extends Type<T>> getMetamodelClass() {
-        return typeParameters.getMetamodelClass();
+        return metamodelClass;
     }
-
-    @Override
+@Override
     public SortedSet<TypeES<? super T>> getSuperTypes() {
-        return typeParameters.getSuperTypes();
+        return superTypes;
     }
 
     @Override
     public SortedSet<TypeES<? extends T>> getSubTypes() {
-        return typeParameters.getSubTypes();
+        return subTypes;
     }
 
-    @Override
-    public PersistenceType getPersistenceType() {
-        return typeParameters.getPersistenceType();
-    }
 
-    @Override
-    public Class<T> getJavaType() {
-        return typeParameters.getAttributeTypeParameters().getJavaType();
-    }
 
     @Override
     public int hashCode() {
@@ -104,5 +102,10 @@ public class TypeESImpl<T> implements TypeES<T> {
     @Override
     public int compareTo(TypeES o) {
         return Integer.compare(getOrdinal(), o.getOrdinal());
+    }
+
+    @Override
+    public T createInstance() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
