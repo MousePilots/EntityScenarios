@@ -17,7 +17,7 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 16-11-2015
+ * @version 1.0, 18-11-2015
  * @param <T> The represented type.
  */
 public class ManagedTypeESImpl<T> extends TypeESImpl<T>
@@ -75,9 +75,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
     @Override
     public <Y> SingularAttributeES<? super T, Y> getSingularAttribute(
             String name, Class<Y> type) {
-        Set<SingularAttribute<? super T, ?>> singularAttributes
+        Set<SingularAttribute<? super T, ?>> singularAttributeSet
                 = this.singularAttributes;
-        for (SingularAttribute<? super T, ?> att : singularAttributes) {
+        for (SingularAttribute<? super T, ?> att : singularAttributeSet) {
             if (att.getName().equals(name) && type == att.getJavaType()) {
                 //Not sure if this will fail at runtime.
                 return (SingularAttributeES<? super T, Y>)att;
@@ -89,9 +89,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
     @Override
     public <Y> SingularAttributeES<T, Y> getDeclaredSingularAttribute(
             String name, Class<Y> type) {
-        Set<SingularAttribute<T, ?>> declaredSingularAttributes
+        Set<SingularAttribute<T, ?>> declaredSingularAttributeSet
                 = this.declaredSingularAttributes;
-        for (SingularAttribute<T, ?> att : declaredSingularAttributes) {
+        for (SingularAttribute<T, ?> att : declaredSingularAttributeSet) {
             if (att.getName().equals(name) && type == att.getJavaType()) {
                 //Not sure if this will fail at runtime.
                 return (SingularAttributeES<T, Y>)att;
@@ -113,9 +113,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
     @Override
     public <E> CollectionAttributeES<? super T, E> getCollection(String name,
             Class<E> elementType) {
-        Set<CollectionAttributeES<? super T, ?>> collectionAttributes
+        Set<CollectionAttributeES<? super T, ?>> collectionAttributeSet
                 = this.collectionAttributes;
-        for (CollectionAttributeES<? super T, ?> att : collectionAttributes) {
+        for (CollectionAttributeES<? super T, ?> att : collectionAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
                 return (CollectionAttributeES<? super T, E>)att;
@@ -127,9 +127,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
     @Override
     public <E> CollectionAttributeES<T, E> getDeclaredCollection(String name,
             Class<E> elementType) {
-        Set<CollectionAttributeES<T, ?>> declaredCollectionAttributes
+        Set<CollectionAttributeES<T, ?>> declaredCollectionAttributeSet
                 = this.declaredCollectionAttributes;
-        for (CollectionAttributeES<T, ?> att : declaredCollectionAttributes) {
+        for (CollectionAttributeES<T, ?> att : declaredCollectionAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
                 return (CollectionAttributeES<T, E>)att;
@@ -141,9 +141,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
     @Override
     public <E> SetAttributeES<? super T, E> getSet(String name,
             Class<E> elementType) {
-        Set<SetAttributeES<? super T, ?>> setAttributes
+        Set<SetAttributeES<? super T, ?>> setAttributeSet
                 = this.setAttributes;
-        for (SetAttributeES<? super T, ?> att : setAttributes) {
+        for (SetAttributeES<? super T, ?> att : setAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
                 return (SetAttributeES<? super T, E>)att;
@@ -155,9 +155,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
     @Override
     public <E> SetAttributeES<T, E> getDeclaredSet(String name,
             Class<E> elementType) {
-        Set<SetAttributeES<T, ?>> declaredSetAttributes
+        Set<SetAttributeES<T, ?>> declaredSetAttributeSet
                 = this.declaredSetAttributes;
-        for (SetAttributeES<T, ?> att : declaredSetAttributes) {
+        for (SetAttributeES<T, ?> att : declaredSetAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
                 return (SetAttributeES<T, E>)att;
@@ -169,9 +169,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
     @Override
     public <E> ListAttributeES<? super T, E> getList(String name,
             Class<E> elementType) {
-        Set<ListAttributeES<? super T, ?>> listAttributes
+        Set<ListAttributeES<? super T, ?>> listAttributeSet
                 = this.listAttributes;
-        for (ListAttributeES<? super T, ?> att : listAttributes) {
+        for (ListAttributeES<? super T, ?> att : listAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
                 return (ListAttributeES<? super T, E>)att;
@@ -183,9 +183,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
     @Override
     public <E> ListAttributeES<T, E> getDeclaredList(String name,
             Class<E> elementType) {
-        Set<ListAttributeES<T, ?>> declaredListAttributes
+        Set<ListAttributeES<T, ?>> declaredListAttributeSet
                 = this.declaredListAttributes;
-        for (ListAttributeES<T, ?> att : declaredListAttributes) {
+        for (ListAttributeES<T, ?> att : declaredListAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
                 return (ListAttributeES<T, E>)att;
@@ -197,9 +197,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
     @Override
     public <K, V> MapAttributeES<? super T, K, V> getMap(String name,
             Class<K> keyType, Class<V> valueType) {
-        Set<MapAttributeES<? super T, ?, ?>> mapAttributes
+        Set<MapAttributeES<? super T, ?, ?>> mapAttributeSet
                 = this.mapAttributes;
-        for (MapAttributeES<? super T, ?, ?> att : mapAttributes) {
+        for (MapAttributeES<? super T, ?, ?> att : mapAttributeSet) {
             if (att.getName().equals(name) && keyType == att.getKeyJavaType()
                     && valueType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
@@ -212,9 +212,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
     @Override
     public <K, V> MapAttributeES<T, K, V> getDeclaredMap(String name,
             Class<K> keyType, Class<V> valueType) {
-        Set<MapAttributeES<T, ?, ?>> mapAttributes
+        Set<MapAttributeES<T, ?, ?>> mapAttributeSet
                 = this.declaredMapAttributes;
-        for (MapAttributeES<T, ?, ?> att : mapAttributes) {
+        for (MapAttributeES<T, ?, ?> att : mapAttributeSet) {
             if (att.getName().equals(name) && keyType == att.getKeyJavaType()
                     && valueType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
@@ -236,9 +236,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
 
     @Override
     public Attribute<? super T, ?> getAttribute(String name) {
-        Set<Attribute<? super T, ?>> attributes
+        Set<Attribute<? super T, ?>> attributeSet
                 = this.attributes;
-        for (Attribute<? super T, ?> att : attributes) {
+        for (Attribute<? super T, ?> att : attributeSet) {
             if (att.getName().equals(name)) {
                 //Not sure if this will fail at runtime.
                 return att;
@@ -249,9 +249,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
 
     @Override
     public Attribute<T, ?> getDeclaredAttribute(String name) {
-        Set<Attribute<T, ?>> declaredAttributes
+        Set<Attribute<T, ?>> declaredAttributeSet
                 = this.declaredAttributes;
-        for (Attribute<T, ?> att : declaredAttributes) {
+        for (Attribute<T, ?> att : declaredAttributeSet) {
             if (att.getName().equals(name)) {
                 //Not sure if this will fail at runtime.
                 return att;
@@ -262,9 +262,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
 
     @Override
     public SingularAttribute<? super T, ?> getSingularAttribute(String name) {
-        Set<SingularAttribute<? super T, ?>> singularAttributes
+        Set<SingularAttribute<? super T, ?>> singularAttributeSet
                 = this.singularAttributes;
-        for (SingularAttribute<? super T, ?> att : singularAttributes) {
+        for (SingularAttribute<? super T, ?> att : singularAttributeSet) {
             if (att.getName().equals(name)) {
                 //Not sure if this will fail at runtime.
                 return att;
@@ -275,9 +275,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
 
     @Override
     public SingularAttribute<T, ?> getDeclaredSingularAttribute(String name) {
-        Set<SingularAttribute<T, ?>> singularAttributes
+        Set<SingularAttribute<T, ?>> singularAttributeSet
                 = this.declaredSingularAttributes;
-        for (SingularAttribute<T, ?> att : singularAttributes) {
+        for (SingularAttribute<T, ?> att : singularAttributeSet) {
             if (att.getName().equals(name)) {
                 //Not sure if this will fail at runtime.
                 return att;
@@ -288,9 +288,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
 
     @Override
     public CollectionAttributeES<? super T, ?> getCollection(String name) {
-        Set<CollectionAttributeES<? super T, ?>> collectionAttributes
+        Set<CollectionAttributeES<? super T, ?>> collectionAttributeSet
                 = this.collectionAttributes;
-        for (CollectionAttributeES<? super T, ?> att : collectionAttributes) {
+        for (CollectionAttributeES<? super T, ?> att : collectionAttributeSet) {
             if (att.getName().equals(name)) {
                 //Not sure if this will fail at runtime.
                 return att;
@@ -301,9 +301,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
 
     @Override
     public CollectionAttributeES<T, ?> getDeclaredCollection(String name) {
-        Set<CollectionAttributeES<T, ?>> collectionAttributes
+        Set<CollectionAttributeES<T, ?>> collectionAttributeSet
                 = this.declaredCollectionAttributes;
-        for (CollectionAttributeES<T, ?> att : collectionAttributes) {
+        for (CollectionAttributeES<T, ?> att : collectionAttributeSet) {
             if (att.getName().equals(name)) {
                 //Not sure if this will fail at runtime.
                 return att;
@@ -314,9 +314,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
 
     @Override
     public SetAttributeES<? super T, ?> getSet(String name) {
-        Set<SetAttributeES<? super T, ?>> setAttributes
+        Set<SetAttributeES<? super T, ?>> setAttributeSet
                 = this.setAttributes;
-        for (SetAttributeES<? super T, ?> att : setAttributes) {
+        for (SetAttributeES<? super T, ?> att : setAttributeSet) {
             if (att.getName().equals(name)) {
                 //Not sure if this will fail at runtime.
                 return att;
@@ -327,9 +327,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
 
     @Override
     public SetAttributeES<T, ?> getDeclaredSet(String name) {
-        Set<SetAttributeES<T, ?>> declaredSetAttributes
+        Set<SetAttributeES<T, ?>> declaredSetAttributeSet
                 = this.declaredSetAttributes;
-        for (SetAttributeES<T, ?> att : declaredSetAttributes) {
+        for (SetAttributeES<T, ?> att : declaredSetAttributeSet) {
             if (att.getName().equals(name)) {
                 //Not sure if this will fail at runtime.
                 return att;
@@ -340,9 +340,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
 
     @Override
     public ListAttributeES<? super T, ?> getList(String name) {
-        Set<ListAttributeES<? super T, ?>> listAttributes
+        Set<ListAttributeES<? super T, ?>> listAttributeSet
                 = this.listAttributes;
-        for (ListAttributeES<? super T, ?> att : listAttributes) {
+        for (ListAttributeES<? super T, ?> att : listAttributeSet) {
             if (att.getName().equals(name)) {
                 //Not sure if this will fail at runtime.
                 return att;
@@ -353,9 +353,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
 
     @Override
     public ListAttributeES<T, ?> getDeclaredList(String name) {
-        Set<ListAttributeES<T, ?>> declaredListAttributes
+        Set<ListAttributeES<T, ?>> declaredListAttributeSet
                 = this.declaredListAttributes;
-        for (ListAttributeES<T, ?> att : declaredListAttributes) {
+        for (ListAttributeES<T, ?> att : declaredListAttributeSet) {
             if (att.getName().equals(name)) {
                 //Not sure if this will fail at runtime.
                 return att;
@@ -366,9 +366,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
 
     @Override
     public MapAttributeES<? super T, ?, ?> getMap(String name) {
-        Set<MapAttributeES<? super T, ?, ?>> mapAttributes
+        Set<MapAttributeES<? super T, ?, ?>> mapAttributeSet
                 = this.mapAttributes;
-        for (MapAttributeES<? super T, ?, ?> att : mapAttributes) {
+        for (MapAttributeES<? super T, ?, ?> att : mapAttributeSet) {
             if (att.getName().equals(name)) {
                 //Not sure if this will fail at runtime.
                 return att;
@@ -379,9 +379,9 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
 
     @Override
     public MapAttributeES<T, ?, ?> getDeclaredMap(String name) {
-        Set<MapAttributeES<T, ?, ?>> declaredMapAttributes
+        Set<MapAttributeES<T, ?, ?>> declaredMapAttributeSet
                 = this.declaredMapAttributes;
-        for (MapAttributeES<T, ?, ?> att : declaredMapAttributes) {
+        for (MapAttributeES<T, ?, ?> att : declaredMapAttributeSet) {
             if (att.getName().equals(name)) {
                 //Not sure if this will fail at runtime.
                 return att;

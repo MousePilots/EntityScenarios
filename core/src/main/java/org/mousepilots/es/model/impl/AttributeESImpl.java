@@ -12,7 +12,7 @@ import org.mousepilots.es.model.MemberES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 16-11-2015
+ * @version 1.0, 18-11-2015
  * @param <T> The represented type that contains the attribute.
  * @param <TA> The type of the represented attribute.
  */
@@ -109,16 +109,16 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
 
     @Override
     public boolean isAssociation(AssociationTypeES type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return associations.containsKey(type);
     }
 
     @Override
     public AssociationES getAssociation(AssociationTypeES type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return associations.get(type);
     }
 
     @Override
     public int compareTo(AttributeES o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Integer.compare(getOrdinal(), o.getOrdinal());
     }
 }

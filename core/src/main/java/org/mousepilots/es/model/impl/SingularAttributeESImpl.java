@@ -36,8 +36,6 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T>
         this.bindableJavaType = bindableJavaType;
     }
 
-
-
     @Override
     public boolean isGenerated() {
         return generated;

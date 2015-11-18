@@ -38,10 +38,12 @@ public class PluralAttributeESImpl<T, C, E> extends AttributeESImpl<T, C>
         return elementType;
     }
 
+    @Override
     public BindableType getBindableType() {
         return bindableType;
     }
 
+    @Override
     public Class<E> getBindableJavaType() {
         return bindableJavaType;
     }

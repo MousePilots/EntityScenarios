@@ -15,7 +15,7 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 16-11-2015
+ * @version 1.0, 18-11-2015
  * @param <T> The represented entity or mapped superclass type.
  */
 public class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
@@ -63,23 +63,15 @@ public class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
         return superType;
     }
 
+    @Override
     public Set<SingularAttribute<? super T, ?>> getIdClassAttributes() {
         return idClassAttributes;
     }
 
-    public boolean isSingleIdAttribute() {
-        return singleIdAttribute;
-    }
-
-    public boolean isVersionAttribute() {
-        return versionAttribute;
-    }
-
+    @Override
     public TypeES<?> getIdType() {
         return idType;
     }
-
-
 
     @Override
     public <Y> SingularAttributeES<? super T, Y> getId(Class<Y> type) {
@@ -103,16 +95,16 @@ public class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
 
     @Override
     public IdentifiableTypeES<? super T> getSupertype() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return superType;
     }
 
     @Override
     public boolean hasSingleIdAttribute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return singleIdAttribute;
     }
 
     @Override
     public boolean hasVersionAttribute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return versionAttribute;
     }
 }

@@ -33,35 +33,43 @@ public class TypeESImpl<T> implements TypeES<T> {
         this.superTypes = superTypes;
         this.subTypes = subTypes;
     }
-@Override
+
+    @Override
     public String getName() {
         return name;
     }
-@Override
+
+    @Override
     public int getOrdinal() {
         return ordinal;
     }
-@Override
+
+    @Override
     public Class<T> getJavaType() {
         return javaType;
     }
-@Override
+
+    @Override
     public PersistenceType getPersistenceType() {
         return persistenceType;
     }
-@Override
+
+    @Override
     public String getJavaClassName() {
         return javaClassName;
     }
-@Override
+
+    @Override
     public boolean isInstantiable() {
         return instantiable;
     }
-@Override
+
+    @Override
     public Class<? extends Type<T>> getMetamodelClass() {
         return metamodelClass;
     }
-@Override
+
+    @Override
     public SortedSet<TypeES<? super T>> getSuperTypes() {
         return superTypes;
     }
@@ -70,8 +78,6 @@ public class TypeESImpl<T> implements TypeES<T> {
     public SortedSet<TypeES<? extends T>> getSubTypes() {
         return subTypes;
     }
-
-
 
     @Override
     public int hashCode() {
