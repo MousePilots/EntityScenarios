@@ -99,10 +99,7 @@ public class TypeESImpl<T> implements TypeES<T> {
         if (!Objects.equals(getName(), other.getName())) {
             return false;
         }
-        if (this.getOrdinal() != other.getOrdinal()) {
-            return false;
-        }
-        return true;
+        return this.getOrdinal() == other.getOrdinal();
     }
 
     @Override

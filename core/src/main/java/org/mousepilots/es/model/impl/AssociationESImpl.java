@@ -77,9 +77,6 @@ public class AssociationESImpl implements AssociationES {
             return false;
         }
         final AssociationESImpl other = (AssociationESImpl) obj;
-        if (!Objects.equals(this.sourceAttribute, other.sourceAttribute)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.sourceAttribute, other.sourceAttribute);
     }
 }
