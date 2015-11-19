@@ -1,6 +1,9 @@
 package org.mousepilots.es.model.impl;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import javax.persistence.metamodel.EmbeddableType;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.ManagedType;
@@ -11,19 +14,41 @@ import org.mousepilots.es.model.MetaModelES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 9-11-2015
+ * @version 1.0, 16-11-2015
  */
-public class MetaModelESImpl implements MetaModelES {
+public abstract class AbstractMetaModelES implements MetaModelES {
+
+    private static MetaModelES INSTANCE;
+
+    public static MetaModelES getInstance() {
+        return INSTANCE;
+    }
+
+    protected void setInstance(MetaModelES instance){
+        if (INSTANCE != null) {
+            throw new IllegalStateException("Cannot set an instance because its already created.");
+        }
+        INSTANCE = instance;
+    }
 
     private final Set<ManagedType<?>> managedTypes;
     private final Set<EntityType<?>> entities;
     private final Set<EmbeddableType<?>> embeddables;
+    private final Map<ManagedTypeES, SortedSet<ManagedTypeES>> managedTypeToSuperManagedTypes;
+    private final Map<ManagedTypeES, SortedSet<ManagedTypeES>> managedTypeToSubManagedTypes;
 
-    public MetaModelESImpl(Set<ManagedType<?>> managedTypes,
+    protected AbstractMetaModelES(Set<ManagedType<?>> managedTypes,
             Set<EntityType<?>> entities, Set<EmbeddableType<?>> embeddables) {
         this.managedTypes = managedTypes;
+        //TODO opslitsen van managed types tot entiteiten en embeddables.
+        //TODO opsplitsen van managed types tot attributen.
+        //Super types en sub types, Map van managed type naar Set.
+        //1 Javatype naar managedtype
+        //2
         this.entities = entities;
         this.embeddables = embeddables;
+        this.managedTypeToSuperManagedTypes = new HashMap<>();
+        this.managedTypeToSubManagedTypes = new HashMap<>();
     }
 
     @Override

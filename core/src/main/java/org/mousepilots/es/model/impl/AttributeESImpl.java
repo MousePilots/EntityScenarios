@@ -1,7 +1,9 @@
 package org.mousepilots.es.model.impl;
 
-import org.mousepilots.es.model.impl.classparameters.AttributeParameters;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Objects;
+import javax.persistence.metamodel.Attribute;
 import org.mousepilots.es.model.AssociationTypeES;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AttributeES;
@@ -10,82 +12,73 @@ import org.mousepilots.es.model.MemberES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 11-11-2015
+ * @version 1.0, 18-11-2015
  * @param <T> The represented type that contains the attribute.
  * @param <TA> The type of the represented attribute.
  */
 public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
 
-    private final AttributeParameters<TA> attributeParameters;
+    private final String name;
+    private final int ordinal;
+    private final Class<TA> javaType;
+    private final Attribute.PersistentAttributeType persistentAttributeType;
+    private final MemberES javaMember;
+    private final boolean readOnly, collection, association;
+    private final ManagedTypeES<T> declaringType;
+    private final Map<AssociationTypeES, AssociationES> associations
+            = new EnumMap<>(AssociationTypeES.class);
 
-    public AttributeESImpl(AttributeParameters<TA> attributeParameters) {
-        this.attributeParameters = attributeParameters;
-        if (attributeParameters == null
-                || attributeParameters.getAttributeTypeParameters() == null) {
-            throw new IllegalArgumentException(
-                "The attribute parameters or attribute type parameters cannot be null");
-        }
+    public AttributeESImpl(String name, int ordinal, Class<TA> javaType, PersistentAttributeType persistentAttributeType, MemberES javaMember, boolean readOnly, boolean collection, boolean association, ManagedTypeES<T> declaringType) {
+        this.name = name;
+        this.ordinal = ordinal;
+        this.javaType = javaType;
+        this.persistentAttributeType = persistentAttributeType;
+        this.javaMember = javaMember;
+        this.readOnly = readOnly;
+        this.collection = collection;
+        this.association = association;
+        this.declaringType = declaringType;
     }
-
-    @Override
-    public boolean isReadOnly() {
-        return attributeParameters.isReadOnly();
-    }
-
-    @Override
-    public boolean isAssociation(AssociationTypeES type) {
-        return attributeParameters.getAssociations().containsKey(type);
-    }
-
-    @Override
-    public AssociationES getAssociation(AssociationTypeES type) {
-        return attributeParameters.getAssociations().get(type);
-    }
-
-    @Override
-    public MemberES getJavaMember() {
-        //Maybe not allowed to get the member from the constructor?
-        return attributeParameters.getJavaMember();
-    }
-
-    @Override
+@Override
     public String getName() {
-        return attributeParameters.getAttributeTypeParameters().getName();
+        return name;
     }
-
-    @Override
+@Override
+    public int getOrdinal() {
+        return ordinal;
+    }
+@Override
+    public Class<TA> getJavaType() {
+        return javaType;
+    }
+@Override
     public PersistentAttributeType getPersistentAttributeType() {
-        return attributeParameters.getPersistentAttributeType();
+        return persistentAttributeType;
+    }
+@Override
+    public MemberES getJavaMember() {
+        return javaMember;
+    }
+@Override
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+@Override
+    public boolean isCollection() {
+        return collection;
+    }
+@Override
+    public boolean isAssociation() {
+        return association;
     }
 
     @Override
     public ManagedTypeES<T> getDeclaringType() {
-        return attributeParameters.getDeclaringType();
+        return declaringType;
     }
 
-    @Override
-    public Class<TA> getJavaType() {
-        return attributeParameters.getAttributeTypeParameters().getJavaType();
-    }
-
-    @Override
-    public boolean isAssociation() {
-        return attributeParameters.isAssociation();
-    }
-
-    @Override
-    public boolean isCollection() {
-        return attributeParameters.isCollection();
-    }
-
-    @Override
-    public int compareTo(AttributeES o) {
-        return Integer.compare(getOrdinal(), o.getOrdinal());
-    }
-
-    @Override
-    public int getOrdinal() {
-        return attributeParameters.getAttributeTypeParameters().getOrdinal();
+    public Map<AssociationTypeES, AssociationES> getAssociations() {
+        return associations;
     }
 
     @Override
@@ -112,5 +105,20 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean isAssociation(AssociationTypeES type) {
+        return associations.containsKey(type);
+    }
+
+    @Override
+    public AssociationES getAssociation(AssociationTypeES type) {
+        return associations.get(type);
+    }
+
+    @Override
+    public int compareTo(AttributeES o) {
+        return Integer.compare(getOrdinal(), o.getOrdinal());
     }
 }
