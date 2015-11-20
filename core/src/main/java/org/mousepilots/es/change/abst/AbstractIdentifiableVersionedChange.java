@@ -9,7 +9,7 @@ import java.io.Serializable;
 import org.mousepilots.es.change.HasVersion;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.IdentifiableTypeES;
-import org.mousepilots.es.model.Wrapper;
+import org.mousepilots.es.model.HasValue;
 
 /**
  * @author Jurjen van Geenen
@@ -19,7 +19,7 @@ import org.mousepilots.es.model.Wrapper;
  */
 public abstract class AbstractIdentifiableVersionedChange<I extends Serializable, V extends Serializable> extends AbstractIdentifiableChange<I> implements HasVersion<V> {
 
-    private Wrapper version;
+    private HasValue version;
     public AbstractIdentifiableVersionedChange() {
         super();
     }
@@ -31,6 +31,6 @@ public abstract class AbstractIdentifiableVersionedChange<I extends Serializable
 
     @Override
     public final V getVersion() {
-        return version == null ? null : (V) version.unwrap();
+        return version == null ? null : (V) version.getValue();
     }
 }

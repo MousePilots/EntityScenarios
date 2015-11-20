@@ -9,7 +9,7 @@ import org.mousepilots.es.change.HasAdditions;
 import org.mousepilots.es.change.HasRemovals;
 import org.mousepilots.es.change.abst.AbstractIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
-import org.mousepilots.es.model.Wrapper;
+import org.mousepilots.es.model.HasValue;
 
 /**
  * @author Jurjen van Geenen
@@ -21,8 +21,8 @@ import org.mousepilots.es.model.Wrapper;
 public final class IdentifiableJavaUtilCollectionBasicAttributeUpdate<I extends Serializable, V extends Serializable, A extends Serializable> extends
       AbstractIdentifiableUpdate<I, V> implements HasAdditions<A>, HasRemovals<A>
 {
-   private ArrayList<Wrapper> additions = new ArrayList<>();
-   private ArrayList<Wrapper> removals = new ArrayList<>();
+   private ArrayList<HasValue> additions = new ArrayList<>();
+   private ArrayList<HasValue> removals = new ArrayList<>();
 
    private IdentifiableJavaUtilCollectionBasicAttributeUpdate()
    {

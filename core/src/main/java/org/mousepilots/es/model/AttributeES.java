@@ -1,51 +1,63 @@
 package org.mousepilots.es.model;
 
 import javax.persistence.metamodel.Attribute;
+import org.mousepilots.es.change.Change;
 
 /**
  * Represents an attribute of a certain {@link TypeES}.
+ *
  * @param <T> The represented type that contains the attribute.
  * @param <TA> The type of the represented attribute.
  * @see Attribute
  * @author Roy Cleven
- * @version 1.0, 19-10-2015
+ * @version 1.0, 20-10-2015
  */
-public interface AttributeES<T, TA> extends Attribute<T, TA>, Comparable<AttributeES>, HasOrdinal
-{
+public interface AttributeES<T, TA> extends Attribute<T, TA>, Comparable<AttributeES>, HasOrdinal {
+
     /**
-     * Check if {@code this} attribute is read only, meaning it only has
-     * a getter method.
+     * Check if {@code this} attribute is read only, meaning it only has a
+     * getter method.
+     *
      * @return {@code true} if {@code this} attribute is read only.
      * {@code false} otherwise.
      */
     boolean isReadOnly();
 
     /**
-     * Check if {@code this} attribute is an association based on the {@link AssociationTypeES}.
-     * @param type The {@link AssociationTypeES} type for the association to check.
-     * @return {@code true} if {@code this} attribute is an association of the specified {@code type}.
-     * {@code false} otherwise.
+     * Check if {@code this} attribute is an association based on the
+     * {@link AssociationTypeES}.
+     *
+     * @param type The {@link AssociationTypeES} type for the association to
+     * check.
+     * @return {@code true} if {@code this} attribute is an association of the
+     * specified {@code type}. {@code false} otherwise.
      */
     boolean isAssociation(AssociationTypeES type);
 
     /**
-     * Get the {@link AssocationES} for {@code this} attribute of the specified {@link AssociationTypeES}.
-     * @param type The {@link AssociationTypeES} for the {@link AssociationES} to get.
-     * @return The {@link AssociationES} for {@code this} attribute for the specified {@link AssociationTypeES} if any.
-     * Otherwise {@code null} is returned.
+     * Get the {@link AssocationES} for {@code this} attribute of the specified
+     * {@link AssociationTypeES}.
+     *
+     * @param type The {@link AssociationTypeES} for the {@link AssociationES}
+     * to get.
+     * @return The {@link AssociationES} for {@code this} attribute for the
+     * specified {@link AssociationTypeES} if any. Otherwise {@code null} is
+     * returned.
      */
     AssociationES getAssociation(AssociationTypeES type);
 
     /**
-     * Get the {@link MemberES} for the represented attribute.
-     * @return The {@link MemberES} for {@code this} attribute.
+     * Wraps attribute-{@code value} in a serializable container for a {@link Change}.
+     * @param value the value to wrapForChange.
+     * @return the container with the wrapped {@code value}.
      */
-    @Override
-    public MemberES getJavaMember();
+    public HasValue wrapForChange(TA value);
 
-    @Override
-    public ManagedTypeES<T> getDeclaringType();
-
-//    Wrapper<Y> wrap(Y value); Mogelijk tijdens de implementatie terughalen.
+    /**
+     * Wraps attribute-{@code value} in a serializable container for a DTO.
+     * @param value the value to wrapForChange.
+     * @return the container with the wrapped {@code value}.
+     */
+    public HasValue wrapForDTO(TA value);
 
 }

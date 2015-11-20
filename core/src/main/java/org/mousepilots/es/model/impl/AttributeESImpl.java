@@ -9,14 +9,15 @@ import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MemberES;
+import org.mousepilots.es.model.HasValue;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 18-11-2015
+ * @version 1.0, 20-11-2015
  * @param <T> The represented type that contains the attribute.
  * @param <TA> The type of the represented attribute.
  */
-public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
+public abstract class AttributeESImpl<T, TA> implements AttributeES<T, TA> {
 
     private final String name;
     private final int ordinal;
@@ -25,10 +26,12 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
     private final MemberES javaMember;
     private final boolean readOnly, collection, association;
     private final ManagedTypeES<T> declaringType;
+    private final Constructor<HasValue> hasValueChangeConstructor;
+    private final Constructor<HasValue> hasValueDtoConstructor;
     private final Map<AssociationTypeES, AssociationES> associations
             = new EnumMap<>(AssociationTypeES.class);
 
-    public AttributeESImpl(String name, int ordinal, Class<TA> javaType, PersistentAttributeType persistentAttributeType, MemberES javaMember, boolean readOnly, boolean collection, boolean association, ManagedTypeES<T> declaringType) {
+    public AttributeESImpl(String name, int ordinal, Class<TA> javaType, PersistentAttributeType persistentAttributeType, MemberES javaMember, boolean readOnly, boolean collection, boolean association, ManagedTypeES<T> declaringType, Constructor<HasValue> hasValueChangeConstructor, Constructor<HasValue> hasValueDtoConstructor) {
         this.name = name;
         this.ordinal = ordinal;
         this.javaType = javaType;
@@ -38,36 +41,46 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
         this.collection = collection;
         this.association = association;
         this.declaringType = declaringType;
+        this.hasValueChangeConstructor = hasValueChangeConstructor;
+        this.hasValueDtoConstructor = hasValueDtoConstructor;
     }
-@Override
+
+    @Override
     public String getName() {
         return name;
     }
-@Override
+
+    @Override
     public int getOrdinal() {
         return ordinal;
     }
-@Override
+
+    @Override
     public Class<TA> getJavaType() {
         return javaType;
     }
-@Override
+
+    @Override
     public PersistentAttributeType getPersistentAttributeType() {
         return persistentAttributeType;
     }
-@Override
+
+    @Override
     public MemberES getJavaMember() {
         return javaMember;
     }
-@Override
+
+    @Override
     public boolean isReadOnly() {
         return readOnly;
     }
-@Override
+
+    @Override
     public boolean isCollection() {
         return collection;
     }
-@Override
+
+    @Override
     public boolean isAssociation() {
         return association;
     }
@@ -121,4 +134,14 @@ public class AttributeESImpl<T, TA> implements AttributeES<T, TA>{
     public int compareTo(AttributeES o) {
         return Integer.compare(getOrdinal(), o.getOrdinal());
     }
+
+    public Constructor<HasValue> getHasValueChangeConstructor() {
+        return hasValueChangeConstructor;
+    }
+
+    public Constructor<HasValue> getHasValueDtoConstructor() {
+        return hasValueDtoConstructor;
+    }
+
+
 }

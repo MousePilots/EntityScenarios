@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.Blob;
 import java.util.List;
 import java.util.Properties;
+import javax.persistence.metamodel.Type;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -13,6 +14,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.velocity.app.VelocityEngine;
+import org.mousepilots.es.maven.model.generator.model.Descriptor;
+import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.TypeES;
 import org.reflections.Reflections;
@@ -129,5 +132,7 @@ public class MetaModelGeneratorMojo extends AbstractMojo
    public void execute() throws MojoExecutionException, MojoFailureException
    {
        System.out.println("Hello World from Plugin!");
+       Descriptor des = new TypeDescriptor(Type.PersistenceType.ENTITY, "Test", null, 0);
+       System.out.println(des.getEsNameAndVersion());
    }
 }

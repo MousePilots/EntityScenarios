@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import org.mousepilots.es.change.HasId;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.IdentifiableTypeES;
-import org.mousepilots.es.model.Wrapper;
+import org.mousepilots.es.model.HasValue;
 
 /**
  * @author Jurjen van Geenen
@@ -20,7 +20,7 @@ import org.mousepilots.es.model.Wrapper;
  */
 public abstract class AbstractIdentifiableChange<I extends Serializable> extends AbstractChange implements HasId<I> {
 
-    private Wrapper id;
+    private HasValue id;
 
     public AbstractIdentifiableChange() {
         super();
@@ -39,6 +39,6 @@ public abstract class AbstractIdentifiableChange<I extends Serializable> extends
 
     @Override
     public final I getId() {
-        return id == null ? null : (I) id.unwrap();
+        return id == null ? null : (I) id.getValue();
     }
 }
