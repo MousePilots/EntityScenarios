@@ -9,9 +9,11 @@ import java.io.Serializable;
  * @author Nicky Ernste
  * @version 1.0, 19-10-2015
  */
-public interface Wrapper<T> extends Serializable {
+public interface HasValue<T> extends Serializable {
     /**
     * @return the value wrapped by {@code this}
     */
-    T unwrap();
+    T getValue();
+
+    void setValue(T value);
 }

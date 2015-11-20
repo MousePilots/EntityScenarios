@@ -4,7 +4,7 @@ import java.io.Serializable;
 import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.change.abst.AbstractIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
-import org.mousepilots.es.model.Wrapper;
+import org.mousepilots.es.model.HasValue;
 
 /**
  * @author Jurjen van Geenen
@@ -16,8 +16,8 @@ import org.mousepilots.es.model.Wrapper;
 public final class IdentifiableSingularBasicAttributeUpdate<I extends Serializable, V extends Serializable, A extends Serializable> extends AbstractIdentifiableUpdate<I, V>
 {
 
-   private Wrapper oldValue;
-   private Wrapper newValue;
+   private HasValue oldValue;
+   private HasValue newValue;
 
    protected IdentifiableSingularBasicAttributeUpdate()
    {
@@ -33,12 +33,12 @@ public final class IdentifiableSingularBasicAttributeUpdate<I extends Serializab
 
    public A getOldValue()
    {
-      return oldValue == null ? null : (A) oldValue.unwrap();
+      return oldValue == null ? null : (A) oldValue.getValue();
    }
 
    public A getNewValue()
    {
-      return newValue == null ? null : (A) newValue.unwrap();
+      return newValue == null ? null : (A) newValue.getValue();
    }
 
    @Override

@@ -1,0 +1,24 @@
+## Velocity Template.
+package ${model.packageName};
+
+import javax.annotation.Generated;
+import javax.persistence.metamodel.SingularAttribute;
+import javax.persistence.metamodel.StaticMetamodel;
+import javax.persistence.metamodel.Type;
+import org.mousepilots.es.model.MappedSuperclassTypeES;
+import org.mousepilots.es.model.impl.MappedSuperclassTypeESImpl;
+
+/**
+ * Models class {@link ${model.javaClassSimpleName}}
+ */
+@Generated(value="${model.esNameAndVersion}", date="${model.currentDate}")
+@StaticMetamodel(${model.javaTypeSimpleName}.class)
+public class ${model.javaTypeSimpleName}_ES #if(${model.extendsClass})extends ${model.descriptorClassFullName}#end{
+
+    ##TODO generate the attributes.
+    private static final MappedSuperclassTypeES<${model.javaTypeSimpleName}> INSTANCE_ES = new MappedSuperclassTypeESImpl<>(null, null, null, null, null, null, true, true, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0, null, Type.PersistenceType.MAPPED_SUPERCLASS, null, true, null, null, null);
+
+    public static MappedSuperclassTypeES<${model.javaTypeSimpleName}> getInstance() {
+        return INSTANCE_ES;
+    }
+}
