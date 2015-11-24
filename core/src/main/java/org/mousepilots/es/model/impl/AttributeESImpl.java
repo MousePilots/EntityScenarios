@@ -31,7 +31,12 @@ public abstract class AttributeESImpl<T, TA> implements AttributeES<T, TA> {
     private final Map<AssociationTypeES, AssociationES> associations
             = new EnumMap<>(AssociationTypeES.class);
 
-    public AttributeESImpl(String name, int ordinal, Class<TA> javaType, PersistentAttributeType persistentAttributeType, MemberES javaMember, boolean readOnly, boolean collection, boolean association, ManagedTypeES<T> declaringType, Constructor<HasValue> hasValueChangeConstructor, Constructor<HasValue> hasValueDtoConstructor) {
+    public AttributeESImpl(String name, int ordinal, Class<TA> javaType,
+            PersistentAttributeType persistentAttributeType, MemberES javaMember,
+            boolean readOnly, boolean collection, boolean association,
+            ManagedTypeES<T> declaringType,
+            Constructor<HasValue> hasValueChangeConstructor,
+            Constructor<HasValue> hasValueDtoConstructor) {
         this.name = name;
         this.ordinal = ordinal;
         this.javaType = javaType;
@@ -142,6 +147,4 @@ public abstract class AttributeESImpl<T, TA> implements AttributeES<T, TA> {
     public Constructor<HasValue> getHasValueDtoConstructor() {
         return hasValueDtoConstructor;
     }
-
-
 }

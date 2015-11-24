@@ -1,5 +1,6 @@
 package org.mousepilots.es.model.impl;
 
+import org.mousepilots.es.model.EntityTypeES;
 import org.mousepilots.es.model.Generator;
 import org.mousepilots.es.model.HasValue;
 import org.mousepilots.es.model.ManagedTypeES;
@@ -79,11 +80,32 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T>
 
     @Override
     public HasValue wrapForChange(T value) {
+        switch(getType().getPersistenceType()){
+            case ENTITY: //Should be Entity
+                //Return HasValue I
+                EntityTypeES entity = AbstractMetaModelES.getInstance().entity(value.getClass());
+                //entity.getId();
+                return getHasValueChangeConstructor().invoke();
+            // incase of Embeddable/basic
+            default: {
+                //Return HasValue T
+            }
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public HasValue wrapForDTO(T value) {
+        switch(getType().getPersistenceType()){
+            case EMBEDDABLE:
+            case ENTITY: //Should be entity.
+                //Return HasValue DTO
+                break;
+            case BASIC:
+            default: {
+                //Return HasValue T
+            }
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
