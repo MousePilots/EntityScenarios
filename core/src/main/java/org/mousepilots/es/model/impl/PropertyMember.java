@@ -5,7 +5,7 @@ import org.mousepilots.es.model.MemberES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 9-11-2015
+ * @version 1.0, 25-11-2015
  */
 public class PropertyMember implements MemberES {
 
@@ -15,6 +15,14 @@ public class PropertyMember implements MemberES {
     private final Setter setter;
     private final int modifiers;
 
+    /**
+     * Create a new instance of this class.
+     * @param declaringClass the class that is declaring this member.
+     * @param name the name of this member.
+     * @param getter the getter for this member.
+     * @param setter the setter for this member.
+     * @param modifiers the modifiers for this member.
+     */
     public PropertyMember(Class<?> declaringClass, String name, Getter getter,
             Setter setter, int modifiers) {
         this.declaringClass = declaringClass;

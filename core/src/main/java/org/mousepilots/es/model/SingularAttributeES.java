@@ -1,5 +1,6 @@
 package org.mousepilots.es.model;
 
+import java.lang.reflect.Member;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.GeneratedValue;
 
@@ -14,7 +15,7 @@ import javax.persistence.GeneratedValue;
  * @see BindableES
  * @see SingularAttribute
  */
-public interface SingularAttributeES<X, T> extends AttributeES<X, T>, BindableES<T>, SingularAttribute<X, T>{
+public interface SingularAttributeES<X, T> extends AttributeES<X, T,T>, BindableES<T>, SingularAttribute<X, T>{
 
     /**
     * @return whether or not {@code this} represents an attribute with a {@link GeneratedValue}
@@ -28,4 +29,5 @@ public interface SingularAttributeES<X, T> extends AttributeES<X, T>, BindableES
 
     @Override
     TypeES<T> getType();
+
 }

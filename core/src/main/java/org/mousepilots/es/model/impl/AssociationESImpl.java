@@ -8,7 +8,7 @@ import org.mousepilots.es.model.AttributeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 9-11-2015
+ * @version 1.0, 25-11-2015
  */
 public class AssociationESImpl implements AssociationES {
 
@@ -17,6 +17,13 @@ public class AssociationESImpl implements AssociationES {
     private final AssociationES inverse;
     private final boolean owner;
 
+    /**
+     * Create a new instance of this class.
+     * @param sourceAttribute the source attribute of this association.
+     * @param persistentAttributeType the {@link PersistentAttributeType} for this association.
+     * @param inverse the inverse of this association if it is a bidirectional association.
+     * @param owner whether or not this side of the association is the owner.
+     */
     public AssociationESImpl(AttributeES sourceAttribute,
             PersistentAttributeType persistentAttributeType,
             AssociationES inverse, boolean owner) {

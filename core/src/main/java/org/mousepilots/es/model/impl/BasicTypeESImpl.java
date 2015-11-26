@@ -7,13 +7,30 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 16-11-2015
+ * @version 1.0, 26-11-2015
  * @param <T> The type for this BasicType.
  */
 public class BasicTypeESImpl<T> extends TypeESImpl<T>
     implements BasicTypeES<T> {
 
-    public BasicTypeESImpl(String name, int ordinal, Class<T> javaType, PersistenceType persistenceType, String javaClassName, boolean instantiable, Class<? extends Type<T>> metamodelClass, SortedSet<TypeES<? super T>> superTypes, SortedSet<TypeES<? extends T>> subTypes) {
-        super(name, ordinal, javaType, persistenceType, javaClassName, instantiable, metamodelClass, superTypes, subTypes);
+    /**
+     * Create a new instance of this class.
+     * @param name the name of this basic type.
+     * @param ordinal the ordinal of this basic type.
+     * @param javaType the java basic type of this basic type.
+     * @param persistenceType the {@link PersistenceType} of this basic type.
+     * @param javaClassName the name of the java class for this basic type.
+     * @param instantiable whether or not this basic type is instanciable.
+     * @param metamodelClass the JPA metamodel class of this basic type.
+     * @param superTypes a set of super basic types of this basic type.
+     * @param subTypes a set of sub basic types of this basic type.
+     */
+    public BasicTypeESImpl(String name, int ordinal, Class<T> javaType,
+            PersistenceType persistenceType, String javaClassName,
+            boolean instantiable, Class<? extends Type<T>> metamodelClass,
+            SortedSet<TypeES<? super T>> superTypes,
+            SortedSet<TypeES<? extends T>> subTypes) {
+        super(name, ordinal, javaType, persistenceType, javaClassName,
+                instantiable, metamodelClass, superTypes, subTypes);
     }
 }

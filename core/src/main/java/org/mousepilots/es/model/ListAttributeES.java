@@ -13,6 +13,6 @@ import javax.persistence.metamodel.ListAttribute;
  * @author Roy Cleven
  * @version 1.0, 19-10-2015
  */
-public interface ListAttributeES<T, E> extends PluralAttributeES<T, java.util.List<E>,E>, ListAttribute<T, E> {
+public interface ListAttributeES<T, E> extends PluralAttributeES<T, java.util.List<E>,E,List<E>>, ListAttribute<T, E> {
 
 }
