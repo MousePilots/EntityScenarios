@@ -12,6 +12,6 @@ import javax.persistence.metamodel.CollectionAttribute;
  * @author Roy Cleven
  * @version 1.0, 11-11-2015
  */
-public interface CollectionAttributeES<T, E> extends PluralAttributeES<T, java.util.Collection<E>, E>, CollectionAttribute<T, E> {
+public interface CollectionAttributeES<T, E> extends PluralAttributeES<T, java.util.Collection<E>, E, Collection<E>>, CollectionAttribute<T, E> {
 
 }

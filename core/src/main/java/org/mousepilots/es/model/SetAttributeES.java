@@ -1,5 +1,6 @@
 package org.mousepilots.es.model;
 
+import java.util.Set;
 import javax.persistence.metamodel.SetAttribute;
 
 /**
@@ -13,6 +14,6 @@ import javax.persistence.metamodel.SetAttribute;
  * @see PluralAttributeES
  * @see SetAttribute
  */
-public interface SetAttributeES<X, E> extends PluralAttributeES<X, java.util.Set<E>, E>, SetAttribute<X, E>{
+public interface SetAttributeES<X, E> extends PluralAttributeES<X, java.util.Set<E>, E, Set<E>>, SetAttribute<X, E>{
 
 }

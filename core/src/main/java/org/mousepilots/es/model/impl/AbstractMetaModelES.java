@@ -14,16 +14,25 @@ import org.mousepilots.es.model.MetaModelES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 16-11-2015
+ * @version 1.0, 25-11-2015
  */
 public abstract class AbstractMetaModelES implements MetaModelES {
 
     private static MetaModelES INSTANCE;
 
+    /**
+     * Get an instance of this class.
+     * @return An instance of this class.
+     */
     public static MetaModelES getInstance() {
         return INSTANCE;
     }
 
+    /**
+     * Set an instance of this class.
+     * @param instance The instance of this class to set.
+     * @throws IllegalStateException If in instance was already created before.
+     */
     protected void setInstance(MetaModelES instance){
         if (INSTANCE != null) {
             throw new IllegalStateException("Cannot set an instance because its already created.");
@@ -37,6 +46,12 @@ public abstract class AbstractMetaModelES implements MetaModelES {
     private final Map<ManagedTypeES, SortedSet<ManagedTypeES>> managedTypeToSuperManagedTypes;
     private final Map<ManagedTypeES, SortedSet<ManagedTypeES>> managedTypeToSubManagedTypes;
 
+    /**
+     * Create a new instance of this class.
+     * @param managedTypes A set of all managed types.
+     * @param entities A set of all entities.
+     * @param embeddables A set of all embeddables.
+     */
     protected AbstractMetaModelES(Set<ManagedType<?>> managedTypes,
             Set<EntityType<?>> entities, Set<EmbeddableType<?>> embeddables) {
         this.managedTypes = managedTypes;

@@ -7,7 +7,7 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 16-11-2015
+ * @version 1.0, 26-11-2015
  * @param <T> The type of the represented object or attribute
  */
 public class TypeESImpl<T> implements TypeES<T> {
@@ -22,7 +22,23 @@ public class TypeESImpl<T> implements TypeES<T> {
     private final SortedSet<TypeES<? super T>> superTypes;
     private final SortedSet<TypeES<? extends T>> subTypes;
 
-    public TypeESImpl(String name, int ordinal, Class<T> javaType, PersistenceType persistenceType, String javaClassName, boolean instantiable, Class<? extends Type<T>> metamodelClass, SortedSet<TypeES<? super T>> superTypes, SortedSet<TypeES<? extends T>> subTypes) {
+    /**
+     * Create a new instance of this class.
+     * @param name the name of this type.
+     * @param ordinal the ordinal of this type.
+     * @param javaType the java type of this type.
+     * @param persistenceType the {@link PersistenceType} of this type.
+     * @param javaClassName the name of the java class for this type.
+     * @param instantiable whether or not this type is instanciable.
+     * @param metamodelClass the JPA metamodel class of this type.
+     * @param superTypes a set of super types of this type.
+     * @param subTypes a set of sub types of this type.
+     */
+    public TypeESImpl(String name, int ordinal, Class<T> javaType,
+            PersistenceType persistenceType, String javaClassName,
+            boolean instantiable, Class<? extends Type<T>> metamodelClass,
+            SortedSet<TypeES<? super T>> superTypes,
+            SortedSet<TypeES<? extends T>> subTypes) {
         this.name = name;
         this.ordinal = ordinal;
         this.javaType = javaType;

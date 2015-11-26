@@ -8,11 +8,12 @@ import org.mousepilots.es.change.Change;
  *
  * @param <T> The represented type that contains the attribute.
  * @param <TA> The type of the represented attribute.
+ * @param <CA> The type of the wrapped element(s) for a {@link Change}.
  * @see Attribute
  * @author Roy Cleven
  * @version 1.0, 20-10-2015
  */
-public interface AttributeES<T, TA> extends Attribute<T, TA>, Comparable<AttributeES>, HasOrdinal {
+public interface AttributeES<T, TA,CA> extends Attribute<T, TA>, Comparable<AttributeES>, HasOrdinal {
 
     /**
      * Check if {@code this} attribute is read only, meaning it only has a
@@ -51,7 +52,7 @@ public interface AttributeES<T, TA> extends Attribute<T, TA>, Comparable<Attribu
      * @param value the value to wrapForChange.
      * @return the container with the wrapped {@code value}.
      */
-    public HasValue wrapForChange(TA value);
+    public HasValue wrapForChange(CA value);
 
     /**
      * Wraps attribute-{@code value} in a serializable container for a DTO.
@@ -59,5 +60,9 @@ public interface AttributeES<T, TA> extends Attribute<T, TA>, Comparable<Attribu
      * @return the container with the wrapped {@code value}.
      */
     public HasValue wrapForDTO(TA value);
+
+    @Override
+    public MemberES getJavaMember();
+
 
 }

@@ -4,20 +4,22 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationTypeES;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MemberES;
 import org.mousepilots.es.model.HasValue;
+import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 20-11-2015
+ * @version 1.0, 25-11-2015
  * @param <T> The represented type that contains the attribute.
  * @param <TA> The type of the represented attribute.
  */
-public abstract class AttributeESImpl<T, TA> implements AttributeES<T, TA> {
+public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC> {
 
     private final String name;
     private final int ordinal;
@@ -31,7 +33,29 @@ public abstract class AttributeESImpl<T, TA> implements AttributeES<T, TA> {
     private final Map<AssociationTypeES, AssociationES> associations
             = new EnumMap<>(AssociationTypeES.class);
 
-    public AttributeESImpl(String name, int ordinal, Class<TA> javaType, PersistentAttributeType persistentAttributeType, MemberES javaMember, boolean readOnly, boolean collection, boolean association, ManagedTypeES<T> declaringType, Constructor<HasValue> hasValueChangeConstructor, Constructor<HasValue> hasValueDtoConstructor) {
+
+
+
+    /**
+     * Create a new instance of this class.
+     * @param name the name of this attribute.
+     * @param ordinal the oridinal of this attribute.
+     * @param javaType the java type of this attribute.
+     * @param persistentAttributeType the {@link PersistentAttributeType} of this attribute.
+     * @param javaMember the java {@link Member} representing this attribute.
+     * @param readOnly whether or not this attribute is read only.
+     * @param collection whether or not this attribute is a collection.
+     * @param association whether or not this attribute is part of an association.
+     * @param declaringType the {@link ManagedTypeES} that declared this attribute.
+     * @param hasValueChangeConstructor the constructor that will be used when wrapping this attribute for a change.
+     * @param hasValueDtoConstructor the constructor that will be used when wrapping this attribute for a DTO.
+     */
+    public AttributeESImpl(String name, int ordinal, Class<TA> javaType,
+            PersistentAttributeType persistentAttributeType, MemberES javaMember,
+            boolean readOnly, boolean collection, boolean association,
+            ManagedTypeES<T> declaringType,
+            Constructor<HasValue> hasValueChangeConstructor,
+            Constructor<HasValue> hasValueDtoConstructor) {
         this.name = name;
         this.ordinal = ordinal;
         this.javaType = javaType;
@@ -104,20 +128,7 @@ public abstract class AttributeESImpl<T, TA> implements AttributeES<T, TA> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final AttributeESImpl<?, ?> other = (AttributeESImpl<?, ?>) obj;
-        if (!Objects.equals(getName(), other.getName())) {
-            return false;
-        }
-        if (!Objects.equals(getJavaType(), other.getJavaType())) {
-            return false;
-        }
-        return true;
+        return this==obj;
     }
 
     @Override
@@ -135,10 +146,18 @@ public abstract class AttributeESImpl<T, TA> implements AttributeES<T, TA> {
         return Integer.compare(getOrdinal(), o.getOrdinal());
     }
 
+    /**
+     * Get the constructor that is used when wrapping the attribute for a change.
+     * @return The constructor for wrapping a change.
+     */
     public Constructor<HasValue> getHasValueChangeConstructor() {
         return hasValueChangeConstructor;
     }
 
+    /**
+     * Get the constructor that is used when wrapping the attribute for a DTO.
+     * @return The constructor for wrapping a DTO.
+     */
     public Constructor<HasValue> getHasValueDtoConstructor() {
         return hasValueDtoConstructor;
     }

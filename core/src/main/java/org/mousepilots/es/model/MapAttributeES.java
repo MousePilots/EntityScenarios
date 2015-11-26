@@ -1,6 +1,8 @@
 package org.mousepilots.es.model;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.persistence.metamodel.MapAttribute;
 
 /**
@@ -14,7 +16,7 @@ import javax.persistence.metamodel.MapAttribute;
  * @author Roy Cleven
  * @version 1.0, 19-10-2015
  */
-public interface MapAttributeES<T,K, V> extends PluralAttributeES<T, java.util.Map<K,V>,V>, MapAttribute<T, K, V> {
+public interface MapAttributeES<T,K, V> extends PluralAttributeES<T, java.util.Map<K,V>,V,List<Entry<K,V>>>, MapAttribute<T, K, V> {
 
     @Override
     TypeES<K> getKeyType();
