@@ -9,7 +9,7 @@ import java.io.Serializable;
 import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.change.abst.AbstractNonIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
-import org.mousepilots.es.model.DTO;
+import org.mousepilots.es.model.Dto;
 import org.mousepilots.es.model.HasValue;
 
 
@@ -28,7 +28,7 @@ public final class EmbeddableSingularAssociationAttributeUpdate<A extends Serial
       super();
    }
 
-   public EmbeddableSingularAssociationAttributeUpdate(DTO container, AttributeES containerAttribute, DTO updated, AttributeES updatedAttribute, A oldValue, A newValue)
+   public EmbeddableSingularAssociationAttributeUpdate(Dto container, AttributeES containerAttribute, Dto updated, AttributeES updatedAttribute, A oldValue, A newValue)
    {
       super(container, containerAttribute, updated, updatedAttribute);
       this.oldValue = containerAttribute.wrapForChange(oldValue);

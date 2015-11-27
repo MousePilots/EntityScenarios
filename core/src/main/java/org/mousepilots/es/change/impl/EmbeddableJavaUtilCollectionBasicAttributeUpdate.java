@@ -14,7 +14,7 @@ import org.mousepilots.es.change.HasAdditions;
 import org.mousepilots.es.change.HasRemovals;
 import org.mousepilots.es.change.abst.AbstractNonIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
-import org.mousepilots.es.model.DTO;
+import org.mousepilots.es.model.Dto;
 import org.mousepilots.es.model.HasValue;
 import org.mousepilots.es.util.WrapperUtils;
 
@@ -30,7 +30,7 @@ public final class EmbeddableJavaUtilCollectionBasicAttributeUpdate<A extends Se
         super();
     }
 
-    public EmbeddableJavaUtilCollectionBasicAttributeUpdate(DTO container, AttributeES containerAttribute, DTO updated, AttributeES updatedAttribute, Collection<A> additions, Collection<A> removals) {
+    public EmbeddableJavaUtilCollectionBasicAttributeUpdate(Dto container, AttributeES containerAttribute, Dto updated, AttributeES updatedAttribute, Collection<A> additions, Collection<A> removals) {
         super(container, containerAttribute, updated, updatedAttribute);
         WrapperUtils.wrap(updatedAttribute, additions, this.additions, false);
         WrapperUtils.wrap(updatedAttribute, removals, this.removals, false);

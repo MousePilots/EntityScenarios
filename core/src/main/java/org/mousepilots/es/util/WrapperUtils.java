@@ -3,6 +3,7 @@ package org.mousepilots.es.util;
 import java.io.Serializable;
 import java.util.Collection;
 import org.mousepilots.es.model.AttributeES;
+import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
 
 /**

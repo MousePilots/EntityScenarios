@@ -5,16 +5,11 @@
  */
 package org.mousepilots.es.model;
 
-import java.io.Serializable;
-import java.util.List;
-
 /**
  *
  * @author clevenro
  */
-public interface DTOManager {
-    
-    List<DTO> getAllDTOs();
-    
-    <I extends Serializable> DTO getDTO(int ordinal, I id);
+public enum DtoType {
+    //DTO , Classes self , subclasses for the actual classes
+    SINGLE, MANAGED_CLASS, MANAGED_SUB_CLASS
 }

@@ -5,7 +5,7 @@ import org.mousepilots.es.change.CRUD;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
 import org.mousepilots.es.model.AttributeES;
-import org.mousepilots.es.model.DTO;
+import org.mousepilots.es.model.Dto;
 import org.mousepilots.es.model.HasValue;
 import org.mousepilots.es.model.IdentifiableTypeES;
 import org.mousepilots.es.model.TypeES;
@@ -17,8 +17,8 @@ import org.mousepilots.es.model.TypeES;
 public abstract class AbstractNonIdentifiableUpdate extends AbstractChange
 {
 
-   private DTO container;
-   private DTO updated;
+   private Dto container;
+   private Dto updated;
    private HasValue containerId;
    private int containerAttributeOrdinal;
    private int updatedAttributeOrdinal;
@@ -28,7 +28,7 @@ public abstract class AbstractNonIdentifiableUpdate extends AbstractChange
 
    }
 
-   protected AbstractNonIdentifiableUpdate(DTO container, AttributeES containerAttribute, DTO updated, AttributeES updatedAttribute)
+   protected AbstractNonIdentifiableUpdate(Dto container, AttributeES containerAttribute, Dto updated, AttributeES updatedAttribute)
    {
       super(updatedAttribute.getDeclaringType());
       // validations
@@ -36,7 +36,7 @@ public abstract class AbstractNonIdentifiableUpdate extends AbstractChange
       {
          throw new IllegalArgumentException("container==null");
       }
-
+      //possibility of having embeddable as parent instead of identifiable
       final IdentifiableTypeES containerType = container.getType();
       if (containerType != containerAttribute.getDeclaringType())
       {
@@ -48,17 +48,17 @@ public abstract class AbstractNonIdentifiableUpdate extends AbstractChange
       {
          throw new IllegalArgumentException(containerAttribute + " represents no value association");
       }
-
-      final TypeES associationTargetType = association.getSourceAttribute().getDeclaringType();
-      final TypeES updatedType = updatedAttribute.getDeclaringType();
-      if (associationTargetType.getOrdinal() != updatedType.getOrdinal())
-      {
-         throw new IllegalArgumentException("containerAttribute's association's targetType" + associationTargetType + " does not match updatedAttribute's owner " + updatedType);
-      }
-      if (updated.getType() != updatedType)
-      {
-         throw new IllegalArgumentException(updatedAttribute + " does not occur on " + updated);
-      }
+      // TODO : 
+//      final TypeES associationTargetType = association.;
+//      final TypeES updatedType = updatedAttribute.getDeclaringType();
+//      if (associationTargetType.getOrdinal() != updatedType.getOrdinal())
+//      {
+//         throw new IllegalArgumentException("containerAttribute's association's targetType" + associationTargetType + " does not match updatedAttribute's owner " + updatedType);
+//      }
+//      if (updated.getType() != updatedType)
+//      {
+//         throw new IllegalArgumentException(updatedAttribute + " does not occur on " + updated);
+//      }
 
       //set simple values
       this.updated = updated;
@@ -83,7 +83,7 @@ public abstract class AbstractNonIdentifiableUpdate extends AbstractChange
       return CRUD.UPDATE;
    }
 
-   public final DTO getUpdated()
+   public final Dto getUpdated()
    {
       return updated;
    }
@@ -99,7 +99,7 @@ public abstract class AbstractNonIdentifiableUpdate extends AbstractChange
     * 
     * @return
     */
-   public DTO getContainer()
+   public Dto getContainer()
    {
       return this.container;
    }
