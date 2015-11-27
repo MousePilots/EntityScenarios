@@ -10,6 +10,7 @@ import java.io.Serializable;
 import javax.persistence.Id;
 import org.mousepilots.es.change.HasId;
 import org.mousepilots.es.model.AttributeES;
+import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.IdentifiableTypeES;
 import org.mousepilots.es.model.HasValue;
 
@@ -35,7 +36,7 @@ public abstract class AbstractIdentifiableChange<I extends Serializable> extends
         if (id == null) {
             throw new IllegalArgumentException("id is a mandatory parameter");
         }
-        this.id = idAttribute.wrapForChange(id);
+        this.id = idAttribute.wrapForChange(id,DtoType.MANAGED_CLASS);
     }
 
     @Override

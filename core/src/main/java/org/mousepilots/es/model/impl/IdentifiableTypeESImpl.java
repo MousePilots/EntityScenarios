@@ -14,7 +14,7 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 26-11-2015
+ * @version 1.0, 27-11-2015
  * @param <T> The represented entity or mapped superclass type.
  */
 public class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
@@ -183,5 +183,11 @@ public class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
     @Override
     public boolean hasVersionAttribute() {
         return versionAttribute;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + ", Identifiable id: " + getId().getName()
+                + ", version: " + getVersion().getName();
     }
 }
