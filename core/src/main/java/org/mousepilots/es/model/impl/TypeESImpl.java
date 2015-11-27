@@ -7,7 +7,7 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 26-11-2015
+ * @version 1.0, 27-11-2015
  * @param <T> The type of the represented object or attribute
  */
 public class TypeESImpl<T> implements TypeES<T> {
@@ -125,6 +125,13 @@ public class TypeESImpl<T> implements TypeES<T> {
 
     @Override
     public T createInstance() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String toString() {
+        return "Type name: " + getName() + ", ordinal: " + getOrdinal()
+                + ", PersistenceType: " + getPersistenceType() + ", javaClass: "
+                + getJavaClassName();
     }
 }

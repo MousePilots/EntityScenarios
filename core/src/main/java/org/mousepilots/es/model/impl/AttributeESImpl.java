@@ -1,23 +1,23 @@
 package org.mousepilots.es.model.impl;
 
+import java.lang.reflect.Member;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.AssociationTypeES;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MemberES;
 import org.mousepilots.es.model.HasValue;
-import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 25-11-2015
- * @param <T> The represented type that contains the attribute.
- * @param <TA> The type of the represented attribute.
+ * @version 1.0, 27-11-2015
+ * @param <T> the represented type that contains the attribute.
+ * @param <TA> the type of the represented attribute.
+ * @param <TC> the type to wrap for a change.
  */
 public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC> {
 
@@ -32,9 +32,6 @@ public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC>
     private final Constructor<HasValue> hasValueDtoConstructor;
     private final Map<AssociationTypeES, AssociationES> associations
             = new EnumMap<>(AssociationTypeES.class);
-
-
-
 
     /**
      * Create a new instance of this class.
@@ -162,5 +159,10 @@ public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC>
         return hasValueDtoConstructor;
     }
 
-
+    @Override
+    public String toString() {
+        return "Attribute name: " + getName() + ", ordinal: " + getOrdinal()
+                + ", persistentAttributeType: " + getPersistentAttributeType()
+                + ", javaClass: " + getJavaType().getName();
+    }
 }

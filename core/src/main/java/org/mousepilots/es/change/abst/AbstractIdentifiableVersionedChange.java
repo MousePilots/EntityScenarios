@@ -8,6 +8,7 @@ package org.mousepilots.es.change.abst;
 import java.io.Serializable;
 import org.mousepilots.es.change.HasVersion;
 import org.mousepilots.es.model.AttributeES;
+import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.IdentifiableTypeES;
 import org.mousepilots.es.model.HasValue;
 
@@ -27,7 +28,7 @@ public abstract class AbstractIdentifiableVersionedChange<I extends Serializable
     public AbstractIdentifiableVersionedChange(IdentifiableTypeES type, I id, V version) {
         super(type, id);
         AttributeES va = type.getVersion(version.getClass());
-        this.version = va.wrapForChange(version);
+        this.version = va.wrapForChange(version, DtoType.MANAGED_CLASS);
     }
 
     @Override

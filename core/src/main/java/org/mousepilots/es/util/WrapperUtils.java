@@ -33,9 +33,9 @@ public class WrapperUtils {
         if (values != null) {
             values.stream().forEach((A source) -> {
                 if(forDTO){
-                    wrappers.add(attribute.wrapForDTO(source));
+                    wrappers.add(attribute.wrapForDTO(source, DtoType.MANAGED_CLASS));
                 }else{
-                    wrappers.add(attribute.wrapForChange(source));
+                    wrappers.add(attribute.wrapForChange(source, DtoType.MANAGED_CLASS));
                 }
             });
         }

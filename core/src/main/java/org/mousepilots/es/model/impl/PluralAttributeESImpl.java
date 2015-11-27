@@ -1,6 +1,7 @@
 package org.mousepilots.es.model.impl;
 
 import java.util.Collection;
+import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
 import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MemberES;
@@ -98,8 +99,11 @@ public abstract class PluralAttributeESImpl<T, C, E, CA> extends AttributeESImpl
     }
 
     @Override
-    public HasValue wrapForChange(CA values) {
+    public HasValue wrapForChange(CA values, DtoType dtoType) {
 
+        if (dtoType != DtoType.MANAGED_CLASS) {
+            throw new UnsupportedOperationException("Currently only " + DtoType.MANAGED_CLASS + " is supported");
+        }
         //default implementation for java.util.Collection subclasses
         final HasValue retval = getHasValueChangeConstructor().invoke();
         final PersistentAttributeType persistentAttributeType = getPersistentAttributeType();
@@ -132,7 +136,14 @@ public abstract class PluralAttributeESImpl<T, C, E, CA> extends AttributeESImpl
     }
 
     @Override
-    public HasValue wrapForDTO(C value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public HasValue wrapForDTO(C value, DtoType dtoType) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + ", PluralAttribute collectionType: "
+                + getCollectionType() + ", elementType: "
+                + getElementType().getJavaClassName();
     }
 }

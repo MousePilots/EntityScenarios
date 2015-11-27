@@ -2,10 +2,12 @@ package org.mousepilots.es.model.impl;
 
 import java.lang.reflect.Member;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
 import org.mousepilots.es.model.ManagedTypeES;
 import org.mousepilots.es.model.MapAttributeES;
@@ -14,13 +16,13 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 26-11-2015
+ * @version 1.0, 27-11-2015
  * @param <T> The type the represented Map belongs to
  * @param <K> The type of the key of the represented Map
  * @param <V> The type of the value of the represented Map
  */
 public class MapAttributeESImpl<T, K, V>
-        extends PluralAttributeESImpl<T, Map<K, V>, V, List<Entry<K,V>>>
+        extends PluralAttributeESImpl<T, Map<K, V>, V, Collection<Entry<K,V>>>
         implements MapAttributeES<T, K, V> {
 
     private final Class<K> keyJavaType;
@@ -69,9 +71,10 @@ public class MapAttributeESImpl<T, K, V>
             Constructor<HasValue> hasValueChangeConstructor,
             Constructor<HasValue> hasValueDtoConstructor,
             Constructor<HasValue> hasValueKeyDtoConstructor) {
+        //TODO Is the isCollection on PluralAttribute based on a java collection or JPA collection?
         super(CollectionType.MAP, elementType, bindableType, bindableJavaType,
                 name, ordinal, javaType, persistentAttributeType, javaMember,
-                readOnly, true, association, declaringType,
+                readOnly, false, association, declaringType,
                 hasValueChangeConstructor, hasValueDtoConstructor);
         this.keyJavaType = keyJavaType;
         this.keyType = keyType;
@@ -89,9 +92,11 @@ public class MapAttributeESImpl<T, K, V>
         return keyType;
     }
 
-
     @Override
-    public final HasValueList wrapForChange(List<Entry<K,V>> values) {
+    public final HasValueList wrapForChange(Collection<Entry<K,V>> values, DtoType dtoType) {
+        if (dtoType != DtoType.MANAGED_CLASS) {
+            throw new UnsupportedOperationException("Currently only " + DtoType.MANAGED_CLASS + " is supoorted.");
+        }
         final Constructor<HasValue> hasValueChangeConstructor = getHasValueChangeConstructor();
         ArrayList<HasValueEntry> hasValueEntries = new ArrayList<>(values.size());
         final TypeES<V> valueType = getElementType();
@@ -102,10 +107,15 @@ public class MapAttributeESImpl<T, K, V>
             SingularAttributeESImpl.setSingularValueForChange(valueHV, valueType, entry.getValue());
             HasValueEntry hve = new HasValueEntry(keyHV, valueHV);
             hasValueEntries.add(hve);
-
         }
         final HasValueList retval = new HasValueList();
         retval.setValue(hasValueEntries);
         return retval;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + " MapAttribute keyType: "
+                + getKeyType().getJavaClassName();
     }
 }

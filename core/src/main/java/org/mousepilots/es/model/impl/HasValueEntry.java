@@ -7,7 +7,7 @@ import org.mousepilots.es.model.HasValue;
 /**
  * Class that represents an entry in a {@link Map}.
  * @author Jurjen van Geenen
- * @version 1.0, 25-11-2015
+ * @version 1.0, 27-11-2015
  * @param <K> the type that represents the key.
  * @param <V> The type that represents the value.
  */
@@ -47,4 +47,10 @@ public class HasValueEntry<K,V> implements Serializable{
      public HasValue<V> getValue() {
           return value;
      }
+
+    @Override
+    public String toString() {
+        return "HasValueEntry key: " + getKey().getValue() + ", value: "
+                + getValue().getValue();
+    }
 }
