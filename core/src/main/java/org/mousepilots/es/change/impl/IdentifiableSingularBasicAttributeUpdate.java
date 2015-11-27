@@ -27,8 +27,8 @@ public final class IdentifiableSingularBasicAttributeUpdate<I extends Serializab
    public IdentifiableSingularBasicAttributeUpdate(AttributeES attribute, I id, V version, A oldValue, A newValue)
    {
       super(attribute, id, version);
-//      this.oldValue = attribute.wrap(oldValue);
-//      this.newValue = attribute.wrap(newValue);
+      this.oldValue = attribute.wrapForChange(oldValue);
+      this.newValue = attribute.wrapForChange(newValue);
    }
 
    public A getOldValue()

@@ -20,6 +20,7 @@ public abstract class AbstractIdentifiableUpdate<I extends Serializable, V exten
 {
 
    private int attributeOrdinal;
+   private AttributeES attribute;
 
    public AbstractIdentifiableUpdate()
    {
@@ -30,11 +31,12 @@ public abstract class AbstractIdentifiableUpdate<I extends Serializable, V exten
    {
       super((IdentifiableTypeES)attribute.getDeclaringType(), id, version);
       this.attributeOrdinal = attribute.getOrdinal();
+      this.attribute = attribute;
    }
 
    public final AttributeES getAttribute()
    {
-      return null;
+      return attribute;
    }
 
    @Override

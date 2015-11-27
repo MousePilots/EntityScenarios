@@ -10,6 +10,7 @@ import org.mousepilots.es.change.HasRemovals;
 import org.mousepilots.es.change.abst.AbstractIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.HasValue;
+import org.mousepilots.es.util.WrapperUtils;
 
 /**
  * @author Jurjen van Geenen
@@ -32,8 +33,8 @@ public final class IdentifiableJavaUtilCollectionBasicAttributeUpdate<I extends 
    public IdentifiableJavaUtilCollectionBasicAttributeUpdate(final AttributeES attribute, I id, V version, Collection<A> additions, Collection<A> removals)
    {
       super(attribute, id, version);
-//      ValueWrappers.wrap(attribute, additions, this.additions);
-//      ValueWrappers.wrap(attribute, removals, this.removals);
+      WrapperUtils.wrap(attribute, additions, this.additions,false);
+      WrapperUtils.wrap(attribute, removals, this.removals,false);
    }
 
    @Override
@@ -45,12 +46,12 @@ public final class IdentifiableJavaUtilCollectionBasicAttributeUpdate<I extends 
    @Override
    public List<A> getAdditions()
    {
-      return null;//ValueWrappers.unWrap(this.additions, new ArrayList<A>());
+      return WrapperUtils.unWrap(this.additions, new ArrayList<A>());
    }
 
    @Override
    public List<A> getRemovals()
    {
-      return null;//ValueWrappers.unWrap(this.removals, new ArrayList<A>());
+      return WrapperUtils.unWrap(this.removals, new ArrayList<A>());
    }
 }

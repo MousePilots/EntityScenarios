@@ -1,6 +1,7 @@
 package org.mousepilots.es.model;
 
 import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.ManagedType;
 import org.mousepilots.es.change.Change;
 
 /**
@@ -64,5 +65,6 @@ public interface AttributeES<T, TA,CA> extends Attribute<T, TA>, Comparable<Attr
     @Override
     public MemberES getJavaMember();
 
-
+    @Override
+    public ManagedTypeES<T> getDeclaringType();
 }
