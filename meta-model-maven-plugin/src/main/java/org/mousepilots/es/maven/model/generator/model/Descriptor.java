@@ -27,7 +27,8 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
     private final Class javaType;
     protected final int ordinal;
 
-    protected Descriptor(T persistenceType, String name, Class javaType, int ordinal) {
+    protected Descriptor(T persistenceType, String name, Class javaType,
+            int ordinal) {
         this.esNameAndVersion = getESNameAndVersion();
         this.persistenceType = persistenceType;
         this.name = name;
@@ -142,7 +143,8 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
         final Properties properties = new Properties();
         final StringBuilder sb = new StringBuilder();
         try {
-            InputStream resourceAsStream = Descriptor.class.getResourceAsStream("/project.properties");
+            InputStream resourceAsStream = Descriptor.class.getResourceAsStream(
+                    "/project.properties");
             if (resourceAsStream != null) {
                 properties.load(resourceAsStream);
                 sb.append(properties.getProperty("artifactId", "Unknown"));
@@ -152,7 +154,8 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
                 sb.append("Unknown_unknown version");
             }
         } catch (IOException ex) {
-            Logger.getLogger(Descriptor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Descriptor.class.getName()).log(Level.SEVERE, null,
+                    ex);
         }
         return sb.toString();
     }
