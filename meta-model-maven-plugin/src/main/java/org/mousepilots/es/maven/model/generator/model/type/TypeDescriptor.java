@@ -2,19 +2,27 @@ package org.mousepilots.es.maven.model.generator.model.type;
 
 import java.util.Set;
 import java.util.TreeSet;
-import javax.persistence.metamodel.Type;
+import javax.persistence.metamodel.Type.PersistenceType;
 import org.mousepilots.es.maven.model.generator.model.Descriptor;
 
 /**
  * Descriptor of the {@link javax.persistence.metamodel.Type} of JPA.
  * @author Nicky Ernste
- * @version 1.0, 18-11-2015
+ * @version 1.0, 25-11-2015
  */
-public class TypeDescriptor extends Descriptor<Type.PersistenceType> {
+public class TypeDescriptor extends Descriptor<PersistenceType> {
 
     private static final Set<TypeDescriptor> INSTANCES = new TreeSet<>();
 
-    public TypeDescriptor(Type.PersistenceType persistenceType, String name, Class javaType, int ordinal) {
+    /**
+     * Create a new instance of this class.
+     * @param name the name of this type.
+     * @param ordinal the ordinal of this type.
+     * @param javaType the java type of this type.
+     * @param persistenceType the {@link PersistenceType} of this type.
+     */
+    public TypeDescriptor(PersistenceType persistenceType, String name,
+            Class javaType, int ordinal) {
         super(persistenceType, name, javaType, ordinal);
         INSTANCES.add(this);
     }
@@ -31,7 +39,7 @@ public class TypeDescriptor extends Descriptor<Type.PersistenceType> {
      * @return
      */
     public String getMetaModelSuperClassFullName(){
-        final Descriptor<Type.PersistenceType> superDescriptor = getSuperDescriptor();
+        final Descriptor<PersistenceType> superDescriptor = getSuperDescriptor();
         return superDescriptor == null ? null : superDescriptor.getDescriptorClassFullName();
     }
 
