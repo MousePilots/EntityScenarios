@@ -27,6 +27,7 @@ public abstract class AbstractIdentifiableVersionedChange<I extends Serializable
     public AbstractIdentifiableVersionedChange(IdentifiableTypeES type, I id, V version) {
         super(type, id);
         AttributeES va = type.getVersion(version.getClass());
+        this.version = va.wrapForChange(version);
     }
 
     @Override

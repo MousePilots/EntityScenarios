@@ -35,6 +35,7 @@ public abstract class AbstractIdentifiableChange<I extends Serializable> extends
         if (id == null) {
             throw new IllegalArgumentException("id is a mandatory parameter");
         }
+        this.id = idAttribute.wrapForChange(id);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.mousepilots.es.model.impl;
 
 import java.util.Objects;
+import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
 
 /**
@@ -10,7 +11,8 @@ import org.mousepilots.es.model.HasValue;
 public abstract class AbstractHasValueImpl<T> implements HasValue<T> {
 
     private T value;
-
+    private DtoType dtoType;
+    
     @Override
     public final T getValue() {
         return value;
@@ -21,6 +23,16 @@ public abstract class AbstractHasValueImpl<T> implements HasValue<T> {
         this.value = value;
     }
 
+    @Override
+    public DtoType getDtoType() {
+        return dtoType;
+    }
+
+    @Override
+    public void setDtoType(DtoType dtoType) {
+        this.dtoType = dtoType;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;

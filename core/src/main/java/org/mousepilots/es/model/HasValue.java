@@ -10,10 +10,15 @@ import java.io.Serializable;
  * @version 1.0, 19-10-2015
  */
 public interface HasValue<T> extends Serializable {
+    
     /**
     * @return the value wrapped by {@code this}
     */
     T getValue();
 
     void setValue(T value);
+    
+    DtoType getDtoType();
+    
+    void setDtoType(DtoType dtoType);
 }
