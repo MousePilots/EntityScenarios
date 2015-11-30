@@ -31,11 +31,12 @@ public final class EmbeddableJavaUtilCollectionAssociationAttributeUpdate<A exte
         super();
     }
 
-    public EmbeddableJavaUtilCollectionAssociationAttributeUpdate(Dto container, AttributeES containerAttribute, Dto updated, AttributeES updatedAttribute, Collection<A> additions,
+    public EmbeddableJavaUtilCollectionAssociationAttributeUpdate(Dto container,
+            AttributeES containerAttribute, Dto updated, AttributeES updatedAttribute, Collection<A> additions,
             Collection<A> removals, DtoType dtoType) {
         super(container, containerAttribute, updated, updatedAttribute);
-        WrapperUtils.wrap(containerAttribute, additions, this.additions, true);
-        WrapperUtils.wrap(containerAttribute, removals, this.removals, true);
+        WrapperUtils.wrapForChange(containerAttribute, additions, this.additions, dtoType);
+        WrapperUtils.wrapForChange(containerAttribute, removals, this.removals, dtoType);
     }
 
     @Override

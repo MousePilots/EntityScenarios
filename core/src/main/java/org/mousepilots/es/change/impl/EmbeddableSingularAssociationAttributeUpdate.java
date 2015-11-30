@@ -28,7 +28,8 @@ public final class EmbeddableSingularAssociationAttributeUpdate<A extends Serial
       super();
    }
 
-   public EmbeddableSingularAssociationAttributeUpdate(Dto container, AttributeES containerAttribute, Dto updated, AttributeES updatedAttribute, A oldValue, A newValue)
+   public EmbeddableSingularAssociationAttributeUpdate(Dto container, AttributeES containerAttribute, 
+           Dto updated, AttributeES updatedAttribute, A oldValue, A newValue)
    {
       super(container, containerAttribute, updated, updatedAttribute);
       this.oldValue = containerAttribute.wrapForChange(oldValue);

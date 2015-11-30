@@ -9,6 +9,7 @@ import org.mousepilots.es.change.HasAdditions;
 import org.mousepilots.es.change.HasRemovals;
 import org.mousepilots.es.change.abst.AbstractIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
+import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
 import org.mousepilots.es.util.WrapperUtils;
 
@@ -30,11 +31,12 @@ public final class IdentifiableJavaUtilCollectionBasicAttributeUpdate<I extends 
       super();
    }
 
-   public IdentifiableJavaUtilCollectionBasicAttributeUpdate(final AttributeES attribute, I id, V version, Collection<A> additions, Collection<A> removals)
+   public IdentifiableJavaUtilCollectionBasicAttributeUpdate(final AttributeES attribute,
+           I id, V version, Collection<A> additions, Collection<A> removals, DtoType dtoType)
    {
       super(attribute, id, version);
-      WrapperUtils.wrap(attribute, additions, this.additions,false);
-      WrapperUtils.wrap(attribute, removals, this.removals,false);
+      WrapperUtils.wrapForChange(attribute, additions, this.additions,dtoType);
+      WrapperUtils.wrapForChange(attribute, removals, this.removals,dtoType);
    }
 
    @Override

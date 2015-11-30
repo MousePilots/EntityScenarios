@@ -7,6 +7,7 @@ package org.mousepilots.es.change;
 
 import java.io.Serializable;
 import javax.persistence.metamodel.Type;
+import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.TypeES;
 
 /**
@@ -38,4 +39,6 @@ public interface Change extends Serializable
     * @return whether or not {@code this} was caused by a {@code crud}
     */
    boolean is(CRUD crud);
+   
+   DtoType getDtoType();
 }
