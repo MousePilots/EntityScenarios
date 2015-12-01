@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.mousepilots.es.model;
 
 import java.io.Serializable;
@@ -11,7 +6,8 @@ import org.mousepilots.es.change.Change;
 
 /**
  *
- * @author clevenro
+ * @author Roy Cleven
+ * @version 1.0, 1-12-2015
  */
 public interface DTO {
 

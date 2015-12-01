@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.mousepilots.es.model;
 
 /**
@@ -11,5 +6,11 @@ package org.mousepilots.es.model;
  */
 public enum DtoType {
     //DTO , Classes self , subclasses for the actual classes
-    SINGLE, MANAGED_CLASS, MANAGED_SUB_CLASS
+    SINGLE, MANAGED_CLASS, MANAGED_SUB_CLASS;
+
+    public void assertSupported() throws UnsupportedOperationException{
+        if (this != MANAGED_CLASS) {
+            throw new UnsupportedOperationException(this + " is not yet supported");
+        }
+    }
 }
