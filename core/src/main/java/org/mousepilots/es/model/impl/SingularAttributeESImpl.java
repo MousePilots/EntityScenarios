@@ -3,6 +3,7 @@ package org.mousepilots.es.model.impl;
 import java.lang.reflect.Member;
 import javax.persistence.Id;
 import javax.persistence.metamodel.Type;
+import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.Generator;
 import org.mousepilots.es.model.HasValue;
 import org.mousepilots.es.model.ManagedTypeES;
@@ -12,7 +13,7 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 26-11-2015
+ * @version 1.0, 27-11-2015
  * @param <X> The type containing the represented attribute
  * @param <T> The type of the represented attribute
  */
@@ -115,7 +116,7 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
     /**
      * Sets the {@code value} onto the {@code hasValue}. For basic or embeddable values, the actual value is set.
      * For identifiables, the {@link Id}-value is set.
-     * @param <T>
+     * @param <T> the type of {@code value}.
      * @param hasValue an empty {@link HasValue}
      * @param valueType the {@link TypeES} of the {@code value} to be wrapped
      * @param value the value to be wrapped
@@ -125,17 +126,20 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
         switch(persistenceType){
             case BASIC :
             case EMBEDDABLE : {
+                //Type is basic or embeddable so just wrap the value.
                 hasValue.setValue(value);
                 break;
             }
             case ENTITY :
             case MAPPED_SUPERCLASS : {
+                //Type is a entity or mapped superclass which is identifiable, so casting should be safe.
+                //Wrap the id of the identifiable.
                 IdentifiableTypeESImpl identifiableType = (IdentifiableTypeESImpl)valueType;
                 final Object id;
-                if(value==null){
-                    id=null;
+                if(value == null){
+                    id = null;
                 } else {
-                    id=identifiableType.getId().getJavaMember().get(value);
+                    id = identifiableType.getId().getJavaMember().get(value);
                 }
                 hasValue.setValue(id);
                 break;
@@ -148,14 +152,20 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
     }
 
     @Override
-    public HasValue wrapForChange(T value) {
+    public HasValue wrapForChange(T value, DtoType dtoType) {
+        if (dtoType != DtoType.MANAGED_CLASS) {
+            throw new UnsupportedOperationException("Currently only " + DtoType.MANAGED_CLASS + " is supported.");
+        }
         final HasValue hv = this.getHasValueChangeConstructor().invoke();
         setSingularValueForChange(hv, getType(), value);
         return hv;
     }
 
     @Override
-    public HasValue wrapForDTO(T value) {
+    public HasValue wrapForDTO(T value, DtoType dtoType) {
+        if (dtoType != DtoType.MANAGED_CLASS) {
+            throw new UnsupportedOperationException("Currently only " + DtoType.MANAGED_CLASS + " is supported.");
+        }
         switch(getType().getPersistenceType()){
             case EMBEDDABLE:
             case ENTITY: //Should be entity.

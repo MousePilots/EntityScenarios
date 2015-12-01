@@ -4,7 +4,8 @@ import java.io.File;
 import java.sql.Blob;
 import java.util.List;
 import java.util.Properties;
-import javax.persistence.metamodel.Type;
+import java.util.Set;
+import javax.persistence.metamodel.StaticMetamodel;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -14,14 +15,16 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.velocity.app.VelocityEngine;
-import org.mousepilots.es.maven.model.generator.model.Descriptor;
-import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.TypeES;
 import org.reflections.Reflections;
 
 
-@Mojo(name = "generate", requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.GENERATE_SOURCES, executionStrategy = "once-per-session"
+@Mojo(name = "generate",
+        requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+        executionStrategy = "once-per-session"
 
 )
 public class MetaModelGeneratorMojo extends AbstractMojo
@@ -131,8 +134,59 @@ public class MetaModelGeneratorMojo extends AbstractMojo
    @Override
    public void execute() throws MojoExecutionException, MojoFailureException
    {
-       System.out.println("Hello World from Plugin!");
-       Descriptor des = new TypeDescriptor(Type.PersistenceType.ENTITY, "Test", null, 0);
-       System.out.println(des.getEsNameAndVersion());
+       if (executed) {
+           return;
+       } else {
+           executed = true;
+       }
+       getLog().info("Starting meta model generation.");
+       initGeneratedSourcesDir();
+       getLog().info("Initialized the generated sources folder: " + this.generatedSourceDir.getAbsolutePath());
+       reflections = new Reflections((String)null);
+       final Set<Class<?>> jpaMetaModelClasses = reflections.getTypesAnnotatedWith(StaticMetamodel.class);
+       getLog().info("Found " + jpaMetaModelClasses.size() + " meta model classes.");
+
+       //TODO make descriptors and generate actual files.
+       getLog().info("Successfully completed meta model generation");
+   }
+
+   /**
+    * Cleans a certain directory by removing all files and subfolders recursivly.
+    * @param directory the directory to clean.
+    */
+   private void clean(File directory)
+   {
+      if (directory != null && directory.exists())
+      {
+         for (File file : directory.listFiles())
+         {
+            if (file.isDirectory())
+            {
+               clean(file);
+            }
+            file.delete();
+         }
+      }
+   }
+
+   /**
+    * Initializes the generated sources directory for the creation of the generated meta model classes.
+    * @throws MojoFailureException if the generated sources directory could not be created if it did not exist.
+    */
+   private void initGeneratedSourcesDir() throws MojoFailureException
+   {
+      if (generatedSourceDir.exists())
+      {
+         clean(generatedSourceDir);
+      }
+      else
+      {
+         if (!generatedSourceDir.mkdirs())
+         {
+            final String message = "failed to create generated sources directory  " + generatedSourceDir.getAbsolutePath();
+            throw new MojoFailureException(message);
+         }
+      }
+      project.addCompileSourceRoot(generatedSourceDir.getAbsolutePath());
    }
 }

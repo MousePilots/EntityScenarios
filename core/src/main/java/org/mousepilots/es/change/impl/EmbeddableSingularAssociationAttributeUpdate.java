@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.mousepilots.es.change.impl;
 
 import java.io.Serializable;
@@ -10,6 +5,7 @@ import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.change.abst.AbstractNonIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.Dto;
+import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
 
 
@@ -32,8 +28,8 @@ public abstract class EmbeddableSingularAssociationAttributeUpdate<A extends Ser
            Dto updated, AttributeES updatedAttribute, A oldValue, A newValue)
    {
       super(container, containerAttribute, updated, updatedAttribute);
-      this.oldValue = containerAttribute.wrapForChange(oldValue);
-      this.newValue = containerAttribute.wrapForChange(newValue);
+      this.oldValue = containerAttribute.wrapForChange(oldValue, DtoType.MANAGED_CLASS);
+      this.newValue = containerAttribute.wrapForChange(newValue, DtoType.MANAGED_CLASS);
    }
 
    public A getOldValue()

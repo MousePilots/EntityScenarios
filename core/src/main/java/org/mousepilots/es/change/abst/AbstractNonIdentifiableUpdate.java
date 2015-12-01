@@ -5,10 +5,8 @@ import org.mousepilots.es.change.CRUD;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
 import org.mousepilots.es.model.AttributeES;
-import org.mousepilots.es.model.Dto;
 import org.mousepilots.es.model.HasValue;
 import org.mousepilots.es.model.IdentifiableTypeES;
-import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Jurjen van Geenen
@@ -48,7 +46,7 @@ public abstract class AbstractNonIdentifiableUpdate extends AbstractChange
       {
          throw new IllegalArgumentException(containerAttribute + " represents no value association");
       }
-      // TODO : 
+      // TODO :
 //      final TypeES associationTargetType = association.;
 //      final TypeES updatedType = updatedAttribute.getDeclaringType();
 //      if (associationTargetType.getOrdinal() != updatedType.getOrdinal())
@@ -96,7 +94,7 @@ public abstract class AbstractNonIdentifiableUpdate extends AbstractChange
 
    /**
     * If the updated embeddable is contained in another embeddable: said other embeddable, otherwise {@code null}
-    * 
+    *
     * @return
     */
    public Dto getContainer()
@@ -114,7 +112,7 @@ public abstract class AbstractNonIdentifiableUpdate extends AbstractChange
 
    /**
     * If the updated embeddable is contained in an identifiable said identifiable, otherwise {@code null}
-    * 
+    *
     * @return
     */
    public Serializable getContainerId()

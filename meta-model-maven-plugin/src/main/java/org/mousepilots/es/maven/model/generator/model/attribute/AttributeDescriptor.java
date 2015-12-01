@@ -32,12 +32,12 @@ import org.mousepilots.es.util.StringUtils;
 /**
  * Descriptor of the {@link javax.persistence.metamodel.Attribute} of JPA.
  * @author Nicky Ernste
- * @version 1.0, 18-11-2015
+ * @version 1.0, 25-11-2015
  */
 public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttributeType> {
 
     private TypeDescriptor declaringTypeDescriptor;
-    private Set<AttributeDescriptor> INSTANCES = new TreeSet<>();
+    private final Set<AttributeDescriptor> INSTANCES = new TreeSet<>();
 
     public AttributeDescriptor(String name, Class javaType, int ordinal) {
         super(name, javaType, ordinal);
@@ -67,27 +67,33 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
             try {
                 return declaringJavaType.getMethod(expectedName);
             } catch (NoSuchMethodException | SecurityException ex) {
-                Logger.getLogger(AttributeDescriptor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AttributeDescriptor.class.getName()).log(
+                        Level.SEVERE, null, ex);
             }
         }
-        throw new IllegalStateException("Cannot find the getter for " + declaringJavaType.getCanonicalName() + "." + getName());
+        throw new IllegalStateException("Cannot find the getter for "
+                + declaringJavaType.getCanonicalName() + "." + getName());
     }
 
     /**
      * Try to find a setter method for this attribute.
-     * @return A {@link Method} representing the setter method for this attribute or {@code null} if no setter was found.
-     * When no setter is found it could mean that this attribute is read only, or that the JavaBeans naming convention was not followed.
+     * @return A {@link Method} representing the setter method for this
+     * attribute or {@code null} if no setter was found.
+     * When no setter is found it could mean that this attribute is read only,
+     * or that the JavaBeans naming convention was not followed.
      */
     private Method getSetterMethod() {
         final List<String> expectedNames;
-        final String suffix = getName().substring(0, 1).toUpperCase() + getName().substring(1);
+        final String suffix = getName().substring(0, 1).toUpperCase()
+                + getName().substring(1);
         final Class declaringJavaType = getDeclaringTypeDescriptor().getJavaType();
         expectedNames = Arrays.asList(new String[]{"set" + suffix});
         for (String expectedName : expectedNames) {
             try {
                 return declaringJavaType.getMethod(expectedName);
             } catch (NoSuchMethodException | SecurityException ex) {
-                Logger.getLogger(AttributeDescriptor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AttributeDescriptor.class.getName())
+                        .log(Level.SEVERE, null, ex);
             }
         }
         return null;
@@ -98,7 +104,8 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
     }
 
     public boolean isCollection() {
-        return Map.class.isAssignableFrom(getJavaType()) || Collection.class.isAssignableFrom(getJavaType());
+        return Map.class.isAssignableFrom(getJavaType())
+                || Collection.class.isAssignableFrom(getJavaType());
     }
 
     public boolean isAssociation() {
@@ -113,13 +120,16 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
     /**
      * Get the association this attribute has with another attribute.
      * @param associationType The type of association you want to get.
-     * @return An {@link AssociationDescriptor} describing the association of this attribute with another.
+     * @return An {@link AssociationDescriptor} describing the association of
+     * this attribute with another.
      * or {@code null} if the persistence type of the attribute is Basic.
-     * @throws IllegalStateException If the owning side of a bidirectional association could not be found.
+     * @throws IllegalStateException If the owning side of a bidirectional
+     * association could not be found.
      */
     public final AssociationDescriptor getAssociation(AssociationTypeES associationType) {
-        // references sub-types. Implementations could be spread over sub-types,
-        // but then those would have to refer to one another e.g. OneToMany <--> ManyToOne
+        /* references sub-types. Implementations could be spread over sub-types,
+        but then those would have to refer to one another
+        e.g. OneToMany <--> ManyToOne*/
         final Attribute.PersistentAttributeType persistentAttributeType = getPersistentAttributeType();
         switch (associationType) {
             case KEY: {
@@ -142,7 +152,6 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
                     }
                 } else {
                     return null;
-
                 }
             }
             case VALUE : {

@@ -1,7 +1,6 @@
 package org.mousepilots.es.model;
 
 import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.ManagedType;
 import org.mousepilots.es.change.Change;
 
 /**
@@ -51,16 +50,18 @@ public interface AttributeES<T, TA,CA> extends Attribute<T, TA>, Comparable<Attr
     /**
      * Wraps attribute-{@code value} in a serializable container for a {@link Change}.
      * @param value the value to wrapForChange.
+     * @param dtoType the type of {@link Dto} that needs to be wrapped.
      * @return the container with the wrapped {@code value}.
      */
-    public HasValue wrapForChange(CA value);
+    public HasValue wrapForChange(CA value, DtoType dtoType);
 
     /**
      * Wraps attribute-{@code value} in a serializable container for a DTO.
      * @param value the value to wrapForChange.
+     * @param dtoType the type of {@link Dto} that needs to be wrapped.
      * @return the container with the wrapped {@code value}.
      */
-    public HasValue wrapForDTO(TA value);
+    public HasValue wrapForDTO(TA value, DtoType dtoType);
 
     @Override
     public MemberES getJavaMember();

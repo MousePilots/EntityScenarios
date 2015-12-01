@@ -5,59 +5,107 @@ import java.util.Set;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Version;
-import javax.persistence.metamodel.Type;
+import javax.persistence.metamodel.Type.PersistenceType;
 import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.SingularAttributeDescriptor;
 
 /**
  * Descriptor of the {@link javax.persistence.metamodel.IdentifiableType} of JPA.
  * @author Nicky Ernste
- * @version 1.0, 18-11-2015
+ * @version 1.0, 25-11-2015
  */
 public class IdentifiableTypeDescriptor extends ManagedTypeDescriptor {
 
-    public IdentifiableTypeDescriptor(Type.PersistenceType persistenceType, String name, Class javaType, int ordinal) {
+    /**
+     * Create a new instance of this class.
+     * @param name the name of this type.
+     * @param ordinal the ordinal of this type.
+     * @param javaType the java type of this type.
+     * @param persistenceType the {@link PersistenceType} of this type.
+     */
+    public IdentifiableTypeDescriptor(PersistenceType persistenceType,
+            String name, Class javaType, int ordinal) {
         super(persistenceType, name, javaType, ordinal);
     }
 
+    /**
+     * Get the attribute that forms the id of this identifiable type.
+     * @return the attribute that forms the id.
+     */
     public AttributeDescriptor getId(){
         return getAttributeAnnotatedWith(Id.class);
     }
 
+    /**
+     * Check whether or not the id for this attribute is generated.
+     * @return {@code true} if the id for this attribute is generated, {@code false} otherwise.
+     */
     public boolean hasGeneratedId(){
         return getId().getAnnotation(GeneratedValue.class)!=null;
     }
 
+    /**
+     * Get the attribute that is the version of this identifiable type.
+     * @return the attribute that is the version.
+     */
     public AttributeDescriptor getVersion(){
         return getAttributeAnnotatedWith(Version.class);
     }
 
+    /**
+     * Check whether the identifiable type has a version attribute.
+     * @return {@code true} if this identifiable has a version attribute.
+     */
     public boolean hasVersionAttribute(){
         return getVersion()!=null;
     }
 
+    /**
+     * Check whether the identifiable type has a single id attribute.
+     * @return {@code true} if the id is a simple or embedded id, {@code false} if the id is a class.
+     */
     public boolean hasSingleIdAttribute(){
         return true;
     }
 
+    /**
+     * Get the attributes corresponding to the id class of the identifiable type.
+     * @return a set of the attributes that make up the id.
+     */
     public Set<SingularAttributeDescriptor> getIdClassAttribute(){
         return Collections.singleton(getId());
     }
 
+    /**
+     * Get the type that represents the type of the id.
+     * @return the type of the id.
+     */
     public TypeDescriptor getIdType(){
         return TypeDescriptor.getInstance(getId().getJavaType());
     }
 
+    /**
+     * Get the attribute that corresponds to the id attribute declared by the entity or mapped superclass.
+     * @return the declared id attribute.
+     */
     public SingularAttributeDescriptor getDeclaredId(){
         final AttributeDescriptor id = getId();
         return id.getDeclaringTypeDescriptor() == this ? (SingularAttributeDescriptor) id : null;
     }
 
+    /**
+     * Get the attribute that corresponds to the version attribute declared by the entity or mapped superclass.
+     * @return the declared version attribute.
+     */
     public SingularAttributeDescriptor getDeclaredVersion(){
         final AttributeDescriptor version = getVersion();
         return version.getDeclaringTypeDescriptor() == this ? (SingularAttributeDescriptor) version : null;
     }
 
+    /**
+     * Get the identifiable type that corresponds to the most specific mapped superclass or entity extended by the entity or mapped superclass.
+     * @return the super type.
+     */
     public IdentifiableTypeDescriptor getSuperType(){
         final TypeDescriptor superType = TypeDescriptor.getInstance(getJavaType().getSuperclass());
         if(superType instanceof IdentifiableTypeDescriptor){

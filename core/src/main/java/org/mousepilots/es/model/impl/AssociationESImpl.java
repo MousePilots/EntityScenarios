@@ -8,7 +8,7 @@ import org.mousepilots.es.model.AttributeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 25-11-2015
+ * @version 1.0, 27-11-2015
  */
 public class AssociationESImpl implements AssociationES {
 
@@ -85,5 +85,11 @@ public class AssociationESImpl implements AssociationES {
         }
         final AssociationESImpl other = (AssociationESImpl) obj;
         return Objects.equals(this.sourceAttribute, other.sourceAttribute);
+    }
+
+    @Override
+    public String toString() {
+        return "Association source: " + getSourceAttribute().getName()
+                + ", bidirectional: " + isBiDirectional() + ", owner: " + isOwner();
     }
 }
