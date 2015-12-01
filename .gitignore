@@ -2,3 +2,5 @@
 /maven-model-generator-plugin/target/
 /meta-model-maven-plugin/target/
 /server/target/
+/test/domain/target/
+/test/web/target/

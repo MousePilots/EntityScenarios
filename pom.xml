@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mousepilots</groupId>
     <artifactId>EntityScenarios</artifactId>
-    <version>0.1-SNAPSHOT</version>    
+    <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -15,7 +15,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <gwt.version>2.8.0-SNAPSHOT</gwt.version>
-    </properties>    
+    </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -76,13 +76,14 @@
                 <scope>provided</scope>
             </dependency>
         </dependencies>
-    </dependencyManagement>    
+    </dependencyManagement>
     <name>EntityScenarios</name>
 
     <modules>
         <module>core</module>
         <module>meta-model-maven-plugin</module>
         <module>server</module>
+        <module>test</module>
     </modules>
-    
+
 </project>
