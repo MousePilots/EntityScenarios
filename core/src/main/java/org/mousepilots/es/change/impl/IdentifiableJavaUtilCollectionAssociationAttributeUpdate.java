@@ -21,13 +21,13 @@ import org.mousepilots.es.util.WrapperUtils;
 /**
  * @author geenenju
  */
-public final class IdentifiableJavaUtilCollectionAssociationAttributeUpdate<I extends Serializable, V extends Serializable, A extends Serializable> extends AbstractIdentifiableUpdate<I, V> implements HasAdditions<A>,
+public abstract class IdentifiableJavaUtilCollectionAssociationAttributeUpdate<I extends Serializable, V extends Serializable, A extends Serializable> extends AbstractIdentifiableUpdate<I, V> implements HasAdditions<A>,
         HasRemovals<A> {
 
     private ArrayList<HasValue> additions;
     private ArrayList<HasValue> removals;
 
-    private IdentifiableJavaUtilCollectionAssociationAttributeUpdate() {
+    protected IdentifiableJavaUtilCollectionAssociationAttributeUpdate() {
         super();
     }
 
@@ -36,11 +36,6 @@ public final class IdentifiableJavaUtilCollectionAssociationAttributeUpdate<I ex
         super(attribute, id, version);
         WrapperUtils.wrapForChange(attribute, additions, this.additions, dtoType);
         WrapperUtils.wrapForChange(attribute, removals, this.removals, dtoType);
-    }
-
-    @Override
-    public void accept(ChangeVisitor changeHandler) {
-        changeHandler.visit(this);
     }
 
     @Override

@@ -15,7 +15,7 @@ import org.mousepilots.es.model.HasValue;
 /**
  * @author geenenju
  */
-public class IdentifiableSingularAssociationAttributeUpdate<I extends Serializable, V extends Serializable, A extends Serializable> extends AbstractIdentifiableUpdate<I, V>
+public abstract class IdentifiableSingularAssociationAttributeUpdate<I extends Serializable, V extends Serializable, A extends Serializable> extends AbstractIdentifiableUpdate<I, V>
 {
 
    private HasValue oldValue;
@@ -33,11 +33,6 @@ public class IdentifiableSingularAssociationAttributeUpdate<I extends Serializab
       this.newValue = attribute.wrapForChange(newValue);
    }
 
-   @Override
-   public final void accept(ChangeVisitor changeHandler)
-   {
-      changeHandler.visit(this);
-   }
 
    public A getOldValue()
    {

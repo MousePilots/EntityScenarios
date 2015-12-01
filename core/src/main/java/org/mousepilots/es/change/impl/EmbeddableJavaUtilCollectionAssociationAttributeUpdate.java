@@ -22,12 +22,12 @@ import org.mousepilots.es.util.WrapperUtils;
 /**
  * @author geenenju
  */
-public final class EmbeddableJavaUtilCollectionAssociationAttributeUpdate<A extends Serializable> extends AbstractNonIdentifiableUpdate implements HasAdditions<A>, HasRemovals<A> {
+public abstract class EmbeddableJavaUtilCollectionAssociationAttributeUpdate<A extends Serializable> extends AbstractNonIdentifiableUpdate implements HasAdditions<A>, HasRemovals<A> {
 
     private ArrayList<HasValue> additions;
     private ArrayList<HasValue> removals;
 
-    private EmbeddableJavaUtilCollectionAssociationAttributeUpdate() {
+    protected EmbeddableJavaUtilCollectionAssociationAttributeUpdate() {
         super();
     }
 
@@ -47,10 +47,5 @@ public final class EmbeddableJavaUtilCollectionAssociationAttributeUpdate<A exte
     @Override
     public ArrayList<A> getRemovals() {
         return WrapperUtils.unWrap(this.removals, new ArrayList<A>());
-    }
-
-    @Override
-    public void accept(ChangeVisitor changeHandler) {
-        changeHandler.visit(this);
     }
 }
