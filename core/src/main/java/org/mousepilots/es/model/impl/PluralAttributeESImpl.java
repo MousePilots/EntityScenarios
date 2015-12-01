@@ -101,9 +101,7 @@ public abstract class PluralAttributeESImpl<T, C, E, CA> extends AttributeESImpl
     @Override
     public HasValue wrapForChange(CA values, DtoType dtoType) {
 
-        if (dtoType != DtoType.MANAGED_CLASS) {
-            throw new UnsupportedOperationException("Currently only " + DtoType.MANAGED_CLASS + " is supported");
-        }
+        dtoType.assertSupported();
         //default implementation for java.util.Collection subclasses
         final HasValue retval = getHasValueChangeConstructor().invoke();
         final PersistentAttributeType persistentAttributeType = getPersistentAttributeType();

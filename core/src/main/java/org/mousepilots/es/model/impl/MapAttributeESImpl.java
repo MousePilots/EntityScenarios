@@ -94,9 +94,7 @@ public class MapAttributeESImpl<T, K, V>
 
     @Override
     public final HasValueList wrapForChange(Collection<Entry<K,V>> values, DtoType dtoType) {
-        if (dtoType != DtoType.MANAGED_CLASS) {
-            throw new UnsupportedOperationException("Currently only " + DtoType.MANAGED_CLASS + " is supoorted.");
-        }
+        dtoType.assertSupported();
         final Constructor<HasValue> hasValueChangeConstructor = getHasValueChangeConstructor();
         ArrayList<HasValueEntry> hasValueEntries = new ArrayList<>(values.size());
         final TypeES<V> valueType = getElementType();
