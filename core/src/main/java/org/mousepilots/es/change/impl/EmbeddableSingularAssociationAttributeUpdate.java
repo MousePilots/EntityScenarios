@@ -4,7 +4,7 @@ import java.io.Serializable;
 import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.change.abst.AbstractNonIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
-import org.mousepilots.es.model.Dto;
+import org.mousepilots.es.model.DTO;
 import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
 
@@ -24,8 +24,8 @@ public abstract class EmbeddableSingularAssociationAttributeUpdate<A extends Ser
       super();
    }
 
-   public EmbeddableSingularAssociationAttributeUpdate(Dto container, AttributeES containerAttribute, 
-           Dto updated, AttributeES updatedAttribute, A oldValue, A newValue)
+   public EmbeddableSingularAssociationAttributeUpdate(DTO container, AttributeES containerAttribute, 
+           DTO updated, AttributeES updatedAttribute, A oldValue, A newValue)
    {
       super(container, containerAttribute, updated, updatedAttribute);
       this.oldValue = containerAttribute.wrapForChange(oldValue, DtoType.MANAGED_CLASS);

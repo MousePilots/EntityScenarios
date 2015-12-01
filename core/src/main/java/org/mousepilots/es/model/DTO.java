@@ -13,7 +13,7 @@ import org.mousepilots.es.change.Change;
  *
  * @author clevenro
  */
-public interface Dto {
+public interface DTO {
 
     IdentifiableTypeES getType();
 

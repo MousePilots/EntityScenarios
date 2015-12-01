@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.model.AttributeES;
-import org.mousepilots.es.model.Dto;
+import org.mousepilots.es.model.DTO;
 import org.mousepilots.es.model.DtoType;
 
 /**
@@ -15,7 +15,7 @@ public final class EmbeddableToIdentifiableJavaUtilCollectionAssociationAttribut
     public EmbeddableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate() {
     }
     
-    public EmbeddableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate(Dto container, AttributeES containerAttribute, Dto updated, AttributeES updatedAttribute, Collection<A> additions, Collection<A> removals, DtoType dtoType) {
+    public EmbeddableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate(DTO container, AttributeES containerAttribute, DTO updated, AttributeES updatedAttribute, Collection<A> additions, Collection<A> removals, DtoType dtoType) {
         super(container, containerAttribute, updated, updatedAttribute, additions, removals, dtoType);
     }
 

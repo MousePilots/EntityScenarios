@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface DtoManager {
     
-    List<Dto> getAllDTOs();
+    List<DTO> getAllDTOs();
     
-    <I extends Serializable> Dto getDTO(int ordinal, I id);
+    <I extends Serializable> DTO getDTO(int ordinal, I id);
 }

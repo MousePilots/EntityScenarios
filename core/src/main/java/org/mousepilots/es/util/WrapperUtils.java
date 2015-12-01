@@ -32,7 +32,7 @@ public class WrapperUtils {
     public static <A extends Serializable, TC extends Collection<HasValue>> TC wrapForDto(AttributeES attribute, Collection<A> values, TC wrappers, DtoType dtoType) {
         if (values != null) {
             for(A source : values){
-                wrappers.add(attribute.wrapForDTO(source));
+                wrappers.add(attribute.wrapForDTO(values, dtoType));
             }
         }
         return wrappers;
@@ -41,7 +41,7 @@ public class WrapperUtils {
     public static <A extends Serializable, TC extends Collection<HasValue>> TC wrapForChange(AttributeES attribute, Collection<A> values, TC wrappers, DtoType dtoType) {
         if (values != null) {
             for(A source : values){
-                wrappers.add(attribute.wrapForChange(source));
+                wrappers.add(attribute.wrapForChange(source,dtoType));
             }
         }
         return wrappers;

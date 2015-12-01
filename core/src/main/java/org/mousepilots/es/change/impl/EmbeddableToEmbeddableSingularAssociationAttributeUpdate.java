@@ -3,7 +3,7 @@ package org.mousepilots.es.change.impl;
 import java.io.Serializable;
 import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.model.AttributeES;
-import org.mousepilots.es.model.Dto;
+import org.mousepilots.es.model.DTO;
 
 /**
  * @author Roy Cleven
@@ -13,7 +13,7 @@ public final class EmbeddableToEmbeddableSingularAssociationAttributeUpdate<A ex
     public EmbeddableToEmbeddableSingularAssociationAttributeUpdate() {
     }
 
-    public EmbeddableToEmbeddableSingularAssociationAttributeUpdate(Dto container, AttributeES containerAttribute, Dto updated, AttributeES updatedAttribute, A oldValue, A newValue) {
+    public EmbeddableToEmbeddableSingularAssociationAttributeUpdate(DTO container, AttributeES containerAttribute, DTO updated, AttributeES updatedAttribute, A oldValue, A newValue) {
         super(container, containerAttribute, updated, updatedAttribute, oldValue, newValue);
     }
 

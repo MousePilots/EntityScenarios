@@ -5,6 +5,7 @@ import org.mousepilots.es.change.CRUD;
 import org.mousepilots.es.model.AssociationES;
 import org.mousepilots.es.model.AssociationTypeES;
 import org.mousepilots.es.model.AttributeES;
+import org.mousepilots.es.model.DTO;
 import org.mousepilots.es.model.HasValue;
 import org.mousepilots.es.model.IdentifiableTypeES;
 
@@ -15,8 +16,8 @@ import org.mousepilots.es.model.IdentifiableTypeES;
 public abstract class AbstractNonIdentifiableUpdate extends AbstractChange
 {
 
-   private Dto container;
-   private Dto updated;
+   private DTO container;
+   private DTO updated;
    private HasValue containerId;
    private int containerAttributeOrdinal;
    private int updatedAttributeOrdinal;
@@ -26,7 +27,7 @@ public abstract class AbstractNonIdentifiableUpdate extends AbstractChange
 
    }
 
-   protected AbstractNonIdentifiableUpdate(Dto container, AttributeES containerAttribute, Dto updated, AttributeES updatedAttribute)
+   protected AbstractNonIdentifiableUpdate(DTO container, AttributeES containerAttribute, DTO updated, AttributeES updatedAttribute)
    {
       super(updatedAttribute.getDeclaringType());
       // validations
@@ -81,7 +82,7 @@ public abstract class AbstractNonIdentifiableUpdate extends AbstractChange
       return CRUD.UPDATE;
    }
 
-   public final Dto getUpdated()
+   public final DTO getUpdated()
    {
       return updated;
    }
@@ -97,7 +98,7 @@ public abstract class AbstractNonIdentifiableUpdate extends AbstractChange
     *
     * @return
     */
-   public Dto getContainer()
+   public DTO getContainer()
    {
       return this.container;
    }
