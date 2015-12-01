@@ -9,31 +9,28 @@ import org.mousepilots.es.change.HasAdditions;
 import org.mousepilots.es.change.HasRemovals;
 import org.mousepilots.es.change.abst.AbstractIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
+import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
 import org.mousepilots.es.util.WrapperUtils;
 
 /**
  * @author geenenju
  */
-public final class IdentifiableJavaUtilCollectionAssociationAttributeUpdate<I extends Serializable, V extends Serializable, A extends Serializable> extends AbstractIdentifiableUpdate<I, V> implements HasAdditions<A>,
+public abstract class IdentifiableJavaUtilCollectionAssociationAttributeUpdate<I extends Serializable, V extends Serializable, A extends Serializable> extends AbstractIdentifiableUpdate<I, V> implements HasAdditions<A>,
         HasRemovals<A> {
 
     private ArrayList<HasValue> additions;
     private ArrayList<HasValue> removals;
 
-    private IdentifiableJavaUtilCollectionAssociationAttributeUpdate() {
+    protected IdentifiableJavaUtilCollectionAssociationAttributeUpdate() {
         super();
     }
 
-    public IdentifiableJavaUtilCollectionAssociationAttributeUpdate(AttributeES attribute, I id, V version, Collection<A> additions, Collection<A> removals) {
+    public IdentifiableJavaUtilCollectionAssociationAttributeUpdate(AttributeES attribute,
+            I id, V version, Collection<A> additions, Collection<A> removals, DtoType dtoType) {
         super(attribute, id, version);
-        WrapperUtils.wrap(attribute, additions, this.additions, true);
-        WrapperUtils.wrap(attribute, removals, this.removals, true);
-    }
-
-    @Override
-    public void accept(ChangeVisitor changeHandler) {
-        changeHandler.visit(this);
+        WrapperUtils.wrapForChange(attribute, additions, this.additions, dtoType);
+        WrapperUtils.wrapForChange(attribute, removals, this.removals, dtoType);
     }
 
     @Override

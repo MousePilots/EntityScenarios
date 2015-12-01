@@ -5,11 +5,13 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map.Entry;
 import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.change.HasAdditions;
 import org.mousepilots.es.change.HasRemovals;
 import org.mousepilots.es.change.abst.AbstractIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
+import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
 import org.mousepilots.es.util.WrapperUtils;
 
@@ -38,10 +40,11 @@ public class JavaUtilMapAttributeUpdate<I extends Serializable, VE extends Seria
      * @param additions
      * @param removals
      */
-    public JavaUtilMapAttributeUpdate(AttributeES attribute, I id, VE version, Collection<SimpleEntry<K, V>> additions, Collection<SimpleEntry<K, V>> removals) {
+    public JavaUtilMapAttributeUpdate(AttributeES attribute, I id, VE version,
+            Collection<SimpleEntry<K, V>> additions, Collection<SimpleEntry<K, V>> removals, DtoType dtoType) {
         super(attribute, id, version);
-        WrapperUtils.wrap(attribute, additions, this.additions, false);
-        WrapperUtils.wrap(attribute, removals, this.removals, false);
+        WrapperUtils.wrapForChange(attribute, additions, this.additions, dtoType);
+        WrapperUtils.wrapForChange(attribute, removals, this.removals, dtoType);
     }
 
     @Override

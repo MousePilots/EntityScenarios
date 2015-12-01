@@ -2,6 +2,7 @@ package org.mousepilots.es.change.abst;
 
 import org.mousepilots.es.change.CRUD;
 import org.mousepilots.es.change.Change;
+import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.TypeES;
 
 /**
@@ -16,6 +17,7 @@ public abstract class AbstractChange implements Change
    }
 
    private int typeOrdinal;
+   private DtoType dtoType;
 
    protected AbstractChange(TypeES type)
    {
@@ -32,5 +34,10 @@ public abstract class AbstractChange implements Change
    public final TypeES getType()
    {
       throw new UnsupportedOperationException();
+   }
+   
+   @Override
+   public final DtoType getDtoType(){
+       return dtoType;
    }
 }

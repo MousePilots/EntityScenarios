@@ -3,18 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mousepilots.es.model;
-
-import java.io.Serializable;
-import java.util.List;
+package org.mousepilots.es.change.exception;
 
 /**
  *
  * @author clevenro
  */
-public interface DtoManager {
+public enum Reason {
     
-    List<DTO> getAllDTOs();
-    
-    <I extends Serializable> DTO getDTO(int ordinal, I id);
+    ENTITY_EXISTS, ENTITY_NOT_FOUND, VERSION_MISMATCH
 }

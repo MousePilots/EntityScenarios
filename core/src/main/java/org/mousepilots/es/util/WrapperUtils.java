@@ -26,40 +26,26 @@ public class WrapperUtils {
      * @param attribute the {@code values}' attribute
      * @param values list of values which need to be wrapped.
      * @param wrappers the collection to which the wrappers must be added
-     * @param forDTO if the attribute needs to wrap it for a DTO or a change.
+     * @param dtoType
      * @return the wrappers
      */
-    public static <A extends Serializable, TC extends Collection<HasValue>> TC wrap(AttributeES attribute, Collection<A> values, TC wrappers, boolean forDTO) {
+    public static <A extends Serializable, TC extends Collection<HasValue>> TC wrapForDto(AttributeES attribute, Collection<A> values, TC wrappers, DtoType dtoType) {
         if (values != null) {
-            values.stream().forEach((A source) -> {
-                if(forDTO){
-                    wrappers.add(attribute.wrapForDTO(source, DtoType.MANAGED_CLASS));
-                }else{
-                    wrappers.add(attribute.wrapForChange(source, DtoType.MANAGED_CLASS));
-                }
-            });
+            for(A source : values){
+                wrappers.add(attribute.wrapForDTO(values, dtoType));
+            }
         }
         return wrappers;
     }
 
-//    /**
-//     * Wraps the {@code identifiables}' Ids.
-//     *
-//     * @param <TI>
-//     * @param <TC>
-//     * @param identifiables
-//     * @param wrappedIds
-//     * @return
-//     */
-//    public static <TI, TC extends Collection<TI>> TC wrapIds(Collection<DTO> identifiables, TC wrappedIds) {
-//        if (identifiables != null) {
-//            for (DTO dto : identifiables) {
-//                final AttributeES idAttribute = dto.getType().getId();
-//                wrappedIds.add((TI) idAttribute.wrap(dto.getIdValue()));
-//            }
-//        }
-//        return wrappedIds;
-//    }
+    public static <A extends Serializable, TC extends Collection<HasValue>> TC wrapForChange(AttributeES attribute, Collection<A> values, TC wrappers, DtoType dtoType) {
+        if (values != null) {
+            for(A source : values){
+                wrappers.add(attribute.wrapForChange(source,dtoType));
+            }
+        }
+        return wrappers;
+    }
 
     /**
      * Unwraps a collection of {@code valueWrappers}
