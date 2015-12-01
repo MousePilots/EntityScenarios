@@ -65,7 +65,7 @@ public class TypeGenerator {
     public SortedSet<TypeDescriptor> generate(Set<Class<?>> jpaMetaModelClasses) {
         final SortedSet<TypeDescriptor> retval = new TreeSet<>();
         addManagedTypeDescriptors(retval, jpaMetaModelClasses);
-
+        addBasicTypeDescriptors(retval, jpaMetaModelClasses);
         return retval;
     }
 
@@ -147,11 +147,14 @@ public class TypeGenerator {
                 }
                 final Class<?> metaModelFieldType = metaModelField.getType();
                 if (PluralAttribute.class.isAssignableFrom(metaModelFieldType)) {
-                    final Class javaFieldType = PLURAL_ATTRIBUTE_TO_COLLECTION_CLASS.get(metaModelFieldType);
-                    //TODO cast
+                    final Class javaFieldType = PLURAL_ATTRIBUTE_TO_COLLECTION_CLASS.get((Class<? extends PluralAttribute>) metaModelFieldType);
                     final TypeDescriptor td = TypeDescriptor.getInstance(javaFieldType);
                     if (td == null) {
-                        //TODO aanmaken TypeDescriptor
+                        basicTypeDescriptors.add(
+                                new BasicTypeDescriptor(javaFieldType.getSimpleName(), javaFieldType, ordinal.getAndIncrement())
+                        );
+
+
                     }
                 }
             }

@@ -2,16 +2,14 @@ package org.mousepilots.es.maven.model.generator.plugin.scratch;
 
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
-import javax.persistence.metamodel.StaticMetamodel;
 import org.mousepilots.es.model.MappedSuperclassTypeES;
-import org.mousepilots.es.model.impl.MappedSuperclassTypeESImpl;
 
 /**
  *
  * @author ernsteni
  */
-@Generated(value="EntityScenarios0.1", date="2015-11-13T13:08:55")
-@StaticMetamodel(Account.class)
+@Generated(value="EntityScenarios0.1", date="2015-11-13T13:08:55")//
+//@StaticMetamodel(Account.class)
 public class Account_ES {
 
     public static final SingularAttribute<Account, ? extends Person> person = null;
