@@ -18,8 +18,11 @@ import org.mousepilots.es.change.impl.IdentifiableSingularBasicAttributeUpdate;
 import org.mousepilots.es.change.impl.IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate;
 import org.mousepilots.es.change.impl.IdentifiableToEmbeddableSingularAssociationAttributeUpdate;
 import org.mousepilots.es.change.impl.IdentifiableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate;
+import org.mousepilots.es.change.impl.IdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
 import org.mousepilots.es.change.impl.IdentifiableToIdentifiableSingularAssociationAttributeUpdate;
-import org.mousepilots.es.change.impl.JavaUtilMapAttributeUpdate;
+import org.mousepilots.es.change.impl.IdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.change.impl.NonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.change.impl.NonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
 
 /**
  *
@@ -33,20 +36,6 @@ public interface ChangeVisitor {
 
     void visit(EmbeddableJavaUtilCollectionBasicAttributeUpdate update);
 
-    void visit(IdentifiableJavaUtilCollectionBasicAttributeUpdate update);
-
-    void visit(IdentifiableSingularBasicAttributeUpdate update);
-
-    void visit(IdentifiableToEmbeddableSingularAssociationAttributeUpdate update);
-
-    void visit(IdentifiableToIdentifiableSingularAssociationAttributeUpdate update);
-
-    void visit(EmbeddableSingularBasicAttributeUpdate update);
-
-    void visit(IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate update);
-
-    void visit(IdentifiableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate update);
-
     void visit(EmbeddableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate update);
 
     void visit(EmbeddableToEmbeddableSingularAssociationAttributeUpdate update);
@@ -55,5 +44,25 @@ public interface ChangeVisitor {
 
     void visit(EmbeddableToIdentifiableSingularAssociationAttributeUpdate update);
 
-    void visit(JavaUtilMapAttributeUpdate update);
+    void visit(EmbeddableSingularBasicAttributeUpdate update);
+
+    void visit(IdentifiableJavaUtilCollectionBasicAttributeUpdate update);
+
+    void visit(IdentifiableSingularBasicAttributeUpdate update);
+
+    void visit(IdentifiableToEmbeddableSingularAssociationAttributeUpdate update);
+
+    void visit(IdentifiableToIdentifiableSingularAssociationAttributeUpdate update);
+
+    void visit(IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate update);
+
+    void visit(IdentifiableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate update);
+
+    void visit(IdentifiableToIdentifiableJavaUtilMapAttributeUpdate update);
+
+    void visit(IdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate update);
+
+    void visit(NonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate update);
+
+    void visit(NonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate update);
 }

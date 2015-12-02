@@ -23,7 +23,7 @@ import org.mousepilots.es.util.WrapperUtils;
  * @param <K> Key type
  * @param <V> Value type
  */
-public class JavaUtilMapAttributeUpdate<I extends Serializable, VE extends Serializable, K, V> extends AbstractIdentifiableUpdate<I, VE> implements HasAdditions<SimpleEntry<K, V>>, HasRemovals<SimpleEntry<K, V>> {
+public abstract class JavaUtilMapAttributeUpdate<I extends Serializable, VE extends Serializable, K, V> extends AbstractIdentifiableUpdate<I, VE> implements HasAdditions<SimpleEntry<K, V>>, HasRemovals<SimpleEntry<K, V>> {
 
     private ArrayList<HasValue> additions;
     private ArrayList<HasValue> removals;
@@ -45,11 +45,6 @@ public class JavaUtilMapAttributeUpdate<I extends Serializable, VE extends Seria
         super(attribute, id, version);
         WrapperUtils.wrapForChange(attribute, additions, this.additions, dtoType);
         WrapperUtils.wrapForChange(attribute, removals, this.removals, dtoType);
-    }
-
-    @Override
-    public void accept(ChangeVisitor changeHandler) {
-        changeHandler.visit(this);
     }
 
     @Override
