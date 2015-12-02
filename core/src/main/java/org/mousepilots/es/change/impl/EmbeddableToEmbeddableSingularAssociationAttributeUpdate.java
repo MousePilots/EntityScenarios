@@ -3,17 +3,19 @@ package org.mousepilots.es.change.impl;
 import java.io.Serializable;
 import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.model.AttributeES;
-import org.mousepilots.es.model.DTO;
 
 /**
  * @author Roy Cleven
+ * @param <C>
+ * @param <U>
+ * @param <A>
  */
-public final class EmbeddableToEmbeddableSingularAssociationAttributeUpdate<A extends Serializable> extends EmbeddableSingularAssociationAttributeUpdate<A> {
+public final class EmbeddableToEmbeddableSingularAssociationAttributeUpdate<C, U, A extends Serializable> extends EmbeddableSingularAssociationAttributeUpdate<C, U, A> {
 
     public EmbeddableToEmbeddableSingularAssociationAttributeUpdate() {
     }
 
-    public EmbeddableToEmbeddableSingularAssociationAttributeUpdate(DTO container, AttributeES containerAttribute, DTO updated, AttributeES updatedAttribute, A oldValue, A newValue) {
+    public EmbeddableToEmbeddableSingularAssociationAttributeUpdate(C container, AttributeES containerAttribute, U updated, AttributeES updatedAttribute, A oldValue, A newValue) {
         super(container, containerAttribute, updated, updatedAttribute, oldValue, newValue);
     }
 

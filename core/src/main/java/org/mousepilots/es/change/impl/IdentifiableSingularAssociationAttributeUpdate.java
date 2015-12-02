@@ -10,6 +10,9 @@ import org.mousepilots.es.model.HasValue;
 
 /**
  * @author geenenju
+ * @param <I>
+ * @param <V>
+ * @param <A>
  */
 public abstract class IdentifiableSingularAssociationAttributeUpdate<I extends Serializable, V extends Serializable, A extends Serializable> extends AbstractIdentifiableUpdate<I, V>
 {

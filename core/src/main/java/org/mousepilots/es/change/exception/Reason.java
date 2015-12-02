@@ -11,5 +11,5 @@ package org.mousepilots.es.change.exception;
  */
 public enum Reason {
     
-    ENTITY_EXISTS, ENTITY_NOT_FOUND, VERSION_MISMATCH
+    ENTITY_EXISTS, ENTITY_NOT_FOUND, VERSION_MISMATCH, DUPLICATE_VALUE, NO_SUCH_VALUE
 }

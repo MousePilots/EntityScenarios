@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.change.HasAdditions;
 import org.mousepilots.es.change.HasRemovals;
 import org.mousepilots.es.change.abst.AbstractIdentifiableUpdate;
@@ -15,12 +14,15 @@ import org.mousepilots.es.util.WrapperUtils;
 
 /**
  * @author geenenju
+ * @param <I>
+ * @param <V>
+ * @param <A>
  */
 public abstract class IdentifiableJavaUtilCollectionAssociationAttributeUpdate<I extends Serializable, V extends Serializable, A extends Serializable> extends AbstractIdentifiableUpdate<I, V> implements HasAdditions<A>,
         HasRemovals<A> {
 
-    private ArrayList<HasValue> additions;
-    private ArrayList<HasValue> removals;
+    private final ArrayList<HasValue> additions = new ArrayList<>();
+    private final ArrayList<HasValue> removals = new ArrayList<>();
 
     protected IdentifiableJavaUtilCollectionAssociationAttributeUpdate() {
         super();

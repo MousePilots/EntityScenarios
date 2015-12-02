@@ -8,6 +8,9 @@ import org.mousepilots.es.model.DtoType;
 
 /**
  * @author Roy Cleven
+ * @param <I>
+ * @param <V>
+ * @param <A>
  */
 public final class IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate<I extends Serializable, V extends Serializable, A extends Serializable> extends IdentifiableJavaUtilCollectionAssociationAttributeUpdate<I, V, A> {
 

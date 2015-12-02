@@ -6,6 +6,9 @@ import org.mousepilots.es.model.AttributeES;
 
 /**
  * @author Roy Cleven
+ * @param <I>
+ * @param <V>
+ * @param <A>
  */
 public final class IdentifiableToEmbeddableSingularAssociationAttributeUpdate<I extends Serializable, V extends Serializable, A extends Serializable> extends IdentifiableSingularAssociationAttributeUpdate<I, V, A> {
 
@@ -19,7 +22,5 @@ public final class IdentifiableToEmbeddableSingularAssociationAttributeUpdate<I 
     @Override
     public void accept(ChangeVisitor changeHandler) {
         changeHandler.visit(this);
-    }
-
-    
+    }   
 }
