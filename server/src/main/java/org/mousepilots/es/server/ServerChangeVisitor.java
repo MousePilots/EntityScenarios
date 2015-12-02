@@ -5,14 +5,16 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import org.mousepilots.es.change.Change;
 import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.change.abst.AbstractIdentifiableVersionedChange;
+import org.mousepilots.es.change.abst.AbstractNonIdentifiableUpdate;
 import org.mousepilots.es.change.exception.IllegalChangeException;
 import org.mousepilots.es.change.exception.Reason;
 import org.mousepilots.es.change.impl.Create;
@@ -28,9 +30,13 @@ import org.mousepilots.es.change.impl.IdentifiableSingularBasicAttributeUpdate;
 import org.mousepilots.es.change.impl.IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate;
 import org.mousepilots.es.change.impl.IdentifiableToEmbeddableSingularAssociationAttributeUpdate;
 import org.mousepilots.es.change.impl.IdentifiableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate;
+import org.mousepilots.es.change.impl.IdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
 import org.mousepilots.es.change.impl.IdentifiableToIdentifiableSingularAssociationAttributeUpdate;
-import org.mousepilots.es.change.impl.JavaUtilMapAttributeUpdate;
+import org.mousepilots.es.change.impl.IdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.change.impl.NonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.change.impl.NonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
 import org.mousepilots.es.model.IdentifiableTypeES;
+import org.mousepilots.es.model.MapAttributeES;
 import org.mousepilots.es.model.MemberES;
 import org.mousepilots.es.model.MetaModelES;
 import org.mousepilots.es.model.SingularAttributeES;
@@ -107,6 +113,45 @@ public class ServerChangeVisitor implements ChangeVisitor {
         return instance;
     }
 
+    private Object getEmbeddable(AbstractNonIdentifiableUpdate update) throws IllegalChangeException {
+        //TODO, fix when container isn't embeddable.
+        final Object source = getInstance(update.getContainer().getClass(), update.getContainerId(), update);
+        final Object embeddable = update.getContainerAttribute().getJavaMember().get(source);
+        return embeddable;
+    }
+
+    private void updateList(final MemberES listMember, Object instance, Change change, List removals, List additions) throws IllegalChangeException {
+        final Collection list = listMember.get(instance);
+        for (Object removal : removals) {
+            if (!list.remove(removal)) {
+                throw new IllegalChangeException(change, Reason.NO_SUCH_VALUE);
+            }
+        }
+        for (Object addition : additions) {
+            if (!list.add(addition)) {
+                throw new IllegalChangeException(change, Reason.DUPLICATE_VALUE);
+            }
+        }
+        listMember.set(instance, list);
+    }
+
+    private void updateListEntity(final MemberES listMember, Object instance, Change change, List<Serializable> removals, List<Serializable> additions, IdentifiableTypeES targetEntity) throws IllegalChangeException {
+        final Collection list = listMember.get(instance);
+        for (Serializable removal : removals) {
+            final Object target = getInstance(change, targetEntity, removal);
+            if (!list.remove(target)) {
+                throw new IllegalChangeException(change, Reason.NO_SUCH_VALUE);
+            }
+        }
+        for (Serializable addition : additions) {
+            final Object target = getInstance(change, targetEntity, addition);
+            if (!list.add(target)) {
+                throw new IllegalChangeException(change, Reason.DUPLICATE_VALUE);
+            }
+        }
+        listMember.set(instance, list);
+    }
+
     @Override
     public void visit(Create create) throws IllegalChangeException {
         final IdentifiableTypeES type = (IdentifiableTypeES) create.getType();
@@ -119,7 +164,6 @@ public class ServerChangeVisitor implements ChangeVisitor {
             final Map<Serializable, Serializable> clientIdToGeneratedId
                     = Maps.getOrCreate(typeToClientIdToGeneratedId, type, HashMap::new);
             clientIdToGeneratedId.put(create.getId(), idMember.get(instance));
-
         } else {
             try {
                 idMember.set(instance, create.getId());
@@ -128,7 +172,6 @@ public class ServerChangeVisitor implements ChangeVisitor {
                 throw new IllegalChangeException(create, Reason.ENTITY_EXISTS);
             }
         }
-
     }
 
     @Override
@@ -142,10 +185,7 @@ public class ServerChangeVisitor implements ChangeVisitor {
     public void visit(IdentifiableJavaUtilCollectionBasicAttributeUpdate update) {
         final Object instance = getIdentifiableSource(update);
         final MemberES listMember = update.getAttribute().getJavaMember();
-        final Collection list = listMember.get(instance);
-        list.removeAll(update.getRemovals());
-        list.addAll(update.getAdditions());
-        listMember.set(instance, list);
+        updateList(listMember, instance, update, update.getAdditions(), update.getRemovals());
     }
 
     @Override
@@ -155,33 +195,17 @@ public class ServerChangeVisitor implements ChangeVisitor {
     }
 
     @Override
-    public void visit(JavaUtilMapAttributeUpdate update) {
-        List<SimpleEntry> additions = update.getAdditions();
-        List<SimpleEntry> removals = update.getRemovals();
-        if (!additions.isEmpty()) {
-            ListIterator<SimpleEntry> iterator = additions.listIterator();
-            do {
-                SimpleEntry entry = iterator.next();
-            } while (iterator.hasNext());
-        }
-        if (!removals.isEmpty()) {
-            ListIterator<SimpleEntry> iterator = removals.listIterator();
-            do {
-                SimpleEntry entry = iterator.next();
-            } while (iterator.hasNext());
-        }
-    }
-
-    @Override
-    public void visit(EmbeddableJavaUtilCollectionBasicAttributeUpdate update) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void visit(EmbeddableJavaUtilCollectionBasicAttributeUpdate update) throws IllegalChangeException {
+        Object embeddable = getEmbeddable(update);
+        final MemberES listMember = update.getUpdatedAttribute().getJavaMember();
+        updateList(listMember, embeddable, update, update.getAdditions(), update.getRemovals());
     }
 
     @Override
     public void visit(IdentifiableToIdentifiableSingularAssociationAttributeUpdate update) {
         final Object source = getIdentifiableSource(update);
         final IdentifiableTypeES targetEntity = (IdentifiableTypeES) metamodel.managedType(update.getAttribute().getJavaType());
-        final Object target = getIdentifiable(update, targetEntity, update.getNewValue());
+        final Object target = getInstance(update, targetEntity, update.getNewValue());
         update.getAttribute().getJavaMember().set(source, target);
     }
 
@@ -193,12 +217,15 @@ public class ServerChangeVisitor implements ChangeVisitor {
 
     @Override
     public void visit(EmbeddableSingularBasicAttributeUpdate update) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Object embeddable = getEmbeddable(update);
+        update.getUpdatedAttribute().getJavaMember().set(embeddable, update.getNewValue());
     }
 
     @Override
     public void visit(IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate update) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final Object instance = getIdentifiableSource(update);
+        final MemberES listMember = update.getAttribute().getJavaMember();
+        updateList(listMember, instance, update, update.getAdditions(), update.getRemovals());
     }
 
     @Override
@@ -206,36 +233,141 @@ public class ServerChangeVisitor implements ChangeVisitor {
         final Object source = getIdentifiableSource(update);
         final IdentifiableTypeES targetEntity = (IdentifiableTypeES) metamodel.managedType(update.getAttribute().getJavaType());
         final MemberES listMember = update.getAttribute().getJavaMember();
-        final Collection list = listMember.get(source);
-        for (Serializable removal : (List<Serializable>) update.getRemovals()) {
-            final Object target = getIdentifiable(update, targetEntity, removal);
-            list.remove(target);
-        }
-        for (Serializable addition : (List<Serializable>) update.getAdditions()) {
-            final Object target = getIdentifiable(update, targetEntity, addition);
-            list.add(target);
-        }
-        listMember.set(source, list);
+        updateListEntity(listMember, source, update, update.getAdditions(), update.getRemovals(), targetEntity);
     }
 
     @Override
     public void visit(EmbeddableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate update) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Object embeddable = getEmbeddable(update);
+        final MemberES listMember = update.getUpdatedAttribute().getJavaMember();
+        updateList(listMember, embeddable, update, update.getAdditions(), update.getRemovals());
     }
 
     @Override
     public void visit(EmbeddableToEmbeddableSingularAssociationAttributeUpdate update) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Object embeddable = getEmbeddable(update);
+        update.getUpdatedAttribute().getJavaMember().set(embeddable, update.getNewValue());
     }
 
     @Override
     public void visit(EmbeddableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate update) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Object embeddable = getEmbeddable(update);
+        final IdentifiableTypeES targetEntity = (IdentifiableTypeES) metamodel.managedType(update.getUpdatedAttribute().getJavaType());
+        final MemberES listMember = update.getUpdatedAttribute().getJavaMember();
+        updateListEntity(listMember, embeddable, update, update.getAdditions(), update.getRemovals(), targetEntity);
     }
 
     @Override
     public void visit(EmbeddableToIdentifiableSingularAssociationAttributeUpdate update) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Object embeddable = getEmbeddable(update);
+        final IdentifiableTypeES targetEntity = (IdentifiableTypeES) metamodel.managedType(update.getUpdatedAttribute().getJavaType());
+        final Object target = getInstance(update, targetEntity, update.getNewValue());
+        update.getUpdatedAttribute().getJavaMember().set(embeddable, target);
     }
 
+    @Override
+    public void visit(NonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate update) throws IllegalChangeException {
+        final Object source = getIdentifiableSource(update);
+        final MemberES mapMember = update.getAttribute().getJavaMember();
+        final Map map = mapMember.get(source);
+
+        final MapAttributeES mapAttribute = (MapAttributeES) update.getAttribute();
+        final IdentifiableTypeES targetEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getElementType().getJavaType());
+        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
+            if (map.containsKey(removal.getKey())) {
+                final Object value = getInstance(update, targetEntity, removal.getValue());
+                if (!map.remove(removal.getKey(), value)) {
+                    throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
+                }
+            } else {
+                throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
+            }
+        }
+        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
+            final Object value = getInstance(update, targetEntity, addition.getValue());
+            if (map.putIfAbsent(addition.getKey(), value) != null) {
+                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+            }
+        }
+        mapMember.set(source, map);
+    }
+
+    @Override
+    public void visit(NonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate update) throws IllegalChangeException {
+        final Object source = getIdentifiableSource(update);
+        final MemberES mapMember = update.getAttribute().getJavaMember();
+        final Map map = mapMember.get(source);
+        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
+            if (map.containsKey(removal.getKey())) {
+                if (!map.remove(removal.getKey(), removal.getValue())) {
+                    throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
+                }
+            } else {
+                throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
+            }
+        }
+        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
+            if (map.putIfAbsent(addition.getKey(), addition.getValue()) != null) {
+                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+            }
+        }
+        mapMember.set(source, map);
+    }
+
+    @Override
+    public void visit(IdentifiableToIdentifiableJavaUtilMapAttributeUpdate update) throws IllegalChangeException {
+        final Object source = getIdentifiableSource(update);
+        final MemberES mapMember = update.getAttribute().getJavaMember();
+        final Map map = mapMember.get(source);
+
+        final MapAttributeES mapAttribute = (MapAttributeES) update.getAttribute();
+        final IdentifiableTypeES valueEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getElementType().getJavaType());
+        final IdentifiableTypeES keyEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getKeyJavaType());
+        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
+            final Object key = getInstance(update, keyEntity, removal.getKey());
+            if (map.containsKey(key)) {
+                final Object value = getInstance(update, valueEntity, removal.getValue());
+                if (!map.remove(key, value)) {
+                    throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
+                }
+            } else {
+                throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
+            }
+        }
+        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
+            final Object key = getInstance(update, keyEntity, addition.getKey());
+            final Object value = getInstance(update, valueEntity, addition.getValue());
+            if (map.putIfAbsent(key, value) != null) {
+                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+            }
+        }
+        mapMember.set(source, map);
+    }
+
+    @Override
+    public void visit(IdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate update) {
+        final Object source = getIdentifiableSource(update);
+        final MemberES mapMember = update.getAttribute().getJavaMember();
+        final Map map = mapMember.get(source);
+
+        final MapAttributeES mapAttribute = (MapAttributeES) update.getAttribute();
+        final IdentifiableTypeES keyEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getKeyJavaType());
+        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
+            final Object key = getInstance(update, keyEntity, removal.getKey());
+            if (map.containsKey(key)) {
+                if (!map.remove(key, removal.getValue())) {
+                    throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
+                }
+            } else {
+                throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
+            }
+        }
+        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
+            final Object key = getInstance(update, keyEntity, addition.getKey());
+            if (map.putIfAbsent(key, addition.getValue()) != null) {
+                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+            }
+        }
+        mapMember.set(source, map);
+    }
 }
