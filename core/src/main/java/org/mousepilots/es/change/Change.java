@@ -40,5 +40,9 @@ public interface Change extends Serializable
     */
    boolean is(CRUD crud);
    
+   /**
+    * Gets the {@link DtoType} which is used for the change, which determines the type of values.
+    * @return the type of values which are eing used in {@code this}
+    */
    DtoType getDtoType();
 }
