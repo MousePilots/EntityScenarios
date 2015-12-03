@@ -30,11 +30,15 @@ import org.mousepilots.es.change.impl.IdentifiableSingularBasicAttributeUpdate;
 import org.mousepilots.es.change.impl.IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate;
 import org.mousepilots.es.change.impl.IdentifiableToEmbeddableSingularAssociationAttributeUpdate;
 import org.mousepilots.es.change.impl.IdentifiableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate;
-import org.mousepilots.es.change.impl.IdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.change.impl.IdentifiableToIdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
 import org.mousepilots.es.change.impl.IdentifiableToIdentifiableSingularAssociationAttributeUpdate;
-import org.mousepilots.es.change.impl.IdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
-import org.mousepilots.es.change.impl.NonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
-import org.mousepilots.es.change.impl.NonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.change.impl.IdentifiableToIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.change.impl.IdentifiableToNonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.change.impl.IdentifiableToNonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.change.impl.EmbeddableToIdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.change.impl.EmbeddableToIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.change.impl.EmbeddableToNonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.change.impl.EmbeddableToNonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
 import org.mousepilots.es.model.IdentifiableTypeES;
 import org.mousepilots.es.model.MapAttributeES;
 import org.mousepilots.es.model.MemberES;
@@ -266,12 +270,12 @@ public class ServerChangeVisitor implements ChangeVisitor {
     }
 
     @Override
-    public void visit(NonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate update) throws IllegalChangeException {
+    public void visit(IdentifiableToNonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate update) throws IllegalChangeException {
         final Object source = getIdentifiableSource(update);
-        final MemberES mapMember = update.getAttribute().getJavaMember();
+        final MapAttributeES mapAttribute = (MapAttributeES) update.getAttribute();
+        final MemberES mapMember = mapAttribute.getJavaMember();
         final Map map = mapMember.get(source);
 
-        final MapAttributeES mapAttribute = (MapAttributeES) update.getAttribute();
         final IdentifiableTypeES targetEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getElementType().getJavaType());
         for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
             if (map.containsKey(removal.getKey())) {
@@ -293,7 +297,7 @@ public class ServerChangeVisitor implements ChangeVisitor {
     }
 
     @Override
-    public void visit(NonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate update) throws IllegalChangeException {
+    public void visit(IdentifiableToNonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate update) throws IllegalChangeException {
         final Object source = getIdentifiableSource(update);
         final MemberES mapMember = update.getAttribute().getJavaMember();
         final Map map = mapMember.get(source);
@@ -315,12 +319,12 @@ public class ServerChangeVisitor implements ChangeVisitor {
     }
 
     @Override
-    public void visit(IdentifiableToIdentifiableJavaUtilMapAttributeUpdate update) throws IllegalChangeException {
+    public void visit(IdentifiableToIdentifiableToIdentifiableJavaUtilMapAttributeUpdate update) throws IllegalChangeException {
         final Object source = getIdentifiableSource(update);
-        final MemberES mapMember = update.getAttribute().getJavaMember();
+        final MapAttributeES mapAttribute = (MapAttributeES) update.getAttribute();
+        final MemberES mapMember = mapAttribute.getJavaMember();
         final Map map = mapMember.get(source);
 
-        final MapAttributeES mapAttribute = (MapAttributeES) update.getAttribute();
         final IdentifiableTypeES valueEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getElementType().getJavaType());
         final IdentifiableTypeES keyEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getKeyJavaType());
         for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
@@ -345,12 +349,12 @@ public class ServerChangeVisitor implements ChangeVisitor {
     }
 
     @Override
-    public void visit(IdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate update) {
+    public void visit(IdentifiableToIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate update) {
         final Object source = getIdentifiableSource(update);
-        final MemberES mapMember = update.getAttribute().getJavaMember();
+        final MapAttributeES mapAttribute = (MapAttributeES) update.getAttribute();
+        final MemberES mapMember = mapAttribute.getJavaMember();
         final Map map = mapMember.get(source);
 
-        final MapAttributeES mapAttribute = (MapAttributeES) update.getAttribute();
         final IdentifiableTypeES keyEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getKeyJavaType());
         for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
             final Object key = getInstance(update, keyEntity, removal.getKey());
@@ -365,6 +369,112 @@ public class ServerChangeVisitor implements ChangeVisitor {
         for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
             final Object key = getInstance(update, keyEntity, addition.getKey());
             if (map.putIfAbsent(key, addition.getValue()) != null) {
+                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+            }
+        }
+        mapMember.set(source, map);
+    }
+
+    @Override
+    public void visit(EmbeddableToIdentifiableToIdentifiableJavaUtilMapAttributeUpdate update) {
+        final Object source = getEmbeddable(update);
+        final MapAttributeES mapAttribute = (MapAttributeES) update.getUpdatedAttribute();
+        final MemberES mapMember = mapAttribute.getJavaMember();
+        final Map map = mapMember.get(source);
+
+        final IdentifiableTypeES valueEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getElementType().getJavaType());
+        final IdentifiableTypeES keyEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getKeyJavaType());
+        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
+            final Object key = getInstance(update, keyEntity, removal.getKey());
+            if (map.containsKey(key)) {
+                final Object value = getInstance(update, valueEntity, removal.getValue());
+                if (!map.remove(key, value)) {
+                    throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
+                }
+            } else {
+                throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
+            }
+        }
+        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
+            final Object key = getInstance(update, keyEntity, addition.getKey());
+            final Object value = getInstance(update, valueEntity, addition.getValue());
+            if (map.putIfAbsent(key, value) != null) {
+                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+            }
+        }
+        mapMember.set(source, map);
+    }
+
+    @Override
+    public void visit(EmbeddableToIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate update) {
+        final Object source = getEmbeddable(update);
+        final MapAttributeES mapAttribute = (MapAttributeES) update.getUpdatedAttribute();
+        final MemberES mapMember = mapAttribute.getJavaMember();
+        final Map map = mapMember.get(source);
+
+        final IdentifiableTypeES keyEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getKeyJavaType());
+        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
+            final Object key = getInstance(update, keyEntity, removal.getKey());
+            if (map.containsKey(key)) {
+                if (!map.remove(key, removal.getValue())) {
+                    throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
+                }
+            } else {
+                throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
+            }
+        }
+        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
+            final Object key = getInstance(update, keyEntity, addition.getKey());
+            if (map.putIfAbsent(key, addition.getValue()) != null) {
+                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+            }
+        }
+        mapMember.set(source, map);
+    }
+
+    @Override
+    public void visit(EmbeddableToNonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate update) {
+        final Object source = getEmbeddable(update);
+        final MapAttributeES mapAttribute = (MapAttributeES) update.getUpdatedAttribute();
+        final MemberES mapMember = mapAttribute.getJavaMember();
+        final Map map = mapMember.get(source);
+
+        final IdentifiableTypeES targetEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getElementType().getJavaType());
+        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
+            if (map.containsKey(removal.getKey())) {
+                final Object value = getInstance(update, targetEntity, removal.getValue());
+                if (!map.remove(removal.getKey(), value)) {
+                    throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
+                }
+            } else {
+                throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
+            }
+        }
+        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
+            final Object value = getInstance(update, targetEntity, addition.getValue());
+            if (map.putIfAbsent(addition.getKey(), value) != null) {
+                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+            }
+        }
+        mapMember.set(source, map);
+    }
+
+    @Override
+    public void visit(EmbeddableToNonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate update) {
+        final Object source = getEmbeddable(update);
+        final MemberES mapMember = update.getUpdatedAttribute().getJavaMember();
+        final Map map = mapMember.get(source);
+        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
+            if (map.containsKey(removal.getKey())) {
+                if (!map.remove(removal.getKey(), removal.getValue())) {
+                    throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
+                }
+            } else {
+                throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
+            }
+        }
+        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
+            if (map.putIfAbsent(addition.getKey(), addition.getValue()) != null) {
                 throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
             }
         }
