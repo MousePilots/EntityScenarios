@@ -6,6 +6,7 @@ import org.mousepilots.es.change.abst.AbstractIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
+import org.mousepilots.es.model.IdentifiableTypeES;
 
 /**
  * @author Jurjen van Geenen
@@ -25,12 +26,11 @@ public final class IdentifiableSingularBasicAttributeUpdate<I extends Serializab
       super();
    }
 
-   public IdentifiableSingularBasicAttributeUpdate(AttributeES attribute, I id, V version, A oldValue, A newValue)
-   {
-      super(attribute, id, version);
-      this.oldValue = attribute.wrapForChange(oldValue, DtoType.MANAGED_CLASS);
-      this.newValue = attribute.wrapForChange(newValue, DtoType.MANAGED_CLASS);
-   }
+    public IdentifiableSingularBasicAttributeUpdate(AttributeES attribute, V version, HasValue id, IdentifiableTypeES type, DtoType dtoType) {
+        super(attribute, version, id, type, dtoType);
+      this.oldValue = attribute.wrapForChange(oldValue, dtoType);
+      this.newValue = attribute.wrapForChange(newValue, dtoType);
+    }
 
    public A getOldValue()
    {

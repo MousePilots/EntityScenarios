@@ -11,7 +11,7 @@ import org.mousepilots.es.model.HasValue;
  * @param <K> the type that represents the key.
  * @param <V> The type that represents the value.
  */
-public class HasValueEntry<K,V> implements Serializable{
+public class HasValueEntry<K ,V> implements Serializable{
 
      private HasValue<K> key;
      private HasValue<V> value;

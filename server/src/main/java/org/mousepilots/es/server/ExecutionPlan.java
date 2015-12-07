@@ -4,19 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import org.mousepilots.es.change.Change;
 
-public class ExecutionPlan
-{
-   private final List<Change> changes;
+public class ExecutionPlan {
 
-   ExecutionPlan(List<Change> changes)
-   {
-      this.changes = new ArrayList<>(changes);
-   }
+    private final List<Change> changes;
 
-   public void execute(ServerChangeVisitor executor)
-   {
-       changes.stream().forEach((change) -> {
-           change.accept(executor);
-       });
-   }
+    ExecutionPlan(List<Change> changes) {
+        this.changes = new ArrayList<>(changes);
+    }
+
+    public void execute(ServerChangeVisitor executor) {
+        for (Change change : changes) {
+            change.accept(executor);
+        }
+    }
 }

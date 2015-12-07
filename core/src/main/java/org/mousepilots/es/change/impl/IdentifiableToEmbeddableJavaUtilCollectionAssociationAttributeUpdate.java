@@ -5,17 +5,22 @@ import java.util.Collection;
 import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.DtoType;
+import org.mousepilots.es.model.HasValue;
+import org.mousepilots.es.model.IdentifiableTypeES;
 
 /**
  * @author Roy Cleven
+ * @param <I>
+ * @param <V>
+ * @param <A>
  */
 public final class IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate<I extends Serializable, V extends Serializable, A extends Serializable> extends IdentifiableJavaUtilCollectionAssociationAttributeUpdate<I, V, A> {
 
     public IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate() {
     }
 
-    public IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate(AttributeES attribute, I id, V version, Collection<A> additions, Collection<A> removals, DtoType dtoType) {
-        super(attribute, id, version, additions, removals, dtoType);
+    public IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate(AttributeES attribute, V version, HasValue id, IdentifiableTypeES type, DtoType dtoType) {
+        super(attribute, version, id, type, dtoType);
     }
 
     @Override

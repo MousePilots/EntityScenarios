@@ -13,6 +13,7 @@ import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.IdentifiableTypeES;
 import org.mousepilots.es.model.HasValue;
+import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Jurjen van Geenen
@@ -27,8 +28,8 @@ public abstract class AbstractIdentifiableChange<I extends Serializable> extends
         super();
     }
 
-    public AbstractIdentifiableChange(IdentifiableTypeES type, I id) {
-        super(type);
+    public AbstractIdentifiableChange(HasValue id, IdentifiableTypeES type, DtoType dtoType) {
+        super(type, dtoType);
         AttributeES idAttribute = type.getId(type.getIdType().getJavaType());
         if (idAttribute == null) {
             throw new IllegalArgumentException(type + " is not identifiable");
@@ -36,8 +37,9 @@ public abstract class AbstractIdentifiableChange<I extends Serializable> extends
         if (id == null) {
             throw new IllegalArgumentException("id is a mandatory parameter");
         }
-        this.id = idAttribute.wrapForChange(id,DtoType.MANAGED_CLASS);
+        this.id = idAttribute.wrapForChange(id,dtoType);
     }
+    
 
     @Override
     public final I getId() {

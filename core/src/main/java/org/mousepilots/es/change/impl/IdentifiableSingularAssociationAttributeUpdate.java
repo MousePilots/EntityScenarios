@@ -6,10 +6,14 @@ import org.mousepilots.es.change.abst.AbstractIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
+import org.mousepilots.es.model.IdentifiableTypeES;
 
 
 /**
  * @author geenenju
+ * @param <I>
+ * @param <V>
+ * @param <A>
  */
 public abstract class IdentifiableSingularAssociationAttributeUpdate<I extends Serializable, V extends Serializable, A extends Serializable> extends AbstractIdentifiableUpdate<I, V>
 {
@@ -22,12 +26,11 @@ public abstract class IdentifiableSingularAssociationAttributeUpdate<I extends S
       super();
    }
 
-   public IdentifiableSingularAssociationAttributeUpdate(AttributeES attribute, I id, V version, A oldValue, A newValue)
-   {
-      super(attribute, id, version);
-      this.oldValue = attribute.wrapForChange(oldValue, DtoType.MANAGED_CLASS);
-      this.newValue = attribute.wrapForChange(newValue, DtoType.MANAGED_CLASS);
-   }
+    public IdentifiableSingularAssociationAttributeUpdate(AttributeES attribute, V version, HasValue id, IdentifiableTypeES type, DtoType dtoType) {
+        super(attribute, version, id, type, dtoType);
+      this.oldValue = attribute.wrapForChange(oldValue, dtoType);
+      this.newValue = attribute.wrapForChange(newValue, dtoType);
+    }
 
 
    public A getOldValue()
