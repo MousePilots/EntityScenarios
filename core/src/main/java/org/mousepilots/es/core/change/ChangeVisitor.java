@@ -199,4 +199,10 @@ public interface ChangeVisitor {
      * @param update 
      */
     void visit(EmbeddableToNonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate update);
+    
+    /**
+     * Gets an {@link ExecutionSummary} based on all the changes which were visited.
+     * @return a filled {@link ExecutionSummary}
+     */
+    ExecutionSummary getExecutionSummary();
 }
