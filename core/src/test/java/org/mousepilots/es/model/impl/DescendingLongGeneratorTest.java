@@ -1,5 +1,6 @@
 package org.mousepilots.es.model.impl;
 
+import org.mousepilots.es.core.model.impl.DescendingLongGenerator;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;

@@ -19,13 +19,13 @@ import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.MapAttribute;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SetAttribute;
-import org.mousepilots.es.model.CollectionAttributeES;
-import org.mousepilots.es.model.ListAttributeES;
-import org.mousepilots.es.model.MapAttributeES;
-import org.mousepilots.es.model.PluralAttributeES;
-import org.mousepilots.es.model.SetAttributeES;
-import org.mousepilots.es.model.TypeES;
-import org.mousepilots.es.model.impl.TypeESImpl;
+import org.mousepilots.es.core.model.CollectionAttributeES;
+import org.mousepilots.es.core.model.ListAttributeES;
+import org.mousepilots.es.core.model.MapAttributeES;
+import org.mousepilots.es.core.model.PluralAttributeES;
+import org.mousepilots.es.core.model.SetAttributeES;
+import org.mousepilots.es.core.model.TypeES;
+import org.mousepilots.es.core.model.impl.TypeESImpl;
 
 /**
  * Utility class that provides a lot of methods to help with reflection tasks.
@@ -294,6 +294,8 @@ public class ReflectionUtils
      * {@code false} if it's not.
      */
     public static boolean isInstantiable(Class<?> clazz) {
+        //TODO check if constructor is public or protected.
+        //TODO check if class is concrete.
         return Stream.of(clazz.getConstructors())
                 .anyMatch((c) -> c.getParameterCount() == 0);
     }
