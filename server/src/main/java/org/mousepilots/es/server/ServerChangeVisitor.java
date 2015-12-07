@@ -1,51 +1,54 @@
 package org.mousepilots.es.server;
 
+import org.mousepilots.es.core.change.ExecutionSummary;
 import java.io.Serializable;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import org.mousepilots.es.change.Change;
-import org.mousepilots.es.change.ChangeVisitor;
-import org.mousepilots.es.change.abst.AbstractIdentifiableVersionedChange;
-import org.mousepilots.es.change.abst.AbstractNonIdentifiableUpdate;
-import org.mousepilots.es.change.exception.IllegalChangeException;
-import org.mousepilots.es.change.exception.Reason;
-import org.mousepilots.es.change.impl.Create;
-import org.mousepilots.es.change.impl.Delete;
-import org.mousepilots.es.change.impl.EmbeddableJavaUtilCollectionBasicAttributeUpdate;
-import org.mousepilots.es.change.impl.EmbeddableSingularBasicAttributeUpdate;
-import org.mousepilots.es.change.impl.EmbeddableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate;
-import org.mousepilots.es.change.impl.EmbeddableToEmbeddableSingularAssociationAttributeUpdate;
-import org.mousepilots.es.change.impl.EmbeddableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate;
-import org.mousepilots.es.change.impl.EmbeddableToIdentifiableSingularAssociationAttributeUpdate;
-import org.mousepilots.es.change.impl.IdentifiableJavaUtilCollectionBasicAttributeUpdate;
-import org.mousepilots.es.change.impl.IdentifiableSingularBasicAttributeUpdate;
-import org.mousepilots.es.change.impl.IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate;
-import org.mousepilots.es.change.impl.IdentifiableToEmbeddableSingularAssociationAttributeUpdate;
-import org.mousepilots.es.change.impl.IdentifiableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate;
-import org.mousepilots.es.change.impl.IdentifiableToIdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
-import org.mousepilots.es.change.impl.IdentifiableToIdentifiableSingularAssociationAttributeUpdate;
-import org.mousepilots.es.change.impl.IdentifiableToIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
-import org.mousepilots.es.change.impl.IdentifiableToNonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
-import org.mousepilots.es.change.impl.IdentifiableToNonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
-import org.mousepilots.es.change.impl.EmbeddableToIdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
-import org.mousepilots.es.change.impl.EmbeddableToIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
-import org.mousepilots.es.change.impl.EmbeddableToNonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
-import org.mousepilots.es.change.impl.EmbeddableToNonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
-import org.mousepilots.es.model.IdentifiableTypeES;
-import org.mousepilots.es.model.MapAttributeES;
-import org.mousepilots.es.model.MemberES;
-import org.mousepilots.es.model.MetaModelES;
-import org.mousepilots.es.model.SingularAttributeES;
-import org.mousepilots.es.model.TypeES;
-import org.mousepilots.es.util.Maps;
+import org.mousepilots.es.core.change.CRUD;
+import org.mousepilots.es.core.change.Change;
+import org.mousepilots.es.core.change.ChangeVisitor;
+import org.mousepilots.es.core.change.abst.AbstractIdentifiableVersionedChange;
+import org.mousepilots.es.core.change.abst.AbstractNonIdentifiableUpdate;
+import org.mousepilots.es.core.change.exception.IllegalChangeException;
+import org.mousepilots.es.core.change.exception.Reason;
+import org.mousepilots.es.core.change.impl.Create;
+import org.mousepilots.es.core.change.impl.Delete;
+import org.mousepilots.es.core.change.impl.EmbeddableAndAttribute;
+import org.mousepilots.es.core.change.impl.EmbeddableJavaUtilCollectionBasicAttributeUpdate;
+import org.mousepilots.es.core.change.impl.EmbeddableSingularBasicAttributeUpdate;
+import org.mousepilots.es.core.change.impl.EmbeddableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate;
+import org.mousepilots.es.core.change.impl.EmbeddableToEmbeddableSingularAssociationAttributeUpdate;
+import org.mousepilots.es.core.change.impl.EmbeddableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate;
+import org.mousepilots.es.core.change.impl.EmbeddableToIdentifiableSingularAssociationAttributeUpdate;
+import org.mousepilots.es.core.change.impl.EmbeddableToIdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.core.change.impl.EmbeddableToIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.core.change.impl.EmbeddableToNonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.core.change.impl.EmbeddableToNonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.core.change.impl.IdentifiableJavaUtilCollectionBasicAttributeUpdate;
+import org.mousepilots.es.core.change.impl.IdentifiableSingularBasicAttributeUpdate;
+import org.mousepilots.es.core.change.impl.IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate;
+import org.mousepilots.es.core.change.impl.IdentifiableToEmbeddableSingularAssociationAttributeUpdate;
+import org.mousepilots.es.core.change.impl.IdentifiableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate;
+import org.mousepilots.es.core.change.impl.IdentifiableToIdentifiableSingularAssociationAttributeUpdate;
+import org.mousepilots.es.core.change.impl.IdentifiableToIdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.core.change.impl.IdentifiableToIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.core.change.impl.IdentifiableToNonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.core.change.impl.IdentifiableToNonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate;
+import org.mousepilots.es.core.model.AttributeES;
+import org.mousepilots.es.core.model.IdentifiableTypeES;
+import org.mousepilots.es.core.model.MapAttributeES;
+import org.mousepilots.es.core.model.MemberES;
+import org.mousepilots.es.core.model.MetaModelES;
+import org.mousepilots.es.core.model.SingularAttributeES;
+import org.mousepilots.es.core.model.TypeES;
+import org.mousepilots.es.core.model.impl.HasValueEntry;
+import org.mousepilots.es.core.util.Maps;
+
 
 /**
  * @author Roy Cleven
@@ -61,12 +64,23 @@ public class ServerChangeVisitor implements ChangeVisitor {
     private final MetaModelES metamodel;
 
     private final Map<IdentifiableTypeES, Map<Serializable, Serializable>> typeToClientIdToGeneratedId = new HashMap<>();
+    
+    private ExecutionSummaryImpl executionSummary;
 
     public ServerChangeVisitor(EntityManager entityManager, MetaModelES metamodel) {
         this.entityManager = entityManager;
         this.metamodel = metamodel;
+        this.executionSummary = new ExecutionSummaryImpl();
     }
 
+    /**
+     * checks if the version of the change and if the version of the object
+     * are the same. This will throw an {@link IllegalChangeException} when
+     * the versions are not the same.
+     * @param change the change which contains the version
+     * @param instance the object which has the second version
+     * @throws IllegalChangeException If the versions are different
+     */
     private void assertEqualVersion(AbstractIdentifiableVersionedChange change, Object instance) throws IllegalChangeException {
         final TypeES type = change.getType();
         if (type instanceof IdentifiableTypeES) {
@@ -82,11 +96,26 @@ public class ServerChangeVisitor implements ChangeVisitor {
         }
     }
 
+    /**
+     * Gets the instance based on the type and the id provided.
+     * @param change change containing the type of instance which is requested
+     * @param id the id of the instance you want
+     * @return an object which is an instance based on the id and javatype
+     * @throws IllegalChangeException 
+     */
     private Object getInstance(Change change, Object id) throws IllegalChangeException {
         final Class javaType = change.getType().getJavaType();
         return getInstance(javaType, id, change);
     }
 
+    /**
+     * Gets the instance based on the type and the id provided.
+     * @param javaType the type of the instance
+     * @param id the id of the requested instance
+     * @param change the change in where the request is needed
+     * @return an object which is an instance based on the id and javatype
+     * @throws IllegalChangeException 
+     */
     private Object getInstance(final Class javaType, Object id, Change change) throws IllegalChangeException {
         final Object instance = entityManager.find(javaType, id);
         if (instance == null) {
@@ -95,15 +124,37 @@ public class ServerChangeVisitor implements ChangeVisitor {
         return instance;
     }
 
+    /**
+     * Gets the instance based on the type and the id provided
+     * @param change the change in where the request is needed
+     * @param targetType IdentifiableTypeES containing the type for the instance
+     * @param id the id of the requested instance
+     * @return an object which is an instance based on the id and javatype
+     * @throws IllegalChangeException 
+     */
     private Object getInstance(Change change, IdentifiableTypeES targetType, Object id) throws IllegalChangeException {
         return getInstance(targetType.getJavaType(), id, change);
     }
 
+    /**
+     * Gets the id for an instance which is saved based on the id.
+     * @param type {@link IdentifiableTypeES} containing the type for the instance which has the id
+     * @param id current known id for the requested instance
+     * @return id for the saved version of the instance
+     */
     private Serializable getPersistentId(IdentifiableTypeES type, Serializable id) {
         final Serializable mappedId = Maps.get(typeToClientIdToGeneratedId, type, id);
         return mappedId == null ? id : mappedId;
     }
 
+    /**
+     * Gets the instance based on the type and id provided from the change and
+     * and checks if the retrieved instance matches the version of the change.
+     * @param update the change containing the needed information
+     * (id of the instance, type of the instance, version of the instance)
+     * @return an instance of the javatype based on the id.
+     * @throws IllegalChangeException If the versions don't match or if the instance doesn't exists.
+     */
     private Object getIdentifiableSource(AbstractIdentifiableVersionedChange update) throws IllegalChangeException {
         Serializable id = getPersistentId((IdentifiableTypeES) update.getType(), update);
         Object instance = getInstance(update, id);
@@ -111,6 +162,14 @@ public class ServerChangeVisitor implements ChangeVisitor {
         return instance;
     }
 
+    /**
+     * 
+     * @param update
+     * @param identifiableType
+     * @param id
+     * @return
+     * @throws IllegalChangeException 
+     */
     private Object getIdentifiable(Change update, IdentifiableTypeES identifiableType, Serializable id) throws IllegalChangeException {
         Serializable pid = getPersistentId(identifiableType, id);
         Object instance = getInstance(update, pid);
@@ -118,13 +177,25 @@ public class ServerChangeVisitor implements ChangeVisitor {
     }
 
     private Object getEmbeddable(AbstractNonIdentifiableUpdate update) throws IllegalChangeException {
-        //TODO, fix when container isn't embeddable.
-        final Object source = getInstance(update.getContainer().getClass(), update.getContainerId(), update);
-        final Object embeddable = update.getContainerAttribute().getJavaMember().get(source);
+        AttributeES containingAttribute = update.getContainerAttribute();
+        Object container = getInstance(containingAttribute.getClass(), update.getContainerId(), update);
+        for(EmbeddableAndAttribute eaa : (List<EmbeddableAndAttribute>) update.getContainerEmbeddables()){
+            container = containingAttribute.getJavaMember().get(container);
+            if(container instanceof Collection){
+                Collection collection = (Collection) container;
+                for (Object embeddable : collection) {
+                    if(Objects.equals(eaa.getEmbeddable(), embeddable)){
+                        container = embeddable;
+                    }
+                }
+            }
+            containingAttribute = eaa.getAttribute();
+        }
+        final Object embeddable = containingAttribute.getJavaMember().get(container);
         return embeddable;
     }
 
-    private void updateList(final MemberES listMember, Object instance, Change change, List removals, List additions) throws IllegalChangeException {
+    private static void updateListOfNonIdentifiables(final MemberES listMember, Object instance, Change change, List removals, List additions) throws IllegalChangeException {
         final Collection list = listMember.get(instance);
         for (Object removal : removals) {
             if (!list.remove(removal)) {
@@ -139,16 +210,16 @@ public class ServerChangeVisitor implements ChangeVisitor {
         listMember.set(instance, list);
     }
 
-    private void updateListEntity(final MemberES listMember, Object instance, Change change, List<Serializable> removals, List<Serializable> additions, IdentifiableTypeES targetEntity) throws IllegalChangeException {
+    private void updateListOfIdentifiables(final MemberES listMember, Object instance, Change change, List<Serializable> removals, List<Serializable> additions, IdentifiableTypeES targetEntity) throws IllegalChangeException {
         final Collection list = listMember.get(instance);
-        for (Serializable removal : removals) {
-            final Object target = getInstance(change, targetEntity, removal);
+        for (Serializable id : removals) {
+            final Object target = getIdentifiable(change, targetEntity, id);
             if (!list.remove(target)) {
                 throw new IllegalChangeException(change, Reason.NO_SUCH_VALUE);
             }
         }
-        for (Serializable addition : additions) {
-            final Object target = getInstance(change, targetEntity, addition);
+        for (Serializable id : additions) {
+            final Object target = getIdentifiable(change, targetEntity, id);
             if (!list.add(target)) {
                 throw new IllegalChangeException(change, Reason.DUPLICATE_VALUE);
             }
@@ -176,6 +247,8 @@ public class ServerChangeVisitor implements ChangeVisitor {
                 throw new IllegalChangeException(create, Reason.ENTITY_EXISTS);
             }
         }
+        executionSummary.addClientIdToPersistetId(type, create.getId(), idMember.get(instance));
+        executionSummary.addCrudToChangeItem(CRUD.DELETE, (Serializable)instance);
     }
 
     @Override
@@ -183,90 +256,103 @@ public class ServerChangeVisitor implements ChangeVisitor {
         Object instance = getInstance(delete, delete.getId());
         assertEqualVersion(delete, instance);
         entityManager.remove(instance);
+        executionSummary.addCrudToChangeItem(CRUD.DELETE, (Serializable)instance);
     }
 
     @Override
     public void visit(IdentifiableJavaUtilCollectionBasicAttributeUpdate update) {
         final Object instance = getIdentifiableSource(update);
         final MemberES listMember = update.getAttribute().getJavaMember();
-        updateList(listMember, instance, update, update.getAdditions(), update.getRemovals());
+        updateListOfNonIdentifiables(listMember, instance, update, update.getAdditions(), update.getRemovals());
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)instance);
     }
 
     @Override
     public void visit(IdentifiableSingularBasicAttributeUpdate update) {
         Object instance = getIdentifiableSource(update);
         update.getAttribute().getJavaMember().set(instance, update.getNewValue());
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)instance);
     }
 
     @Override
     public void visit(EmbeddableJavaUtilCollectionBasicAttributeUpdate update) throws IllegalChangeException {
         Object embeddable = getEmbeddable(update);
         final MemberES listMember = update.getUpdatedAttribute().getJavaMember();
-        updateList(listMember, embeddable, update, update.getAdditions(), update.getRemovals());
+        updateListOfNonIdentifiables(listMember, embeddable, update, update.getAdditions(), update.getRemovals());
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)embeddable);
     }
 
     @Override
     public void visit(IdentifiableToIdentifiableSingularAssociationAttributeUpdate update) {
         final Object source = getIdentifiableSource(update);
-        final IdentifiableTypeES targetEntity = (IdentifiableTypeES) metamodel.managedType(update.getAttribute().getJavaType());
-        final Object target = getInstance(update, targetEntity, update.getNewValue());
+        final IdentifiableTypeES targetEntity = metamodel.managedType(update.getAttribute().getJavaType(),IdentifiableTypeES.class);
+        final Object target = getIdentifiable(update, targetEntity, update.getNewValue());
         update.getAttribute().getJavaMember().set(source, target);
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)source);
     }
 
     @Override
     public void visit(IdentifiableToEmbeddableSingularAssociationAttributeUpdate update) {
         final Object source = getIdentifiableSource(update);
         update.getAttribute().getJavaMember().set(source, update.getNewValue());
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)source);
     }
 
     @Override
     public void visit(EmbeddableSingularBasicAttributeUpdate update) {
         Object embeddable = getEmbeddable(update);
         update.getUpdatedAttribute().getJavaMember().set(embeddable, update.getNewValue());
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)embeddable);
     }
 
     @Override
     public void visit(IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate update) {
         final Object instance = getIdentifiableSource(update);
         final MemberES listMember = update.getAttribute().getJavaMember();
-        updateList(listMember, instance, update, update.getAdditions(), update.getRemovals());
+        updateListOfNonIdentifiables(listMember, instance, update, update.getAdditions(), update.getRemovals());
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)instance);
     }
 
     @Override
     public void visit(IdentifiableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate update) {
         final Object source = getIdentifiableSource(update);
-        final IdentifiableTypeES targetEntity = (IdentifiableTypeES) metamodel.managedType(update.getAttribute().getJavaType());
+        final IdentifiableTypeES targetEntity = metamodel.managedType(update.getAttribute().getJavaType(),IdentifiableTypeES.class);
         final MemberES listMember = update.getAttribute().getJavaMember();
-        updateListEntity(listMember, source, update, update.getAdditions(), update.getRemovals(), targetEntity);
+        updateListOfIdentifiables(listMember, source, update, update.getAdditions(), update.getRemovals(), targetEntity);
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)source);
     }
 
     @Override
     public void visit(EmbeddableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate update) {
         Object embeddable = getEmbeddable(update);
         final MemberES listMember = update.getUpdatedAttribute().getJavaMember();
-        updateList(listMember, embeddable, update, update.getAdditions(), update.getRemovals());
+        updateListOfNonIdentifiables(listMember, embeddable, update, update.getAdditions(), update.getRemovals());
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)embeddable);
     }
 
     @Override
     public void visit(EmbeddableToEmbeddableSingularAssociationAttributeUpdate update) {
         Object embeddable = getEmbeddable(update);
         update.getUpdatedAttribute().getJavaMember().set(embeddable, update.getNewValue());
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)embeddable);
     }
 
     @Override
     public void visit(EmbeddableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate update) {
         Object embeddable = getEmbeddable(update);
-        final IdentifiableTypeES targetEntity = (IdentifiableTypeES) metamodel.managedType(update.getUpdatedAttribute().getJavaType());
+        final IdentifiableTypeES targetEntity = metamodel.managedType(update.getUpdatedAttribute().getJavaType(),IdentifiableTypeES.class);
         final MemberES listMember = update.getUpdatedAttribute().getJavaMember();
-        updateListEntity(listMember, embeddable, update, update.getAdditions(), update.getRemovals(), targetEntity);
+        updateListOfIdentifiables(listMember, embeddable, update, update.getAdditions(), update.getRemovals(), targetEntity);
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)embeddable);
     }
 
     @Override
     public void visit(EmbeddableToIdentifiableSingularAssociationAttributeUpdate update) {
         Object embeddable = getEmbeddable(update);
-        final IdentifiableTypeES targetEntity = (IdentifiableTypeES) metamodel.managedType(update.getUpdatedAttribute().getJavaType());
-        final Object target = getInstance(update, targetEntity, update.getNewValue());
+        final IdentifiableTypeES targetEntity = metamodel.managedType(update.getUpdatedAttribute().getJavaType(),IdentifiableTypeES.class);
+        final Object target = getIdentifiable(update, targetEntity, update.getNewValue());
         update.getUpdatedAttribute().getJavaMember().set(embeddable, target);
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)embeddable);
     }
 
     @Override
@@ -276,24 +362,26 @@ public class ServerChangeVisitor implements ChangeVisitor {
         final MemberES mapMember = mapAttribute.getJavaMember();
         final Map map = mapMember.get(source);
 
-        final IdentifiableTypeES targetEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getElementType().getJavaType());
-        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
-            if (map.containsKey(removal.getKey())) {
-                final Object value = getInstance(update, targetEntity, removal.getValue());
-                if (!map.remove(removal.getKey(), value)) {
+        final IdentifiableTypeES targetEntity = metamodel.managedType(mapAttribute.getElementType().getJavaType(),IdentifiableTypeES.class);
+        for (HasValueEntry removal : (List<HasValueEntry>) update.getRemovals()) {
+            if (map.containsKey(removal.getKey().getValue())) {
+                final Object value = getIdentifiable(update, targetEntity, (Serializable)removal.getValue().getValue());
+                if (!map.remove(removal.getKey().getValue(), value)) {
                     throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
                 }
             } else {
                 throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
             }
         }
-        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
-            final Object value = getInstance(update, targetEntity, addition.getValue());
-            if (map.putIfAbsent(addition.getKey(), value) != null) {
-                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+        for (HasValueEntry addition : (List<HasValueEntry>) update.getAdditions()) {
+            final Object value = getIdentifiable(update, targetEntity, (Serializable)addition.getValue().getValue());
+            if(addition.getKey().getValue() == null){
+                throw new IllegalChangeException(update,Reason.KEY_IS_NULL);
             }
+            map.put(addition.getKey().getValue(), value);
         }
         mapMember.set(source, map);
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)source);
     }
 
     @Override
@@ -301,21 +389,23 @@ public class ServerChangeVisitor implements ChangeVisitor {
         final Object source = getIdentifiableSource(update);
         final MemberES mapMember = update.getAttribute().getJavaMember();
         final Map map = mapMember.get(source);
-        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
-            if (map.containsKey(removal.getKey())) {
-                if (!map.remove(removal.getKey(), removal.getValue())) {
+        for (HasValueEntry removal : (List<HasValueEntry>) update.getRemovals()) {
+            if (map.containsKey(removal.getKey().getValue())) {
+                if (!map.remove(removal.getKey().getValue(), removal.getValue().getValue())) {
                     throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
                 }
             } else {
                 throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
             }
         }
-        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
-            if (map.putIfAbsent(addition.getKey(), addition.getValue()) != null) {
-                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+        for (HasValueEntry addition : (List<HasValueEntry>) update.getAdditions()) {
+            if(addition.getKey().getValue() == null){
+                throw new IllegalChangeException(update,Reason.KEY_IS_NULL);
             }
+            map.put(addition.getKey().getValue(), addition.getValue().getValue());
         }
         mapMember.set(source, map);
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)source);
     }
 
     @Override
@@ -325,12 +415,12 @@ public class ServerChangeVisitor implements ChangeVisitor {
         final MemberES mapMember = mapAttribute.getJavaMember();
         final Map map = mapMember.get(source);
 
-        final IdentifiableTypeES valueEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getElementType().getJavaType());
-        final IdentifiableTypeES keyEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getKeyJavaType());
-        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
-            final Object key = getInstance(update, keyEntity, removal.getKey());
+        final IdentifiableTypeES valueEntity = metamodel.managedType(mapAttribute.getElementType().getJavaType(),IdentifiableTypeES.class);
+        final IdentifiableTypeES keyEntity = metamodel.managedType(mapAttribute.getKeyJavaType(),IdentifiableTypeES.class);
+        for (HasValueEntry removal : (List<HasValueEntry>) update.getRemovals()) {
+            final Object key = getIdentifiable(update, keyEntity, (Serializable) removal.getKey().getValue());
             if (map.containsKey(key)) {
-                final Object value = getInstance(update, valueEntity, removal.getValue());
+                final Object value = getIdentifiable(update, valueEntity, (Serializable)removal.getValue().getValue());
                 if (!map.remove(key, value)) {
                     throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
                 }
@@ -338,14 +428,16 @@ public class ServerChangeVisitor implements ChangeVisitor {
                 throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
             }
         }
-        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
-            final Object key = getInstance(update, keyEntity, addition.getKey());
-            final Object value = getInstance(update, valueEntity, addition.getValue());
-            if (map.putIfAbsent(key, value) != null) {
-                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+        for (HasValueEntry addition : (List<HasValueEntry>) update.getAdditions()) {
+            final Object key = getIdentifiable(update, keyEntity, (Serializable) addition.getKey().getValue());
+            final Object value = getIdentifiable(update, valueEntity, (Serializable) addition.getValue().getValue());
+            if(key == null){
+                throw new IllegalChangeException(update,Reason.KEY_IS_NULL);
             }
+            map.put(key, value);
         }
         mapMember.set(source, map);
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)source);
     }
 
     @Override
@@ -355,24 +447,27 @@ public class ServerChangeVisitor implements ChangeVisitor {
         final MemberES mapMember = mapAttribute.getJavaMember();
         final Map map = mapMember.get(source);
 
-        final IdentifiableTypeES keyEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getKeyJavaType());
-        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
-            final Object key = getInstance(update, keyEntity, removal.getKey());
+        final IdentifiableTypeES keyEntity = metamodel.managedType(mapAttribute.getKeyJavaType(),IdentifiableTypeES.class);
+        for (HasValueEntry removal : (List<HasValueEntry>) update.getRemovals()) {
+            //TODO possible change the method which retrieves an instance/identifiable
+            final Object key = getIdentifiable(update, keyEntity,(Serializable) removal.getKey().getValue());
             if (map.containsKey(key)) {
-                if (!map.remove(key, removal.getValue())) {
+                if (!map.remove(key, removal.getValue().getValue())) {
                     throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
                 }
             } else {
                 throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
             }
         }
-        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
-            final Object key = getInstance(update, keyEntity, addition.getKey());
-            if (map.putIfAbsent(key, addition.getValue()) != null) {
-                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+        for (HasValueEntry addition : (List<HasValueEntry>) update.getAdditions()) {
+            final Object key = getIdentifiable(update, keyEntity, (Serializable) addition.getKey().getValue());
+            if(key == null){
+                throw new IllegalChangeException(update,Reason.KEY_IS_NULL);
             }
+            map.put(key, addition.getValue().getValue());
         }
         mapMember.set(source, map);
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)source);
     }
 
     @Override
@@ -382,12 +477,12 @@ public class ServerChangeVisitor implements ChangeVisitor {
         final MemberES mapMember = mapAttribute.getJavaMember();
         final Map map = mapMember.get(source);
 
-        final IdentifiableTypeES valueEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getElementType().getJavaType());
-        final IdentifiableTypeES keyEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getKeyJavaType());
-        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
-            final Object key = getInstance(update, keyEntity, removal.getKey());
+        final IdentifiableTypeES valueEntity = metamodel.managedType(mapAttribute.getElementType().getJavaType(),IdentifiableTypeES.class);
+        final IdentifiableTypeES keyEntity = metamodel.managedType(mapAttribute.getKeyJavaType(),IdentifiableTypeES.class);
+        for (HasValueEntry removal : (List<HasValueEntry>) update.getRemovals()) {
+            final Object key = getIdentifiable(update, keyEntity, (Serializable) removal.getKey().getValue());
             if (map.containsKey(key)) {
-                final Object value = getInstance(update, valueEntity, removal.getValue());
+                final Object value = getIdentifiable(update, valueEntity,(Serializable) removal.getValue().getValue());
                 if (!map.remove(key, value)) {
                     throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
                 }
@@ -395,14 +490,16 @@ public class ServerChangeVisitor implements ChangeVisitor {
                 throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
             }
         }
-        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
-            final Object key = getInstance(update, keyEntity, addition.getKey());
-            final Object value = getInstance(update, valueEntity, addition.getValue());
-            if (map.putIfAbsent(key, value) != null) {
-                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+        for (HasValueEntry addition : (List<HasValueEntry>) update.getAdditions()) {
+            final Object key = getIdentifiable(update, keyEntity, (Serializable) addition.getKey().getValue());
+            final Object value = getIdentifiable(update, valueEntity, (Serializable) addition.getValue().getValue());
+            if(key == null){
+                throw new IllegalChangeException(update,Reason.KEY_IS_NULL);
             }
+            map.put(key, value);
         }
         mapMember.set(source, map);
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)source);
     }
 
     @Override
@@ -412,24 +509,26 @@ public class ServerChangeVisitor implements ChangeVisitor {
         final MemberES mapMember = mapAttribute.getJavaMember();
         final Map map = mapMember.get(source);
 
-        final IdentifiableTypeES keyEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getKeyJavaType());
-        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
-            final Object key = getInstance(update, keyEntity, removal.getKey());
+        final IdentifiableTypeES keyEntity = metamodel.managedType(mapAttribute.getKeyJavaType(),IdentifiableTypeES.class);
+        for (HasValueEntry removal : (List<HasValueEntry>) update.getRemovals()) {
+            final Object key = getIdentifiable(update, keyEntity, (Serializable) removal.getKey().getValue());
             if (map.containsKey(key)) {
-                if (!map.remove(key, removal.getValue())) {
+                if (!map.remove(key, removal.getValue().getValue())) {
                     throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
                 }
             } else {
                 throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
             }
         }
-        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
-            final Object key = getInstance(update, keyEntity, addition.getKey());
-            if (map.putIfAbsent(key, addition.getValue()) != null) {
-                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+        for (HasValueEntry addition : (List<HasValueEntry>) update.getAdditions()) {
+            final Object key = getIdentifiable(update, keyEntity, (Serializable) addition.getKey().getValue());
+            if(key == null){
+                throw new IllegalChangeException(update,Reason.KEY_IS_NULL);
             }
+            map.put(key, addition.getValue().getValue());
         }
         mapMember.set(source, map);
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)source);
     }
 
     @Override
@@ -439,24 +538,26 @@ public class ServerChangeVisitor implements ChangeVisitor {
         final MemberES mapMember = mapAttribute.getJavaMember();
         final Map map = mapMember.get(source);
 
-        final IdentifiableTypeES targetEntity = (IdentifiableTypeES) metamodel.managedType(mapAttribute.getElementType().getJavaType());
-        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
-            if (map.containsKey(removal.getKey())) {
-                final Object value = getInstance(update, targetEntity, removal.getValue());
-                if (!map.remove(removal.getKey(), value)) {
+        final IdentifiableTypeES targetEntity = metamodel.managedType(mapAttribute.getElementType().getJavaType(),IdentifiableTypeES.class);
+        for (HasValueEntry removal : (List<HasValueEntry>) update.getRemovals()) {
+            if (map.containsKey(removal.getKey().getValue())) {
+                final Object value = getIdentifiable(update, targetEntity, (Serializable)removal.getValue().getValue());
+                if (!map.remove(removal.getKey().getValue(), value)) {
                     throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
                 }
             } else {
                 throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
             }
         }
-        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
-            final Object value = getInstance(update, targetEntity, addition.getValue());
-            if (map.putIfAbsent(addition.getKey(), value) != null) {
-                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+        for (HasValueEntry addition : (List<HasValueEntry>) update.getAdditions()) {
+            final Object value = getIdentifiable(update, targetEntity,(Serializable) addition.getValue().getValue());
+            if(addition.getKey().getValue() == null){
+                throw new IllegalChangeException(update,Reason.KEY_IS_NULL);
             }
+            map.put(addition.getKey().getValue(), value);
         }
         mapMember.set(source, map);
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)source);
     }
 
     @Override
@@ -464,20 +565,27 @@ public class ServerChangeVisitor implements ChangeVisitor {
         final Object source = getEmbeddable(update);
         final MemberES mapMember = update.getUpdatedAttribute().getJavaMember();
         final Map map = mapMember.get(source);
-        for (SimpleEntry removal : (List<SimpleEntry>) update.getRemovals()) {
-            if (map.containsKey(removal.getKey())) {
-                if (!map.remove(removal.getKey(), removal.getValue())) {
+        for (HasValueEntry removal : (List<HasValueEntry>) update.getRemovals()) {
+            if (map.containsKey(removal.getKey().getValue())) {
+                if (!map.remove(removal.getKey().getValue(), removal.getValue().getValue())) {
                     throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY_AND_VALUE);
                 }
             } else {
                 throw new IllegalChangeException(update, Reason.NO_ENTRY_FOR_KEY);
             }
         }
-        for (SimpleEntry addition : (List<SimpleEntry>) update.getAdditions()) {
-            if (map.putIfAbsent(addition.getKey(), addition.getValue()) != null) {
-                throw new IllegalChangeException(update, Reason.KEY_ALREADY_PRESENT);
+        for (HasValueEntry addition : (List<HasValueEntry>) update.getAdditions()) {
+            if(addition.getKey() == null){
+                throw new IllegalChangeException(update,Reason.KEY_IS_NULL);
             }
+            map.put(addition.getKey().getValue(), addition.getValue().getValue());
         }
         mapMember.set(source, map);
+        executionSummary.addCrudToChangeItem(CRUD.UPDATE, (Serializable)source);
+    }
+    
+    @Override
+    public ExecutionSummary getExecutionSummary(){
+        return executionSummary;
     }
 }
