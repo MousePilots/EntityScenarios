@@ -5,6 +5,8 @@
  */
 package org.mousepilots.es.change.exception;
 
+import org.mousepilots.es.model.DtoType;
+
 /**
  *
  * @author Roy Cleven
@@ -41,5 +43,9 @@ public enum Reason {
     /**
      * The entry which is being added contains a null key..
      */
-    KEY_IS_NULL
+    KEY_IS_NULL,
+    /**
+     * The selected {@link DtoType} is not yet supported
+     */
+    DTO_TYPE_NOT_SUPPORTED
 }
