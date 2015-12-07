@@ -25,10 +25,14 @@ public abstract class AbstractIdentifiableVersionedChange<I extends Serializable
         super();
     }
 
-    public AbstractIdentifiableVersionedChange(IdentifiableTypeES type, I id, V version) {
-        super(type, id);
+    public AbstractIdentifiableVersionedChange(HasValue version) {
+        this.version = version;
+    }
+
+    public AbstractIdentifiableVersionedChange(V version, HasValue id, IdentifiableTypeES type, DtoType dtoType) {
+        super(id, type, dtoType);
         AttributeES va = type.getVersion(version.getClass());
-        this.version = va.wrapForChange(version, DtoType.MANAGED_CLASS);
+        this.version = va.wrapForChange(version, dtoType);
     }
 
     @Override

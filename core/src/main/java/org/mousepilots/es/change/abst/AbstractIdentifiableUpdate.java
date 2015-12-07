@@ -8,6 +8,8 @@ package org.mousepilots.es.change.abst;
 import java.io.Serializable;
 import org.mousepilots.es.change.CRUD;
 import org.mousepilots.es.model.AttributeES;
+import org.mousepilots.es.model.DtoType;
+import org.mousepilots.es.model.HasValue;
 import org.mousepilots.es.model.IdentifiableTypeES;
 
 /**
@@ -16,32 +18,27 @@ import org.mousepilots.es.model.IdentifiableTypeES;
  * @param <I>
  * @param <V>
  */
-public abstract class AbstractIdentifiableUpdate<I extends Serializable, V extends Serializable> extends AbstractIdentifiableVersionedChange<I, V>
-{
+public abstract class AbstractIdentifiableUpdate<I extends Serializable, V extends Serializable> extends AbstractIdentifiableVersionedChange<I, V> {
 
-   private int attributeOrdinal;
-   private AttributeES attribute;
+    private int attributeOrdinal;
+    private AttributeES attribute;
 
-   public AbstractIdentifiableUpdate()
-   {
-      super();
-   }
+    public AbstractIdentifiableUpdate() {
+        super();
+    }
 
-   public AbstractIdentifiableUpdate(AttributeES attribute, I id, V version)
-   {
-      super((IdentifiableTypeES)attribute.getDeclaringType(), id, version);
-      this.attributeOrdinal = attribute.getOrdinal();
-      this.attribute = attribute;
-   }
+    public AbstractIdentifiableUpdate(AttributeES attribute, V version, HasValue id, IdentifiableTypeES type, DtoType dtoType) {
+        super(version, id, type, dtoType);
+        this.attribute = attribute;
+        this.attributeOrdinal = attribute.getOrdinal();
+    }
 
-   public final AttributeES getAttribute()
-   {
-      return attribute;
-   }
+    public final AttributeES getAttribute() {
+        return attribute;
+    }
 
-   @Override
-   public final CRUD operation()
-   {
-      return CRUD.UPDATE;
-   }
+    @Override
+    public final CRUD operation() {
+        return CRUD.UPDATE;
+    }
 }
