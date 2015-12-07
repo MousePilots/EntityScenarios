@@ -13,7 +13,7 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 27-11-2015
+ * @version 1.0, 7-12-2015
  * @param <X> The type containing the represented attribute
  * @param <T> The type of the represented attribute
  */
@@ -45,7 +45,6 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
      * @param persistentAttributeType the {@link PersistentAttributeType} of this singular attribute.
      * @param javaMember the java {@link Member} representing this singular attribute.
      * @param readOnly whether or not this singular attribute is read only.
-     * @param collection whether or not this singular attribute is a collection.
      * @param association whether or not this singular attribute is part of an association.
      * @param declaringType the {@link ManagedTypeES} that declared this singular attribute.
      * @param hasValueChangeConstructor the constructor that will be used when wrapping this singular attribute for a change.
@@ -56,13 +55,12 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
             BindableType bindableType, Class<T> bindableJavaType, String name,
             int ordinal, Class<T> javaType,
             PersistentAttributeType persistentAttributeType, MemberES javaMember,
-            boolean readOnly, boolean collection, boolean association,
-            ManagedTypeES<X> declaringType,
+            boolean readOnly, boolean association, ManagedTypeES<X> declaringType,
             Constructor<HasValue> hasValueChangeConstructor,
             Constructor<HasValue> hasValueDtoConstructor) {
         super(name, ordinal, javaType, persistentAttributeType, javaMember,
-                readOnly, collection, association, declaringType,
-                hasValueChangeConstructor, hasValueDtoConstructor);
+                readOnly, association, declaringType, hasValueChangeConstructor,
+                hasValueDtoConstructor);
         this.generated = generated;
         this.generator = generator;
         this.id = id;
@@ -177,5 +175,10 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
             }
         }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isCollection() {
+        return false;
     }
 }

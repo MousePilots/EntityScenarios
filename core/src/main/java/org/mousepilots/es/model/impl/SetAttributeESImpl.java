@@ -10,7 +10,7 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 26-11-2015
+ * @version 1.0, 7-12-2015
  * @param <T> The type the represented Set belongs to
  * @param <E> The element type of the represented Set
  */
@@ -42,11 +42,17 @@ public class SetAttributeESImpl<T, E>
             Class<E> bindableJavaType, String name, int ordinal,
             Class<Set<E>> javaType, PersistentAttributeType persistentAttributeType,
             MemberES javaMember, boolean readOnly, boolean association,
-            ManagedTypeES<T> declaringType, Constructor<HasValue> hasValueChangeConstructor,
+            ManagedTypeES<T> declaringType,
+            Constructor<HasValue> hasValueChangeConstructor,
             Constructor<HasValue> hasValueDtoConstructor) {
         super(CollectionType.SET, elementType, bindableType, bindableJavaType,
                 name, ordinal, javaType, persistentAttributeType, javaMember,
-                readOnly, true, association, declaringType,
-                hasValueChangeConstructor, hasValueDtoConstructor);
+                readOnly, association, declaringType, hasValueChangeConstructor,
+                hasValueDtoConstructor);
+    }
+
+    @Override
+    public boolean isCollection() {
+        return true;
     }
 }

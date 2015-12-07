@@ -11,7 +11,7 @@ import javax.persistence.MappedSuperclass;
  * @see Type
  * @param <T> The type of the represented object or attribute
  * @author Roy Cleven
- * @version 1.0, 19-10-2015
+ * @version 1.0, 7-12-2015
  */
 public interface TypeES<T> extends Type<T>, Comparable<TypeES>, HasOrdinal{
 
@@ -45,6 +45,12 @@ public interface TypeES<T> extends Type<T>, Comparable<TypeES>, HasOrdinal{
      * @return this type's super-types {@code s}, such that {@code s.getJavaType()} is a superclass of {@code this.getJavaType()}
      */
     SortedSet<TypeES<? super T>> getSuperTypes();
+
+    /**
+     * Get the super type of this type.
+     * @return the super type.
+     */
+    TypeES<? super T> getSuperType();
 
     /**
      * @return this type's sub-types {@code s}, such that {@code s.getJavaType()} is a subclass of {@code this.getJavaType()}

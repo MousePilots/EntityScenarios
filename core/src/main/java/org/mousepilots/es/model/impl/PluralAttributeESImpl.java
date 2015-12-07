@@ -11,7 +11,7 @@ import org.mousepilots.es.util.IdentifiableUtils;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 25-11-2015
+ * @version 1.0, 7-12-2015
  * @param <T> The type the represented collection belongs to
  * @param <C> The type of the represented collection
  * @param <E> The element type of the represented collection
@@ -42,8 +42,6 @@ public abstract class PluralAttributeESImpl<T, C, E, CA> extends AttributeESImpl
      * @param javaMember the java {@link Member} representing this plural
      * attribute.
      * @param readOnly whether or not this plural attribute is read only.
-     * @param collection whether or not this plural attribute represents a
-     * collection.
      * @param association whether or not this plural attribute is part of an
      * association.
      * @param declaringType the {@link ManagedTypeES} that declared this plural
@@ -55,15 +53,15 @@ public abstract class PluralAttributeESImpl<T, C, E, CA> extends AttributeESImpl
      */
     public PluralAttributeESImpl(CollectionType collectionType,
             TypeES<E> elementType, BindableType bindableType,
-            Class<E> bindableJavaType, String name, int ordinal, Class<C> javaType,
-            PersistentAttributeType persistentAttributeType, MemberES javaMember,
-            boolean readOnly, boolean collection, boolean association,
+            Class<E> bindableJavaType, String name, int ordinal,
+            Class<C> javaType, PersistentAttributeType persistentAttributeType,
+            MemberES javaMember, boolean readOnly, boolean association,
             ManagedTypeES<T> declaringType,
             Constructor<HasValue> hasValueChangeConstructor,
             Constructor<HasValue> hasValueDtoConstructor) {
         super(name, ordinal, javaType, persistentAttributeType, javaMember,
-                readOnly, collection, association, declaringType,
-                hasValueChangeConstructor, hasValueDtoConstructor);
+                readOnly, association, declaringType, hasValueChangeConstructor,
+                hasValueDtoConstructor);
         this.collectionType = collectionType;
         this.elementType = elementType;
         this.bindableType = bindableType;

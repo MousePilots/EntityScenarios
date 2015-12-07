@@ -1,13 +1,15 @@
 package org.mousepilots.es.model.impl;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 27-11-2015
+ * @version 1.0, 7-12-2015
  * @param <T> The type of the represented object or attribute
  */
 public class TypeESImpl<T> implements TypeES<T> {
@@ -19,7 +21,7 @@ public class TypeESImpl<T> implements TypeES<T> {
     private final String javaClassName;
     private final boolean instantiable;
     private final Class<? extends Type<T>> metamodelClass;
-    private final SortedSet<TypeES<? super T>> superTypes;
+    private final TypeES<? super T> superType;
     private final SortedSet<TypeES<? extends T>> subTypes;
 
     /**
@@ -31,14 +33,13 @@ public class TypeESImpl<T> implements TypeES<T> {
      * @param javaClassName the name of the java class for this type.
      * @param instantiable whether or not this type is instanciable.
      * @param metamodelClass the JPA metamodel class of this type.
-     * @param superTypes a set of super types of this type.
+     * @param superType a super type of this type.
      * @param subTypes a set of sub types of this type.
      */
     public TypeESImpl(String name, int ordinal, Class<T> javaType,
             PersistenceType persistenceType, String javaClassName,
             boolean instantiable, Class<? extends Type<T>> metamodelClass,
-            SortedSet<TypeES<? super T>> superTypes,
-            SortedSet<TypeES<? extends T>> subTypes) {
+            TypeES<? super T> superType, Collection<TypeES<? extends T>> subTypes) {
         this.name = name;
         this.ordinal = ordinal;
         this.javaType = javaType;
@@ -46,8 +47,8 @@ public class TypeESImpl<T> implements TypeES<T> {
         this.javaClassName = javaClassName;
         this.instantiable = instantiable;
         this.metamodelClass = metamodelClass;
-        this.superTypes = superTypes;
-        this.subTypes = subTypes;
+        this.superType = superType;
+        this.subTypes = new TreeSet<>(subTypes);
     }
 
     @Override
@@ -87,7 +88,7 @@ public class TypeESImpl<T> implements TypeES<T> {
 
     @Override
     public SortedSet<TypeES<? super T>> getSuperTypes() {
-        return superTypes;
+        return null;
     }
 
     @Override
@@ -133,5 +134,10 @@ public class TypeESImpl<T> implements TypeES<T> {
         return "Type name: " + getName() + ", ordinal: " + getOrdinal()
                 + ", PersistenceType: " + getPersistenceType() + ", javaClass: "
                 + getJavaClassName();
+    }
+
+    @Override
+    public TypeES<? super T> getSuperType() {
+        return superType;
     }
 }

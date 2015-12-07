@@ -1,8 +1,10 @@
 package org.mousepilots.es.model.impl;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
@@ -17,97 +19,67 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 26-11-2015
+ * @version 1.0, 7-12-2015
  * @param <T> The represented type.
  */
 public class ManagedTypeESImpl<T> extends TypeESImpl<T>
-    implements ManagedTypeES<T> {
+        implements ManagedTypeES<T> {
 
-    private final Set<PluralAttribute<? super T, ?, ?>> pluralAttributes = new HashSet<>();
-    private final Set<PluralAttribute<T, ?, ?>> declaredPluralAttributes = new HashSet<>();
-    private final Set<Attribute<? super T, ?>> attributes = new HashSet<>();
-    private final Set<Attribute<T, ?>> declaredAttributes = new HashSet<>();
-    private final Set<SingularAttribute<? super T, ?>> singularAttributes;
-    private final Set<SingularAttribute<T, ?>> declaredSingularAttributes;
-    private final Set<CollectionAttributeES<? super T, ?>> collectionAttributes;
-    private final Set<CollectionAttributeES<T, ?>> declaredCollectionAttributes;
-    private final Set<ListAttributeES<? super T, ?>> listAttributes;
-    private final Set<ListAttributeES<T, ?>> declaredListAttributes;
-    private final Set<SetAttributeES<? super T, ?>> setAttributes;
-    private final Set<SetAttributeES<T, ?>> declaredSetAttributes;
-    private final Set<MapAttributeES<? super T, ?, ?>> mapAttributes;
-    private final Set<MapAttributeES<T, ?, ?>> declaredMapAttributes;
+    private final SortedSet<PluralAttribute<? super T, ?, ?>> pluralAttributes = new TreeSet<>();
+    private final SortedSet<PluralAttribute<T, ?, ?>> declaredPluralAttributes = new TreeSet<>();
+    private final SortedSet<Attribute<? super T, ?>> attributes = new TreeSet<>();
+    private final SortedSet<Attribute<T, ?>> declaredAttributes = new TreeSet<>();
+    private final SortedSet<SingularAttribute<? super T, ?>> singularAttributes = new TreeSet<>();
+    private final SortedSet<SingularAttribute<T, ?>> declaredSingularAttributes = new TreeSet<>();
+    private final SortedSet<CollectionAttributeES<? super T, ?>> collectionAttributes = new TreeSet<>();
+    private final SortedSet<CollectionAttributeES<T, ?>> declaredCollectionAttributes = new TreeSet<>();
+    private final SortedSet<ListAttributeES<? super T, ?>> listAttributes = new TreeSet<>();
+    private final SortedSet<ListAttributeES<T, ?>> declaredListAttributes = new TreeSet<>();
+    private final SortedSet<SetAttributeES<? super T, ?>> setAttributes = new TreeSet<>();
+    private final SortedSet<SetAttributeES<T, ?>> declaredSetAttributes = new TreeSet<>();
+    private final SortedSet<MapAttributeES<? super T, ?, ?>> mapAttributes = new TreeSet<>();
+    private final SortedSet<MapAttributeES<T, ?, ?>> declaredMapAttributes = new TreeSet<>();
 
     /**
      * Create a new instance of this class.
-     * @param singularAttributes the singular attributes that are part of this managed type.
-     * @param declaredSingularAttributes the singular attributes that are declared by this managed type.
-     * @param collectionAttributes the collection attributes that are part of this managed type.
-     * @param declaredCollectionAttributes the collection attributes that are declared by this managed type.
-     * @param listAttributes the list attributes that are part of this managed type.
-     * @param declaredListAttributes the list attributes that are declared by this managed type.
-     * @param setAttributes the set attributes that are part of this managed type.
-     * @param declaredSetAttributes the set attributes that are declared by this managed type.
-     * @param mapAttributes the map attributes that are part of this managed type.
-     * @param declaredMapAttributes the map attributes that are declared by this managed type.
+     *
+     * @param attributes the singular attributes that are part of this managed
+     * type.
      * @param name the name of this managed type.
      * @param ordinal the ordinal of this managed type.
      * @param javaType the java type for this managed type.
      * @param persistenceType the {@link PersistenceType} for this managed type.
-     * @param javaClassName the name of the java class that represents this managed type.
+     * @param javaClassName the name of the java class that represents this
+     * managed type.
      * @param instantiable whether or not this managed type is instanciable.
      * @param metamodelClass the JPa meta model class for this managed type.
-     * @param superTypes a set of super types for this managed type.
+     * @param superType the supertype of this managed type.
      * @param subTypes a set of sub types for this managed type.
      */
-    public ManagedTypeESImpl(Set<SingularAttribute<? super T, ?>> singularAttributes,
-            Set<SingularAttribute<T, ?>> declaredSingularAttributes,
-            Set<CollectionAttributeES<? super T, ?>> collectionAttributes,
-            Set<CollectionAttributeES<T, ?>> declaredCollectionAttributes,
-            Set<ListAttributeES<? super T, ?>> listAttributes,
-            Set<ListAttributeES<T, ?>> declaredListAttributes,
-            Set<SetAttributeES<? super T, ?>> setAttributes,
-            Set<SetAttributeES<T, ?>> declaredSetAttributes,
-            Set<MapAttributeES<? super T, ?, ?>> mapAttributes,
-            Set<MapAttributeES<T, ?, ?>> declaredMapAttributes, String name,
-            int ordinal, Class<T> javaType, PersistenceType persistenceType,
-            String javaClassName, boolean instantiable,
+    public ManagedTypeESImpl(
+            String name,
+            int ordinal,
+            Class<T> javaType,
+            PersistenceType persistenceType,
+            String javaClassName,
+            boolean instantiable,
             Class<? extends Type<T>> metamodelClass,
-            SortedSet<TypeES<? super T>> superTypes,
-            SortedSet<TypeES<? extends T>> subTypes) {
-        super(name, ordinal, javaType, persistenceType, javaClassName,
-                instantiable, metamodelClass, superTypes, subTypes);
-        this.singularAttributes = singularAttributes;
-        this.declaredSingularAttributes = declaredSingularAttributes;
-        this.collectionAttributes = collectionAttributes;
-        this.declaredCollectionAttributes = declaredCollectionAttributes;
-        this.listAttributes = listAttributes;
-        this.declaredListAttributes = declaredListAttributes;
-        this.setAttributes = setAttributes;
-        this.declaredSetAttributes = declaredSetAttributes;
-        this.mapAttributes = mapAttributes;
-        this.declaredMapAttributes = declaredMapAttributes;
-        pluralAttributes.addAll(this.collectionAttributes);
-        pluralAttributes.addAll(this.setAttributes);
-        pluralAttributes.addAll(this.mapAttributes);
-        pluralAttributes.addAll(this.listAttributes);
-        declaredPluralAttributes.addAll(this.declaredCollectionAttributes);
-        declaredPluralAttributes.addAll(this.declaredSetAttributes);
-        declaredPluralAttributes.addAll(this.declaredMapAttributes);
-        declaredPluralAttributes.addAll(this.declaredListAttributes);
-        attributes.addAll(this.pluralAttributes);
-        attributes.addAll(this.singularAttributes);
-        declaredAttributes.addAll(this.declaredPluralAttributes);
-        declaredAttributes.addAll(this.declaredSingularAttributes);
+            Set<Attribute<? super T, ?>> attributes,
+            TypeES<? super T> superType,
+            Collection<TypeES<? extends T>> subTypes) {
+        super(name, ordinal, javaType, persistenceType, javaClassName, instantiable, metamodelClass, superType, subTypes);
+        this.attributes.addAll(attributes);
+        //TODO calculate attrbute types.
+
     }
 
     @Override
-    public Set<Attribute<? super T, ?>> getAttributes() {
+    public SortedSet<Attribute<? super T, ?>> getAttributes() {
         return attributes;
     }
 
     @Override
-    public Set<Attribute<T, ?>> getDeclaredAttributes() {
+    public SortedSet<Attribute<T, ?>> getDeclaredAttributes() {
         return declaredAttributes;
     }
 
@@ -119,7 +91,7 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
         for (SingularAttribute<? super T, ?> att : singularAttributeSet) {
             if (att.getName().equals(name) && type == att.getJavaType()) {
                 //Not sure if this will fail at runtime.
-                return (SingularAttributeES<? super T, Y>)att;
+                return (SingularAttributeES<? super T, Y>) att;
             }
         }
         return null;
@@ -133,19 +105,19 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
         for (SingularAttribute<T, ?> att : declaredSingularAttributeSet) {
             if (att.getName().equals(name) && type == att.getJavaType()) {
                 //Not sure if this will fail at runtime.
-                return (SingularAttributeES<T, Y>)att;
+                return (SingularAttributeES<T, Y>) att;
             }
         }
         return null;
     }
 
     @Override
-    public Set<SingularAttribute<? super T, ?>> getSingularAttributes() {
+    public SortedSet<SingularAttribute<? super T, ?>> getSingularAttributes() {
         return singularAttributes;
     }
 
     @Override
-    public Set<SingularAttribute<T, ?>> getDeclaredSingularAttributes() {
+    public SortedSet<SingularAttribute<T, ?>> getDeclaredSingularAttributes() {
         return this.declaredSingularAttributes;
     }
 
@@ -157,7 +129,7 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
         for (CollectionAttributeES<? super T, ?> att : collectionAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
-                return (CollectionAttributeES<? super T, E>)att;
+                return (CollectionAttributeES<? super T, E>) att;
             }
         }
         return null;
@@ -171,7 +143,7 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
         for (CollectionAttributeES<T, ?> att : declaredCollectionAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
-                return (CollectionAttributeES<T, E>)att;
+                return (CollectionAttributeES<T, E>) att;
             }
         }
         return null;
@@ -185,7 +157,7 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
         for (SetAttributeES<? super T, ?> att : setAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
-                return (SetAttributeES<? super T, E>)att;
+                return (SetAttributeES<? super T, E>) att;
             }
         }
         return null;
@@ -199,7 +171,7 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
         for (SetAttributeES<T, ?> att : declaredSetAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
-                return (SetAttributeES<T, E>)att;
+                return (SetAttributeES<T, E>) att;
             }
         }
         return null;
@@ -213,7 +185,7 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
         for (ListAttributeES<? super T, ?> att : listAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
-                return (ListAttributeES<? super T, E>)att;
+                return (ListAttributeES<? super T, E>) att;
             }
         }
         return null;
@@ -227,7 +199,7 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
         for (ListAttributeES<T, ?> att : declaredListAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
-                return (ListAttributeES<T, E>)att;
+                return (ListAttributeES<T, E>) att;
             }
         }
         return null;
@@ -242,7 +214,7 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
             if (att.getName().equals(name) && keyType == att.getKeyJavaType()
                     && valueType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
-                return (MapAttributeES<? super T, K, V>)att;
+                return (MapAttributeES<? super T, K, V>) att;
             }
         }
         return null;
@@ -257,19 +229,19 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
             if (att.getName().equals(name) && keyType == att.getKeyJavaType()
                     && valueType == att.getElementType().getClass()) {
                 //Not sure if this will fail at runtime.
-                return (MapAttributeES<T, K, V>)att;
+                return (MapAttributeES<T, K, V>) att;
             }
         }
         return null;
     }
 
     @Override
-    public Set<PluralAttribute<? super T, ?, ?>> getPluralAttributes() {
+    public SortedSet<PluralAttribute<? super T, ?, ?>> getPluralAttributes() {
         return pluralAttributes;
     }
 
     @Override
-    public Set<PluralAttribute<T, ?, ?>> getDeclaredPluralAttributes() {
+    public SortedSet<PluralAttribute<T, ?, ?>> getDeclaredPluralAttributes() {
         return declaredPluralAttributes;
     }
 

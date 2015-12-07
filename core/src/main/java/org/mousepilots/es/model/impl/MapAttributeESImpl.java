@@ -4,7 +4,6 @@ import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.mousepilots.es.model.DtoType;
@@ -16,7 +15,7 @@ import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 27-11-2015
+ * @version 1.0, 7-12-2015
  * @param <T> The type the represented Map belongs to
  * @param <K> The type of the key of the represented Map
  * @param <V> The type of the value of the represented Map
@@ -54,31 +53,23 @@ public class MapAttributeESImpl<T, K, V>
      * @param hasValueDtoConstructor the constructor that will be used when wrapping this attribute for a DTO.
      * @param hasValueKeyDtoConstructor the constructor that will be used when wrapping the key of this attribute for a DTO.
      */
-    public MapAttributeESImpl(
-            Class<K> keyJavaType,
-            TypeES<K> keyType,
-            TypeES<V> elementType,
-            BindableType bindableType,
-            Class<V> bindableJavaType,
-            String name, int ordinal,
-            Class<Map<K, V>> javaType,
-            PersistentAttributeType persistentAttributeType,
-            MemberES javaMember,
-            boolean readOnly,
-            boolean association,
-            ManagedTypeES<T> declaringType,
+    public MapAttributeESImpl(Class<K> keyJavaType, TypeES<K> keyType,
             Constructor<HasValue> hasValueKeyChangeConstructor,
+            Constructor<HasValue> hasValueKeyDtoConstructor,
+            TypeES<V> elementType, BindableType bindableType,
+            Class<V> bindableJavaType, String name, int ordinal,
+            Class<Map<K, V>> javaType,
+            PersistentAttributeType persistentAttributeType, MemberES javaMember,
+            boolean readOnly, boolean association, ManagedTypeES<T> declaringType,
             Constructor<HasValue> hasValueChangeConstructor,
-            Constructor<HasValue> hasValueDtoConstructor,
-            Constructor<HasValue> hasValueKeyDtoConstructor) {
-        //TODO Is the isCollection on PluralAttribute based on a java collection or JPA collection?
+            Constructor<HasValue> hasValueDtoConstructor) {
         super(CollectionType.MAP, elementType, bindableType, bindableJavaType,
                 name, ordinal, javaType, persistentAttributeType, javaMember,
-                readOnly, false, association, declaringType,
-                hasValueChangeConstructor, hasValueDtoConstructor);
+                readOnly, association, declaringType, hasValueChangeConstructor,
+                hasValueDtoConstructor);
         this.keyJavaType = keyJavaType;
         this.keyType = keyType;
-        this.hasValueKeyChangeConstructor=hasValueKeyChangeConstructor;
+        this.hasValueKeyChangeConstructor = hasValueKeyChangeConstructor;
         this.hasValueKeyDtoConstructor = hasValueKeyDtoConstructor;
     }
 
@@ -115,5 +106,10 @@ public class MapAttributeESImpl<T, K, V>
     public String toString() {
         return super.toString() + " MapAttribute keyType: "
                 + getKeyType().getJavaClassName();
+    }
+
+    @Override
+    public boolean isCollection() {
+        return true;
     }
 }

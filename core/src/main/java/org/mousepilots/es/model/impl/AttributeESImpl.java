@@ -14,7 +14,7 @@ import org.mousepilots.es.model.HasValue;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 27-11-2015
+ * @version 1.0, 7-12-2015
  * @param <T> the represented type that contains the attribute.
  * @param <TA> the type of the represented attribute.
  * @param <TC> the type to wrap for a change.
@@ -26,7 +26,7 @@ public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC>
     private final Class<TA> javaType;
     private final Attribute.PersistentAttributeType persistentAttributeType;
     private final MemberES javaMember;
-    private final boolean readOnly, collection, association;
+    private final boolean readOnly, association;
     private final ManagedTypeES<T> declaringType;
     private final Constructor<HasValue> hasValueChangeConstructor;
     private final Constructor<HasValue> hasValueDtoConstructor;
@@ -41,7 +41,6 @@ public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC>
      * @param persistentAttributeType the {@link PersistentAttributeType} of this attribute.
      * @param javaMember the java {@link Member} representing this attribute.
      * @param readOnly whether or not this attribute is read only.
-     * @param collection whether or not this attribute is a collection.
      * @param association whether or not this attribute is part of an association.
      * @param declaringType the {@link ManagedTypeES} that declared this attribute.
      * @param hasValueChangeConstructor the constructor that will be used when wrapping this attribute for a change.
@@ -49,7 +48,7 @@ public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC>
      */
     public AttributeESImpl(String name, int ordinal, Class<TA> javaType,
             PersistentAttributeType persistentAttributeType, MemberES javaMember,
-            boolean readOnly, boolean collection, boolean association,
+            boolean readOnly, boolean association,
             ManagedTypeES<T> declaringType,
             Constructor<HasValue> hasValueChangeConstructor,
             Constructor<HasValue> hasValueDtoConstructor) {
@@ -59,7 +58,6 @@ public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC>
         this.persistentAttributeType = persistentAttributeType;
         this.javaMember = javaMember;
         this.readOnly = readOnly;
-        this.collection = collection;
         this.association = association;
         this.declaringType = declaringType;
         this.hasValueChangeConstructor = hasValueChangeConstructor;
@@ -94,11 +92,6 @@ public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC>
     @Override
     public boolean isReadOnly() {
         return readOnly;
-    }
-
-    @Override
-    public boolean isCollection() {
-        return collection;
     }
 
     @Override

@@ -7,17 +7,17 @@ import javax.persistence.metamodel.SingularAttribute;
 /**
  * Instances of the type {@link ManagedTypeES} represent entity, mapped
  * superclass, and embeddable types.
+ *
  * @param <T> The represented type.
  * @see TypeES
  * @see ManagedType
  * @author Roy Cleven
  * @version 1.0, 19-10-2015
  */
-public interface ManagedTypeES<T> extends TypeES<T>,ManagedType<T>{
+public interface ManagedTypeES<T> extends TypeES<T>, ManagedType<T> {
 
     @Override
-    <Y> SingularAttributeES<? super T, Y> getSingularAttribute(
-            String name, Class<Y> type);
+    <Y> SingularAttributeES<? super T, Y> getSingularAttribute(String name, Class<Y> type);
 
     @Override
     <Y> SingularAttributeES<T, Y> getDeclaredSingularAttribute(
