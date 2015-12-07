@@ -1,11 +1,12 @@
 package org.mousepilots.es.test.domain;
 
+import java.util.Objects;
 import javax.persistence.MappedSuperclass;
 
 /**
  * Mapped superclass that models a person.
  * @author Nicky Ernste
- * @version 1.0, 30-11-2015
+ * @version 1.0, 1-12-2015
  */
 @MappedSuperclass
 public abstract class Person extends BaseEntity {
@@ -67,5 +68,35 @@ public abstract class Person extends BaseEntity {
 
     public void setSex(String sex) {
         this.sex = sex;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + Objects.hashCode(this.firstName);
+        hash = 23 * hash + Objects.hashCode(this.lastName);
+        hash = 23 * hash + this.age;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Person other = (Person) obj;
+        if (!Objects.equals(this.firstName, other.firstName)) {
+            return false;
+        }
+        if (!Objects.equals(this.lastName, other.lastName)) {
+            return false;
+        }
+        if (this.age != other.age) {
+            return false;
+        }
+        return true;
     }
 }

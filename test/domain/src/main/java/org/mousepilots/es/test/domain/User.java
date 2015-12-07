@@ -17,9 +17,13 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "Users")
-public class User extends Person {
+public abstract class User<A extends Account> extends Person {
     private static final long serialVersionUID = 1L;
     private String userName;
+
+    @OneToOne
+    private A account;
+
     @ElementCollection
     private List<Address> addresses;
     @ElementCollection
@@ -28,8 +32,11 @@ public class User extends Person {
     private Set<User> subordinates;
     @OneToOne
     private WorkEnvironment workEnvironment;
-    @ManyToMany(mappedBy = "users", targetEntity = Role.class)
+    @ManyToMany(targetEntity = Role.class)
     private Collection<Role> roles;
+
+    @ManyToMany
+    private Collection<Role> previousRoles;
 
     public User() {
     }
@@ -46,6 +53,16 @@ public class User extends Person {
         this.workEnvironment = workEnvironment;
         this.roles = roles;
     }
+
+    public A getAccount() {
+        return account;
+    }
+
+    public void setAccount(A account) {
+        this.account = account;
+    }
+
+    
 
     public String getUserName() {
         return userName;
@@ -87,11 +104,47 @@ public class User extends Person {
         this.roles = roles;
     }
 
+    public Collection<Role> getPreviousRoles() {
+        return previousRoles;
+    }
+
+    public void setPreviousRoles(Collection<Role> previousRoles) {
+        this.previousRoles = previousRoles;
+    }
+
+
+
     public Set<User> getSubordinates() {
         return subordinates;
     }
 
     public void setSubordinates(Set<User> subordinates) {
         this.subordinates = subordinates;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 19;
+        hash += this.getId() != null ? this.getId().hashCode() : 0;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        BaseEntity other = (BaseEntity) obj;
+        if (!this.getId().equals(other.getId()) && (this.getId() == null)
+                || !this.id.equals(other.id)) {
+            return false;
+        }
+        return true;
     }
 }

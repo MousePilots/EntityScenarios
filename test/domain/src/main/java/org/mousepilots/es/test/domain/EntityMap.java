@@ -60,4 +60,30 @@ public class EntityMap extends BaseEntity {
     public void setEntityEntity(Map<Phone, Phone> entityEntity) {
         this.entityEntity = entityEntity;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 17;
+        hash += this.getId() != null ? this.getId().hashCode() : 0;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        BaseEntity other = (BaseEntity) obj;
+        if (!this.getId().equals(other.getId()) && (this.getId() == null)
+                || !this.id.equals(other.id)) {
+            return false;
+        }
+        return true;
+    }
 }

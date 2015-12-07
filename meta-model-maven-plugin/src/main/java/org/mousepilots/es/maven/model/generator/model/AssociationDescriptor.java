@@ -4,12 +4,12 @@ import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.ManagedTypeDescriptor;
-import org.mousepilots.es.model.AssociationTypeES;
+import org.mousepilots.es.core.model.AssociationTypeES;
 
 /**
  * Descriptor that describes an association between two attributes.
  * @author Nicky Ernste
- * @version 1.0, 18-11-2015
+ * @version 1.0, 4-12-2015
  */
 public class AssociationDescriptor {
 
@@ -71,8 +71,29 @@ public class AssociationDescriptor {
      * @return an {@link AssociationDescriptor} for the inverse of this association, or {@code null} if there is no inverse.
      */
     public AssociationDescriptor getInverse(){
-        return this.associationInverseTargetAttributeType == null ? null
+        return this.inverseTargetAttributeDescriptor == null ? null
                 : inverseTargetAttributeDescriptor.getAssociation(
                         associationInverseTargetAttributeType);
+    }
+
+    /**
+     * Gets the target type for this association.
+     * @return a {@link ManagedTypeDescriptor} that is the target of this association.
+     */
+    public ManagedTypeDescriptor getTargetTypeDescriptor() {
+        return targetTypeDescriptor;
+    }
+
+    @Override
+    public String toString() {
+        String inverse = getInverse() != null
+                ? getInverse().sourceAttribute.getName() : "null";
+        StringBuilder sb = new StringBuilder("Source: ");
+        sb.append(getSourceAttribute().getName()).append(", Attribute type: ")
+                .append(getPersistentAttributeType()).append(", Target type: ")
+                .append(getTargetTypeDescriptor().getName())
+                .append(", Inverse association: ").append(inverse)
+                .append(", Is owner: ").append(isOwner());
+        return sb.toString();
     }
 }

@@ -42,4 +42,30 @@ public class Role extends BaseEntity {
     public void setUsers(Collection<User> users) {
         this.users = users;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 2;
+        hash += this.getId() != null ? this.getId().hashCode() : 0;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        BaseEntity other = (BaseEntity) obj;
+        if (!this.getId().equals(other.getId()) && (this.getId() == null)
+                || !this.id.equals(other.id)) {
+            return false;
+        }
+        return true;
+    }
 }

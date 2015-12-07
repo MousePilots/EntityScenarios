@@ -2,7 +2,7 @@ package org.mousepilots.es.maven.model.generator.plugin.scratch;
 
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
-import org.mousepilots.es.model.MappedSuperclassTypeES;
+import org.mousepilots.es.core.model.MappedSuperclassTypeES;
 
 /**
  *
