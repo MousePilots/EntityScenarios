@@ -4,6 +4,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import javax.persistence.metamodel.Type.PersistenceType;
 import org.mousepilots.es.maven.model.generator.model.Descriptor;
+import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescriptor;
+import org.mousepilots.es.maven.model.generator.plugin.ReflectionUtils;
 
 /**
  * Descriptor of the {@link javax.persistence.metamodel.Type} of JPA.
@@ -58,6 +60,20 @@ public class TypeDescriptor extends Descriptor<PersistenceType> {
     }
 
     /**
+     * Searches the declared attributes for an attribute with the specified {@code name}.
+     * If it is not found it will search in the super classes.
+     * @param name the name of the attribute to get.
+     * @return the {@link AttributeDescriptor} with the specified {@code name} or {@code null} if the attribute was not found.
+     */
+    public AttributeDescriptor getAttribute(String name){
+        return null;
+    }
+
+    public TypeDescriptor getSuper(){
+        return getInstance(getJavaType().getSuperclass());
+    }
+
+    /**
      * Get a specific instance of a descriptor.
      * @param <T> A type that extends {@link TypeDescriptor}.
      * @param javaClass The class to get the descriptor of.
@@ -71,5 +87,9 @@ public class TypeDescriptor extends Descriptor<PersistenceType> {
         } else {
             return null;
         }
+    }
+
+    public boolean isInstantiable(){
+        return ReflectionUtils.isInstantiable(getJavaType());
     }
 }

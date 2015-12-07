@@ -1,103 +1,133 @@
 package org.mousepilots.es.maven.model.generator.model;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.persistence.metamodel.Type;
 
 /**
  * Generic descriptor that holds the common attributes for all sub descriptors.
  *
  * @author Jurjen van Geenen
  * @author Nicky Ernste
- * @version 1.0, 18-11-2015
+ * @version 1.0, 4-12-2015
  * @param <T> The kind of the persistence type this descriptor models. Either
  * {@link javax.persistence.metamodel.Type.PersistenceType} or
  * {@link javax.persistence.metamodel.Attribute.PersistentAttributeType}.
  */
 public abstract class Descriptor<T> implements Comparable<Descriptor> {
 
-    private static final Date currentDate = new Date();
-    private final String esNameAndVersion;
     private Descriptor<T> superDescriptor;
     private T persistenceType;
     private final String name;
     private final Class javaType;
     protected final int ordinal;
 
+    /**
+     * Create a new instance of this class.
+     * @param persistenceType the persistence type of this descriptor.
+     * @param name the name of this descriptor.
+     * @param javaType the java type this descriptor represents.
+     * @param ordinal the ordinal for this descriptor.
+     */
     protected Descriptor(T persistenceType, String name, Class javaType,
             int ordinal) {
-        this.esNameAndVersion = getESNameAndVersion();
         this.persistenceType = persistenceType;
         this.name = name;
         this.javaType = javaType;
         this.ordinal = ordinal;
     }
 
+    /**
+     * Create a new instance of this class.
+     * @param name the name of this descriptor.
+     * @param javaType the java type this descriptor represents.
+     * @param ordinal the ordinal for this descriptor.
+     */
     protected Descriptor(String name, Class javaType, int ordinal) {
         this(null, name, javaType, ordinal);
     }
 
-    public String getEsNameAndVersion() {
-        return esNameAndVersion;
-    }
-
+    /**
+     * @return the {@link Type.PersistenceType} of this descriptor.
+     */
     public T getPersistenceType() {
         return persistenceType;
     }
 
+    /**
+     * Set the {@link Type.PersistenceType} of this descriptor.
+     * @param persistenceType the new persistence type.
+     */
     protected void setPersistenceType(T persistenceType) {
         this.persistenceType = persistenceType;
     }
 
+    /**
+     * @return the name of this descriptor.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return the java type of this descriptor.
+     */
     public Class getJavaType() {
         return javaType;
     }
 
+    /**
+     * @return the simple name of the {@code javaType}.
+     */
     public String getJavaTypeSimpleName() {
         return javaType.getSimpleName();
     }
 
+    /**
+     * @return the ordinal of this descriptor.
+     */
     public int getOrdinal() {
         return ordinal;
     }
 
     /**
-     * the (full) class name of the {@link AbstractType} implementation of this
+     * @return the (full) class name of the {@link AbstractType} implementation of this
      * descriptor
-     *
-     * @return
      */
     public String getDescriptorClassSimpleName() {
         return getJavaTypeSimpleName() + "_ES";
     }
 
+    /**
+     * @return the (canonical) class name of the {@link AbstractType}} implementation of this descriptor.
+     */
     public String getDescriptorClassFullName() {
         return getJavaTypeCanonicalName() + "_ES";
     }
 
+    /**
+     * @return the (canonical) class name of the {@code javeType} of this descriptor.
+     */
     public String getJavaTypeCanonicalName() {
         return javaType.getCanonicalName();
     }
 
+    /**
+     * @return the name of the package the represented {@code javaType} is in.
+     */
     public String getPackageName() {
         return javaType.getPackage().getName();
     }
 
-    public static Date getCurrentDate() {
-        return currentDate;
-    }
-
+    /**
+     * @return the super {@link Descriptor} of this descriptor if any.
+     */
     public Descriptor<T> getSuperDescriptor() {
         return superDescriptor;
     }
 
+    /**
+     * Set the super {@link Descriptor} of this descriptor.
+     * @param superDescriptor the new super descriptor.
+     */
     public void setSuperDescriptor(Descriptor<T> superDescriptor) {
         this.superDescriptor = superDescriptor;
     }
@@ -126,37 +156,13 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
 
     @Override
     public final String toString() {
-        return getClass().getSimpleName();
+        return "Descriptor: " + getName() + ", Persistence tyoe: "
+                + getPersistenceType() + ", Java type: "
+                + getJavaTypeSimpleName() + ", Ordinal: " + getOrdinal();
     }
 
     @Override
     public int compareTo(Descriptor o) {
         return Integer.compare(getOrdinal(), o.getOrdinal());
-    }
-
-    /**
-     * Load the name of the plugin and its version from the properties file.
-     * So it can be used to annotate the generated meta model classes.
-     * @return A {@link String} containing the name and version of the plugin.
-     */
-    private String getESNameAndVersion() {
-        final Properties properties = new Properties();
-        final StringBuilder sb = new StringBuilder();
-        try {
-            InputStream resourceAsStream = Descriptor.class.getResourceAsStream(
-                    "/project.properties");
-            if (resourceAsStream != null) {
-                properties.load(resourceAsStream);
-                sb.append(properties.getProperty("artifactId", "Unknown"));
-                sb.append("_");
-                sb.append(properties.getProperty("version", "unknown version"));
-            } else {
-                sb.append("Unknown_unknown version");
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(Descriptor.class.getName()).log(Level.SEVERE, null,
-                    ex);
-        }
-        return sb.toString();
     }
 }

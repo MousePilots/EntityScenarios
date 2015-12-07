@@ -206,4 +206,19 @@ public class ManagedTypeDescriptor extends TypeDescriptor {
         }
         return returnSet;
     }
+
+    @Override
+    public final AttributeDescriptor getAttribute(String name){
+        for (AttributeDescriptor attribute : getDeclaredAttributes()){
+            if (attribute.getName().equals(name)) {
+                return attribute;
+            }
+        }
+        TypeDescriptor superType = getSuper();
+        if (superType == null) {
+            return null;
+        } else {
+            return superType.getAttribute(name);
+        }
+    }
 }
