@@ -42,7 +42,7 @@ import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
  * models.
  *
  * @author Nicky Ernste
- * @version 1.0, 19-11-2015
+ * @version 1.0, 7-12-2015
  */
 public class TypeGenerator {
 
@@ -83,7 +83,7 @@ public class TypeGenerator {
     public SortedSet<TypeDescriptor> generate(Set<Class<?>> jpaMetaModelClasses) {
         final SortedSet<TypeDescriptor> retval = new TreeSet<>();
         addManagedTypeDescriptors(retval, jpaMetaModelClasses);
-        addSuperDescriptors(jpaMetaModelClasses);
+        addSuperDescriptors(retval);
         addBasicTypeDescriptors(retval, jpaMetaModelClasses);
         addAttributeTypeDescriptors(retval, jpaMetaModelClasses);
         return retval;
@@ -122,36 +122,11 @@ public class TypeGenerator {
 
     /**
      * Add the super descriptor to each type descriptor.
-     * @param jpaMetaModels a set of all the found JPA meta model classes.
+     * @param typeDescriptors a set of all the found type descriptors.
      */
-    private void addSuperDescriptors(Set<Class<?>> jpaMetaModels) {
-        for (Class<?> jpaMetaModel : jpaMetaModels) {
-            try {
-                //Find the corresponding type descriptor.
-                Class originalClass = Class.forName(removeTrailingUnderscore(jpaMetaModel.getName()));
-                TypeDescriptor td = TypeDescriptor.getInstance(originalClass);
-                if (td != null) {
-                    Class superclass = jpaMetaModel.getSuperclass();
-                    if (superclass != null && !superclass.getSimpleName().equals("Object")) {
-                        String baseName = removeTrailingUnderscore(superclass.getName());
-                        try {
-                            Class parentClass = Class.forName(baseName);
-                            TypeDescriptor foundTd = TypeDescriptor.getInstance(parentClass);
-                            if (foundTd != null) {
-                                td.setSuperDescriptor(foundTd);
-                            } else {
-                                //Could not find the type descriptor of the super class.
-                                throw new IllegalStateException("Could not find the type descriptor for the super class of: " + parentClass.getSimpleName());
-                            }
-                        } catch (ClassNotFoundException ex) {
-                            //Descriptor has no superclass, so ignore exception.
-                        }
-                    }
-                }
-            } catch (ClassNotFoundException ex) {
-                //Could not find the type descriptor for the jpa class.
-                throw new IllegalStateException("Could not find the type descriptor for the jpa meta model class: " + jpaMetaModel.getSimpleName());
-            }
+    private void addSuperDescriptors(SortedSet<TypeDescriptor> typeDescriptors) {
+        for (TypeDescriptor td : typeDescriptors){
+            td.setSuperDescriptor(td.getSuper());
         }
     }
 

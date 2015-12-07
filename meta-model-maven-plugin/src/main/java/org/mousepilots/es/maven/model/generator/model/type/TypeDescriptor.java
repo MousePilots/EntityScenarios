@@ -10,7 +10,7 @@ import org.mousepilots.es.maven.model.generator.plugin.ReflectionUtils;
 /**
  * Descriptor of the {@link javax.persistence.metamodel.Type} of JPA.
  * @author Nicky Ernste
- * @version 1.0, 25-11-2015
+ * @version 1.0, 7-12-2015
  */
 public class TypeDescriptor extends Descriptor<PersistenceType> {
 
@@ -69,6 +69,10 @@ public class TypeDescriptor extends Descriptor<PersistenceType> {
         return null;
     }
 
+    /**
+     * Get the super descriptor if this descriptor if any.
+     * @return the super descriptor of this type, or {@code null} if this type has no super descriptor.
+     */
     public TypeDescriptor getSuper(){
         return getInstance(getJavaType().getSuperclass());
     }
@@ -89,6 +93,10 @@ public class TypeDescriptor extends Descriptor<PersistenceType> {
         }
     }
 
+    /**
+     * Check if this type is instantiable.
+     * @return {@code true} if this type can be instantiated, or {@code false} otherwise.
+     */
     public boolean isInstantiable(){
         return ReflectionUtils.isInstantiable(getJavaType());
     }
