@@ -149,6 +149,7 @@ public class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
 
     @Override
     public IdentifiableTypeES<? super T> getSupertype() {
+        //TODO get the super type.
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

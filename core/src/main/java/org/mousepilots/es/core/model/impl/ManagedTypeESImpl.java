@@ -1,7 +1,6 @@
 package org.mousepilots.es.core.model.impl;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -13,6 +12,7 @@ import org.mousepilots.es.core.model.CollectionAttributeES;
 import org.mousepilots.es.core.model.ListAttributeES;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.MapAttributeES;
+import org.mousepilots.es.core.model.PluralAttributeES;
 import org.mousepilots.es.core.model.SetAttributeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.TypeES;
@@ -69,7 +69,7 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
             Collection<TypeES<? extends T>> subTypes) {
         super(name, ordinal, javaType, persistenceType, javaClassName, instantiable, metamodelClass, superType, subTypes);
         this.attributes.addAll(attributes);
-        //TODO calculate attrbute types.
+        sortAndFillAttributes();
 
     }
 
@@ -399,5 +399,81 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
             }
         }
         return null;
+    }
+
+    /**
+     * Sort all the attributes of this managed type and fill the seperate lists.
+     * The attributes are sorted by if they are a collection or a single attribute.
+     * Then its determined if they are declared by this type or a different one.
+     * Then they are added to the respective lists in this managed type.
+     */
+    private void sortAndFillAttributes() {
+        for (Attribute attribute : getAttributes()) {
+            if (attribute.isCollection()) {
+                if (attribute.getClass().isAssignableFrom(PluralAttributeES.class)) {
+                    PluralAttributeES plural = (PluralAttributeES) attribute;
+                    if (attribute.getDeclaringType() != null && attribute.getDeclaringType().getClass().getName().equals(this.getClass().getName())) {
+                        //Plural attribute is declared by this class.
+                        declaredAttributes.add(attribute);
+                        declaredPluralAttributes.add(plural);
+                        switch (plural.getCollectionType()) {
+                            case COLLECTION:
+                                CollectionAttributeES collection = (CollectionAttributeES) plural;
+                                declaredCollectionAttributes.add(collection);
+                                break;
+                            case LIST:
+                                ListAttributeES list = (ListAttributeES) plural;
+                                declaredListAttributes.add(list);
+                                break;
+                            case MAP:
+                                MapAttributeES map = (MapAttributeES) plural;
+                                declaredMapAttributes.add(map);
+                                break;
+                            case SET:
+                                SetAttributeES set = (SetAttributeES) plural;
+                                declaredSetAttributes.add(set);
+                                break;
+                            default:
+                                throw new IllegalStateException("The collection type could not be determined.");
+                        }
+                    } else {
+                        //Plural attribute is declared somewhere else.
+                        pluralAttributes.add(plural);
+                        switch (plural.getCollectionType()) {
+                            case COLLECTION:
+                                CollectionAttributeES collection = (CollectionAttributeES) plural;
+                                collectionAttributes.add(collection);
+                                break;
+                            case LIST:
+                                ListAttributeES list = (ListAttributeES) plural;
+                                listAttributes.add(list);
+                                break;
+                            case MAP:
+                                MapAttributeES map = (MapAttributeES) plural;
+                                mapAttributes.add(map);
+                                break;
+                            case SET:
+                                SetAttributeES set = (SetAttributeES) plural;
+                                setAttributes.add(set);
+                                break;
+                            default:
+                                throw new IllegalStateException("The collection type could not be determined.");
+                        }
+                    }
+                }
+            } else {
+                if (attribute.getClass().isAssignableFrom(SingularAttributeES.class)) {
+                    SingularAttributeES singular = (SingularAttributeES) attribute;
+                    if (attribute.getDeclaringType() != null && attribute.getDeclaringType().getClass().getName().equals(this.getClass().getName())) {
+                        //Singular attribute is declared by this class.
+                        declaredAttributes.add(attribute);
+                        declaredSingularAttributes.add(singular);
+                    } else {
+                        //Singular attribute is declared somewhere else.
+                        singularAttributes.add(singular);
+                    }
+                }
+            }
+        }
     }
 }

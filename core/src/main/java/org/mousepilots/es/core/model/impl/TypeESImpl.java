@@ -88,6 +88,7 @@ public class TypeESImpl<T> implements TypeES<T> {
 
     @Override
     public SortedSet<TypeES<? super T>> getSuperTypes() {
+        //TODO Get mulitple super types.
         return null;
     }
 
