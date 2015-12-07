@@ -11,6 +11,7 @@ import org.mousepilots.es.change.abst.AbstractNonIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.HasValue;
 import org.mousepilots.es.model.DtoType;
+import org.mousepilots.es.model.TypeES;
 
 /**
  * @author geenenju
@@ -27,11 +28,12 @@ public final class EmbeddableSingularBasicAttributeUpdate<C, U, A extends Serial
         super();
     }
 
-    public EmbeddableSingularBasicAttributeUpdate(C container, AttributeES containerAttribute, U updated, AttributeES updatedAttribute, A oldValue, A newValue, DtoType dtoType) {
-        super(container, containerAttribute, updated, updatedAttribute);
+    public EmbeddableSingularBasicAttributeUpdate(HasValue oldValue, HasValue newValue, C container, U updated, HasValue containerId, AttributeES containerAttribute, AttributeES updatedAttribute, TypeES type, DtoType dtoType) {
+        super(container, updated, containerId, containerAttribute, updatedAttribute, type, dtoType, null);
         this.oldValue = updatedAttribute.wrapForChange(oldValue, dtoType);
         this.newValue = updatedAttribute.wrapForChange(newValue, dtoType);
     }
+
 
     public A getOldValue() {
         return oldValue == null ? null : (A) oldValue.getValue();

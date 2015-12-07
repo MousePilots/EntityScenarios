@@ -1,19 +1,15 @@
 package org.mousepilots.es.change.impl;
 
 import java.io.Serializable;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map.Entry;
-import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.change.HasAdditions;
 import org.mousepilots.es.change.HasRemovals;
 import org.mousepilots.es.change.abst.AbstractIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
-import org.mousepilots.es.util.WrapperUtils;
+import org.mousepilots.es.model.IdentifiableTypeES;
+import org.mousepilots.es.model.impl.HasValueEntry;
 
 /**
  * @author Jurjen van Geenen
@@ -23,10 +19,10 @@ import org.mousepilots.es.util.WrapperUtils;
  * @param <K> Key type
  * @param <V> Value type
  */
-public abstract class IdentifiableJavaUtilMapAttributeUpdate<I extends Serializable, VE extends Serializable, K, V> extends AbstractIdentifiableUpdate<I, VE> implements HasAdditions<SimpleEntry<K, V>>, HasRemovals<SimpleEntry<K, V>> {
+public abstract class IdentifiableJavaUtilMapAttributeUpdate<I extends Serializable, VE extends Serializable, K, V> extends AbstractIdentifiableUpdate<I, VE> implements HasAdditions<HasValueEntry<K, V>>, HasRemovals<HasValueEntry<K, V>> {
 
-    private ArrayList<HasValue> additions;
-    private ArrayList<HasValue> removals;
+    private List<HasValueEntry<K,V>> additions;
+    private List<HasValueEntry<K,V>> removals;
 
     public IdentifiableJavaUtilMapAttributeUpdate() {
         super();
@@ -40,20 +36,19 @@ public abstract class IdentifiableJavaUtilMapAttributeUpdate<I extends Serializa
      * @param additions
      * @param removals
      */
-    public IdentifiableJavaUtilMapAttributeUpdate(AttributeES attribute, I id, VE version,
-            Collection<SimpleEntry<K, V>> additions, Collection<SimpleEntry<K, V>> removals, DtoType dtoType) {
-        super(attribute, id, version);
-        WrapperUtils.wrapForChange(attribute, additions, this.additions, dtoType);
-        WrapperUtils.wrapForChange(attribute, removals, this.removals, dtoType);
+    public IdentifiableJavaUtilMapAttributeUpdate(List<HasValueEntry<K, V>> additions, List<HasValueEntry<K, V>> removals, AttributeES attribute, VE version, HasValue id, IdentifiableTypeES type, DtoType dtoType) {
+        super(attribute, version, id, type, dtoType);
+        this.additions = additions;
+        this.removals = removals;
+    }
+    
+    @Override
+    public List<HasValueEntry<K, V>> getAdditions() {
+        return additions;
     }
 
     @Override
-    public List<SimpleEntry<K, V>> getAdditions() {
-        return WrapperUtils.unWrap(additions, new ArrayList<SimpleEntry<K, V>>());
-    }
-
-    @Override
-    public List<SimpleEntry<K, V>> getRemovals() {
-        return WrapperUtils.unWrap(removals, new ArrayList<SimpleEntry<K, V>>());
+    public List<HasValueEntry<K, V>> getRemovals() {
+        return removals;
     }
 }

@@ -10,6 +10,7 @@ import org.mousepilots.es.change.abst.AbstractIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
+import org.mousepilots.es.model.IdentifiableTypeES;
 import org.mousepilots.es.util.WrapperUtils;
 
 /**
@@ -28,9 +29,8 @@ public abstract class IdentifiableJavaUtilCollectionAssociationAttributeUpdate<I
         super();
     }
 
-    public IdentifiableJavaUtilCollectionAssociationAttributeUpdate(AttributeES attribute,
-            I id, V version, Collection<A> additions, Collection<A> removals, DtoType dtoType) {
-        super(attribute, id, version);
+    public IdentifiableJavaUtilCollectionAssociationAttributeUpdate(AttributeES attribute, V version, HasValue id, IdentifiableTypeES type, DtoType dtoType) {
+        super(attribute, version, id, type, dtoType);
         WrapperUtils.wrapForChange(attribute, additions, this.additions, dtoType);
         WrapperUtils.wrapForChange(attribute, removals, this.removals, dtoType);
     }

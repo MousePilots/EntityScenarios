@@ -5,6 +5,8 @@ import java.util.Collection;
 import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.DtoType;
+import org.mousepilots.es.model.HasValue;
+import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Roy Cleven
@@ -17,8 +19,8 @@ public final class EmbeddableToEmbeddableJavaUtilCollectionAssociationAttributeU
     public EmbeddableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate() {
     }
 
-    public EmbeddableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate(C container, AttributeES containerAttribute, U updated, AttributeES updatedAttribute, Collection<A> additions, Collection<A> removals, DtoType dtoType) {
-        super(container, containerAttribute, updated, updatedAttribute, additions, removals, dtoType);
+    public EmbeddableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate(C container, U updated, HasValue containerId, AttributeES containerAttribute, AttributeES updatedAttribute, TypeES type, DtoType dtoType) {
+        super(container, updated, containerId, containerAttribute, updatedAttribute, type, dtoType);
     }
 
     @Override

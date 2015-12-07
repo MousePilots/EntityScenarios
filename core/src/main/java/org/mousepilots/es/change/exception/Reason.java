@@ -39,7 +39,7 @@ public enum Reason {
      */
     NO_ENTRY_FOR_KEY_AND_VALUE,
     /**
-     * Map already contains an entry for the given key.
+     * The entry which is being added contains a null key..
      */
-    KEY_ALREADY_PRESENT
+    KEY_IS_NULL
 }

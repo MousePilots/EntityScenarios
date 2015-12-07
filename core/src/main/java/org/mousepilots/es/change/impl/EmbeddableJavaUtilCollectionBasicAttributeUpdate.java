@@ -11,6 +11,7 @@ import org.mousepilots.es.change.abst.AbstractNonIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
+import org.mousepilots.es.model.TypeES;
 import org.mousepilots.es.util.WrapperUtils;
 
 /**
@@ -28,10 +29,10 @@ public final class EmbeddableJavaUtilCollectionBasicAttributeUpdate<C, U, A exte
         super();
     }
 
-    public EmbeddableJavaUtilCollectionBasicAttributeUpdate(C container,
-            AttributeES containerAttribute, U updated, AttributeES updatedAttribute,
-            Collection<A> additions, Collection<A> removals, DtoType dtoType) {
-        super(container, containerAttribute, updated, updatedAttribute);
+    public EmbeddableJavaUtilCollectionBasicAttributeUpdate(C container, 
+            U updated, HasValue containerId, AttributeES containerAttribute, 
+            AttributeES updatedAttribute, TypeES type, DtoType dtoType) {
+        super(container, updated, containerId, containerAttribute, updatedAttribute, type, dtoType, null);
         WrapperUtils.wrapForChange(updatedAttribute, additions, this.additions, dtoType);
         WrapperUtils.wrapForChange(updatedAttribute, removals, this.removals, dtoType);
     }

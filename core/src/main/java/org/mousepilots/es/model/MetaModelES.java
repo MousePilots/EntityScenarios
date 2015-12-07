@@ -17,6 +17,17 @@ public interface MetaModelES extends Metamodel{
     @Override
     <X> ManagedTypeES<X> managedType(Class<X> cls);
 
+    /**
+     * Gets a {@link ManagedTypeES} of the expected return tye {@code M}
+     * @param <X>
+     * @param <M> a 
+     * @param managedTypeClass
+     * @param javaType
+     * @return 
+     */
+    <X,M extends ManagedTypeES<X>> M managedType(Class<X> javaType, Class<M> managedTypeClass);
+    
+
     @Override
     <X> EmbeddableTypeES<X> embeddable(Class<X> cls);
 }

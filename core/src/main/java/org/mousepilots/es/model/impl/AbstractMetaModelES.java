@@ -87,6 +87,12 @@ public abstract class AbstractMetaModelES implements MetaModelES {
     }
 
     @Override
+    public <X, M extends ManagedTypeES<X>> M managedType(Class<X> javaType, Class<M> managedTypeClass){
+        return (M) managedType(javaType);
+    }
+
+    
+    @Override
     public <X> EmbeddableTypeES<X> embeddable(Class<X> cls) {
        for (EmbeddableType embeddableType : embeddables){
             if (embeddableType.getJavaType() == cls) {

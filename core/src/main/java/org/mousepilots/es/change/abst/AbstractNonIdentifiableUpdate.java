@@ -1,13 +1,19 @@
 package org.mousepilots.es.change.abst;
 
 import java.io.Serializable;
+import java.util.List;
 import org.mousepilots.es.change.CRUD;
+import org.mousepilots.es.change.impl.EmbeddableAndAttribute;
 import org.mousepilots.es.model.AttributeES;
+import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
+import org.mousepilots.es.model.TypeES;
 
 /**
  * @author Jurjen van Geenen
  * @author Roy Cleven
+ * @param <C>
+ * @param <U>
  */
 public abstract class AbstractNonIdentifiableUpdate<C, U> extends AbstractChange
 {
@@ -15,62 +21,24 @@ public abstract class AbstractNonIdentifiableUpdate<C, U> extends AbstractChange
    private C container;
    private U updated;
    private HasValue containerId;
-   private int containerAttributeOrdinal;
-   private int updatedAttributeOrdinal;
+   private AttributeES containerAttribute;
+   private AttributeES updatedAttribute;
+   private List<EmbeddableAndAttribute> containerEmbeddables;
 
    protected AbstractNonIdentifiableUpdate()
    {
 
    }
 
-   protected AbstractNonIdentifiableUpdate(C container, AttributeES containerAttribute, U updated, AttributeES updatedAttribute)
-   {
-//      super(updatedAttribute.getDeclaringType());
-//      // validations
-//      if (container == null)
-//      {
-//         throw new IllegalArgumentException("container==null");
-//      }
-//      //possibility of having embeddable as parent instead of identifiable
-//      final IdentifiableTypeES containerType = container.getType();
-//      if (containerType != containerAttribute.getDeclaringType())
-//      {
-//         throw new IllegalArgumentException("containerAttribute " + containerAttribute + " does not occur on container-type" + container.getType());
-//      }
-//
-//      final AssociationES association = containerAttribute.getAssociation(AssociationTypeES.VALUE);
-//      if (association == null)
-//      {
-//         throw new IllegalArgumentException(containerAttribute + " represents no value association");
-//      }
-//      // TODO :
-////      final TypeES associationTargetType = association.;
-////      final TypeES updatedType = updatedAttribute.getDeclaringType();
-////      if (associationTargetType.getOrdinal() != updatedType.getOrdinal())
-////      {
-////         throw new IllegalArgumentException("containerAttribute's association's targetType" + associationTargetType + " does not match updatedAttribute's owner " + updatedType);
-////      }
-////      if (updated.getType() != updatedType)
-////      {
-////         throw new IllegalArgumentException(updatedAttribute + " does not occur on " + updated);
-////      }
-//
-//      //set simple values
-//      this.updated = updated;
-//      this.updatedAttributeOrdinal = updatedAttribute.getOrdinal();
-//      this.containerAttributeOrdinal = containerAttribute.getOrdinal();
-//
-//      //set container XOR containerId
-//      //final AttributeES containerIdAttribute = containerType.getId();
-////      if (containerIdAttribute == null)
-////      {
-////         this.container = container;
-////      }
-////      else
-////      {
-////         this.containerId = containerIdAttribute.wrapForDTO(container.getIdValue());
-////      }
-   }
+    public AbstractNonIdentifiableUpdate(C container, U updated, HasValue containerId, AttributeES containerAttribute, AttributeES updatedAttribute, TypeES type, DtoType dtoType, List<EmbeddableAndAttribute> containerEmbeddables) {
+        super(type, dtoType);
+        this.container = container;
+        this.updated = updated;
+        this.containerId = containerId;
+        this.containerAttribute = containerAttribute;
+        this.updatedAttribute = updatedAttribute;
+        this.containerEmbeddables = containerEmbeddables;
+    }
 
    @Override
    public final CRUD operation()
@@ -85,8 +53,7 @@ public abstract class AbstractNonIdentifiableUpdate<C, U> extends AbstractChange
 
    public final AttributeES getUpdatedAttribute()
    {
-       return null;
-      //return AbstractMetaModelES.getInstance().getAttribute(updatedAttributeOrdinal);
+       return updatedAttribute;
    }
 
    /**
@@ -98,15 +65,7 @@ public abstract class AbstractNonIdentifiableUpdate<C, U> extends AbstractChange
    {
       return this.container;
    }
-
-   /**
-    * @return fast convenience equiavlent of {@code getContainer().getType().isIdentifiable()} represents an identifiable type
-    */
-   public boolean hasIdentifiableContainer()
-   {
-      return this.containerId != null;
-   }
-
+   
    /**
     * If the updated embeddable is contained in an identifiable said identifiable, otherwise {@code null}
     *
@@ -114,14 +73,17 @@ public abstract class AbstractNonIdentifiableUpdate<C, U> extends AbstractChange
     */
    public Serializable getContainerId()
    {
-      return this.containerId == null ? null : (Serializable) containerId.getValue();
+      return (Serializable) containerId.getValue();
    }
 
    /**
     * @return the container's attribute on which the updated embeddable lives, never {@code null}
     */
    public final AttributeES getContainerAttribute(){
-       return null;
-//      return AbstractMetaModel.getInstance().getAttribute(containerAttributeOrdinal);
+       return containerAttribute;
    }
+
+    public List<EmbeddableAndAttribute> getContainerEmbeddables() {
+        return containerEmbeddables;
+    }
 }

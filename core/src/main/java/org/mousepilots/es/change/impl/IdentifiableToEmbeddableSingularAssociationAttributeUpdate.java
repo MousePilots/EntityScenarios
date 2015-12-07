@@ -3,6 +3,9 @@ package org.mousepilots.es.change.impl;
 import java.io.Serializable;
 import org.mousepilots.es.change.ChangeVisitor;
 import org.mousepilots.es.model.AttributeES;
+import org.mousepilots.es.model.DtoType;
+import org.mousepilots.es.model.HasValue;
+import org.mousepilots.es.model.IdentifiableTypeES;
 
 /**
  * @author Roy Cleven
@@ -15,8 +18,8 @@ public final class IdentifiableToEmbeddableSingularAssociationAttributeUpdate<I 
     public IdentifiableToEmbeddableSingularAssociationAttributeUpdate() {
     }
 
-    public IdentifiableToEmbeddableSingularAssociationAttributeUpdate(AttributeES attribute, I id, V version, A oldValue, A newValue) {
-        super(attribute, id, version, oldValue, newValue);
+    public IdentifiableToEmbeddableSingularAssociationAttributeUpdate(AttributeES attribute, V version, HasValue id, IdentifiableTypeES type, DtoType dtoType) {
+        super(attribute, version, id, type, dtoType);
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.mousepilots.es.change.abst.AbstractNonIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
+import org.mousepilots.es.model.TypeES;
 
 /**
  * @author geenenju
@@ -21,12 +22,15 @@ public abstract class EmbeddableSingularAssociationAttributeUpdate<C, U, A exten
         super();
     }
 
-    public EmbeddableSingularAssociationAttributeUpdate(C container, AttributeES containerAttribute,
-            U updated, AttributeES updatedAttribute, A oldValue, A newValue) {
-        super(container, containerAttribute, updated, updatedAttribute);
-        this.oldValue = containerAttribute.wrapForChange(oldValue, DtoType.MANAGED_CLASS);
-        this.newValue = containerAttribute.wrapForChange(newValue, DtoType.MANAGED_CLASS);
+    public EmbeddableSingularAssociationAttributeUpdate(HasValue oldValue, 
+            HasValue newValue, C container, U updated, HasValue containerId, 
+            AttributeES containerAttribute, AttributeES updatedAttribute, 
+            TypeES type, DtoType dtoType) {
+        super(container, updated, containerId, containerAttribute, updatedAttribute, type, dtoType, null);
+        this.oldValue = containerAttribute.wrapForChange(oldValue, dtoType);
+        this.newValue = containerAttribute.wrapForChange(newValue, dtoType);
     }
+
 
     public A getOldValue() {
         return oldValue == null ? null : (A) oldValue.getValue();

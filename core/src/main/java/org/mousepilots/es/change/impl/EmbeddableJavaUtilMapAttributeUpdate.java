@@ -1,9 +1,5 @@
 package org.mousepilots.es.change.impl;
 
-import java.io.Serializable;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.mousepilots.es.change.HasAdditions;
 import org.mousepilots.es.change.HasRemovals;
@@ -11,7 +7,8 @@ import org.mousepilots.es.change.abst.AbstractNonIdentifiableUpdate;
 import org.mousepilots.es.model.AttributeES;
 import org.mousepilots.es.model.DtoType;
 import org.mousepilots.es.model.HasValue;
-import org.mousepilots.es.util.WrapperUtils;
+import org.mousepilots.es.model.TypeES;
+import org.mousepilots.es.model.impl.HasValueEntry;
 
 /**
  * @author Jurjen van Geenen
@@ -21,10 +18,10 @@ import org.mousepilots.es.util.WrapperUtils;
  * @param <K> Key type
  * @param <V> Value type
  */
-public abstract class EmbeddableJavaUtilMapAttributeUpdate<C, U, K, V> extends AbstractNonIdentifiableUpdate<C, U> implements HasAdditions<SimpleEntry<K, V>>, HasRemovals<SimpleEntry<K, V>> {
+public abstract class EmbeddableJavaUtilMapAttributeUpdate<C, U, K, V> extends AbstractNonIdentifiableUpdate<C, U> implements HasAdditions<HasValueEntry<K, V>>, HasRemovals<HasValueEntry<K, V>> {
 
-    private ArrayList<HasValue> additions;
-    private ArrayList<HasValue> removals;
+    private List<HasValueEntry<K, V>> additions;
+    private List<HasValueEntry<K, V>> removals;
 
     public EmbeddableJavaUtilMapAttributeUpdate() {
         super();
@@ -40,20 +37,19 @@ public abstract class EmbeddableJavaUtilMapAttributeUpdate<C, U, K, V> extends A
      * @param removals
      * @param dtoType
      */
-    public EmbeddableJavaUtilMapAttributeUpdate(C container, AttributeES containerAttribute, U updated, AttributeES updatedAttribute,
-            Collection<SimpleEntry<K, V>> additions, Collection<SimpleEntry<K, V>> removals, DtoType dtoType) {
-        super(container, containerAttribute, updated, updatedAttribute);
-        WrapperUtils.wrapForChange(updatedAttribute, additions, this.additions, dtoType);
-        WrapperUtils.wrapForChange(updatedAttribute, removals, this.removals, dtoType);
+    public EmbeddableJavaUtilMapAttributeUpdate(List<HasValueEntry<K, V>> additions, List<HasValueEntry<K, V>> removals, C container, U updated, HasValue containerId, AttributeES containerAttribute, AttributeES updatedAttribute, TypeES type, DtoType dtoType) {
+        super(container, updated, containerId, containerAttribute, updatedAttribute, type, dtoType, null);
+        this.additions = additions;
+        this.removals = removals;
     }
 
     @Override
-    public List<SimpleEntry<K, V>> getAdditions() {
-        return WrapperUtils.unWrap(additions, new ArrayList<SimpleEntry<K, V>>());
+    public List<HasValueEntry<K, V>> getAdditions() {
+        return additions;
     }
 
     @Override
-    public List<SimpleEntry<K, V>> getRemovals() {
-        return WrapperUtils.unWrap(removals, new ArrayList<SimpleEntry<K, V>>());
+    public List<HasValueEntry<K, V>> getRemovals() {
+        return removals;
     }
 }
