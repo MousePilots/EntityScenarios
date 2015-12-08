@@ -12,7 +12,7 @@ import org.mousepilots.es.maven.model.generator.model.attribute.SingularAttribut
 /**
  * Descriptor of the {@link javax.persistence.metamodel.IdentifiableType} of JPA.
  * @author Nicky Ernste
- * @version 1.0, 25-11-2015
+ * @version 1.0, 8-12-2015
  */
 public class IdentifiableTypeDescriptor extends ManagedTypeDescriptor {
 
@@ -33,7 +33,14 @@ public class IdentifiableTypeDescriptor extends ManagedTypeDescriptor {
      * @return the attribute that forms the id.
      */
     public AttributeDescriptor getId(){
-        return getAttributeAnnotatedWith(Id.class);
+        AttributeDescriptor ad = getAttributeAnnotatedWith(Id.class);
+        if (ad == null) {
+            if (getSuperType() != null) {
+                ad = getSuperType().getId(); //If this type does not contain an id check its super type.
+            }
+            //Should not happen with identifiables, since they or their super type always needs an id.
+        }
+        return ad;
     }
 
     /**
@@ -49,7 +56,14 @@ public class IdentifiableTypeDescriptor extends ManagedTypeDescriptor {
      * @return the attribute that is the version.
      */
     public AttributeDescriptor getVersion(){
-        return getAttributeAnnotatedWith(Version.class);
+        AttributeDescriptor ad = getAttributeAnnotatedWith(Version.class);
+        if (ad == null) {
+            if (getSuperType() != null) {
+                ad = getSuperType().getVersion(); //If this type does not contain a version check its super type.
+            }
+            //Should not happen with identifiables, since they or their super type always need a version.
+        }
+        return ad;
     }
 
     /**

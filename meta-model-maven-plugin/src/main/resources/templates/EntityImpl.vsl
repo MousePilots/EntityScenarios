@@ -4,8 +4,7 @@ package ${package};
 import javax.annotation.Generated;
 import javax.persistence.metamodel.StaticMetamodel;
 import javax.persistence.metamodel.Type;
-import org.mousepilots.es.core.model.MappedSuperclassTypeES;
-import org.mousepilots.es.core.model.impl.MappedSuperclassTypeESImpl;
+import org.mousepilots.es.core.model.EntityTypeES;
 ##Attribute imports
 #if (${td.getDeclaredSingularAttributes().size()} > 0)
 import org.mousepilots.es.core.model.SingularAttributeES;

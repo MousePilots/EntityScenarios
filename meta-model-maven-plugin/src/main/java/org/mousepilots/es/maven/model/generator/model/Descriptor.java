@@ -7,7 +7,7 @@ import javax.persistence.metamodel.Type;
  *
  * @author Jurjen van Geenen
  * @author Nicky Ernste
- * @version 1.0, 4-12-2015
+ * @version 1.0, 8-12-2015
  * @param <T> The kind of the persistence type this descriptor models. Either
  * {@link javax.persistence.metamodel.Type.PersistenceType} or
  * {@link javax.persistence.metamodel.Attribute.PersistentAttributeType}.
@@ -156,7 +156,7 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
 
     @Override
     public final String toString() {
-        return "Descriptor: " + getName() + ", Persistence tyoe: "
+        return "Descriptor: " + getName() + ", Persistence type: "
                 + getPersistenceType() + ", Java type: "
                 + getJavaTypeSimpleName() + ", Ordinal: " + getOrdinal();
     }

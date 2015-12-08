@@ -3,6 +3,8 @@ package org.mousepilots.es.maven.model.generator.plugin;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Set;
@@ -18,6 +20,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.mousepilots.es.maven.model.generator.controller.TypeGenerator;
 import org.mousepilots.es.maven.model.generator.model.AssociationDescriptor;
@@ -31,6 +35,8 @@ import org.mousepilots.es.maven.model.generator.model.attribute.SingularAttribut
 import org.mousepilots.es.maven.model.generator.model.type.ManagedTypeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
 import org.mousepilots.es.core.model.AssociationTypeES;
+import org.mousepilots.es.maven.model.generator.model.type.EntityTypeDescriptor;
+import org.mousepilots.es.maven.model.generator.model.type.MappedSuperClassDescriptor;
 import org.reflections.Reflections;
 
 @Mojo(name = "generate",
@@ -40,6 +46,46 @@ import org.reflections.Reflections;
         executionStrategy = "once-per-session"
 )
 public class MetaModelGeneratorMojo extends AbstractMojo {
+
+    //TODO find a reliable way to get the correct subpackages.
+    /**
+    * Enumerates the sub-packages of {@link #packageName}
+    */
+   private enum SubPackage
+   {
+
+      /**
+       * The subpackage in which the {@link MetaModel} implementation is written
+       */
+      META_MODEL(""),
+      /**
+       * The subpackage in which {@link Type} implementations are written
+       */
+      TYPE("type"),
+      /**
+       * The subpackage in which {@link DTO_Facade} implementations are written
+       */
+      DTO_FACADE("dto.facade"),
+      /**
+       * The subpackage in which {@link Attribute} implementations are written
+       */
+      ATTRIBUTE("attribute");
+
+      private SubPackage(String subPackage)
+      {
+         this.name = subPackage;
+      }
+
+      private final String name;
+
+      /**
+       * @return the name of the subpackage, relative to {@link MetaModelGeneratorMojo#packageName}
+       */
+      public String getSubPackageName()
+      {
+         return name;
+      }
+   }
 
     /**
      * used to prevent multiple executions within the same maven session
@@ -129,7 +175,8 @@ public class MetaModelGeneratorMojo extends AbstractMojo {
         if (generatedTypes == null) {
             throw new MojoFailureException("Generator failed to generate types");
         }
-        printGeneratedTypes(generatedTypes);
+        //printGeneratedTypes(generatedTypes);
+        writeAbstractTypeImpls();
         getLog().info("Successfully completed meta model generation");
     }
 
@@ -168,6 +215,105 @@ public class MetaModelGeneratorMojo extends AbstractMojo {
         }
         project.addCompileSourceRoot(generatedSourceDir.getAbsolutePath());
     }
+
+    /**
+    * Writes a source file file for a class to disk
+    *
+    * @param writer contains the source code
+    * @param className the FQN of the class contained in the {@code writer}
+    * @throws MojoExecutionException is writing fails
+    */
+   private void classToDisk(StringWriter writer, String className) throws MojoExecutionException
+   {
+      final String path = toPath(className);
+      final File classFile = new File(path);
+      if (!classFile.getParentFile().exists())
+      {
+         classFile.getParentFile().mkdirs();
+      }
+      if (classFile.exists())
+      {
+         classFile.delete();
+      }
+      //write file
+      try (final PrintWriter printWriter = new PrintWriter(classFile))
+      {
+         printWriter.append(writer.toString());
+         printWriter.flush();
+         getLog().debug("written " + className);
+      }
+      catch (IOException ex)
+      {
+         throw new MojoExecutionException("error writing class " + className + " to " + path, ex);
+      }
+   }
+
+   /**
+    * @param className
+    * @return the absolute path to the file on disk corresponding to {@code className}
+    */
+   private String toPath(String className)
+   {
+      return new StringBuilder(this.generatedSourceDir.getAbsolutePath()).append(File.separatorChar).append(className.replace('.', File.separatorChar)).append(".java").toString();
+   }
+
+   /**
+    * @param subPackage
+    * @return the fully qualified package name of the {@code subPackage}, resolved against {@link #packageName}
+    */
+   private String getPackageName(SubPackage subPackage)
+   {
+      return subPackage.getSubPackageName().isEmpty() ? this.packageName : this.packageName + "." + subPackage.getSubPackageName();
+   }
+
+   /**
+    * Creates a velocity context initialized for the specified {@link SubPackage}
+    *
+    * @param subPackage
+    * @return
+    */
+   private VelocityContext createContext(SubPackage subPackage)
+   {
+      final VelocityContext context = new VelocityContext();
+      context.put("package", packageName);
+      context.put("esNameAndVersion", getESNameAndVersion());
+      context.put("currentDate", currentDate);
+      return context;
+   }
+
+   /**
+    * Writes all {@link AbstractType} implementations
+    *
+    * @throws MojoExecutionException
+    */
+   private void writeAbstractTypeImpls() throws MojoExecutionException
+   {      
+      for (TypeDescriptor td : TypeDescriptor.getAll())
+      {
+         final VelocityContext context = createContext(SubPackage.TYPE);
+         Template template = null;
+         switch (td.getPersistenceType()){
+             case MAPPED_SUPERCLASS:
+                 context.put("td", (MappedSuperClassDescriptor)td);
+                 template = velocityEngine.getTemplate("templates/MappedSuperClassImpl.vsl");
+                 break;
+             case ENTITY:
+                 context.put("td", (EntityTypeDescriptor)td);
+                 template = velocityEngine.getTemplate("templates/EntityImpl.vsl");
+                 break;
+         }
+          if (template != null) {
+              if (td.getSuper() != null) {
+                  context.put("extendsClass", td.getSuper());
+              }
+              StringWriter writer = new StringWriter();
+              template.merge(context, writer);
+              classToDisk(writer, td.getDescriptorClassFullName());
+          } else {
+              getLog().warn("Could not write the class because there was no template: " + td.getName());
+          }
+      }
+   }
 
     /**
      * Print information about the type descriptors that were generated. For
