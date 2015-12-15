@@ -28,7 +28,6 @@ public class EntityTypeESImpl<T> extends IdentifiableTypeESImpl<T>
      * @param declaredId the attribute that is declared by this entity and forms its id.
      * @param version the attribute that is the version of this entity.
      * @param declaredVersion the attribute that is declared by this entity and forms its version.
-     * @param superType the super type of this entity.
      * @param idClassAttributes a set of attributes that form the id of this entity.
      * @param singleIdAttribute whether or not this entity has a simple primary key or a composite primary key.
      * @param versionAttribute whether or not this entity has a version attribute.
@@ -41,6 +40,7 @@ public class EntityTypeESImpl<T> extends IdentifiableTypeESImpl<T>
      * @param instantiable whether or not this entity is instanciable.
      * @param attributes the attributes this entity contains.
      * @param metamodelClass the JPa meta model class for this entity.
+     * @param superType the super type of this entity.
      * @param subTypes a set of sub types for this entity.
      */
     public EntityTypeESImpl(BindableType bindableType, Class<T> bindableJavaType,
@@ -52,7 +52,7 @@ public class EntityTypeESImpl<T> extends IdentifiableTypeESImpl<T>
             boolean singleIdAttribute, boolean versionAttribute,
             TypeES<?> idType, String name, int ordinal, Class<T> javaType,
             PersistenceType persistenceType, String javaClassName,
-            boolean instantiable, Class<? extends Type<T>> metamodelClass,
+            boolean instantiable, Class<?> metamodelClass,
             Set<Attribute<? super T, ?>> attributes, TypeES<? super T> superType,
             Collection<TypeES<? extends T>> subTypes) {
         super(id, declaredId, version, declaredVersion, idClassAttributes,

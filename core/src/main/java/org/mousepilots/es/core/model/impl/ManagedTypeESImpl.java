@@ -63,7 +63,7 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
             PersistenceType persistenceType,
             String javaClassName,
             boolean instantiable,
-            Class<? extends Type<T>> metamodelClass,
+            Class<?> metamodelClass,
             Set<Attribute<? super T, ?>> attributes,
             TypeES<? super T> superType,
             Collection<TypeES<? extends T>> subTypes) {

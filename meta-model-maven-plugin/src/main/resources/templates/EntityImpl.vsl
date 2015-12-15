@@ -1,5 +1,5 @@
 ## Velocity Template.
-package ${package};
+package ${td.getPackageName()};
 
 import javax.annotation.Generated;
 import javax.persistence.metamodel.StaticMetamodel;
@@ -27,23 +27,12 @@ import org.mousepilots.es.core.model.SetAttributeES;
  */
 @Generated(value="${esNameAndVersion}", date="${currentDate}")
 @StaticMetamodel(${td.javaTypeSimpleName}.class)
-public class ${td.javaTypeSimpleName}_ES #if(${extendsClass})extends ${extendsClass.javaTypeSimpleName}_ES#end{
+public class ${td.javaTypeSimpleName}_ES #if(${extendsClass})extends ${extendsClass.javaTypeCanonicalName}_ES#end{
 
-#foreach($ad in ${td.getDeclaredSingularAttributes()}) ##Add Singular attributes.
-    public static volatile SingularAttributeES<${td.name}, ${ad.getJavaTypeSimpleName()}> ${ad.name};
+#foreach($ad in ${td.getDeclaredAttributes()}) ##Add attributes.
+    public static volatile ${ad.getClass().getSimpleName().replace("Descriptor","ES")}<${td.name}, #if(${ad.getClass().getSimpleName().contains("Map")})${ad.getKeyJavaType().getCanonicalName()},#end ${ad.getJavaTypeCanonicalName()}> ${ad.name};
 #end
-#foreach($ad in ${td.getDeclaredCollectionAttributes()}) ##Add Collection attributes.
-    public static volatile CollectionAttributeES<${td.name}, ${ad.getJavaTypeSimpleName()}> ${ad.name};
-#end
-#foreach($ad in ${td.getDeclaredListAttributes()}) ##Add List attributes.
-    public static volatile ListAttributeES<${td.name}, ${ad.getJavaTypeSimpleName()}> ${ad.name};
-#end
-#foreach($ad in ${td.getDeclaredMapAttributes()}) ##Add Map attributes.
-    public static volatile MapAttributeES<${td.name}, ${ad.getKeyJavaType().getSimpleName()}, ${ad.getJavaTypeSimpleName()}> ${ad.name};
-#end
-#foreach($ad in ${td.getDeclaredSetAttributes()}) ##Add Set attributes.
-    public static volatile SetAttributeES<${td.name}, ${ad.getJavaTypeSimpleName()}> ${ad.name};
-#end
+
     #*private static final MappedSuperclassTypeES<${td.javaTypeSimpleName}> INSTANCE_ES = new MappedSuperclassTypeESImpl<>(
         ${td.getId()},
         null,
@@ -60,7 +49,7 @@ public class ${td.javaTypeSimpleName}_ES #if(${extendsClass})extends ${extendsCl
         "${td.javaTypeSimpleName}",
         ${td.instantiable},
         ${td.getMetaModelClass()},
-        ${td.getAttributes()},        
+        ${td.getAttributes()},
         ${td.getSuper()},
         null);
 

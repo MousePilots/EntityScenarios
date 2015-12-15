@@ -2,12 +2,9 @@
 package ${td.getPackageName()};
 
 import javax.annotation.Generated;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.Bindable;
 import javax.persistence.metamodel.StaticMetamodel;
 import javax.persistence.metamodel.Type;
-import org.mousepilots.es.core.model.MappedSuperclassTypeES;
-import org.mousepilots.es.core.model.impl.MappedSuperclassTypeESImpl;
+import org.mousepilots.es.core.model.EmbeddableTypeES;
 ##Attribute imports
 #if (${td.getDeclaredSingularAttributes().size()} > 0)
 import org.mousepilots.es.core.model.SingularAttributeES;
@@ -30,36 +27,33 @@ import org.mousepilots.es.core.model.SetAttributeES;
  */
 @Generated(value="${esNameAndVersion}", date="${currentDate}")
 @StaticMetamodel(${td.javaTypeSimpleName}.class)
-public class ${td.javaTypeSimpleName}_ES #if(${extendsClass})extends ${extendsClass.javaTypeSimpleName}_ES#end{
+public class ${td.javaTypeSimpleName}_ES #if(${extendsClass})extends ${extendsClass.javaTypeCanonicalName}_ES#end{
 
 #foreach($ad in ${td.getDeclaredAttributes()}) ##Add attributes.
-    public static volatile ${ad.getClass().getSimpleName().replace("Descriptor","ES")}<${td.getJavaTypeCanonicalName()}, #if(${ad.getClass().getCanonicalName().contains("Map")})${ad.getKeyJavaType().getCanonicalName()},#end ${ad.getJavaTypeCanonicalName()}> ${ad.name};
+    public static volatile ${ad.getClass().getSimpleName().replace("Descriptor","ES")}<${td.name}, #if(${ad.getClass().getSimpleName().contains("Map")})${ad.getKeyJavaType().getCanonicalName()},#end ${ad.getJavaTypeCanonicalName()}> ${ad.name};
 #end
 
-    private static final MappedSuperclassTypeES<${td.javaTypeSimpleName}> INSTANCE_ES = new MappedSuperclassTypeESImpl<>(
-        ${td.getId().getStringRepresentation()},
-        #if(${td.getDeclaredId()})${td.getDeclaredId().getStringRepresentation()},
-#else null,#end
-        ${td.getVersion().getStringRepresentation()},
-        #if (${td.getDeclaredVersion()})${td.getDeclaredVersion().getStringRepresentation()},
-#else null,#end
-        ${idClassAttributes},
+    #*private static final MappedSuperclassTypeES<${td.javaTypeSimpleName}> INSTANCE_ES = new MappedSuperclassTypeESImpl<>(
+        ${td.getId()},
+        null,
+        ${td.getVersion()},
+        null,
+        ${td.getIdClassAttribute()},
         ${td.hasSingleIdAttribute()},
         ${td.hasVersionAttribute()},
-        ${idType},
+        ${td.getIdType()},
         "${td.name}",
         ${td.ordinal},
-        ${td.javaType.name}.class,
+        ${td.javaType},
         Type.PersistenceType.MAPPED_SUPERCLASS,
         "${td.javaTypeSimpleName}",
         ${td.instantiable},
-        ${td.getMetaModelClass().getCanonicalName()}.class,
-        ${attributes},
-        null,
-        ${subTypes}
-        );
+        ${td.getMetaModelClass()},
+        ${td.getAttributes()},
+        ${td.getSuper()},
+        null);
 
-    public static MappedSuperclassTypeES getInstance() {
+    public static MappedSuperclassTypeES<${td.javaTypeSimpleName}> getInstance() {
         return INSTANCE_ES;
-    }
+    }*#
 }

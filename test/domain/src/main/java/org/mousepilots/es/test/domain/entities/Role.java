@@ -1,5 +1,6 @@
-package org.mousepilots.es.test.domain;
+package org.mousepilots.es.test.domain.entities;
 
+import org.mousepilots.es.test.domain.BaseEntity;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.persistence.Entity;
@@ -63,7 +64,7 @@ public class Role extends BaseEntity {
         }
         BaseEntity other = (BaseEntity) obj;
         if (!this.getId().equals(other.getId()) && (this.getId() == null)
-                || !this.id.equals(other.id)) {
+                || !this.id.equals(other.getId())) {
             return false;
         }
         return true;

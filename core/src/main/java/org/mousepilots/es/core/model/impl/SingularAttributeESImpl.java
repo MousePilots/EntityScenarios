@@ -40,7 +40,7 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
      * @param bindableType the {@link BindableType} of this singular attribute.
      * @param bindableJavaType the java type that is bound for this singular attribute.
      * @param name the name of this singular attribute.
-     * @param ordinal the oridinal of this singular attribute.
+     * @param ordinal the ordinal of this singular attribute.
      * @param javaType the java type of this singular attribute.
      * @param persistentAttributeType the {@link PersistentAttributeType} of this singular attribute.
      * @param javaMember the java {@link Member} representing this singular attribute.
@@ -50,12 +50,23 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
      * @param hasValueChangeConstructor the constructor that will be used when wrapping this singular attribute for a change.
      * @param hasValueDtoConstructor the constructor that will be used when wrapping this singular attribute for a DTO.
      */
-    public SingularAttributeESImpl(boolean generated, Generator generator,
-            boolean id, boolean version, boolean optional, TypeES<T> type,
-            BindableType bindableType, Class<T> bindableJavaType, String name,
-            int ordinal, Class<T> javaType,
-            PersistentAttributeType persistentAttributeType, MemberES javaMember,
-            boolean readOnly, boolean association, ManagedTypeES<X> declaringType,
+    public SingularAttributeESImpl(
+            boolean generated,
+            Generator generator,
+            boolean id,
+            boolean version,
+            boolean optional,
+            TypeES<T> type,
+            BindableType bindableType,
+            Class<T> bindableJavaType,
+            String name,
+            int ordinal,
+            Class<T> javaType,
+            PersistentAttributeType persistentAttributeType,
+            MemberES javaMember,
+            boolean readOnly,
+            boolean association,
+            ManagedTypeES<X> declaringType,
             Constructor<HasValue> hasValueChangeConstructor,
             Constructor<HasValue> hasValueDtoConstructor) {
         super(name, ordinal, javaType, persistentAttributeType, javaMember,

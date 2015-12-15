@@ -22,11 +22,12 @@ public class BasicTypeESImpl<T> extends TypeESImpl<T>
      * @param javaClassName the name of the java class for this basic type.
      * @param instantiable whether or not this basic type is instanciable.
      * @param metamodelClass the JPA metamodel class of this basic type.
+     * @param superType the super type of this basic type if any.
      * @param subTypes a set of sub basic types of this basic type.
      */
     public BasicTypeESImpl(String name, int ordinal, Class<T> javaType,
             PersistenceType persistenceType, String javaClassName,
-            boolean instantiable, Class<? extends Type<T>> metamodelClass,
+            boolean instantiable, Class<?> metamodelClass,
             TypeES<? super T> superType, Collection<TypeES<? extends T>> subTypes) {
         super(name, ordinal, javaType, persistenceType, javaClassName,
                 instantiable, metamodelClass, superType, subTypes);

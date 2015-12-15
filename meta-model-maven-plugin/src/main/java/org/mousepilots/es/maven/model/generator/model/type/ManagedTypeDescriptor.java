@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import javax.persistence.metamodel.Type;
 import javax.persistence.metamodel.Type.PersistenceType;
 import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.CollectionAttributeDescriptor;
@@ -16,7 +17,7 @@ import org.mousepilots.es.maven.model.generator.model.attribute.SingularAttribut
 /**
  * Descriptor of the {@link javax.persistence.metamodel.ManagedType} of JPA.
  * @author Nicky Ernste
- * @version 1.0, 25-11-2015
+ * @version 1.0, 14-12-2015
  */
 public class ManagedTypeDescriptor extends TypeDescriptor {
 
@@ -24,14 +25,16 @@ public class ManagedTypeDescriptor extends TypeDescriptor {
 
     /**
      * Create a new instance of this class.
+     * @param metaModelClass the JPA meta model class that models this type.
      * @param name the name of this type.
      * @param ordinal the ordinal of this type.
      * @param javaType the java type of this type.
      * @param persistenceType the {@link PersistenceType} of this type.
      */
-    public ManagedTypeDescriptor(PersistenceType persistenceType, String name,
-            Class javaType, int ordinal) {
-        super(persistenceType, name, javaType, ordinal);
+    public ManagedTypeDescriptor(Class<?> metaModelClass,
+            PersistenceType persistenceType, String name, Class javaType,
+            int ordinal) {
+        super(metaModelClass, persistenceType, name, javaType, ordinal);
     }
 
     /**

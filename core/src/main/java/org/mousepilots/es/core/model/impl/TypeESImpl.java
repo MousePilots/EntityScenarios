@@ -20,7 +20,7 @@ public class TypeESImpl<T> implements TypeES<T> {
     private final Type.PersistenceType persistenceType;
     private final String javaClassName;
     private final boolean instantiable;
-    private final Class<? extends Type<T>> metamodelClass;
+    private final Class<?> metamodelClass;
     private final TypeES<? super T> superType;
     private final SortedSet<TypeES<? extends T>> subTypes;
 
@@ -38,7 +38,7 @@ public class TypeESImpl<T> implements TypeES<T> {
      */
     public TypeESImpl(String name, int ordinal, Class<T> javaType,
             PersistenceType persistenceType, String javaClassName,
-            boolean instantiable, Class<? extends Type<T>> metamodelClass,
+            boolean instantiable, Class<?> metamodelClass,
             TypeES<? super T> superType, Collection<TypeES<? extends T>> subTypes) {
         this.name = name;
         this.ordinal = ordinal;
@@ -82,7 +82,7 @@ public class TypeESImpl<T> implements TypeES<T> {
     }
 
     @Override
-    public Class<? extends Type<T>> getMetamodelClass() {
+    public Class<?> getMetamodelClass() {
         return metamodelClass;
     }
 

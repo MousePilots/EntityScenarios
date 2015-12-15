@@ -1,4 +1,4 @@
-package org.mousepilots.es.test.domain;
+package org.mousepilots.es.test.domain.embeddables;
 
 import java.io.Serializable;
 import java.util.Objects;

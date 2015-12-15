@@ -54,7 +54,7 @@ public class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
             boolean singleIdAttribute, boolean versionAttribute, TypeES<?> idType,
             String name, int ordinal, Class<T> javaType,
             PersistenceType persistenceType, String javaClassName,
-            boolean instantiable, Class<? extends Type<T>> metamodelClass,
+            boolean instantiable, Class<?> metamodelClass,
             Set<Attribute<? super T, ?>> attributes, TypeES<? super T> superType,
             Collection<TypeES<? extends T>> subTypes) {
         super(name, ordinal, javaType, persistenceType, javaClassName,

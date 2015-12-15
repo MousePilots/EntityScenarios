@@ -40,56 +40,6 @@ import org.reflections.Reflections;
 )
 public class MetaModelGeneratorMojo extends AbstractMojo {
 
-    //TODO find a reliable way to get the correct subpackages.
-    /**
-     * Enumerates the sub-packages of {@link #packageName}
-     */
-    enum SubPackage {
-
-        /**
-         * The sub-package in which the {@link MetaModel} implementation is
-         * written
-         */
-        META_MODEL(""),
-        /**
-         * The sub-package in which {@link Type} implementations are written
-         */
-        TYPE("type"),
-        /**
-         * The sub-package in which {@link DTO_Facade} implementations are
-         * written
-         */
-        DTO_FACADE("dto.facade"),
-        /**
-         * The sub-package in which {@link Attribute} implementations are
-         * written
-         */
-        ATTRIBUTE("attribute");
-
-        private SubPackage(String subPackage) {
-            this.name = subPackage;
-        }
-
-        private final String name;
-
-        /**
-         * @return the name of the sub-package, relative to
-         * {@link MetaModelGeneratorMojo#packageName}
-         */
-        public String getSubPackageName() {
-            return name;
-        }
-    }
-
-    /**
-     * @param subPackage
-     * @return the fully qualified package name of the {@code subPackage},
-     * resolved against {@link #packageName}
-     */
-    private String getPackageName(SubPackage subPackage) {
-        return subPackage.getSubPackageName().isEmpty() ? this.packageName : this.packageName + "." + subPackage.getSubPackageName();
-    }
-
     /**
      * used to prevent multiple executions within the same maven session
      */
@@ -160,7 +110,6 @@ public class MetaModelGeneratorMojo extends AbstractMojo {
             getLog().error("Generator failed to generate types.", ex);
             throw new MojoFailureException("Generator failed to generate types", ex);
         }
-//        TODO generate actual files.
         if (generatedTypes == null) {
             throw new MojoFailureException("Generator failed to generate types");
         }
@@ -168,7 +117,7 @@ public class MetaModelGeneratorMojo extends AbstractMojo {
         final MetaModelWriter writer = new MetaModelWriter(generatedSourceDir, getLog(), packageName);
         writer.writeAbstractTypeImpls();
         getLog().info("Successfully completed meta model generation");
-    }    
+    }
 
     /**
      * Print information about the type descriptors that were generated. For
@@ -183,6 +132,10 @@ public class MetaModelGeneratorMojo extends AbstractMojo {
                 StringBuilder sb = new StringBuilder("Modeled class: ").append(mtd.getName());
                 sb.append("\nPersistence type: ").append(mtd.getPersistenceType());
                 sb.append("\nSuper descriptor: ").append(mtd.getSuperDescriptor() != null ? mtd.getSuperDescriptor().getName() : "null");
+                sb.append("\nSub types ------------\n");
+                for (TypeDescriptor subTd : mtd.getSubTypes()){
+                    sb.append(subTd.getName()).append("\n");
+                }
                 sb.append("\nFound attributes ------------------\n");
                 for (AttributeDescriptor ad : mtd.getAttributes()) {
                     if (MapAttributeDescriptor.class.isAssignableFrom(ad.getClass())) {

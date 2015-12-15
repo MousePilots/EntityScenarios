@@ -165,4 +165,13 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
     public int compareTo(Descriptor o) {
         return Integer.compare(getOrdinal(), o.getOrdinal());
     }
+
+    /**
+     * Get a string representation on how to initialise this attribute
+     * descriptor.
+     *
+     * @return a string to initialise this attribute descriptor to insert into
+     * the velocity generator.
+     */
+    public abstract String getStringRepresentation();
 }
