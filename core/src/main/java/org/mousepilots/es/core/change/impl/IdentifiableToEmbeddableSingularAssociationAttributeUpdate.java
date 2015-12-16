@@ -18,8 +18,8 @@ public final class IdentifiableToEmbeddableSingularAssociationAttributeUpdate<I 
     public IdentifiableToEmbeddableSingularAssociationAttributeUpdate() {
     }
 
-    public IdentifiableToEmbeddableSingularAssociationAttributeUpdate(AttributeES attribute, V version, HasValue id, IdentifiableTypeES type, DtoType dtoType) {
-        super(attribute, version, id, type, dtoType);
+    public IdentifiableToEmbeddableSingularAssociationAttributeUpdate(AttributeES attribute, V version, HasValue id, IdentifiableTypeES type, DtoType dtoType, Serializable oldValue, Serializable newValue) {
+        super(attribute, version, id, type, dtoType, oldValue, newValue);
     }
 
     @Override

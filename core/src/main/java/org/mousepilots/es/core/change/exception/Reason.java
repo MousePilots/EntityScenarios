@@ -41,5 +41,13 @@ public enum Reason {
     /**
      * The entry which is being added contains a null key..
      */
-    KEY_IS_NULL
+    KEY_IS_NULL,
+    /**
+     * The selected {@link DtoType} is not yet supported
+     */
+    DTO_TYPE_NOT_SUPPORTED,
+    /**
+     * The selected {@link DtoType} is not matching with other {@link Change}'s
+     */
+    NOT_MATCHING_DTO_TYPE
 }

@@ -31,7 +31,8 @@ public final class IdentifiableJavaUtilCollectionBasicAttributeUpdate<I extends 
         super();
     }
 
-    public IdentifiableJavaUtilCollectionBasicAttributeUpdate(AttributeES attribute, V version, HasValue id, IdentifiableTypeES type, DtoType dtoType) {
+    public IdentifiableJavaUtilCollectionBasicAttributeUpdate(AttributeES attribute,
+            V version, HasValue id, IdentifiableTypeES type, DtoType dtoType, Collection<Serializable> additions, Collection<Serializable> removals) {
         super(attribute, version, id, type, dtoType);
         WrapperUtils.wrapForChange(attribute, additions, this.additions, dtoType);
         WrapperUtils.wrapForChange(attribute, removals, this.removals, dtoType);
