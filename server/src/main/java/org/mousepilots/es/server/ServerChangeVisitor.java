@@ -176,6 +176,12 @@ public class ServerChangeVisitor implements ChangeVisitor {
         return instance;
     }
 
+    /**
+     * 
+     * @param update the change which contains the embeddable which is needed.
+     * @return embeddable which is getting changed
+     * @throws IllegalChangeException 
+     */
     private Object getEmbeddable(AbstractNonIdentifiableUpdate update) throws IllegalChangeException {
         AttributeES containingAttribute = update.getContainerAttribute();
         Object container = getInstance(containingAttribute.getClass(), update.getContainerId(), update);
@@ -192,6 +198,7 @@ public class ServerChangeVisitor implements ChangeVisitor {
             containingAttribute = eaa.getAttribute();
         }
         final Object embeddable = containingAttribute.getJavaMember().get(container);
+        // possible check if the attribute is an list
         return embeddable;
     }
 

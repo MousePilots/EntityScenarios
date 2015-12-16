@@ -10,40 +10,61 @@ import org.mousepilots.es.core.change.CRUD;
 import org.mousepilots.es.core.model.IdentifiableTypeES;
 import org.mousepilots.es.core.util.Maps;
 
-
 public class ExecutionSummaryImpl implements ExecutionSummary {
 
-    private Map<IdentifiableTypeES,Map<Serializable,Serializable>> clientIdtoPersistetId;
-    private Map<CRUD,List<Serializable>> crudToChangedItems;
+    /**
+     * Contains the combination of the client side id and the persistet id 
+     * based on the {@link IdentifiableTypeES}.
+     */
+    private final Map<IdentifiableTypeES, Map<Serializable, Serializable>> clientIdToPersistetId;
     
-    public ExecutionSummaryImpl(){
-        clientIdtoPersistetId = new HashMap<>();
+    /**
+     * Holds the combinations of which operation was performed on which items.
+     */
+    private final Map<CRUD, List<Serializable>> crudToChangedItems;
+
+    public ExecutionSummaryImpl() {
+        clientIdToPersistetId = new HashMap<>();
         crudToChangedItems = new HashMap<>();
     }
-    
-    void addClientIdToPersistetId(IdentifiableTypeES type, Serializable clientId, Serializable persistedId){
-        final Map<Serializable, Serializable> idToPersistedId = Maps.getOrCreate(clientIdtoPersistetId,type,HashMap::new);
+
+    /**
+     * adds an entry to the clientIdToPersistetId.
+     *
+     * @param type type of the identifiable
+     * @param clientId id given to the identifiable on client side
+     * @param persistedId id given to the identifiable on server side
+     */
+    void addClientIdToPersistetId(IdentifiableTypeES type, Serializable clientId, Serializable persistedId) {
+        final Map<Serializable, Serializable> idToPersistedId = Maps.getOrCreate(clientIdToPersistetId, type, HashMap::new);
         idToPersistedId.put(clientId, persistedId);
     }
-    
-    void addCrudToChangeItem(CRUD operation,Serializable item){
+
+    /**
+     * Stores an entry in the crudToChangedItems
+     *
+     * @param operation which operation was performed.
+     * @param item which identifable it was performed on.
+     */
+    void addCrudToChangeItem(CRUD operation, Serializable item) {
         final List<Serializable> itemList = Maps.getOrCreate(crudToChangedItems, operation, ArrayList::new);
         itemList.add(item);
     }
-    
+
     @Override
     public Map<IdentifiableTypeES, Map<Serializable, Serializable>> getClientIdToPersistetId() {
-        return clientIdtoPersistetId;
+        return clientIdToPersistetId;
     }
 
     @Override
     public <T> List<T> get(Class<T> javaType, CRUD... operations) {
         List<T> returnList = new ArrayList<>();
-        for (int i = 0; i < operations.length; i++) {
-            List<Serializable> crudList = crudToChangedItems.get(operations[i]);
+        for (CRUD operation : operations) {
+            List<Serializable> crudList = crudToChangedItems.get(operation);
             for (Serializable item : crudList) {
-                if(item.getClass() == javaType)
-                    returnList.add((T)item);
+                if (item.getClass() == javaType) {
+                    returnList.add((T) item);
+                }
             }
         }
         return returnList;

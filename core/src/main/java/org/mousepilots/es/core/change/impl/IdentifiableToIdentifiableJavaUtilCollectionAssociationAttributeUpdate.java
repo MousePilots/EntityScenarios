@@ -19,8 +19,8 @@ public final class IdentifiableToIdentifiableJavaUtilCollectionAssociationAttrib
     public IdentifiableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate() {
     }
 
-    public IdentifiableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate(AttributeES attribute, V version, HasValue id, IdentifiableTypeES type, DtoType dtoType) {
-        super(attribute, version, id, type, dtoType);
+    public IdentifiableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate(AttributeES attribute, V version, HasValue id, IdentifiableTypeES type, DtoType dtoType, Collection<Serializable> additions, Collection<Serializable> removals) {
+        super(attribute, version, id, type, dtoType, additions, removals);
     }
 
     @Override

@@ -15,12 +15,25 @@ import org.mousepilots.es.core.model.MetaModelES;
  */
 public abstract class ChangeExecutor {
     
+    /**
+     * Gets the entity manager which allows changes to be made to the database.
+     * @return the entitymanager which holds a connection to the database.
+     */
     protected abstract EntityManager getEntityManager();
     
+    /**
+     * 
+     * @return Gets the fully generated MetaModelES.
+     */
     protected abstract MetaModelES getMetaModelES();
     
-    
-    
+    /**
+     * Generates the correct {@link ChangeVisitor} according to the changes and
+     * lets the Changevisitor visit the changes.
+     * @param changes changes which need to be executed and saved
+     * @return {@link ExecutionSummary} containing all the items which were changed
+     * @throws IllegalChangeException When 2 changes differ from {@link DtoType}
+     */
     public ExecutionSummary execute(List<Change> changes) throws IllegalChangeException{
         ChangeVisitor visitor= null;
         final Change changeForDtoCheck = changes.get(0);
@@ -46,7 +59,7 @@ public abstract class ChangeExecutor {
             }
             change.accept(visitor);
         }
-        return null;
+        return visitor.getExecutionSummary();
     }
 
 }
