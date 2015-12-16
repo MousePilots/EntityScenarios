@@ -27,12 +27,6 @@ import org.mousepilots.es.core.util.Transformer;
  */
 public class BidirectionalTransformer implements Transformer<Change, LinkedList<Change>> {
 
-    private final EntityManager entityManager;
-
-    public BidirectionalTransformer(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-
     @Override
     public LinkedList<Change> transform(LinkedList<Change> changes) {
         final Map<Integer, Collection<AbstractIdentifiableUpdate>> insertionPointToInverseUpdate = new TreeMap<>();
