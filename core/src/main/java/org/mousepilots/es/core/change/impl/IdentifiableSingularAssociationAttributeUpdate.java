@@ -26,7 +26,9 @@ public abstract class IdentifiableSingularAssociationAttributeUpdate<I extends S
       super();
    }
 
-    public IdentifiableSingularAssociationAttributeUpdate(AttributeES attribute, V version, HasValue id, IdentifiableTypeES type, DtoType dtoType) {
+    public IdentifiableSingularAssociationAttributeUpdate(AttributeES attribute, 
+            V version, HasValue id, IdentifiableTypeES type, DtoType dtoType,
+            Serializable oldValue, Serializable newValue) {
         super(attribute, version, id, type, dtoType);
       this.oldValue = attribute.wrapForChange(oldValue, dtoType);
       this.newValue = attribute.wrapForChange(newValue, dtoType);
