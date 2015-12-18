@@ -9,7 +9,7 @@ import org.mousepilots.es.core.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 7-12-2015
+ * @version 1.0, 18-12-2015
  * @param <T> The type of the represented object or attribute
  */
 public class TypeESImpl<T> implements TypeES<T> {
@@ -21,8 +21,8 @@ public class TypeESImpl<T> implements TypeES<T> {
     private final String javaClassName;
     private final boolean instantiable;
     private final Class<?> metamodelClass;
-    private final TypeES<? super T> superType;
-    private final SortedSet<TypeES<? extends T>> subTypes;
+    private final int superTypeOrdinal;
+    private final SortedSet<Integer> subTypes;
 
     /**
      * Create a new instance of this class.
@@ -36,10 +36,15 @@ public class TypeESImpl<T> implements TypeES<T> {
      * @param superType a super type of this type.
      * @param subTypes a set of sub types of this type.
      */
-    public TypeESImpl(String name, int ordinal, Class<T> javaType,
-            PersistenceType persistenceType, String javaClassName,
-            boolean instantiable, Class<?> metamodelClass,
-            TypeES<? super T> superType, Collection<TypeES<? extends T>> subTypes) {
+    public TypeESImpl(
+            String name,
+            int ordinal,
+            Class<T> javaType,
+            PersistenceType persistenceType,
+            String javaClassName,
+            boolean instantiable,
+            Class<?> metamodelClass,
+            int superType, Collection<Integer> subTypes) {
         this.name = name;
         this.ordinal = ordinal;
         this.javaType = javaType;
@@ -47,8 +52,9 @@ public class TypeESImpl<T> implements TypeES<T> {
         this.javaClassName = javaClassName;
         this.instantiable = instantiable;
         this.metamodelClass = metamodelClass;
-        this.superType = superType;
+        this.superTypeOrdinal = superType;
         this.subTypes = new TreeSet<>(subTypes);
+        AbstractMetaModelES.getInstance().register(this);
     }
 
     @Override
@@ -94,7 +100,11 @@ public class TypeESImpl<T> implements TypeES<T> {
 
     @Override
     public SortedSet<TypeES<? extends T>> getSubTypes() {
-        return subTypes;
+        SortedSet<TypeES<? extends T>> subs = new TreeSet<>();
+        for (int subTypeOrdinal : subTypes) {
+            subs.add(AbstractMetaModelES.getInstance().getType(subTypeOrdinal));
+        }
+        return subs;
     }
 
     @Override
@@ -139,6 +149,6 @@ public class TypeESImpl<T> implements TypeES<T> {
 
     @Override
     public TypeES<? super T> getSuperType() {
-        return superType;
+        return AbstractMetaModelES.getInstance().getType(this.superTypeOrdinal);
     }
 }

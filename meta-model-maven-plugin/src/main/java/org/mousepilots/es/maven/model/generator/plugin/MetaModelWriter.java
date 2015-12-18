@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Properties;
+import javax.persistence.metamodel.Bindable;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.velocity.Template;
@@ -105,6 +106,12 @@ public class MetaModelWriter {
         for (TypeDescriptor td : TypeDescriptor.getAll()) {
             final VelocityContext context = createContext();
             Template template;
+            if (td.getSuper() != null) {
+                context.put("superType", td.getSuper().getOrdinal());
+            } else {
+                context.put("superType", -1);
+            }
+            context.put("subTypes", DescriptorUtils.printSubTypes(td));
             switch (td.getPersistenceType()) {
                 case BASIC:
                 default:
@@ -113,25 +120,25 @@ public class MetaModelWriter {
                     template = velocityEngine.getTemplate("templates/BasicTypeImpl.vsl");
                     break;
                 case EMBEDDABLE:
-                    context.put("td", (EmbeddableTypeDescriptor) td);
-                    context.put("attributes", DescriptorUtils.printAttributesList(((EmbeddableTypeDescriptor)td).getAttributes()));
+                    EmbeddableTypeDescriptor etd = (EmbeddableTypeDescriptor) td;
+                    context.put("td", etd);
+                    context.put("attributes", DescriptorUtils.printAttributesList(etd.getAttributes()));
                     template = velocityEngine.getTemplate("templates/EmbeddableImpl.vsl");
                     break;
                 case MAPPED_SUPERCLASS:
                     MappedSuperClassDescriptor mscd = (MappedSuperClassDescriptor) td;
                     context.put("td", mscd);
                     context.put("attributes", DescriptorUtils.printAttributesList(mscd.getAttributes()));
-                    context.put("idClassAttributes", DescriptorUtils.printAttributesList(mscd.getIdClassAttribute()));
+                    context.put("idClassAttributes", DescriptorUtils.printIdClassAttributes(mscd.getIdClassAttribute()));
                     context.put("idType", DescriptorUtils.printType(mscd.getIdType()));
-                    context.put("subTypes", DescriptorUtils.printSubTypes(mscd));
                     template = velocityEngine.getTemplate("templates/MappedSuperClassImpl.vsl");
                     break;
                 case ENTITY:
-                    EntityTypeDescriptor etd = (EntityTypeDescriptor) td;
-                    context.put("td", etd);
-                    context.put("attributes", DescriptorUtils.printAttributesList(etd.getAttributes()));
-                    context.put("idClassAttributes", DescriptorUtils.printAttributesList(etd.getIdClassAttribute()));
-                    context.put("idType", DescriptorUtils.printType(etd.getIdType()));
+                    EntityTypeDescriptor enTd = (EntityTypeDescriptor) td;
+                    context.put("td", enTd);
+                    context.put("attributes", DescriptorUtils.printAttributesList(enTd.getAttributes()));
+                    context.put("idClassAttributes", DescriptorUtils.printIdClassAttributes(enTd.getIdClassAttribute()));
+                    context.put("idType", DescriptorUtils.printType(enTd.getIdType()));
                     template = velocityEngine.getTemplate("templates/EntityImpl.vsl");
                     break;
             }

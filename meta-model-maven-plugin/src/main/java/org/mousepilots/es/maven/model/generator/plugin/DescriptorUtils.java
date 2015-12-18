@@ -11,7 +11,7 @@ import javax.persistence.metamodel.Bindable;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.core.model.MemberES;
 import org.mousepilots.es.core.model.impl.BasicTypeESImpl;
-import org.mousepilots.es.core.model.impl.Constructor;
+import org.mousepilots.es.core.model.impl.CollectionAttributeESImpl;
 import org.mousepilots.es.core.model.impl.DescendingLongGenerator;
 import org.mousepilots.es.core.model.impl.EmbeddableTypeESImpl;
 import org.mousepilots.es.core.model.impl.EntityTypeESImpl;
@@ -60,7 +60,7 @@ public final class DescriptorUtils {
         } else {
             sb.append("false, ");
             sb.append("null, ");
-        }                
+        }
         if (isDeclarerIdentifiable && sad.getAnnotation(Id.class) != null) {
             sb.append("true, ");
         } else {
@@ -89,6 +89,28 @@ public final class DescriptorUtils {
         return sb.toString();
     }
 
+    public static String printCollectionAttributeImpl(CollectionAttributeDescriptor cad){
+        if (cad == null) {
+            return "null";
+        }
+        final StringBuilder sb = new StringBuilder("new ").append(CollectionAttributeESImpl.class.getCanonicalName()).append("(");
+        sb.append(printType(cad.getElementType())).append(", ");
+        sb.append("Bindable.BindableType.").append(cad.getBindableType().name()).append(", ");
+        sb.append(cad.getBindableJavaType().getCanonicalName()).append(".class, ");
+        sb.append("\"").append(cad.getName()).append("\", ");
+        sb.append(cad.getOrdinal()).append(", ");
+        sb.append(cad.getJavaTypeCanonicalName()).append(".class, ");
+        sb.append("Attribute.PersistentAttributeType.").append(cad.getPersistentAttributeType().name()).append(", ");
+        sb.append(printMember(cad, false)).append(", ");
+        sb.append(cad.isReadOnly()).append(", ");
+        sb.append(cad.isAssociation()).append(", ");
+        sb.append("null, "); //TODO get declaring type. Causes stackoverflow.
+        sb.append("null, "); //TODO get change constructor.
+        sb.append("null"); //TODO get dto constructor.
+        sb.append(")");
+        return sb.toString();
+    }
+
     /**
      * Get a string representation for initialising the specified {@link BasicTypeDescriptor}.
      * @param btd the basic type descriptor to get the initialisation string for.
@@ -106,9 +128,29 @@ public final class DescriptorUtils {
         sb.append("\"").append(btd.getJavaTypeSimpleName()).append("\", ");
         sb.append(btd.isInstantiable()).append(", ");
         sb.append("null, ");
-        sb.append("null, ");
-        sb.append("null");
+        if (btd.getSuper() != null) {
+            sb.append(btd.getSuper().getOrdinal()).append(", ");
+        } else {
+            sb.append(-1).append(", ");
+        }
+        sb.append("null"); //Subtypes
         sb.append(")");
+        return sb.toString();
+    }
+
+    public static String printIdClassAttributes(Set<SingularAttributeDescriptor> idClassAttributes){
+        if (idClassAttributes == null) {
+            return "null";
+        }
+        final StringBuilder sb = new StringBuilder("new ").append(HashSet.class.getCanonicalName()).append("(").append(Arrays.class.getCanonicalName()).append(".asList(");
+        final Iterator<SingularAttributeDescriptor> it = idClassAttributes.iterator();
+        while (it.hasNext()){
+            sb.append(it.next().getOrdinal());
+            if (it.hasNext()) {
+                sb.append(", ");
+            }
+        }
+        sb.append("))");
         return sb.toString();
     }
 
@@ -124,7 +166,7 @@ public final class DescriptorUtils {
         final StringBuilder sb = new StringBuilder("new ").append(HashSet.class.getCanonicalName()).append("(").append(Arrays.class.getCanonicalName()).append(".asList(");
         Iterator<? extends AttributeDescriptor> it = attributes.iterator();
         while (it.hasNext()){
-            sb.append(printAttribute(it.next()));
+            sb.append(it.next().getOrdinal());
             if (it.hasNext()) {
                 sb.append(", ");
             }
@@ -171,6 +213,7 @@ public final class DescriptorUtils {
         if (adType.isAssignableFrom(SingularAttributeDescriptor.class)) {
             return printSingularAttributeImpl((SingularAttributeDescriptor) ad);
         } else if (adType.isAssignableFrom(CollectionAttributeDescriptor.class)) {
+            //return printCollectionAttributeImpl((CollectionAttributeDescriptor) ad);
             return "null";
         } else if (adType.isAssignableFrom(ListAttributeDescriptor.class)) {
             return "null";
@@ -296,36 +339,38 @@ public final class DescriptorUtils {
     }
 
     public static String printSubTypes(TypeDescriptor td){
+
+        //TODO refer to the INSTANCE_ES of other types.
         if (td == null) {
             return "null";
         }
         final StringBuilder sb = new StringBuilder(Arrays.class.getCanonicalName()).append(".asList(");
         final Iterator<TypeDescriptor> it = td.getSubTypes().iterator();
         while (it.hasNext()){
-            sb.append(printType(it.next()));
+            sb.append(it.next().getOrdinal());
             if (it.hasNext()) {
-                sb.append(",\r\n\t\t");
+                sb.append(", ");
             }
         }
         sb.append(")");
         return sb.toString();
     }
-    
+
     /**
      * This method will return a {@link String} representation of the
      * declaration and initialisation of a {@link MemberES} object for this
      * attribute. This is put in the velocity template when generating the meta
      * model.
      *
-     * @param sad the {@link SingularAttributeDescriptor} to get the member for.
+     * @param ad the {@link SingularAttributeDescriptor} to get the member for.
      * @param includeDeclaration if set to {@code true} the declaration of the
      * Member will be included in the string, if set to {@code false} only the
      * initialisation of the Member is included.
      * @return A {@link String} with the declaration and initialisation of a
      * {@link MemberES} object for this attribute.
      */
-    private static String printMember(SingularAttributeDescriptor sad, boolean includeDeclaration) {
-        final String declarerJavaTypeCanonicalName = sad.getDeclaringTypeDescriptor().getJavaTypeCanonicalName();
+    private static String printMember(AttributeDescriptor ad, boolean includeDeclaration) {
+        final String declarerJavaTypeCanonicalName = ad.getDeclaringTypeDescriptor().getJavaTypeCanonicalName();
         StringBuilder sb = new StringBuilder();
         if (includeDeclaration) {
             sb.append("private final ").append(MemberES.class.getCanonicalName()).append(" javaMember = new ").append(PropertyMember.class.getCanonicalName()).append("(");
@@ -333,14 +378,14 @@ public final class DescriptorUtils {
             sb.append("new ").append(PropertyMember.class.getCanonicalName()).append("(");
         }
         sb.append(declarerJavaTypeCanonicalName).append(".class, ");
-        sb.append("\"").append(sad.getName()).append("\", ");
-        sb.append("(").append(Getter.class.getCanonicalName()).append("<").append(declarerJavaTypeCanonicalName).append(",").append(sad.getJavaTypeCanonicalName()).append(">)").append(declarerJavaTypeCanonicalName).append("::").append(sad.getGetterMethodName()).append(", ");
-        if (sad.getSetterMethodName() != null) {
-            sb.append("(").append(Setter.class.getCanonicalName()).append("<").append(declarerJavaTypeCanonicalName).append(",").append(sad.getJavaTypeCanonicalName()).append(">)").append(declarerJavaTypeCanonicalName).append("::").append(sad.getSetterMethodName()).append(", ");
+        sb.append("\"").append(ad.getName()).append("\", ");
+        sb.append("(").append(Getter.class.getCanonicalName()).append("<").append(declarerJavaTypeCanonicalName).append(",").append(ad.getJavaTypeCanonicalName()).append(">)").append(declarerJavaTypeCanonicalName).append("::").append(ad.getGetterMethodName()).append(", ");
+        if (ad.getSetterMethodName() != null) {
+            sb.append("(").append(Setter.class.getCanonicalName()).append("<").append(declarerJavaTypeCanonicalName).append(",").append(ad.getJavaTypeCanonicalName()).append(">)").append(declarerJavaTypeCanonicalName).append("::").append(ad.getSetterMethodName()).append(", ");
         } else {
             sb.append("null,");
         }
-        sb.append(sad.getGetterMethod().getModifiers());
+        sb.append(ad.getGetterMethod().getModifiers());
         if (includeDeclaration) {
             sb.append(");");
         } else {

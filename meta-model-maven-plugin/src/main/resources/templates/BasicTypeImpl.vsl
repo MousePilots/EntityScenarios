@@ -5,7 +5,6 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.StaticMetamodel;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.core.model.BasicTypeES;
-import org.mousepilots.es.core.model.impl.BasicTypeESImpl;
 
 /**
  * Models class {@link ${td.javaTypeSimpleName}} with persistence type: ${td.getPersistenceType().name()}

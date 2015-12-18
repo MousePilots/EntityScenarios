@@ -28,9 +28,6 @@ import org.mousepilots.es.maven.model.generator.model.type.IdentifiableTypeDescr
 import org.mousepilots.es.maven.model.generator.model.type.ManagedTypeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
 import org.mousepilots.es.core.model.AssociationTypeES;
-import org.mousepilots.es.core.model.MemberES;
-import org.mousepilots.es.core.model.impl.Getter;
-import org.mousepilots.es.core.model.impl.Setter;
 import org.mousepilots.es.core.util.StringUtils;
 
 /**

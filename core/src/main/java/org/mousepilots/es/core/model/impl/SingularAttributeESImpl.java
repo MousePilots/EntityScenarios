@@ -13,7 +13,7 @@ import org.mousepilots.es.core.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 7-12-2015
+ * @version 1.0, 18-12-2015
  * @param <X> The type containing the represented attribute
  * @param <T> The type of the represented attribute
  */
@@ -124,7 +124,7 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
 
     /**
      * Sets the {@code value} onto the {@code hasValue}. For basic or embeddable values, the actual value is set.
-     * For identifiables, the {@link Id}-value is set.
+     * For identifiable, the {@link Id}-value is set.
      * @param <T> the type of {@code value}.
      * @param hasValue an empty {@link HasValue}
      * @param valueType the {@link TypeES} of the {@code value} to be wrapped

@@ -5,6 +5,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.StaticMetamodel;
 import javax.persistence.metamodel.Type;
 import org.mousepilots.es.core.model.EmbeddableTypeES;
+import org.mousepilots.es.core.model.impl.EmbeddableTypeESImpl;
 ##Attribute imports
 #if (${td.getDeclaredSingularAttributes().size()} > 0)
 import org.mousepilots.es.core.model.SingularAttributeES;
@@ -30,30 +31,23 @@ import org.mousepilots.es.core.model.SetAttributeES;
 public class ${td.javaTypeSimpleName}_ES #if(${extendsClass})extends ${extendsClass.javaTypeCanonicalName}_ES#end{
 
 #foreach($ad in ${td.getDeclaredAttributes()}) ##Add attributes.
-    public static volatile ${ad.getClass().getSimpleName().replace("Descriptor","ES")}<${td.name}, #if(${ad.getClass().getSimpleName().contains("Map")})${ad.getKeyJavaType().getCanonicalName()},#end ${ad.getJavaTypeCanonicalName()}> ${ad.name};
+    public static volatile ${ad.getClass().getSimpleName().replace("Descriptor","ES")}<${td.getJavaTypeCanonicalName()}, #if(${ad.getClass().getCanonicalName().contains("Map")})${ad.getKeyJavaType().getCanonicalName()},#end ${ad.getJavaTypeCanonicalName()}> ${ad.name};
 #end
 
-    #*private static final MappedSuperclassTypeES<${td.javaTypeSimpleName}> INSTANCE_ES = new MappedSuperclassTypeESImpl<>(
-        ${td.getId()},
-        null,
-        ${td.getVersion()},
-        null,
-        ${td.getIdClassAttribute()},
-        ${td.hasSingleIdAttribute()},
-        ${td.hasVersionAttribute()},
-        ${td.getIdType()},
+    private static final EmbeddableTypeES<${td.javaTypeSimpleName}> INSTANCE_ES = new EmbeddableTypeESImpl<>(
         "${td.name}",
         ${td.ordinal},
-        ${td.javaType},
-        Type.PersistenceType.MAPPED_SUPERCLASS,
+        ${td.javaType.name}.class,
+        Type.PersistenceType.EMBEDDABLE,
         "${td.javaTypeSimpleName}",
         ${td.instantiable},
-        ${td.getMetaModelClass()},
-        ${td.getAttributes()},
-        ${td.getSuper()},
-        null);
+        ${td.getMetaModelClass().getCanonicalName()}.class,
+        ${attributes},
+        ${superType},
+        ${subTypes}
+        );
 
-    public static MappedSuperclassTypeES<${td.javaTypeSimpleName}> getInstance() {
+    public static EmbeddableTypeES getInstance() {
         return INSTANCE_ES;
-    }*#
+    }
 }

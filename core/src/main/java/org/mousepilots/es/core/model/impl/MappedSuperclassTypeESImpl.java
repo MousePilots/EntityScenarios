@@ -2,16 +2,12 @@ package org.mousepilots.es.core.model.impl;
 
 import java.util.Collection;
 import java.util.Set;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.SingularAttribute;
-import javax.persistence.metamodel.Type;
 import org.mousepilots.es.core.model.MappedSuperclassTypeES;
-import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 7-12-2015
+ * @version 1.0, 18-12-2015
  * @param <T> The represented entity type
  */
 public class MappedSuperclassTypeESImpl<T> extends IdentifiableTypeESImpl<T>
@@ -38,17 +34,15 @@ public class MappedSuperclassTypeESImpl<T> extends IdentifiableTypeESImpl<T>
      * @param superType the super type of this mapped superclass type.
      * @param subTypes a set of sub types for this mapped superclass type.
      */
-    public MappedSuperclassTypeESImpl(SingularAttributeES<? super T, ?> id,
-            SingularAttributeES<T, ?> declaredId,
-            SingularAttributeES<? super T, ?> version,
-            SingularAttributeES<T, ?> declaredVersion,
-            Set<SingularAttribute<? super T, ?>> idClassAttributes,
-            boolean singleIdAttribute, boolean versionAttribute, TypeES<?> idType,
+    public MappedSuperclassTypeESImpl(
+            int id, int declaredId, int version, int declaredVersion,
+            Set<Integer> idClassAttributes,
+            boolean singleIdAttribute, boolean versionAttribute, int idType,
             String name, int ordinal, Class<T> javaType,
             PersistenceType persistenceType, String javaClassName,
             boolean instantiable, Class<?> metamodelClass,
-            Set<Attribute<? super T, ?>> attributes, TypeES<? super T> superType,
-            Collection<TypeES<? extends T>> subTypes) {
+            Set<Integer> attributes, int superType,
+            Collection<Integer> subTypes) {
         super(id, declaredId, version, declaredVersion, idClassAttributes,
                 singleIdAttribute, versionAttribute, idType, name, ordinal,
                 javaType, persistenceType, javaClassName, instantiable,

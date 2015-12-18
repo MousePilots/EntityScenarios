@@ -7,7 +7,6 @@ import java.util.TreeSet;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
-import javax.persistence.metamodel.Type;
 import org.mousepilots.es.core.model.CollectionAttributeES;
 import org.mousepilots.es.core.model.ListAttributeES;
 import org.mousepilots.es.core.model.ManagedTypeES;
@@ -15,11 +14,10 @@ import org.mousepilots.es.core.model.MapAttributeES;
 import org.mousepilots.es.core.model.PluralAttributeES;
 import org.mousepilots.es.core.model.SetAttributeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
-import org.mousepilots.es.core.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 7-12-2015
+ * @version 1.0, 18-12-2015
  * @param <T> The represented type.
  */
 public class ManagedTypeESImpl<T> extends TypeESImpl<T>
@@ -64,13 +62,12 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
             String javaClassName,
             boolean instantiable,
             Class<?> metamodelClass,
-            Set<Attribute<? super T, ?>> attributes,
-            TypeES<? super T> superType,
-            Collection<TypeES<? extends T>> subTypes) {
+            Set<Integer> attributes,
+            int superType,
+            Collection<Integer> subTypes) {
         super(name, ordinal, javaType, persistenceType, javaClassName, instantiable, metamodelClass, superType, subTypes);
-        this.attributes.addAll(attributes);
+        getAttributesFromMetaModel(attributes);
         sortAndFillAttributes();
-
     }
 
     @Override
@@ -399,6 +396,12 @@ public class ManagedTypeESImpl<T> extends TypeESImpl<T>
             }
         }
         return null;
+    }
+
+    private void getAttributesFromMetaModel(Set<Integer> attributeOrdinals){
+        for (int attributeOrdinal : attributeOrdinals) {
+            attributes.add(AbstractMetaModelES.getInstance().getAttribute(attributeOrdinal));
+        }
     }
 
     /**
