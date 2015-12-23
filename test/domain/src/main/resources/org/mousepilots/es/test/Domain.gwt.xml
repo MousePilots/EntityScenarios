@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document SYSTEM "http://www.gwtproject.org/doctype/latest-snapshot/gwt-module.dtd">
+<module rename-to="Domain">
+    <source path="domain"/>
+ </module>
