@@ -1,13 +1,11 @@
 package org.mousepilots.es.core.model.impl;
 
 import java.util.Collection;
-import javax.persistence.metamodel.Type;
 import org.mousepilots.es.core.model.BasicTypeES;
-import org.mousepilots.es.core.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 7-12-2015
+ * @version 1.0, 18-12-2015
  * @param <T> The type for this BasicType.
  */
 public class BasicTypeESImpl<T> extends TypeESImpl<T>
@@ -21,13 +19,14 @@ public class BasicTypeESImpl<T> extends TypeESImpl<T>
      * @param persistenceType the {@link PersistenceType} of this basic type.
      * @param javaClassName the name of the java class for this basic type.
      * @param instantiable whether or not this basic type is instanciable.
-     * @param metamodelClass the JPA metamodel class of this basic type.
+     * @param metamodelClass the JPA meta-model class of this basic type.
+     * @param superType the super type of this basic type if any.
      * @param subTypes a set of sub basic types of this basic type.
      */
     public BasicTypeESImpl(String name, int ordinal, Class<T> javaType,
             PersistenceType persistenceType, String javaClassName,
-            boolean instantiable, Class<? extends Type<T>> metamodelClass,
-            TypeES<? super T> superType, Collection<TypeES<? extends T>> subTypes) {
+            boolean instantiable, Class<?> metamodelClass,
+            int superType, Collection<Integer> subTypes) {
         super(name, ordinal, javaType, persistenceType, javaClassName,
                 instantiable, metamodelClass, superType, subTypes);
     }

@@ -39,7 +39,7 @@ public interface TypeES<T> extends Type<T>, Comparable<TypeES>, HasOrdinal{
     /**
     * @return the JPA static meta-model class for the represented class
     */
-    Class<? extends Type<T>> getMetamodelClass();
+    Class<?> getMetamodelClass();
 
     /**
      * @return this type's super-types {@code s}, such that {@code s.getJavaType()} is a superclass of {@code this.getJavaType()}

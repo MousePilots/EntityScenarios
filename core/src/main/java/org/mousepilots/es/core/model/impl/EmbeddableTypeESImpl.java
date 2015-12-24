@@ -2,14 +2,11 @@ package org.mousepilots.es.core.model.impl;
 
 import java.util.Collection;
 import java.util.Set;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.Type;
 import org.mousepilots.es.core.model.EmbeddableTypeES;
-import org.mousepilots.es.core.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 7-12-2015
+ * @version 1.0, 18-12-2015
  * @param <T> The type that is embeddable.
  */
 public class EmbeddableTypeESImpl<T> extends ManagedTypeESImpl<T>
@@ -30,9 +27,9 @@ public class EmbeddableTypeESImpl<T> extends ManagedTypeESImpl<T>
      */
     public EmbeddableTypeESImpl(String name, int ordinal, Class<T> javaType,
             PersistenceType persistenceType, String javaClassName,
-            boolean instantiable, Class<? extends Type<T>> metamodelClass,
-            Set<Attribute<? super T, ?>> attributes, TypeES<? super T> superType,
-            Collection<TypeES<? extends T>> subTypes) {
+            boolean instantiable, Class<?> metamodelClass,
+            Set<Integer> attributes, int superType,
+            Collection<Integer> subTypes) {
         super(name, ordinal, javaType, persistenceType, javaClassName,
                 instantiable, metamodelClass, attributes, superType, subTypes);
     }

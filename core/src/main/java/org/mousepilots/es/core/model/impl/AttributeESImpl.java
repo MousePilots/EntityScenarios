@@ -14,7 +14,7 @@ import org.mousepilots.es.core.model.HasValue;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 7-12-2015
+ * @version 1.0, 18-12-2015
  * @param <T> the represented type that contains the attribute.
  * @param <TA> the type of the represented attribute.
  * @param <TC> the type to wrap for a change.
@@ -36,7 +36,7 @@ public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC>
     /**
      * Create a new instance of this class.
      * @param name the name of this attribute.
-     * @param ordinal the oridinal of this attribute.
+     * @param ordinal the ordinal of this attribute.
      * @param javaType the java type of this attribute.
      * @param persistentAttributeType the {@link PersistentAttributeType} of this attribute.
      * @param javaMember the java {@link Member} representing this attribute.
@@ -62,6 +62,7 @@ public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC>
         this.declaringType = declaringType;
         this.hasValueChangeConstructor = hasValueChangeConstructor;
         this.hasValueDtoConstructor = hasValueDtoConstructor;
+        AbstractMetaModelES.getInstance().register(this);
     }
 
     @Override

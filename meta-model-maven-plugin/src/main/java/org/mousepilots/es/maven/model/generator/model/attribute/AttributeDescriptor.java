@@ -70,7 +70,7 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
      * @throws IllegalStateException If no getter method could be found. Which
      * could mean the JavaBeans naming convention was not used.
      */
-    private Method getGetterMethod() {
+    public Method getGetterMethod() {
         final List<String> expectedNames;
         final String suffix = getName().substring(0, 1).toUpperCase() + getName().substring(1);
         final Class declaringJavaType = getDeclaringTypeDescriptor().getJavaType();
@@ -108,7 +108,9 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
         for (String expectedName : expectedNames) {
             try {
                 return declaringJavaType.getMethod(expectedName);
-            } catch (NoSuchMethodException | SecurityException ex) {
+            } catch (NoSuchMethodException ex) {
+                //There is no setter method which means this attribute is read only.
+            } catch (SecurityException ex) {
                 Logger.getLogger(AttributeDescriptor.class.getName())
                         .log(Level.SEVERE, null, ex);
             }
@@ -154,11 +156,14 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
     }
 
     /**
-     * Gets the super attribute for this attribute.
-     * A super attribute is an attribute with the same name, declared on a super class of {@code this} declaring type.
-     * @return the super attribute for this attribute if existent. Otherwise {@code null}.
+     * Gets the super attribute for this attribute. A super attribute is an
+     * attribute with the same name, declared on a super class of {@code this}
+     * declaring type.
+     *
+     * @return the super attribute for this attribute if existent. Otherwise
+     * {@code null}.
      */
-    public AttributeDescriptor getSuper(){
+    public AttributeDescriptor getSuper() {
         TypeDescriptor aSuper = getDeclaringTypeDescriptor().getSuper();
         if (aSuper == null) {
             return null;
@@ -240,9 +245,9 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
                             if (elementTypesMatch) {
                                 final ManyToMany inverseManyToMany = inverseAttributeDescriptor.getAnnotation(ManyToMany.class);
                                 if (inverseManyToMany != null) {
-                                    final boolean inverseFound =
-                                            owner  && getName().equals(inverseManyToMany.mappedBy()) ||
-                                            !owner && inverseAttributeDescriptor.getName().equals(manyToMany.mappedBy());
+                                    final boolean inverseFound
+                                            = owner && getName().equals(inverseManyToMany.mappedBy())
+                                            || !owner && inverseAttributeDescriptor.getName().equals(manyToMany.mappedBy());
                                     if (inverseFound) {
                                         return new AssociationDescriptor(
                                                 this,
@@ -380,32 +385,7 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
      */
     public void setDeclaringTypeDescriptor(TypeDescriptor declaringTypeDescriptor) {
         this.declaringTypeDescriptor = declaringTypeDescriptor;
-    }
-
-    /**
-     * This method will return a {@link String} representation of the
-     * declaration and initialisation of a {@link MemberES} object for this
-     * attribute. This is put in the velocity template when generating the meta
-     * model.
-     *
-     * @return A {@link String} with the declaration and initialisation of a
-     * {@link MemberES} object for this attribute.
-     */
-    public String getMemberDeclaration() {
-        final String declarerJavaTypeCanonicalName = getDeclaringTypeDescriptor().getJavaTypeCanonicalName();
-        StringBuilder sb = new StringBuilder();
-        sb.append("private final MemberES javaMember = new PropertyMember(");
-        sb.append(declarerJavaTypeCanonicalName).append(".class, ");
-        sb.append("\"").append(getName()).append("\", ");
-        sb.append("(Getter<").append(declarerJavaTypeCanonicalName).append(",").append(getJavaTypeCanonicalName()).append(">)").append(declarerJavaTypeCanonicalName).append("::").append(getGetterMethodName()).append(", ");
-        if (getSetterMethodName() != null) {
-            sb.append("(Setter<").append(declarerJavaTypeCanonicalName).append(",").append(getJavaTypeCanonicalName()).append(">)").append(declarerJavaTypeCanonicalName).append("::").append(getSetterMethodName()).append(", ");
-        } else {
-            sb.append("null,");
-        }
-        sb.append(getGetterMethod().getModifiers()).append(");");
-        return sb.toString();
-    }
+    }    
 
     /**
      * Try to get the {@link Field} for this attribute.
@@ -453,7 +433,6 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
         typeMap.put(ManyToOne.class, Attribute.PersistentAttributeType.MANY_TO_ONE);
         typeMap.put(ManyToMany.class, Attribute.PersistentAttributeType.MANY_TO_MANY);
         typeMap.put(ElementCollection.class, Attribute.PersistentAttributeType.ELEMENT_COLLECTION);
-        //Does this need to be EmbeddedId or just Embedded?
         typeMap.put(EmbeddedId.class, Attribute.PersistentAttributeType.EMBEDDED);
         typeMap.put(Embedded.class, Attribute.PersistentAttributeType.EMBEDDED);
 
@@ -463,5 +442,10 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
             }
         }
         return Attribute.PersistentAttributeType.BASIC;
+    }
+
+    @Override
+    public String getStringRepresentation() {
+        return "";
     }
 }

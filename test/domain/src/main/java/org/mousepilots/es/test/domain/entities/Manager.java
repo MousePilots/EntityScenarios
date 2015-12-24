@@ -1,16 +1,16 @@
-package org.mousepilots.es.test.domain;
+package org.mousepilots.es.test.domain.entities;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
+import org.mousepilots.es.test.domain.embeddables.Address;
 
 /**
  *
  * @author Nicky Ernste
- * @version 1.0, 3-dec-2015
+ * @version 1.0, 8-12-2015
  */
 @Entity
-
 public class Manager extends User<ManagerAccount> {
     private static final long serialVersionUID = 1L;
 

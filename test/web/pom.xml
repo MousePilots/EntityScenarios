@@ -68,6 +68,11 @@
             <version>5.0.3</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mousepilots</groupId>
+            <artifactId>core</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -76,7 +81,7 @@
                 <artifactId>meta-model-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <packageName>org.mousepilots.es.test.web</packageName>
+                    <packageName>org.mousepilots.es.test.domain</packageName>
                 </configuration>
                 <dependencies>
                     <dependency>

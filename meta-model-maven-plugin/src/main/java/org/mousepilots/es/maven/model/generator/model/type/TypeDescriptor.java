@@ -1,5 +1,7 @@
 package org.mousepilots.es.maven.model.generator.model.type;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.persistence.metamodel.Type.PersistenceType;
@@ -10,22 +12,28 @@ import org.mousepilots.es.maven.model.generator.plugin.ReflectionUtils;
 /**
  * Descriptor of the {@link javax.persistence.metamodel.Type} of JPA.
  * @author Nicky Ernste
- * @version 1.0, 25-11-2015
+ * @version 1.0, 14-12-2015
  */
 public class TypeDescriptor extends Descriptor<PersistenceType> {
 
     private static final Set<TypeDescriptor> INSTANCES = new TreeSet<>();
+    private final Class<?> metaModelClass;
+    private Collection<TypeDescriptor> subTypes;
 
     /**
      * Create a new instance of this class.
+     * @param metaModelClass the JPA meta model class that models this type.
      * @param name the name of this type.
      * @param ordinal the ordinal of this type.
      * @param javaType the java type of this type.
      * @param persistenceType the {@link PersistenceType} of this type.
      */
-    public TypeDescriptor(PersistenceType persistenceType, String name,
-            Class javaType, int ordinal) {
+    public TypeDescriptor(Class<?> metaModelClass,
+            PersistenceType persistenceType, String name, Class javaType,
+            int ordinal) {
         super(persistenceType, name, javaType, ordinal);
+        this.metaModelClass = metaModelClass;
+        subTypes = new ArrayList<>();
         INSTANCES.add(this);
     }
 
@@ -43,6 +51,10 @@ public class TypeDescriptor extends Descriptor<PersistenceType> {
     public String getMetaModelSuperClassFullName(){
         final Descriptor<PersistenceType> superDescriptor = getSuperDescriptor();
         return superDescriptor == null ? null : superDescriptor.getDescriptorClassFullName();
+    }
+
+    public Class<?> getMetaModelClass() {
+        return metaModelClass;
     }
 
     /**
@@ -69,6 +81,10 @@ public class TypeDescriptor extends Descriptor<PersistenceType> {
         return null;
     }
 
+    /**
+     * Get the super descriptor if this descriptor if any.
+     * @return the super descriptor of this type, or {@code null} if this type has no super descriptor.
+     */
     public TypeDescriptor getSuper(){
         return getInstance(getJavaType().getSuperclass());
     }
@@ -89,7 +105,24 @@ public class TypeDescriptor extends Descriptor<PersistenceType> {
         }
     }
 
+    /**
+     * Check if this type is instantiable.
+     * @return {@code true} if this type can be instantiated, or {@code false} otherwise.
+     */
     public boolean isInstantiable(){
         return ReflectionUtils.isInstantiable(getJavaType());
+    }
+
+    @Override
+    public String getStringRepresentation() {
+        return "";
+    }
+
+    public Collection<TypeDescriptor> getSubTypes() {
+        return subTypes;
+    }
+
+    public void setSubTypes(Collection<TypeDescriptor> subTypes) {
+        this.subTypes = subTypes;
     }
 }

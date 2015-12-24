@@ -1,6 +1,9 @@
 package org.mousepilots.es.maven.model.generator.model.attribute;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.metamodel.Bindable.BindableType;
+import org.mousepilots.es.maven.model.generator.plugin.DescriptorUtils;
 
 /**
  * Descriptor of the {@link javax.persistence.metamodel.SingularAttribute} of JPA.
@@ -34,5 +37,23 @@ public class SingularAttributeDescriptor extends AttributeDescriptor {
      */
     public Class getBindableJavaType(){
         return getJavaType();
+    }
+
+    /**
+     * Check if this singular attribute is an optional attribute.
+     * If this attribute is part of the id or if this attribute is not nullable it is considered to be not optional.
+     * @return {@code true} if this attribute is considered to be optional, {@code false} otherwise.
+     */
+    public boolean isOptional(){
+        Column columnAnnotation = getAnnotation(Column.class);
+        if (getAnnotation(Id.class) != null || (columnAnnotation != null && !columnAnnotation.nullable())) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String getStringRepresentation(){
+        return DescriptorUtils.printSingularAttributeImpl(this);
     }
 }

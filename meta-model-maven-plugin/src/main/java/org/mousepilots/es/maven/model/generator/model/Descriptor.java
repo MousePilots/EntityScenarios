@@ -7,7 +7,7 @@ import javax.persistence.metamodel.Type;
  *
  * @author Jurjen van Geenen
  * @author Nicky Ernste
- * @version 1.0, 4-12-2015
+ * @version 1.0, 8-12-2015
  * @param <T> The kind of the persistence type this descriptor models. Either
  * {@link javax.persistence.metamodel.Type.PersistenceType} or
  * {@link javax.persistence.metamodel.Attribute.PersistentAttributeType}.
@@ -156,7 +156,7 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
 
     @Override
     public final String toString() {
-        return "Descriptor: " + getName() + ", Persistence tyoe: "
+        return "Descriptor: " + getName() + ", Persistence type: "
                 + getPersistenceType() + ", Java type: "
                 + getJavaTypeSimpleName() + ", Ordinal: " + getOrdinal();
     }
@@ -165,4 +165,13 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
     public int compareTo(Descriptor o) {
         return Integer.compare(getOrdinal(), o.getOrdinal());
     }
+
+    /**
+     * Get a string representation on how to initialise this attribute
+     * descriptor.
+     *
+     * @return a string to initialise this attribute descriptor to insert into
+     * the velocity generator.
+     */
+    public abstract String getStringRepresentation();
 }

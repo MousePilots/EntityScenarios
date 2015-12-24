@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Version;
+import javax.persistence.metamodel.Type;
 import javax.persistence.metamodel.Type.PersistenceType;
 import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.SingularAttributeDescriptor;
@@ -12,28 +13,37 @@ import org.mousepilots.es.maven.model.generator.model.attribute.SingularAttribut
 /**
  * Descriptor of the {@link javax.persistence.metamodel.IdentifiableType} of JPA.
  * @author Nicky Ernste
- * @version 1.0, 25-11-2015
+ * @version 1.0, 14-12-2015
  */
 public class IdentifiableTypeDescriptor extends ManagedTypeDescriptor {
 
     /**
      * Create a new instance of this class.
+     * @param metaModelClass the JPA meta model class that models this type.
      * @param name the name of this type.
      * @param ordinal the ordinal of this type.
      * @param javaType the java type of this type.
      * @param persistenceType the {@link PersistenceType} of this type.
      */
-    public IdentifiableTypeDescriptor(PersistenceType persistenceType,
-            String name, Class javaType, int ordinal) {
-        super(persistenceType, name, javaType, ordinal);
+    public IdentifiableTypeDescriptor(Class<?> metaModelClass,
+            PersistenceType persistenceType, String name, Class javaType,
+            int ordinal){
+        super(metaModelClass, persistenceType, name, javaType, ordinal);
     }
 
     /**
      * Get the attribute that forms the id of this identifiable type.
      * @return the attribute that forms the id.
      */
-    public AttributeDescriptor getId(){
-        return getAttributeAnnotatedWith(Id.class);
+    public AttributeDescriptor getId() {
+        AttributeDescriptor ad = getAttributeAnnotatedWith(Id.class);
+        if (ad == null) {
+            if (getSuperType() != null) {
+                ad = getSuperType().getId(); //If this type does not contain an id check its super type.
+            }
+            //Should not happen with identifiables, since they or their super type always needs an id.
+        }
+        return ad;
     }
 
     /**
@@ -49,7 +59,14 @@ public class IdentifiableTypeDescriptor extends ManagedTypeDescriptor {
      * @return the attribute that is the version.
      */
     public AttributeDescriptor getVersion(){
-        return getAttributeAnnotatedWith(Version.class);
+        AttributeDescriptor ad = getAttributeAnnotatedWith(Version.class);
+        if (ad == null) {
+            if (getSuperType() != null) {
+                ad = getSuperType().getVersion(); //If this type does not contain a version check its super type.
+            }
+            //Should not happen with identifiables, since they or their super type always need a version.
+        }
+        return ad;
     }
 
     /**

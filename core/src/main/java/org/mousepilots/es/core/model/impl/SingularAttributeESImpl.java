@@ -13,7 +13,7 @@ import org.mousepilots.es.core.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 7-12-2015
+ * @version 1.0, 18-12-2015
  * @param <X> The type containing the represented attribute
  * @param <T> The type of the represented attribute
  */
@@ -40,7 +40,7 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
      * @param bindableType the {@link BindableType} of this singular attribute.
      * @param bindableJavaType the java type that is bound for this singular attribute.
      * @param name the name of this singular attribute.
-     * @param ordinal the oridinal of this singular attribute.
+     * @param ordinal the ordinal of this singular attribute.
      * @param javaType the java type of this singular attribute.
      * @param persistentAttributeType the {@link PersistentAttributeType} of this singular attribute.
      * @param javaMember the java {@link Member} representing this singular attribute.
@@ -50,12 +50,23 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
      * @param hasValueChangeConstructor the constructor that will be used when wrapping this singular attribute for a change.
      * @param hasValueDtoConstructor the constructor that will be used when wrapping this singular attribute for a DTO.
      */
-    public SingularAttributeESImpl(boolean generated, Generator generator,
-            boolean id, boolean version, boolean optional, TypeES<T> type,
-            BindableType bindableType, Class<T> bindableJavaType, String name,
-            int ordinal, Class<T> javaType,
-            PersistentAttributeType persistentAttributeType, MemberES javaMember,
-            boolean readOnly, boolean association, ManagedTypeES<X> declaringType,
+    public SingularAttributeESImpl(
+            boolean generated,
+            Generator generator,
+            boolean id,
+            boolean version,
+            boolean optional,
+            TypeES<T> type,
+            BindableType bindableType,
+            Class<T> bindableJavaType,
+            String name,
+            int ordinal,
+            Class<T> javaType,
+            PersistentAttributeType persistentAttributeType,
+            MemberES javaMember,
+            boolean readOnly,
+            boolean association,
+            ManagedTypeES<X> declaringType,
             Constructor<HasValue> hasValueChangeConstructor,
             Constructor<HasValue> hasValueDtoConstructor) {
         super(name, ordinal, javaType, persistentAttributeType, javaMember,
@@ -113,7 +124,7 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
 
     /**
      * Sets the {@code value} onto the {@code hasValue}. For basic or embeddable values, the actual value is set.
-     * For identifiables, the {@link Id}-value is set.
+     * For identifiable, the {@link Id}-value is set.
      * @param <T> the type of {@code value}.
      * @param hasValue an empty {@link HasValue}
      * @param valueType the {@link TypeES} of the {@code value} to be wrapped

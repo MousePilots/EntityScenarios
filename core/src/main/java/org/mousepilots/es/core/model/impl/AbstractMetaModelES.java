@@ -3,28 +3,32 @@ package org.mousepilots.es.core.model.impl;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import javax.persistence.metamodel.EmbeddableType;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.ManagedType;
+import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.EmbeddableTypeES;
 import org.mousepilots.es.core.model.EntityTypeES;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.MetaModelES;
+import org.mousepilots.es.core.model.TypeES;
 
 /**
  * @author Nicky Ernste
- * @version 1.0, 25-11-2015
+ * @version 1.0, 18-12-2015
  */
 public abstract class AbstractMetaModelES implements MetaModelES {
 
-    private static MetaModelES INSTANCE;
+    private static AbstractMetaModelES INSTANCE;
 
     /**
      * Get an instance of this class.
      * @return An instance of this class.
      */
-    public static MetaModelES getInstance() {
+    public static AbstractMetaModelES getInstance() {
         return INSTANCE;
     }
 
@@ -33,7 +37,7 @@ public abstract class AbstractMetaModelES implements MetaModelES {
      * @param instance The instance of this class to set.
      * @throws IllegalStateException If in instance was already created before.
      */
-    protected void setInstance(MetaModelES instance){
+    protected void setInstance(AbstractMetaModelES instance){
         if (INSTANCE != null) {
             throw new IllegalStateException("Cannot set an instance because its already created.");
         }
@@ -45,6 +49,20 @@ public abstract class AbstractMetaModelES implements MetaModelES {
     private final Set<EmbeddableType<?>> embeddables;
     private final Map<ManagedTypeES, SortedSet<ManagedTypeES>> managedTypeToSuperManagedTypes;
     private final Map<ManagedTypeES, SortedSet<ManagedTypeES>> managedTypeToSubManagedTypes;
+    private final SortedMap<Integer, TypeES> ordinalToType = new TreeMap<>();
+    private final SortedMap<Integer, AttributeES> ordinalToAttribute = new TreeMap<>();
+
+    protected final void register(TypeES type){
+        ordinalToType.put(type.getOrdinal(), type);
+    }
+
+    protected final void register(AttributeES attribute){
+        ordinalToAttribute.put(attribute.getOrdinal(), attribute);
+    }
+
+    public TypeES getType(int ordinal){
+        return ordinalToType.get(ordinal);
+    }
 
     /**
      * Create a new instance of this class.
@@ -91,7 +109,7 @@ public abstract class AbstractMetaModelES implements MetaModelES {
         return (M) managedType(javaType);
     }
 
-    
+
     @Override
     public <X> EmbeddableTypeES<X> embeddable(Class<X> cls) {
        for (EmbeddableType embeddableType : embeddables){
@@ -115,5 +133,9 @@ public abstract class AbstractMetaModelES implements MetaModelES {
     @Override
     public Set<EmbeddableType<?>> getEmbeddables() {
         return embeddables;
+    }
+
+    public AttributeES getAttribute(int ordinal) {
+        return ordinalToAttribute.get(ordinal);
     }
 }

@@ -42,7 +42,7 @@ import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
  * models.
  *
  * @author Nicky Ernste
- * @version 1.0, 19-11-2015
+ * @version 1.0, 14-12-2015
  */
 public class TypeGenerator {
 
@@ -78,14 +78,15 @@ public class TypeGenerator {
      *
      * @param jpaMetaModelClasses the set of classes on the classpath annotated
      * with {@link StaticMetamodel}
-     * @return a descriptor for each meta model.
+     * @return a set of descriptors that represent the found models.
      */
     public SortedSet<TypeDescriptor> generate(Set<Class<?>> jpaMetaModelClasses) {
         final SortedSet<TypeDescriptor> retval = new TreeSet<>();
-        addManagedTypeDescriptors(retval, jpaMetaModelClasses);
-        addSuperDescriptors(jpaMetaModelClasses);
-        addBasicTypeDescriptors(retval, jpaMetaModelClasses);
-        addAttributeTypeDescriptors(retval, jpaMetaModelClasses);
+        addManagedTypeDescriptors(retval, jpaMetaModelClasses); //Step 1
+        addSuperDescriptors(retval); //Step 2
+        addSubTypes(retval); //Step 3
+        addBasicTypeDescriptors(retval, jpaMetaModelClasses); //Step 4
+        addAttributeTypeDescriptors(retval, jpaMetaModelClasses); //Step 5
         return retval;
     }
 
@@ -106,13 +107,13 @@ public class TypeGenerator {
             final TypeDescriptor td;
             if (javaType.getAnnotation(Embeddable.class) != null) {
                 //embeddable
-                td = new EmbeddableTypeDescriptor(javaType.getSimpleName(), javaType, ordinal.getAndIncrement());
+                td = new EmbeddableTypeDescriptor(managedClass, javaType.getSimpleName(), javaType, ordinal.getAndIncrement());
             } else if (javaType.getAnnotation(MappedSuperclass.class) != null) {
                 //mapped superclass
-                td = new MappedSuperClassDescriptor(javaType.getSimpleName(), javaType, ordinal.getAndIncrement());
+                td = new MappedSuperClassDescriptor(managedClass, javaType.getSimpleName(), javaType, ordinal.getAndIncrement());
             } else if (javaType.getAnnotation(Entity.class) != null) {
                 //entity
-                td = new EntityTypeDescriptor(javaType.getSimpleName(), javaType, ordinal.getAndIncrement());
+                td = new EntityTypeDescriptor(managedClass, javaType.getSimpleName(), javaType, ordinal.getAndIncrement());
             } else {
                 throw new IllegalStateException("unable to determine PersistenceType for " + managedClass);
             }
@@ -120,37 +121,27 @@ public class TypeGenerator {
         }
     }
 
+
     /**
      * Add the super descriptor to each type descriptor.
-     * @param jpaMetaModels a set of all the found JPA meta model classes.
+     * @param typeDescriptors a set of all the found type descriptors.
      */
-    private void addSuperDescriptors(Set<Class<?>> jpaMetaModels) {
-        for (Class<?> jpaMetaModel : jpaMetaModels) {
-            try {
-                //Find the corresponding type descriptor.
-                Class originalClass = Class.forName(removeTrailingUnderscore(jpaMetaModel.getName()));
-                TypeDescriptor td = TypeDescriptor.getInstance(originalClass);
-                if (td != null) {
-                    Class superclass = jpaMetaModel.getSuperclass();
-                    if (superclass != null && !superclass.getSimpleName().equals("Object")) {
-                        String baseName = removeTrailingUnderscore(superclass.getName());
-                        try {
-                            Class parentClass = Class.forName(baseName);
-                            TypeDescriptor foundTd = TypeDescriptor.getInstance(parentClass);
-                            if (foundTd != null) {
-                                td.setSuperDescriptor(foundTd);
-                            } else {
-                                //Could not find the type descriptor of the super class.
-                                throw new IllegalStateException("Could not find the type descriptor for the super class of: " + parentClass.getSimpleName());
-                            }
-                        } catch (ClassNotFoundException ex) {
-                            //Descriptor has no superclass, so ignore exception.
-                        }
-                    }
-                }
-            } catch (ClassNotFoundException ex) {
-                //Could not find the type descriptor for the jpa class.
-                throw new IllegalStateException("Could not find the type descriptor for the jpa meta model class: " + jpaMetaModel.getSimpleName());
+    private void addSuperDescriptors(SortedSet<TypeDescriptor> typeDescriptors) {
+        for (TypeDescriptor td : typeDescriptors){
+            td.setSuperDescriptor(td.getSuper());
+        }
+    }
+
+    /**
+     * Find and add the sub types of all the managed type descriptors.
+     * @param typeDescriptors the managed type descriptors that were generated.
+     */
+    private void addSubTypes(SortedSet<TypeDescriptor> typeDescriptors){
+        for (TypeDescriptor td : typeDescriptors) {
+            TypeDescriptor superTd = td.getSuper();
+            while (superTd != null) {
+                superTd.getSubTypes().add(td);
+                superTd = superTd.getSuper();
             }
         }
     }
@@ -176,7 +167,7 @@ public class TypeGenerator {
                     final TypeDescriptor td = TypeDescriptor.getInstance(attributeJavaType);
                     if (td == null) {
                         basicTypeDescriptors.add(
-                                new BasicTypeDescriptor(attributeJavaType.getSimpleName(), attributeJavaType, ordinal.getAndIncrement())
+                                new BasicTypeDescriptor(metaModelClass, attributeJavaType.getSimpleName(), attributeJavaType, ordinal.getAndIncrement())
                         );
                     }
                 }
@@ -185,7 +176,7 @@ public class TypeGenerator {
                     final TypeDescriptor td = TypeDescriptor.getInstance(javaFieldType);
                     if (td == null) {
                         basicTypeDescriptors.add(
-                                new BasicTypeDescriptor(javaFieldType.getSimpleName(), javaFieldType, ordinal.getAndIncrement())
+                                new BasicTypeDescriptor(metaModelClass, javaFieldType.getSimpleName(), javaFieldType, ordinal.getAndIncrement())
                         );
                     }
                 }
@@ -241,7 +232,6 @@ public class TypeGenerator {
                 }
                 if (ad != null) {
                     ad.setDeclaringTypeDescriptor(modelDescriptor);
-                    //TODO set super descriptor.
                     classAttributes.add(ad);
                 }
             }
@@ -269,22 +259,6 @@ public class TypeGenerator {
             indices = new int[]{-1};
         }
         return indices;
-    }
-
-    /**
-     * Removes the trailing underscore from jpa meta model class names. Or
-     * otherwise can be used to remove the last character of a string.
-     *
-     * @param metaModelClassName the class name of the jpa meta model to remove
-     * the trialing underscore from.
-     * @return the {@code metaModelClassName} string with the last character removed.
-     * or the original {@code metaModelClassName} if the length was insuffecient.
-     */
-    private String removeTrailingUnderscore(String metaModelClassName) {
-        if (metaModelClassName.length() > 1) {
-            return metaModelClassName.substring(0, metaModelClassName.length() - 1);
-        }
-        return metaModelClassName;
     }
 
     /**

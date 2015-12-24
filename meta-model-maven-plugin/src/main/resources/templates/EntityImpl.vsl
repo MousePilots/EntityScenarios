@@ -3,9 +3,10 @@ package ${td.getPackageName()};
 
 import javax.annotation.Generated;
 import javax.persistence.metamodel.StaticMetamodel;
+import javax.persistence.metamodel.Bindable;
 import javax.persistence.metamodel.Type;
-import org.mousepilots.es.core.model.MappedSuperclassTypeES;
-import org.mousepilots.es.core.model.impl.MappedSuperclassTypeESImpl;
+import org.mousepilots.es.core.model.EntityTypeES;
+import org.mousepilots.es.core.model.impl.EntityTypeESImpl;
 ##Attribute imports
 #if (${td.getDeclaredSingularAttributes().size()} > 0)
 import org.mousepilots.es.core.model.SingularAttributeES;
@@ -34,7 +35,9 @@ public class ${td.javaTypeSimpleName}_ES #if(${extendsClass})extends ${extendsCl
     public static volatile ${ad.getClass().getSimpleName().replace("Descriptor","ES")}<${td.getJavaTypeCanonicalName()}, #if(${ad.getClass().getCanonicalName().contains("Map")})${ad.getKeyJavaType().getCanonicalName()},#end ${ad.getJavaTypeCanonicalName()}> ${ad.name};
 #end
 
-    private static final MappedSuperclassTypeES<${td.javaTypeSimpleName}> INSTANCE_ES = new MappedSuperclassTypeESImpl<>(
+    private static final EntityTypeES<${td.javaTypeSimpleName}> INSTANCE_ES = new EntityTypeESImpl<>(
+        Bindable.BindableType.ENTITY_TYPE,
+        ${td.getJavaTypeCanonicalName()}.class,
         ${td.getId().getOrdinal()},
         #if(${td.getDeclaredId()})${td.getDeclaredId().getOrdinal()},
 #else -1,
@@ -50,7 +53,7 @@ public class ${td.javaTypeSimpleName}_ES #if(${extendsClass})extends ${extendsCl
         "${td.name}",
         ${td.ordinal},
         ${td.javaType.name}.class,
-        Type.PersistenceType.MAPPED_SUPERCLASS,
+        Type.PersistenceType.ENTITY,
         "${td.javaTypeSimpleName}",
         ${td.instantiable},
         ${td.getMetaModelClass().getCanonicalName()}.class,
@@ -59,7 +62,7 @@ public class ${td.javaTypeSimpleName}_ES #if(${extendsClass})extends ${extendsCl
         ${subTypes}
         );
 
-    public static org.mousepilots.es.core.model.TypeES getInstance() {
+    public static EntityTypeES getInstance() {
         return INSTANCE_ES;
     }
 }
