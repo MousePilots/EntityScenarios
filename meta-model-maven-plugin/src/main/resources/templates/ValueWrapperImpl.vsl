@@ -1,28 +1,44 @@
 ## Velocity Template.
-package $wvd.wrapperClassPackage;
+package wrappers;
 
 /**
- * Wraps a value of type {@code $wvd.wrappedValueTypeParameter}.
+ * Wraps a value of type {@code ${td.getJavaTypeSimpleName()}}.
  */
-@javax.annotation.Generated(value = "org.mousepilots.es.maven.model.generator.plugin.MetaModelGeneratorMojo")
-public class $wvd.wrapperClassSimpleName extends org.mousepilots.es.shared.model.AbstractValueWrapper<$wvd.wrappedValueTypeParameter>{
-    
-    private $wvd.wrappedValueTypeParameter value;
-    
+@javax.annotation.Generated(value = "${esNameAndVersion}", date = "${currentDate}")
+public class ${td.getJavaTypeSimpleName()}Wrapper implements org.mousepilots.es.core.model.HasValue<${td.getJavaTypeCanonicalName()}>{
+
+    private ${td.getJavaTypeCanonicalName()} value;
+    //MANAGED_CLASS is currently the only supported type, do not change!
+    private org.mousepilots.es.core.model.DtoType dtoType = org.mousepilots.es.core.model.DtoType.MANAGED_CLASS;
+
     /**
      * for GWT (de-)serialization
      */
-    private ${wvd.wrapperClassSimpleName}() {
+    private ${td.getJavaTypeSimpleName()}Wrapper() {
         super();
     }
-    
-    public ${wvd.wrapperClassSimpleName}($wvd.wrappedValueTypeParameter value) {
+
+    public ${td.getJavaTypeSimpleName()}Wrapper(${td.getJavaTypeCanonicalName()} value) {
         this.value=value;
     }
 
     @Override
-    public $wvd.wrappedValueTypeParameter getValue() {
+    public ${td.getJavaTypeCanonicalName()} getValue() {
         return value;
     }
 
+    @Override
+    public void setValue(${td.getJavaTypeCanonicalName()} newValue){
+        this.value = newValue;
+    }
+
+    @Override
+    public org.mousepilots.es.core.model.DtoType getDtoType(){
+        return dtoType;
+    }
+
+    @Override
+    public void setDtoType(org.mousepilots.es.core.model.DtoType newDtoType){
+        this.dtoType = newDtoType;
+    }
 }

@@ -1,12 +1,6 @@
 ## Velocity Template.
 package ${td.getPackageName()};
 
-import javax.annotation.Generated;
-import javax.persistence.metamodel.StaticMetamodel;
-import javax.persistence.metamodel.Bindable;
-import javax.persistence.metamodel.Type;
-import org.mousepilots.es.core.model.EntityTypeES;
-import org.mousepilots.es.core.model.impl.EntityTypeESImpl;
 ##Attribute imports
 #if (${td.getDeclaredSingularAttributes().size()} > 0)
 import org.mousepilots.es.core.model.SingularAttributeES;
@@ -27,16 +21,16 @@ import org.mousepilots.es.core.model.SetAttributeES;
 /**
  * Models class {@link ${td.javaTypeSimpleName}} with persistence type: ${td.getPersistenceType().name()}
  */
-@Generated(value="${esNameAndVersion}", date="${currentDate}")
-@StaticMetamodel(${td.javaTypeSimpleName}.class)
+@javax.annotation.Generated(value = "${esNameAndVersion}", date = "${currentDate}")
+@javax.persistence.metamodel.StaticMetamodel(${td.javaTypeSimpleName}.class)
 public class ${td.javaTypeSimpleName}_ES #if(${extendsClass})extends ${extendsClass.javaTypeCanonicalName}_ES#end{
 
 #foreach($ad in ${td.getDeclaredAttributes()}) ##Add attributes.
     public static volatile ${ad.getClass().getSimpleName().replace("Descriptor","ES")}<${td.getJavaTypeCanonicalName()}, #if(${ad.getClass().getCanonicalName().contains("Map")})${ad.getKeyJavaType().getCanonicalName()},#end ${ad.getJavaTypeCanonicalName()}> ${ad.name};
 #end
 
-    private static final EntityTypeES<${td.javaTypeSimpleName}> INSTANCE_ES = new EntityTypeESImpl<>(
-        Bindable.BindableType.ENTITY_TYPE,
+    private static final org.mousepilots.es.core.model.EntityTypeES<${td.javaTypeSimpleName}> INSTANCE_ES = new org.mousepilots.es.core.model.impl.EntityTypeESImpl<>(
+        javax.persistence.metamodel.Bindable.BindableType.ENTITY_TYPE,
         ${td.getJavaTypeCanonicalName()}.class,
         ${td.getId().getOrdinal()},
         #if(${td.getDeclaredId()})${td.getDeclaredId().getOrdinal()},
@@ -53,7 +47,7 @@ public class ${td.javaTypeSimpleName}_ES #if(${extendsClass})extends ${extendsCl
         "${td.name}",
         ${td.ordinal},
         ${td.javaType.name}.class,
-        Type.PersistenceType.ENTITY,
+        javax.persistence.metamodel.Type.PersistenceType.ENTITY,
         "${td.javaTypeSimpleName}",
         ${td.instantiable},
         ${td.getMetaModelClass().getCanonicalName()}.class,
@@ -62,7 +56,19 @@ public class ${td.javaTypeSimpleName}_ES #if(${extendsClass})extends ${extendsCl
         ${subTypes}
         );
 
-    public static EntityTypeES getInstance() {
+    public static org.mousepilots.es.core.model.EntityTypeES getInstance() {
         return INSTANCE_ES;
+    }
+
+    static {
+#foreach($ad in ${td.getDeclaredAttributes()}) ##Initialise attributes.
+#if(${ad.name.equals("id")})
+    ${ad.name} = (${ad.getClass().getSimpleName().replace("Descriptor", "ES")}<${td.getJavaTypeCanonicalName()}, #if(${ad.getClass.getCanonicalName().contains("Map")})${ad.getKeyJavaType().getCanonicalName()}, #end${ad.getJavaTypeCanonicalName()}>) INSTANCE_ES.${ad.getGetterMethodName()}(${ad.getJavaTypeCanonicalName()}.class);
+#elseif (${ad.name.equals("version")})
+    ${ad.name} = (${ad.getClass().getSimpleName().replace("Descriptor", "ES")}<${td.getJavaTypeCanonicalName()}, #if(${ad.getClass.getCanonicalName().contains("Map")})${ad.getKeyJavaType().getCanonicalName()}, #end${ad.getJavaTypeCanonicalName()}>) INSTANCE_ES.${ad.getGetterMethodName()}(${ad.getJavaTypeCanonicalName()}.class);
+#else
+    ${ad.name} = (${ad.getClass().getSimpleName().replace("Descriptor", "ES")}<${td.getJavaTypeCanonicalName()}, #if(${ad.getClass().getCanonicalName().contains("Map")})${ad.getKeyJavaType().getCanonicalName()}, #end${ad.getJavaTypeCanonicalName()}>) org.mousepilots.es.core.model.impl.AbstractMetaModelES.getInstance().getAttribute(${ad.getOrdinal()});
+#end
+#end
     }
 }

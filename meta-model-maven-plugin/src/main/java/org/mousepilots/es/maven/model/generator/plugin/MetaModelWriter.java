@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Properties;
-import javax.persistence.metamodel.Bindable;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.velocity.Template;
@@ -27,7 +26,6 @@ public class MetaModelWriter {
 
     private final File generatedSourceDir;
     private final Log log;
-    private final String packageName;
 
     /**
      * The velocity engine for generating source files
@@ -37,7 +35,6 @@ public class MetaModelWriter {
     public MetaModelWriter(File generatedSourceDir, Log log, String packageName) {
         this.generatedSourceDir = generatedSourceDir;
         this.log = log;
-        this.packageName = packageName;
 
         //Initialise the velocity engine.
         velocityEngine = new VelocityEngine();
@@ -53,7 +50,7 @@ public class MetaModelWriter {
      *
      * @param writer contains the source code
      * @param className the FQN of the class contained in the {@code writer}
-     * @throws MojoExecutionException is writing fails
+     * @throws MojoExecutionException if writing fails
      */
     private void classToDisk(StringWriter writer, String className) throws MojoExecutionException {
         final String path = toPath(className);
@@ -75,7 +72,8 @@ public class MetaModelWriter {
     }
 
     /**
-     * @param className
+     * Get the absolute path to the file with the given {@code className}.
+     * @param className the name of the class.
      * @return the absolute path to the file on disk corresponding to
      * {@code className}
      */
@@ -115,7 +113,6 @@ public class MetaModelWriter {
             switch (td.getPersistenceType()) {
                 case BASIC:
                 default:
-                    //TODO generate basic types for hasvalue implementations.
                     context.put("td", (BasicTypeDescriptor) td);
                     template = velocityEngine.getTemplate("templates/BasicTypeImpl.vsl");
                     break;
@@ -152,7 +149,30 @@ public class MetaModelWriter {
         }
     }
 
+    /**
+     * Writes all value wrapper implementations for the basic types.
+     * @throws MojoExecutionException if something goes wrong when writing the
+     * generated meta models to disk.
+     */
     public void writeHasValuesTypes() throws MojoExecutionException {
-        //TODO write has values wrapper implementations.
+        for (TypeDescriptor td : TypeDescriptor.getAll()){
+            final VelocityContext context = createContext();
+            Template template = null;
+            switch (td.getPersistenceType()){
+                case BASIC:
+                    context.put("td", (BasicTypeDescriptor)td);
+                    template = velocityEngine.getTemplate("templates/ValueWrapperImpl.vsl");
+                    break;
+            }
+            if (template != null) {
+                StringWriter writer = new StringWriter();
+                template.merge(context, writer);
+                classToDisk(writer, "wrappers." + td.getJavaTypeSimpleName() + "Wrapper");
+            }
+        }
+    }
+
+    public void writeMetaModel() throws MojoExecutionException {
+        //TODO write the meta model implementation class.
     }
 }
