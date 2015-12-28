@@ -35,7 +35,7 @@ public abstract class AbstractMetaModelES implements MetaModelES {
     /**
      * Set an instance of this class.
      * @param instance The instance of this class to set.
-     * @throws IllegalStateException If in instance was already created before.
+     * @throws IllegalStateException If an instance was already created before.
      */
     protected void setInstance(AbstractMetaModelES instance){
         if (INSTANCE != null) {
@@ -52,14 +52,27 @@ public abstract class AbstractMetaModelES implements MetaModelES {
     private final SortedMap<Integer, TypeES> ordinalToType = new TreeMap<>();
     private final SortedMap<Integer, AttributeES> ordinalToAttribute = new TreeMap<>();
 
+    /**
+     * Register a specific {@link TypeES} to the meta model.
+     * @param type The type to register.
+     */
     protected final void register(TypeES type){
         ordinalToType.put(type.getOrdinal(), type);
     }
 
+    /**
+     * Register a specific {@link AttributeES} to the meta model.
+     * @param attribute The attribute to register.
+     */
     protected final void register(AttributeES attribute){
         ordinalToAttribute.put(attribute.getOrdinal(), attribute);
     }
 
+    /**
+     * Get a specific type by its ordinal.
+     * @param ordinal The ordinal of the type to get.
+     * @return The {@link TypeES} instance for the specified {@code ordinal}, or {@code null} if no type with the specified {@code ordinal} exists.
+     */
     public TypeES getType(int ordinal){
         return ordinalToType.get(ordinal);
     }
@@ -135,6 +148,11 @@ public abstract class AbstractMetaModelES implements MetaModelES {
         return embeddables;
     }
 
+    /**
+     * Get a specific attribute by its ordinal.
+     * @param ordinal The ordinal of the attribute to get.
+     * @return The {@link AttributeES} instance for the specified {@code ordinal}, or {@code null} if no attribute with the specified {@code ordinal} exists.
+     */
     public AttributeES getAttribute(int ordinal) {
         return ordinalToAttribute.get(ordinal);
     }
