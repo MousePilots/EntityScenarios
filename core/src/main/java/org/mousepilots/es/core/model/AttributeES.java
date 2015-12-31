@@ -68,4 +68,6 @@ public interface AttributeES<T, TA,CA> extends Attribute<T, TA>, Comparable<Attr
 
     @Override
     public ManagedTypeES<T> getDeclaringType();
+    
+    public void accept(AttributeVisitor visitor);
 }

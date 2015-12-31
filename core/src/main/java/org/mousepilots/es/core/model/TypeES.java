@@ -56,4 +56,6 @@ public interface TypeES<T> extends Type<T>, Comparable<TypeES>, HasOrdinal{
      * @return this type's sub-types {@code s}, such that {@code s.getJavaType()} is a subclass of {@code this.getJavaType()}
      */
     SortedSet<TypeES<? extends T>> getSubTypes();
+    
+    void accept(TypeVisitor v);
 }

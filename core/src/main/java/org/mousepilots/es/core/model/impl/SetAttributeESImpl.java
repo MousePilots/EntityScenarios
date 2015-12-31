@@ -2,6 +2,7 @@ package org.mousepilots.es.core.model.impl;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.mousepilots.es.core.model.AttributeVisitor;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.MemberES;
@@ -55,4 +56,10 @@ public class SetAttributeESImpl<T, E>
     public boolean isCollection() {
         return true;
     }
+    
+    @Override
+    public void accept(AttributeVisitor visitor) {
+        visitor.visit(this);
+    }
+    
 }

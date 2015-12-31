@@ -13,7 +13,7 @@ import org.mousepilots.es.core.model.TypeES;
  * @version 1.0, 18-12-2015
  * @param <T> The represented entity or mapped superclass type.
  */
-public class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
+public abstract class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
     implements IdentifiableTypeES<T>{
 
     private final int id, declaredId, version, declaredVersion, idType;

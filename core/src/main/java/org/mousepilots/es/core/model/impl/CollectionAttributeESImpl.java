@@ -3,6 +3,7 @@ package org.mousepilots.es.core.model.impl;
 import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.mousepilots.es.core.model.AttributeVisitor;
 import org.mousepilots.es.core.model.CollectionAttributeES;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.ManagedTypeES;
@@ -58,4 +59,12 @@ public class CollectionAttributeESImpl<T, E>
     public boolean isCollection() {
         return true;
     }
+
+    @Override
+    public void accept(AttributeVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    
+    
 }

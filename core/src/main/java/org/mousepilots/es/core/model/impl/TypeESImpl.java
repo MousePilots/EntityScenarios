@@ -12,7 +12,7 @@ import org.mousepilots.es.core.model.TypeES;
  * @version 1.0, 18-12-2015
  * @param <T> The type of the represented object or attribute
  */
-public class TypeESImpl<T> implements TypeES<T> {
+public abstract class TypeESImpl<T> implements TypeES<T> {
 
     private final String name;
     private final int ordinal;

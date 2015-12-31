@@ -12,4 +12,10 @@ import javax.persistence.metamodel.BasicType;
  */
 public interface BasicTypeES<T> extends TypeES<T>,BasicType<T>{
 
+    @Override
+    public default void accept(TypeVisitor v) {
+        v.visit(this);
+    }
+
+    
 }

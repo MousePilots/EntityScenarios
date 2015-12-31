@@ -3,5 +3,6 @@
     <inherits name='com.google.gwt.user.User' />    
     <inherits name='java.lang.Reflect' />
     <inherits name='javax.Persistence' />
+    <inherits name='org.JGraphT' />
     <source path='core' />
 </module>

@@ -88,4 +88,5 @@ public interface ManagedTypeES<T> extends TypeES<T>, ManagedType<T> {
 
     @Override
     MapAttributeES<T, ?, ?> getDeclaredMap(String name);
+    
 }

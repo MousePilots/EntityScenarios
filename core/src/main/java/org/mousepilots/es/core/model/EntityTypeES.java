@@ -13,4 +13,8 @@ import javax.persistence.metamodel.EntityType;
  */
 public interface EntityTypeES<T> extends IdentifiableTypeES<T>, EntityType<T>, BindableES<T> {
     
+    @Override
+    public default void accept(TypeVisitor v) {
+        v.visit(this);
+    }    
 }

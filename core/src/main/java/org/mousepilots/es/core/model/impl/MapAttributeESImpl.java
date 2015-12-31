@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.mousepilots.es.core.model.AttributeVisitor;
 import org.mousepilots.es.core.model.DtoType;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.ManagedTypeES;
@@ -112,4 +113,10 @@ public class MapAttributeESImpl<T, K, V>
     public boolean isCollection() {
         return true;
     }
+    
+    @Override
+    public void accept(AttributeVisitor visitor) {
+        visitor.visit(this);
+    }
+    
 }

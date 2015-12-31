@@ -3,6 +3,7 @@ package org.mousepilots.es.core.model.impl;
 import java.lang.reflect.Member;
 import javax.persistence.Id;
 import javax.persistence.metamodel.Type;
+import org.mousepilots.es.core.model.AttributeVisitor;
 import org.mousepilots.es.core.model.DtoType;
 import org.mousepilots.es.core.model.Generator;
 import org.mousepilots.es.core.model.HasValue;
@@ -192,4 +193,10 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
     public boolean isCollection() {
         return false;
     }
+    
+    @Override
+    public void accept(AttributeVisitor visitor) {
+        visitor.visit(this);
+    }
+    
 }

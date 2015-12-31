@@ -20,7 +20,7 @@ import org.mousepilots.es.core.model.SingularAttributeES;
  * @version 1.0, 18-12-2015
  * @param <T> The represented type.
  */
-public class ManagedTypeESImpl<T> extends TypeESImpl<T>
+public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
         implements ManagedTypeES<T> {
 
     private final SortedSet<PluralAttribute<? super T, ?, ?>> pluralAttributes = new TreeSet<>();
