@@ -3,19 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mousepilots.es.core.model;
+package org.mousepilots.es.core.scenario;
+
+import java.util.Collection;
 
 /**
  *
  * @author jgeenen
  */
-public interface TypeVisitor<R> {
+public interface Context {
     
-    R visit(BasicTypeES t);
+    String getUserName();
     
-    R visit(EmbeddableTypeES t);
+    Collection<String> getRoles();
     
-    R visit(MappedSuperclassTypeES t);
-    
-    R visit(EntityTypeES t);
 }

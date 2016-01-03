@@ -57,5 +57,11 @@ public interface TypeES<T> extends Type<T>, Comparable<TypeES>, HasOrdinal{
      */
     SortedSet<TypeES<? extends T>> getSubTypes();
     
-    void accept(TypeVisitor v);
+    /**
+     * 
+     * @param <R> {@code v}'s return type
+     * @param v the {@link TypeVisitor}
+     * @return the value returned by {@code v}'s visit of {@code this}
+     */
+    <R> R accept(TypeVisitor<R> v);
 }

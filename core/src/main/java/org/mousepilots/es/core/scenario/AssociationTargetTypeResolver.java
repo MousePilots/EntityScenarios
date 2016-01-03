@@ -18,7 +18,7 @@ import org.mousepilots.es.core.model.SingularAttributeES;
  *
  * @author jgeenen
  */
-public class AssociationTargetTypeResolver implements AttributeVisitor{
+public class AssociationTargetTypeResolver implements AttributeVisitor<Void>{
     
     private final AssociationTypeES associationTypeES;
     
@@ -39,34 +39,39 @@ public class AssociationTargetTypeResolver implements AttributeVisitor{
     }
     
     @Override
-    public void visit(SingularAttributeES a) {
+    public Void visit(SingularAttributeES a) {
         assertIsValue();
         associationTargetType = (ManagedTypeES) a.getType();
+        return null;
     }
 
     @Override
-    public void visit(CollectionAttributeES a) {
+    public Void visit(CollectionAttributeES a) {
         assertIsValue();
         associationTargetType = (ManagedTypeES) a.getElementType();
+        return null;
     }
 
     @Override
-    public void visit(ListAttributeES a) {
+    public Void visit(ListAttributeES a) {
         assertIsValue();
         associationTargetType = (ManagedTypeES) a.getElementType();
+        return null;
     }
 
     @Override
-    public void visit(SetAttributeES a) {
+    public Void visit(SetAttributeES a) {
         assertIsValue();
         associationTargetType = (ManagedTypeES) a.getElementType();
+        return null;
     }
 
     @Override
-    public void visit(MapAttributeES a) {
+    public Void visit(MapAttributeES a) {
         associationTargetType = (ManagedTypeES) (
             associationTypeES==AssociationTypeES.KEY ? a.getKeyType() : a.getElementType()
         );
+        return null;
     }
 
 }

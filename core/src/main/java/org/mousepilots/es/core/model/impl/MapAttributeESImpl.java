@@ -115,8 +115,8 @@ public class MapAttributeESImpl<T, K, V>
     }
     
     @Override
-    public void accept(AttributeVisitor visitor) {
-        visitor.visit(this);
+    public <T> T accept(AttributeVisitor<T> visitor) {
+        return visitor.visit(this);
     }
     
 }

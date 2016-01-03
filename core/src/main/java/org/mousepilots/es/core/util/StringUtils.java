@@ -1,5 +1,8 @@
 package org.mousepilots.es.core.util;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Utilities class for Strings.
  * @author Nicky Ernste
@@ -23,5 +26,16 @@ public class StringUtils {
      */
     public static boolean isNullOrWhiteSpace(String str){
         return str == null || str.equals(" ");
+    }
+    
+    public static String createToString(Class clazz, List fieldValuePairs){
+        StringBuilder retval = new StringBuilder(clazz.getName()).append('[');
+        for(Iterator i = fieldValuePairs.iterator(); i.hasNext(); ){
+            retval.append(i.next()).append("=").append(i.next());
+            if(i.hasNext()){
+                retval.append(", ");
+            }
+        }
+        return retval.append(']').toString();
     }
 }

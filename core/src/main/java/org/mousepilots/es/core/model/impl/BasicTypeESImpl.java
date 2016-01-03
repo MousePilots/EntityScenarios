@@ -2,6 +2,7 @@ package org.mousepilots.es.core.model.impl;
 
 import java.util.Collection;
 import org.mousepilots.es.core.model.BasicTypeES;
+import org.mousepilots.es.core.model.TypeVisitor;
 
 /**
  * @author Nicky Ernste
@@ -30,4 +31,10 @@ public class BasicTypeESImpl<T> extends TypeESImpl<T>
         super(name, ordinal, javaType, persistenceType, javaClassName,
                 instantiable, metamodelClass, superType, subTypes);
     }
+    
+    @Override
+    public <R> R accept(TypeVisitor<R> v) {
+        return v.visit(this);
+    }
+    
 }

@@ -9,15 +9,15 @@ package org.mousepilots.es.core.model;
  *
  * @author jgeenen
  */
-public interface AttributeVisitor{
+public interface AttributeVisitor<T>{
     
-    void visit(SingularAttributeES a);
+    T visit(SingularAttributeES a);
     
-    void visit(CollectionAttributeES a);
+    T visit(CollectionAttributeES a);
     
-    void visit(ListAttributeES a);
+    T visit(ListAttributeES a);
     
-    void visit(SetAttributeES a);
+    T visit(SetAttributeES a);
     
-    void visit(MapAttributeES a);
+    T visit(MapAttributeES a);
 }

@@ -195,8 +195,8 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
     }
     
     @Override
-    public void accept(AttributeVisitor visitor) {
-        visitor.visit(this);
+    public <T> T accept(AttributeVisitor<T> visitor) {
+        return visitor.visit(this);
     }
     
 }

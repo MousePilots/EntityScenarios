@@ -61,10 +61,8 @@ public class CollectionAttributeESImpl<T, E>
     }
 
     @Override
-    public void accept(AttributeVisitor visitor) {
-        visitor.visit(this);
+    public <T> T accept(AttributeVisitor<T> visitor) {
+        return visitor.visit(this);
     }
-
-    
     
 }

@@ -2,7 +2,9 @@ package org.mousepilots.es.core.util;
 
 import java.util.Collection;
 import javax.persistence.Id;
+import org.mousepilots.es.core.model.IdentifiableTypeES;
 import org.mousepilots.es.core.model.MemberES;
+import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.impl.IdentifiableTypeESImpl;
 
 /**
@@ -12,6 +14,16 @@ import org.mousepilots.es.core.model.impl.IdentifiableTypeESImpl;
  */
 public class IdentifiableUtils {
 
+    
+    public static <E> Object getId(IdentifiableTypeES<E> type, E instance){
+        if(instance==null){
+            return null;
+        } else {
+            final SingularAttributeES idAttribute = type.getId(type.getIdType().getJavaType());
+            return idAttribute.getJavaMember().get(instance);
+        }
+    }
+    
     /**
      * Adds the {@link Id}-values of the {@code identifiables} to the supplied
      * {@code ids} collection.
@@ -21,7 +33,7 @@ public class IdentifiableUtils {
      * @param type the identifiable type to add the id for.
      * @param identifiables a collection of the type for the identifable type.
      * @param ids a collection to add the ids to.
-     * @return the supplied {@link ids} collection for chaining
+     * @return the supplied {@link ids} method for chaining
      */
     public static <E, I> Collection<I> addIds(IdentifiableTypeESImpl<E> type, Collection<E> identifiables, Collection<I> ids) {
         final MemberES idMember = (MemberES) type.getId().getJavaMember();
