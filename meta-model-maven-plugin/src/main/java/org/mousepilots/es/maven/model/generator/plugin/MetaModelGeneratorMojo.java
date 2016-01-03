@@ -97,8 +97,8 @@ public class MetaModelGeneratorMojo extends AbstractMojo {
         reflections = new Reflections((String) null);
         final Set<Class<?>> jpaMetaModelClasses = reflections.getTypesAnnotatedWith(StaticMetamodel.class);
         if (jpaMetaModelClasses.isEmpty()) {
-            //No meta models found.
-            getLog().info("No meta model classes where found, stopping execution.");
+            //No meta model classes found.
+            getLog().info("No meta model classes were found, stopping execution.");
             return;
         }
         getLog().info("Found " + jpaMetaModelClasses.size() + " meta model classes.");
@@ -116,6 +116,10 @@ public class MetaModelGeneratorMojo extends AbstractMojo {
         //printGeneratedTypes(generatedTypes);
         final MetaModelWriter writer = new MetaModelWriter(generatedSourceDir, getLog(), packageName);
         writer.writeAbstractTypeImpls();
+        getLog().info("Wrote the abstract types and attributes");
+        writer.writeHasValuesTypes();
+        getLog().info("Wrote the value wrappers.");
+        writer.writeMetaModel();
         getLog().info("Successfully completed meta model generation");
     }
 

@@ -1,11 +1,6 @@
 ## Velocity Template.
 package ${td.getPackageName()};
 
-import javax.annotation.Generated;
-import javax.persistence.metamodel.StaticMetamodel;
-import javax.persistence.metamodel.Type;
-import org.mousepilots.es.core.model.MappedSuperclassTypeES;
-import org.mousepilots.es.core.model.impl.MappedSuperclassTypeESImpl;
 ##Attribute imports
 #if (${td.getDeclaredSingularAttributes().size()} > 0)
 import org.mousepilots.es.core.model.SingularAttributeES;
@@ -26,15 +21,15 @@ import org.mousepilots.es.core.model.SetAttributeES;
 /**
  * Models class {@link ${td.javaTypeSimpleName}} with persistence type: ${td.getPersistenceType().name()}
  */
-@Generated(value="${esNameAndVersion}", date="${currentDate}")
-@StaticMetamodel(${td.javaTypeSimpleName}.class)
+@javax.annotation.Generated(value = "${esNameAndVersion}", date = "${currentDate}")
+@javax.persistence.metamodel.StaticMetamodel(${td.javaTypeSimpleName}.class)
 public class ${td.javaTypeSimpleName}_ES #if(${extendsClass})extends ${extendsClass.javaTypeCanonicalName}_ES#end{
 
 #foreach($ad in ${td.getDeclaredAttributes()}) ##Add attributes.
     public static volatile ${ad.getClass().getSimpleName().replace("Descriptor","ES")}<${td.getJavaTypeCanonicalName()}, #if(${ad.getClass().getCanonicalName().contains("Map")})${ad.getKeyJavaType().getCanonicalName()},#end ${ad.getJavaTypeCanonicalName()}> ${ad.name};
 #end
 
-    private static final MappedSuperclassTypeES<${td.javaTypeSimpleName}> INSTANCE_ES = new MappedSuperclassTypeESImpl<>(
+    private static final org.mousepilots.es.core.model.MappedSuperclassTypeES<${td.javaTypeSimpleName}> INSTANCE_ES = new org.mousepilots.es.core.model.impl.MappedSuperclassTypeESImpl<>(
         ${td.getId().getOrdinal()},
         #if(${td.getDeclaredId()})${td.getDeclaredId().getOrdinal()},
 #else -1,
@@ -50,7 +45,7 @@ public class ${td.javaTypeSimpleName}_ES #if(${extendsClass})extends ${extendsCl
         "${td.name}",
         ${td.ordinal},
         ${td.javaType.name}.class,
-        Type.PersistenceType.MAPPED_SUPERCLASS,
+        javax.persistence.metamodel.Type.PersistenceType.MAPPED_SUPERCLASS,
         "${td.javaTypeSimpleName}",
         ${td.instantiable},
         ${td.getMetaModelClass().getCanonicalName()}.class,
@@ -61,5 +56,17 @@ public class ${td.javaTypeSimpleName}_ES #if(${extendsClass})extends ${extendsCl
 
     public static org.mousepilots.es.core.model.TypeES getInstance() {
         return INSTANCE_ES;
+    }
+
+    static {
+#foreach($ad in ${td.getDeclaredAttributes()}) ##Initialise attributes.
+#if(${ad.name.equals("id")})
+    ${ad.name} = (${ad.getClass().getSimpleName().replace("Descriptor", "ES")}<${td.getJavaTypeCanonicalName()}, #if(${ad.getClass.getCanonicalName().contains("Map")})${ad.getKeyJavaType().getCanonicalName()}, #end${ad.getJavaTypeCanonicalName()}>) INSTANCE_ES.${ad.getGetterMethodName()}(${ad.getJavaTypeCanonicalName()}.class);
+#elseif (${ad.name.equals("version")})
+    ${ad.name} = (${ad.getClass().getSimpleName().replace("Descriptor", "ES")}<${td.getJavaTypeCanonicalName()}, #if(${ad.getClass.getCanonicalName().contains("Map")})${ad.getKeyJavaType().getCanonicalName()}, #end${ad.getJavaTypeCanonicalName()}>) INSTANCE_ES.${ad.getGetterMethodName()}(${ad.getJavaTypeCanonicalName()}.class);
+#else
+    ${ad.name} = (${ad.getClass().getSimpleName().replace("Descriptor", "ES")}<${td.getJavaTypeCanonicalName()}, #if(${ad.getClass().getCanonicalName().contains("Map")})${ad.getKeyJavaType().getCanonicalName()}, #end${ad.getJavaTypeCanonicalName()}>) org.mousepilots.es.core.model.impl.AbstractMetaModelES.getInstance().getAttribute(${ad.getOrdinal()});
+#end
+#end
     }
 }
