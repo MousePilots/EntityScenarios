@@ -1,46 +1,52 @@
-package org.mousepilots.es.test.domain.entities;
+package org.mousepilots.es.test.domain;
 
-import org.mousepilots.es.test.domain.BaseEntity;
+import java.util.ArrayList;
+import java.util.Collection;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 /**
- * Entity modeling a work environment.
+ * Entity that models a role.
+ * Testing the ManyToMany relations.
  * @author Nicky Ernste
  * @version 1.0, 1-12-2015
  */
 @Entity
-public class WorkEnvironment extends BaseEntity {
+@Table(name = "Roles")
+public class Role extends BaseEntity {
     private static final long serialVersionUID = 1L;
-    private String officeNumber;
-    private String officeLocation;
+    private String name;
+    @ManyToMany(mappedBy = "roles")
+    private Collection<User> users = new ArrayList<>();
 
-    public WorkEnvironment() {
+    public Role() {
     }
 
-    public WorkEnvironment(String officeNumber, String officeLocation) {
-        this.officeNumber = officeNumber;
-        this.officeLocation = officeLocation;
+    public Role(String name, Collection<User> users) {
+        this.name = name;
+        this.users = users;
     }
 
-    public String getOfficeNumber() {
-        return officeNumber;
+    public String getName() {
+        return name;
     }
 
-    public void setOfficeNumber(String officeNumber) {
-        this.officeNumber = officeNumber;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getOfficeLocation() {
-        return officeLocation;
+    public Collection<User> getUsers() {
+        return users;
     }
 
-    public void setOfficeLocation(String officeLocation) {
-        this.officeLocation = officeLocation;
+    public void setUsers(Collection<User> users) {
+        this.users = users;
     }
 
     @Override
     public int hashCode() {
-        int hash = 99;
+        int hash = 2;
         hash += this.getId() != null ? this.getId().hashCode() : 0;
         return hash;
     }

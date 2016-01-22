@@ -3,6 +3,7 @@ package org.mousepilots.es.core.model.impl;
 import org.mousepilots.es.core.model.BindableES;
 
 /**
+ * This class implements the BindableES interface.
  * @author Nicky Ernste
  * @version 1.0, 25-11-2015
  * @param <T> The type that will be bound.

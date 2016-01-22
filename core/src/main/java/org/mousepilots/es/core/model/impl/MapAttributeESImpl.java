@@ -15,6 +15,7 @@ import org.mousepilots.es.core.model.MemberES;
 import org.mousepilots.es.core.model.TypeES;
 
 /**
+ * This class implements the MapAttributeES interface.
  * @author Nicky Ernste
  * @version 1.0, 7-12-2015
  * @param <T> The type the represented Map belongs to
@@ -117,6 +118,5 @@ public class MapAttributeESImpl<T, K, V>
     @Override
     public <T> T accept(AttributeVisitor<T> visitor) {
         return visitor.visit(this);
-    }
-    
+    }    
 }

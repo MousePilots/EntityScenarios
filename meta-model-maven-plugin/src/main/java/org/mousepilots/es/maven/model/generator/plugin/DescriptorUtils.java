@@ -46,7 +46,7 @@ public final class DescriptorUtils {
     /**
      * Get a string representation for initialising the specified {@link SingularAttributeDescriptor}.
      * @param sad the singular attribute descriptor to get the initialisation string for.
-     * @return a string representation to initialise the specified {@code sad}, or an empty string if {@code sad} was {@code null}.
+     * @return a string representation to initialise the specified {@code sad}, or the string null if {@code sad} was {@code null}.
      */
     public static String printSingularAttributeImpl(SingularAttributeDescriptor sad){
         if (sad == null) {
@@ -89,6 +89,11 @@ public final class DescriptorUtils {
         return sb.toString();
     }
 
+    /**
+     * Get the string representation for initialising the specified {@Link CollectionAttributeDescriptor}.
+     * @param cad the collection attribute descriptor to get the initialisation string for.
+     * @return a String representation to initialise the specified {@code cad}, or the String null if {@code cad} was {@code null}.
+     */
     public static String printCollectionAttributeImpl(CollectionAttributeDescriptor cad){
         if (cad == null) {
             return "null";
@@ -114,7 +119,7 @@ public final class DescriptorUtils {
     /**
      * Get a string representation for initialising the specified {@link BasicTypeDescriptor}.
      * @param btd the basic type descriptor to get the initialisation string for.
-     * @return a string representation to initialise the specified {@code btd}, or an empty string if {@code btd} was {@code null}.
+     * @return a string representation to initialise the specified {@code btd}, or the string null if {@code btd} was {@code null}.
      */
     public static String printBasicTypeImpl(BasicTypeDescriptor btd){
         if (btd == null) {
@@ -138,6 +143,11 @@ public final class DescriptorUtils {
         return sb.toString();
     }
 
+    /**
+     * Get a String representation for initialising the id class attributes of a type.
+     * @param idClassAttributes a Set of {@link SingularAttributeDescriptor}s that represent the id class attributes for a type.
+     * @return a String representation to initialise the specified {@code idClassAttributes}, or the string null if {@code idClassAttributes} was {@code null}.
+     */
     public static String printIdClassAttributes(Set<SingularAttributeDescriptor> idClassAttributes){
         if (idClassAttributes == null) {
             return "null";
@@ -157,7 +167,7 @@ public final class DescriptorUtils {
     /**
      * Get the string representation of all attributes as a {@link HashSet}.
      * @param attributes the set of attributes to get the string representation of.
-     * @return a string representation to initialise the set of attributes, or and empty string if {@code attributes} was {@code null} or empty.
+     * @return a string representation to initialise the set of attributes, or the string null if {@code attributes} was {@code null} or empty.
      */
     public static String printAttributesList(Set<? extends AttributeDescriptor> attributes){
         if (attributes == null || attributes.isEmpty()) {
@@ -179,7 +189,7 @@ public final class DescriptorUtils {
      * Get the string representation to initialise a {@link TypeDescriptor}
      * This method will call a different method depending on the {@link Type.PersistenceType} of {@code td}.
      * @param td the type descriptor to get the initialisation string for.
-     * @return a string representation to initialise a type, or an empty string if {@code td} is null.
+     * @return a string representation to initialise a type, or the string null if {@code td} is null.
      */
     public static String printType(TypeDescriptor td){
         if (td == null) {
@@ -203,7 +213,7 @@ public final class DescriptorUtils {
      * Get the string representation to initialise an {@link AttributeDescriptor}
      * This method will call a different method depending on the class of {@code ad}.
      * @param ad the attribute descriptor to get the initialisation string for.
-     * @return a string representation to initialise an attribute, or an empty string if {@code ad} is null.
+     * @return a string representation to initialise an attribute, or the string null if {@code ad} is null.
      */
     public static String printAttribute(AttributeDescriptor ad){
         if (ad == null) {
@@ -227,9 +237,9 @@ public final class DescriptorUtils {
     }
 
     /**
-     * Get the string representation to initialise a {@link EmbeddableTypeESImpl}
+     * Get the string representation to initialise a {@link EmbeddableTypeESImpl}.
      * @param etd the {@link EmbeddableTypeDescriptor} to get the initialisation string for.
-     * @return a string representation to initialise a embeddable type, or an empty string if {@code etd} is {@code null}.
+     * @return a string representation to initialise a embeddable type, or the string null if {@code etd} is {@code null}.
      */
     public static String printEmbeddableType(EmbeddableTypeDescriptor etd){
         if (etd == null) {
@@ -250,6 +260,11 @@ public final class DescriptorUtils {
         return sb.toString();
     }
 
+    /**
+     * Get the String representation to initialise a {@link MappedSuperClassDescriptor}.
+     * @param mscd the {@link MappedSuperClassDescriptor} to get the initialisation string for.
+     * @return a String representation to initialise a mapped super class, or the string null if {@code mscd} was {@code null}.
+     */
     public static String printMappedSupperClass(MappedSuperClassDescriptor mscd){
         if (mscd == null) {
             return "null";
@@ -293,6 +308,11 @@ public final class DescriptorUtils {
         return sb.toString();
     }
 
+    /**
+     * Get the String representation to initialise a {@link EntityTypeDescriptor}.
+     * @param etd the {@link EntityTypeDescriptor} to get the initialisation string for.
+     * @return a String representation to initialise a entity type, or the string null if {@code etd} was {@code null}.
+     */
     public static String printEntityType(EntityTypeDescriptor etd){
         if (etd == null) {
             return "null";
@@ -338,6 +358,11 @@ public final class DescriptorUtils {
         return sb.toString();
     }
 
+    /**
+     * Get the String representation to initialise the sub types of a {@link TypeDescriptor}.
+     * @param td the {@link TypeDescriptor} to get the initialisation string for.
+     * @return a String representation to initialise the sub types of a type descriptor, or the string null if {@code mscd} was {@code null}.
+     */
     public static String printSubTypes(TypeDescriptor td){
 
         //TODO refer to the INSTANCE_ES of other types.

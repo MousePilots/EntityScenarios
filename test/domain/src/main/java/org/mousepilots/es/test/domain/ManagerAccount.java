@@ -1,4 +1,4 @@
-package org.mousepilots.es.test.domain.entities;
+package org.mousepilots.es.test.domain;
 
 import java.util.List;
 import java.util.Objects;
@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
 /**
+ * Testing OneToMany relations.
  * @author Nicky Ernste
  * @version 1.0, 8-12-2015
  */

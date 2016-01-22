@@ -1,15 +1,14 @@
-package org.mousepilots.es.test.domain.entities;
+package org.mousepilots.es.test.domain;
 
-import org.mousepilots.es.test.domain.BaseEntity;
 import java.util.Map;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyClass;
-import org.mousepilots.es.test.domain.embeddables.Address;
 
 /**
  * Entity that tests Maps with basic keys.
+ * Testing the basic key part of the Map semantics research.
  * @author Nicky Ernste
  * @version 1.0, 1-12-2015
  */

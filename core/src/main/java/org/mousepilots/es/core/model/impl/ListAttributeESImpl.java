@@ -10,6 +10,7 @@ import org.mousepilots.es.core.model.MemberES;
 import org.mousepilots.es.core.model.TypeES;
 
 /**
+ * This class implements the ListAttributeES interface.
  * @author Nicky Ernste
  * @version 1.0, 7-12-2015
  * @param <T> The type the represented List belongs to.
@@ -61,6 +62,5 @@ public class ListAttributeESImpl<T, E>
     @Override
     public <T> T accept(AttributeVisitor<T> visitor) {
         return visitor.visit(this);
-    }
-    
+    }    
 }

@@ -1,7 +1,7 @@
 package org.mousepilots.es.core.model;
 
 /**
- * Enum to define the different types of associations.
+ * Enumeration to define the different types of associations.
  * @author Nicky Ernste
  * @version 1.0, 19-10-2015
  */

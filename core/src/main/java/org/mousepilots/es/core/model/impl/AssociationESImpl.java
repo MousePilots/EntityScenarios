@@ -7,6 +7,7 @@ import org.mousepilots.es.core.model.AssociationES;
 import org.mousepilots.es.core.model.AttributeES;
 
 /**
+ * The class implements the AssociationES interface.
  * @author Nicky Ernste
  * @version 1.0, 27-11-2015
  */

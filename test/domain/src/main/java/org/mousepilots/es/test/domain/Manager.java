@@ -1,12 +1,11 @@
-package org.mousepilots.es.test.domain.entities;
+package org.mousepilots.es.test.domain;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import org.mousepilots.es.test.domain.embeddables.Address;
 
 /**
- *
+ * Testing OneToOne relations and embedded relations.
  * @author Nicky Ernste
  * @version 1.0, 8-12-2015
  */

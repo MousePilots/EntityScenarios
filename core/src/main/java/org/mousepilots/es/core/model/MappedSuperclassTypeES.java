@@ -16,7 +16,5 @@ public interface MappedSuperclassTypeES<T> extends IdentifiableTypeES<T>, Mapped
     @Override
     public default <R> R accept(TypeVisitor<R> v) {
         return v.visit(this);
-    }
-
-    
+    }    
 }

@@ -8,13 +8,14 @@ import javax.persistence.metamodel.Type;
 import org.mousepilots.es.core.model.TypeES;
 
 /**
+ * This class is an abstract implementation of the TypeES interface.
  * @author Nicky Ernste
  * @version 1.0, 18-12-2015
  * @param <T> The type of the represented object or attribute
  */
 public abstract class TypeESImpl<T> implements TypeES<T> {
 
-    private final String name;
+    public final String name;
     private final int ordinal;
     private final Class<T> javaType;
     private final Type.PersistenceType persistenceType;
@@ -31,8 +32,8 @@ public abstract class TypeESImpl<T> implements TypeES<T> {
      * @param javaType the java type of this type.
      * @param persistenceType the {@link PersistenceType} of this type.
      * @param javaClassName the name of the java class for this type.
-     * @param instantiable whether or not this type is instanciable.
-     * @param metamodelClass the JPA metamodel class of this type.
+     * @param instantiable whether or not this type is instantiable.
+     * @param metamodelClass the JPA meta model class of this type.
      * @param superType a super type of this type.
      * @param subTypes a set of sub types of this type.
      */
@@ -54,7 +55,14 @@ public abstract class TypeESImpl<T> implements TypeES<T> {
         this.metamodelClass = metamodelClass;
         this.superTypeOrdinal = superType;
         this.subTypes = new TreeSet<>(subTypes);
-        AbstractMetaModelES.getInstance().register(this);
+    }
+
+    /**
+     * <strong>framework method</strong>: registers {@code this} on the {@link MetaModelES}
+     * @param metaModel The meta model instance to register on.
+     */
+    protected void register(AbstractMetaModelES metaModel){
+        metaModel.register(this);
     }
 
     @Override

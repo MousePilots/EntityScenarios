@@ -4,7 +4,6 @@ import java.lang.annotation.Annotation;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import javax.persistence.metamodel.Type;
 import javax.persistence.metamodel.Type.PersistenceType;
 import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.CollectionAttributeDescriptor;

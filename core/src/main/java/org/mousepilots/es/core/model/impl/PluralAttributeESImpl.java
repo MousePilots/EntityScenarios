@@ -10,6 +10,7 @@ import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.util.IdentifiableUtils;
 
 /**
+ * This class implements the PluralAttributeES interface.
  * @author Nicky Ernste
  * @version 1.0, 7-12-2015
  * @param <T> The type the represented collection belongs to

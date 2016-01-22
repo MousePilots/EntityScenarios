@@ -1,6 +1,5 @@
 package org.mousepilots.es.core.model;
 
-import java.lang.reflect.Member;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.GeneratedValue;
 
@@ -29,5 +28,4 @@ public interface SingularAttributeES<X, T> extends AttributeES<X, T,T>, Bindable
 
     @Override
     TypeES<T> getType();
-
 }

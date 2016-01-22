@@ -1,6 +1,7 @@
 package org.mousepilots.es.core.model.impl;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -17,6 +18,10 @@ import org.mousepilots.es.core.model.MetaModelES;
 import org.mousepilots.es.core.model.TypeES;
 
 /**
+ * This class is an abstract implementation of the MetaModelES interface.
+ * This class will hold of the instances of the meta model classes.
+ * And it will be used to interact with the extended meta model programmatically.
+ * An different version will be generated that implements the abstract methods from this class.
  * @author Nicky Ernste
  * @version 1.0, 18-12-2015
  */
@@ -44,11 +49,11 @@ public abstract class AbstractMetaModelES implements MetaModelES {
         INSTANCE = instance;
     }
 
-    private final Set<ManagedType<?>> managedTypes;
-    private final Set<EntityType<?>> entities;
-    private final Set<EmbeddableType<?>> embeddables;
-    private final Map<ManagedTypeES, SortedSet<ManagedTypeES>> managedTypeToSuperManagedTypes;
-    private final Map<ManagedTypeES, SortedSet<ManagedTypeES>> managedTypeToSubManagedTypes;
+    private final Set<ManagedType<?>> managedTypes = new HashSet<>();
+    private final Set<EntityType<?>> entities = new HashSet<>();
+    private final Set<EmbeddableType<?>> embeddables = new HashSet<>();
+    private final Map<ManagedTypeES, SortedSet<ManagedTypeES>> managedTypeToSuperManagedTypes = new HashMap<>();
+    private final Map<ManagedTypeES, SortedSet<ManagedTypeES>> managedTypeToSubManagedTypes = new HashMap<>();
     private final SortedMap<Integer, TypeES> ordinalToType = new TreeMap<>();
     private final SortedMap<Integer, AttributeES> ordinalToAttribute = new TreeMap<>();
 
@@ -77,25 +82,7 @@ public abstract class AbstractMetaModelES implements MetaModelES {
         return ordinalToType.get(ordinal);
     }
 
-    /**
-     * Create a new instance of this class.
-     * @param managedTypes A set of all managed types.
-     * @param entities A set of all entities.
-     * @param embeddables A set of all embeddables.
-     */
-    protected AbstractMetaModelES(Set<ManagedType<?>> managedTypes,
-            Set<EntityType<?>> entities, Set<EmbeddableType<?>> embeddables) {
-        this.managedTypes = managedTypes;
-        //TODO opslitsen van managed types tot entiteiten en embeddables.
-        //TODO opsplitsen van managed types tot attributen.
-        //Super types en sub types, Map van managed type naar Set.
-        //1 Javatype naar managedtype
-        //2
-        this.entities = entities;
-        this.embeddables = embeddables;
-        this.managedTypeToSuperManagedTypes = new HashMap<>();
-        this.managedTypeToSubManagedTypes = new HashMap<>();
-    }
+    protected AbstractMetaModelES(){}
 
     @Override
     public <X> EntityTypeES<X> entity(Class<X> cls) {
@@ -121,7 +108,6 @@ public abstract class AbstractMetaModelES implements MetaModelES {
     public <X, M extends ManagedTypeES<X>> M managedType(Class<X> javaType, Class<M> managedTypeClass){
         return (M) managedType(javaType);
     }
-
 
     @Override
     public <X> EmbeddableTypeES<X> embeddable(Class<X> cls) {

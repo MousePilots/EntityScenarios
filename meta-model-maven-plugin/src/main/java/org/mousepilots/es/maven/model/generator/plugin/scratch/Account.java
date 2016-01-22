@@ -1,74 +1,51 @@
 package org.mousepilots.es.maven.model.generator.plugin.scratch;
 
-import java.io.Serializable;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToOne;
+import java.util.Objects;
+import javax.persistence.Entity;
 
 /**
- *
- * @author ernsteni
+ * @author Nicky Ernste
+ * @version 1.0, 9-12-2015
  */
-@MappedSuperclass
-public class Account<P extends Person> implements Serializable {
-    private static final long serialVersionUID = 1L;
+@Entity
+public class Account extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String description;
 
-    public Long getId() {
-        return id;
+    public Account() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Account(String description) {
+        this.description = description;
     }
 
-    private String name;
-    @OneToOne
-    private P person;
-
-    public P getPerson() {
-        return person;
+    public String getDescription() {
+        return description;
     }
 
-    public void setPerson(P person) {
-        this.person = person;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        int hash = 7;
+        hash = 83 * hash + Objects.hashCode(this.description);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Account)) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        Account other = (Account) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Account other = (Account) obj;
+        if (!Objects.equals(this.description, other.description)) {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return "org.mousepilots.maptest.Model.User[ id=" + id + " ]";
     }
 }

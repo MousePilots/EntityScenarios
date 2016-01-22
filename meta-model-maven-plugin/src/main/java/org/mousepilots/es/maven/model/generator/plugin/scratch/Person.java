@@ -1,92 +1,102 @@
 package org.mousepilots.es.maven.model.generator.plugin.scratch;
 
-import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.Objects;
 import javax.persistence.MappedSuperclass;
 
 /**
- *
- * @author ernsteni
+ * Mapped superclass that models a person.
+ * @author Nicky Ernste
+ * @version 1.0, 1-12-2015
  */
 @MappedSuperclass
-public abstract class Person implements Serializable {
+public abstract class Person extends BaseEntity {
+
     private static final long serialVersionUID = 1L;
+    private String firstName;
+    private String infix;
+    private String lastName;
+    private int age;
+    private String sex;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    public Long getId() {
-        return id;
+    public Person() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Person(String firstName, String infix, String lastName, int age,
+            String sex) {
+        this.firstName = firstName;
+        this.infix = infix;
+        this.lastName = lastName;
+        this.age = age;
+        this.sex = sex;
     }
 
-    private String street;
-    private String houseNumber;
-    private String postalCode;
-    private String city;
-
-    public String getStreet() {
-        return street;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setStreet(String street) {
-        this.street = street;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getHouseNumber() {
-        return houseNumber;
+    public String getInfix() {
+        return infix;
     }
 
-    public void setHouseNumber(String houseNumber) {
-        this.houseNumber = houseNumber;
+    public void setInfix(String infix) {
+        this.infix = infix;
     }
 
-    public String getPostalCode() {
-        return postalCode;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public String getCity() {
-        return city;
+    public int getAge() {
+        return age;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        int hash = 7;
+        hash = 23 * hash + Objects.hashCode(this.firstName);
+        hash = 23 * hash + Objects.hashCode(this.lastName);
+        hash = 23 * hash + this.age;
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Person)) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        Person other = (Person) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Person other = (Person) obj;
+        if (!Objects.equals(this.firstName, other.firstName)) {
+            return false;
+        }
+        if (!Objects.equals(this.lastName, other.lastName)) {
+            return false;
+        }
+        if (this.age != other.age) {
             return false;
         }
         return true;
     }
-
-    @Override
-    public String toString() {
-        return "org.mousepilots.maptest.Model.Address[ id=" + id + " ]";
-    }
-
 }

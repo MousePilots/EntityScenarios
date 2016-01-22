@@ -5,6 +5,7 @@ import org.mousepilots.es.core.model.DtoType;
 import org.mousepilots.es.core.model.HasValue;
 
 /**
+ * This class is and abstract implementation of the HasValue interface.
  * @author Nicky Ernste
  * @version 1.0, 20-11-2015
  */
