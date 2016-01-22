@@ -69,5 +69,11 @@ public interface AttributeES<T, TA,CA> extends Attribute<T, TA>, Comparable<Attr
     @Override
     public ManagedTypeES<T> getDeclaringType();
     
+    /**
+     * Accept a change on this attribute.
+     * @param <T> The type for this attribute.
+     * @param visitor The change visitor to accept the change on.
+     * @return Does not return an object, but null.
+     */
     public <T> T accept(AttributeVisitor<T> visitor);
 }

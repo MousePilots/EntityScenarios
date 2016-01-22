@@ -1,12 +1,11 @@
-package org.mousepilots.es.test.domain.entities;
+package org.mousepilots.es.maven.model.generator.plugin.scratch;
 
-import org.mousepilots.es.test.domain.BaseEntity;
+
 import java.util.Map;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyClass;
-import org.mousepilots.es.test.domain.embeddables.Address;
 
 /**
  * Entity that tests maps with Entity keys.

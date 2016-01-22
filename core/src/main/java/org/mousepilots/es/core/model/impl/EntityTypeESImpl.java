@@ -6,6 +6,7 @@ import org.mousepilots.es.core.model.EntityTypeES;
 import org.mousepilots.es.core.model.TypeES;
 
 /**
+ * This class implements the EntityTypeES interface.
  * @author Nicky Ernste
  * @version 1.0, 18-12-2015
  * @param <T> The represented entity type.
@@ -16,6 +17,7 @@ public class EntityTypeESImpl<T> extends IdentifiableTypeESImpl<T>
     private final BindableType bindableType;
     private final Class<T> bindableJavaType;
 
+    //@TODO add declared attributes to constructor
     /**
      * Create a new instance of this class.
      * @param bindableType the {@link BindableType} of this entity.
@@ -33,7 +35,7 @@ public class EntityTypeESImpl<T> extends IdentifiableTypeESImpl<T>
      * @param javaType the java type for this entity.
      * @param persistenceType the {@link PersistenceType} for this entity.
      * @param javaClassName the name of the java class that represents this entity.
-     * @param instantiable whether or not this entity is instanciable.
+     * @param instantiable whether or not this entity is instantiable.
      * @param metamodelClass the JPa meta model class for this entity.
      * @param attributes the attributes this entity contains.
      * @param superType the super type of this entity.

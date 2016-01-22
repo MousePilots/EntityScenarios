@@ -1,6 +1,6 @@
-package org.mousepilots.es.test.domain.entities;
+package org.mousepilots.es.maven.model.generator.plugin.scratch;
 
-import org.mousepilots.es.test.domain.BaseEntity;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -10,8 +10,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import org.mousepilots.es.test.domain.embeddables.Address;
-import org.mousepilots.es.test.domain.Person;
 
 /**
  * Entity testing all the collection types and arities.

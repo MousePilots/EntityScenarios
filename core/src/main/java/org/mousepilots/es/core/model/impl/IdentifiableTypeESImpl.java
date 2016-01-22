@@ -9,6 +9,7 @@ import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.TypeES;
 
 /**
+ * This class implements the IdentifiableTypeES interface.
  * @author Nicky Ernste
  * @version 1.0, 18-12-2015
  * @param <T> The represented entity or mapped superclass type.

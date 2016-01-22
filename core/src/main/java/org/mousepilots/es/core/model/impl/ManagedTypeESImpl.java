@@ -7,6 +7,7 @@ import java.util.TreeSet;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
+import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.CollectionAttributeES;
 import org.mousepilots.es.core.model.ListAttributeES;
 import org.mousepilots.es.core.model.ManagedTypeES;
@@ -16,6 +17,7 @@ import org.mousepilots.es.core.model.SetAttributeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
 
 /**
+ * This class implements the ManagedTypeES interface.
  * @author Nicky Ernste
  * @version 1.0, 18-12-2015
  * @param <T> The represented type.
@@ -49,9 +51,9 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
      * @param persistenceType the {@link PersistenceType} for this managed type.
      * @param javaClassName the name of the java class that represents this
      * managed type.
-     * @param instantiable whether or not this managed type is instanciable.
+     * @param instantiable whether or not this managed type is instantiable.
      * @param metamodelClass the JPa meta model class for this managed type.
-     * @param superType the supertype of this managed type.
+     * @param superType the super type of this managed type.
      * @param subTypes a set of sub types for this managed type.
      */
     public ManagedTypeESImpl(
@@ -71,6 +73,14 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
     }
 
     @Override
+    protected void register(AbstractMetaModelES metaModel) {
+        super.register(metaModel);
+        for(Attribute a : getDeclaredAttributes()){
+            metaModel.register((AttributeES) a);
+        }
+    }
+
+    @Override
     public SortedSet<Attribute<? super T, ?>> getAttributes() {
         return attributes;
     }
@@ -87,7 +97,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.singularAttributes;
         for (SingularAttribute<? super T, ?> att : singularAttributeSet) {
             if (att.getName().equals(name) && type == att.getJavaType()) {
-                //Not sure if this will fail at runtime.
                 return (SingularAttributeES<? super T, Y>) att;
             }
         }
@@ -101,7 +110,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.declaredSingularAttributes;
         for (SingularAttribute<T, ?> att : declaredSingularAttributeSet) {
             if (att.getName().equals(name) && type == att.getJavaType()) {
-                //Not sure if this will fail at runtime.
                 return (SingularAttributeES<T, Y>) att;
             }
         }
@@ -125,7 +133,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.collectionAttributes;
         for (CollectionAttributeES<? super T, ?> att : collectionAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
-                //Not sure if this will fail at runtime.
                 return (CollectionAttributeES<? super T, E>) att;
             }
         }
@@ -139,7 +146,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.declaredCollectionAttributes;
         for (CollectionAttributeES<T, ?> att : declaredCollectionAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
-                //Not sure if this will fail at runtime.
                 return (CollectionAttributeES<T, E>) att;
             }
         }
@@ -153,7 +159,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.setAttributes;
         for (SetAttributeES<? super T, ?> att : setAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
-                //Not sure if this will fail at runtime.
                 return (SetAttributeES<? super T, E>) att;
             }
         }
@@ -167,7 +172,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.declaredSetAttributes;
         for (SetAttributeES<T, ?> att : declaredSetAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
-                //Not sure if this will fail at runtime.
                 return (SetAttributeES<T, E>) att;
             }
         }
@@ -181,7 +185,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.listAttributes;
         for (ListAttributeES<? super T, ?> att : listAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
-                //Not sure if this will fail at runtime.
                 return (ListAttributeES<? super T, E>) att;
             }
         }
@@ -195,7 +198,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.declaredListAttributes;
         for (ListAttributeES<T, ?> att : declaredListAttributeSet) {
             if (att.getName().equals(name) && elementType == att.getElementType().getClass()) {
-                //Not sure if this will fail at runtime.
                 return (ListAttributeES<T, E>) att;
             }
         }
@@ -210,7 +212,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
         for (MapAttributeES<? super T, ?, ?> att : mapAttributeSet) {
             if (att.getName().equals(name) && keyType == att.getKeyJavaType()
                     && valueType == att.getElementType().getClass()) {
-                //Not sure if this will fail at runtime.
                 return (MapAttributeES<? super T, K, V>) att;
             }
         }
@@ -225,7 +226,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
         for (MapAttributeES<T, ?, ?> att : mapAttributeSet) {
             if (att.getName().equals(name) && keyType == att.getKeyJavaType()
                     && valueType == att.getElementType().getClass()) {
-                //Not sure if this will fail at runtime.
                 return (MapAttributeES<T, K, V>) att;
             }
         }
@@ -248,7 +248,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.attributes;
         for (Attribute<? super T, ?> att : attributeSet) {
             if (att.getName().equals(name)) {
-                //Not sure if this will fail at runtime.
                 return att;
             }
         }
@@ -261,7 +260,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.declaredAttributes;
         for (Attribute<T, ?> att : declaredAttributeSet) {
             if (att.getName().equals(name)) {
-                //Not sure if this will fail at runtime.
                 return att;
             }
         }
@@ -274,7 +272,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.singularAttributes;
         for (SingularAttribute<? super T, ?> att : singularAttributeSet) {
             if (att.getName().equals(name)) {
-                //Not sure if this will fail at runtime.
                 return att;
             }
         }
@@ -287,7 +284,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.declaredSingularAttributes;
         for (SingularAttribute<T, ?> att : singularAttributeSet) {
             if (att.getName().equals(name)) {
-                //Not sure if this will fail at runtime.
                 return att;
             }
         }
@@ -300,7 +296,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.collectionAttributes;
         for (CollectionAttributeES<? super T, ?> att : collectionAttributeSet) {
             if (att.getName().equals(name)) {
-                //Not sure if this will fail at runtime.
                 return att;
             }
         }
@@ -313,7 +308,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.declaredCollectionAttributes;
         for (CollectionAttributeES<T, ?> att : collectionAttributeSet) {
             if (att.getName().equals(name)) {
-                //Not sure if this will fail at runtime.
                 return att;
             }
         }
@@ -326,7 +320,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.setAttributes;
         for (SetAttributeES<? super T, ?> att : setAttributeSet) {
             if (att.getName().equals(name)) {
-                //Not sure if this will fail at runtime.
                 return att;
             }
         }
@@ -339,7 +332,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.declaredSetAttributes;
         for (SetAttributeES<T, ?> att : declaredSetAttributeSet) {
             if (att.getName().equals(name)) {
-                //Not sure if this will fail at runtime.
                 return att;
             }
         }
@@ -352,7 +344,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.listAttributes;
         for (ListAttributeES<? super T, ?> att : listAttributeSet) {
             if (att.getName().equals(name)) {
-                //Not sure if this will fail at runtime.
                 return att;
             }
         }
@@ -365,7 +356,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.declaredListAttributes;
         for (ListAttributeES<T, ?> att : declaredListAttributeSet) {
             if (att.getName().equals(name)) {
-                //Not sure if this will fail at runtime.
                 return att;
             }
         }
@@ -378,7 +368,6 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.mapAttributes;
         for (MapAttributeES<? super T, ?, ?> att : mapAttributeSet) {
             if (att.getName().equals(name)) {
-                //Not sure if this will fail at runtime.
                 return att;
             }
         }
@@ -391,13 +380,16 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T>
                 = this.declaredMapAttributes;
         for (MapAttributeES<T, ?, ?> att : declaredMapAttributeSet) {
             if (att.getName().equals(name)) {
-                //Not sure if this will fail at runtime.
                 return att;
             }
         }
         return null;
     }
 
+    /**
+     * Gets the attributes of this managed type from the meta model.
+     * @param attributeOrdinals The set of ordinals that belong to the attributes of this managed type.
+     */
     private void getAttributesFromMetaModel(Set<Integer> attributeOrdinals){
         for (int attributeOrdinal : attributeOrdinals) {
             attributes.add(AbstractMetaModelES.getInstance().getAttribute(attributeOrdinal));

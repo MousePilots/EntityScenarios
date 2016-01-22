@@ -5,6 +5,7 @@ import java.util.Set;
 import org.mousepilots.es.core.model.EmbeddableTypeES;
 
 /**
+ * This class implements the EmbeddableTypeES interface.
  * @author Nicky Ernste
  * @version 1.0, 18-12-2015
  * @param <T> The type that is embeddable.
@@ -19,7 +20,7 @@ public class EmbeddableTypeESImpl<T> extends ManagedTypeESImpl<T>
      * @param javaType the java type for this embeddable.
      * @param persistenceType the {@link PersistenceType} for this embeddable.
      * @param javaClassName the name of the java class that represents this embeddable.
-     * @param instantiable whether or not this embeddable is instanciable.
+     * @param instantiable whether or not this embeddable is instantiable.
      * @param metamodelClass the JPa meta model class for this embeddable.
      * @param attributes the attributes this embeddable contains.
      * @param superType the super type of this embeddable.

@@ -6,6 +6,7 @@ import org.mousepilots.es.core.model.MappedSuperclassTypeES;
 import org.mousepilots.es.core.model.TypeES;
 
 /**
+ * This class implements the MappedSuperClassTypeES interface.
  * @author Nicky Ernste
  * @version 1.0, 18-12-2015
  * @param <T> The represented entity type

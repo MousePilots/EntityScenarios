@@ -13,6 +13,7 @@ import org.mousepilots.es.core.model.MemberES;
 import org.mousepilots.es.core.model.HasValue;
 
 /**
+ * This class is and abstract implementation of the AttributeES interface.
  * @author Nicky Ernste
  * @version 1.0, 18-12-2015
  * @param <T> the represented type that contains the attribute.
@@ -62,7 +63,6 @@ public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC>
         this.declaringType = declaringType;
         this.hasValueChangeConstructor = hasValueChangeConstructor;
         this.hasValueDtoConstructor = hasValueDtoConstructor;
-        AbstractMetaModelES.getInstance().register(this);
     }
 
     @Override
@@ -105,6 +105,10 @@ public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC>
         return declaringType;
     }
 
+    /**
+     * Get the associations for this attribute.
+     * @return The map of associations linked to this attribute.
+     */
     public Map<AssociationTypeES, AssociationES> getAssociations() {
         return associations;
     }

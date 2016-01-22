@@ -10,6 +10,7 @@ import org.mousepilots.es.core.model.SetAttributeES;
 import org.mousepilots.es.core.model.TypeES;
 
 /**
+ * This class implements the SetAttributeES interface.
  * @author Nicky Ernste
  * @version 1.0, 7-12-2015
  * @param <T> The type the represented Set belongs to
@@ -60,6 +61,5 @@ public class SetAttributeESImpl<T, E>
     @Override
     public <T> T accept(AttributeVisitor<T> visitor) {
         return visitor.visit(this);
-    }
-    
+    }    
 }

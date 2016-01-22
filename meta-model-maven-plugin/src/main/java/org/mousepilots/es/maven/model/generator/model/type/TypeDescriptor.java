@@ -53,6 +53,10 @@ public class TypeDescriptor extends Descriptor<PersistenceType> {
         return superDescriptor == null ? null : superDescriptor.getDescriptorClassFullName();
     }
 
+    /**
+     * Get the original meta model class that this descriptor got its information from.
+     * @return The original scanned meta model class.
+     */
     public Class<?> getMetaModelClass() {
         return metaModelClass;
     }

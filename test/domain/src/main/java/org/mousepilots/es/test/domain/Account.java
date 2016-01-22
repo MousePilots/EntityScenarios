@@ -1,6 +1,5 @@
-package org.mousepilots.es.test.domain.entities;
+package org.mousepilots.es.test.domain;
 
-import org.mousepilots.es.test.domain.BaseEntity;
 import java.util.Objects;
 import javax.persistence.Entity;
 

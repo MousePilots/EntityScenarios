@@ -5,6 +5,7 @@ import org.mousepilots.es.core.model.BasicTypeES;
 import org.mousepilots.es.core.model.TypeVisitor;
 
 /**
+ * This class implments the TypeES interface.
  * @author Nicky Ernste
  * @version 1.0, 18-12-2015
  * @param <T> The type for this BasicType.
@@ -19,7 +20,7 @@ public class BasicTypeESImpl<T> extends TypeESImpl<T>
      * @param javaType the java basic type of this basic type.
      * @param persistenceType the {@link PersistenceType} of this basic type.
      * @param javaClassName the name of the java class for this basic type.
-     * @param instantiable whether or not this basic type is instanciable.
+     * @param instantiable whether or not this basic type is instantiable.
      * @param metamodelClass the JPA meta-model class of this basic type.
      * @param superType the super type of this basic type if any.
      * @param subTypes a set of sub basic types of this basic type.
@@ -35,6 +36,5 @@ public class BasicTypeESImpl<T> extends TypeESImpl<T>
     @Override
     public <R> R accept(TypeVisitor<R> v) {
         return v.visit(this);
-    }
-    
+    }    
 }

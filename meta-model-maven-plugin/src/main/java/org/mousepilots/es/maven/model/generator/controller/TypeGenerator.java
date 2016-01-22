@@ -68,6 +68,11 @@ public class TypeGenerator {
         PLURAL_ATTRIBUTE_TO_COLLECTION_CLASS = Collections.unmodifiableMap(pluralAttributeToCollectionClass);
     }
 
+    /**
+     * Create a new instance of the TypeGenerator and pass an instance of the Log from Maven.
+     * So that any errors can be logged directly to Maven.
+     * @param log A Maven log instance.
+     */
     public TypeGenerator(Log log) {
         this.log = log;
     }
@@ -76,7 +81,7 @@ public class TypeGenerator {
      * Generate the {@link TypeDescriptor}s from the specified meta model
      * classes.
      *
-     * @param jpaMetaModelClasses the set of classes on the classpath annotated
+     * @param jpaMetaModelClasses the set of classes on the class path annotated
      * with {@link StaticMetamodel}
      * @return a set of descriptors that represent the found models.
      */
@@ -247,7 +252,7 @@ public class TypeGenerator {
      * Calculate which indices to get when getting the generic types.
      *
      * @param metaModelFieldType The type of the current field.
-     * @return an array of ints with the indices to retrieve with the
+     * @return an array of int's with the indices to retrieve with the
      * getGenericTypes() method.
      * @see TypeGenerator#getGenericTypes(java.lang.reflect.Field, int...)
      */

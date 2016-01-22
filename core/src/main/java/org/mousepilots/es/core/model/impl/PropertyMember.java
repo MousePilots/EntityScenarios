@@ -4,6 +4,7 @@ import java.util.Objects;
 import org.mousepilots.es.core.model.MemberES;
 
 /**
+ * This class implements the MemberES interface.
  * @author Nicky Ernste
  * @version 1.0, 25-11-2015
  */

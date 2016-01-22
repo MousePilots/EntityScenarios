@@ -1,24 +1,44 @@
 package org.mousepilots.es.maven.model.generator.plugin.scratch;
 
-import javax.annotation.Generated;
-import javax.persistence.metamodel.SingularAttribute;
-import org.mousepilots.es.core.model.MappedSuperclassTypeES;
-import org.mousepilots.es.core.model.impl.MappedSuperclassTypeESImpl;
+import org.mousepilots.es.core.model.SingularAttributeES;
 
 /**
- *
- * @author ernsteni
+ * Models class {@link Account} with persistence type: ENTITY
  */
-@Generated(value="EntityScenarios0.1", date="2015-11-13T13:08:55")
-//@StaticMetamodel(Account.class)
-public class Account_ES {
+@javax.annotation.Generated(value = "meta-model-maven-plugin_0.1-SNAPSHOT", date = "Fri Jan 08 13:28:36 CET 2016")
+//@javax.persistence.metamodel.StaticMetamodel(Account.class)
+public class Account_ES extends BaseEntity_ES{
 
-    public static final SingularAttribute<Account, ? extends Person> person = null;
-    public static final SingularAttribute<Account, String> name = null;
-    public static final SingularAttribute<Account, Long> id = null;
-    private static final MappedSuperclassTypeES<Account> INSTANCE_ES = null;
+     public static volatile SingularAttributeES<Account,  java.lang.String> description;
 
-    public static MappedSuperclassTypeES<Account> getInstance() {
+    private static final org.mousepilots.es.core.model.EntityTypeES<Account> INSTANCE_ES = new org.mousepilots.es.core.model.impl.EntityTypeESImpl<>(
+        javax.persistence.metamodel.Bindable.BindableType.ENTITY_TYPE,
+        Account.class,
+        35,
+         -1,
+        36,
+         -1,
+        new java.util.HashSet(java.util.Arrays.asList(35)),
+        true,
+        true,
+        18,
+        "Account",
+        0,
+        Account.class,
+        javax.persistence.metamodel.Type.PersistenceType.ENTITY,
+        "Account",
+        true,
+        Account_.class,
+        new java.util.HashSet(java.util.Arrays.asList(58)),
+        2,
+        java.util.Arrays.asList(6)
+        );
+
+    public static org.mousepilots.es.core.model.EntityTypeES getInstance() {
         return INSTANCE_ES;
+    }
+
+    static {
+     description = (SingularAttributeES<Account, java.lang.String>) org.mousepilots.es.core.model.impl.AbstractMetaModelES.getInstance().getAttribute(58);
     }
 }

@@ -15,7 +15,5 @@ public interface BasicTypeES<T> extends TypeES<T>,BasicType<T>{
     @Override
     public default <R> R accept(TypeVisitor<R> v) {
         return v.visit(this);
-    }
-
-    
+    }    
 }

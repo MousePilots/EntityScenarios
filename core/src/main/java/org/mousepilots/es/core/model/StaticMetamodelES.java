@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * The StaticMetamodel annotation specifies that the class
- * is a metamodel class that represents the entity, mapped
+ * is a meta model class that represents the entity, mapped
  * superclass, or embeddable class designated by the value
  * element.
  * @author Roy Cleven
@@ -18,8 +18,8 @@ import java.lang.annotation.Target;
 public @interface StaticMetamodelES {
 
     /**
-     * Class being modeled by the annotated class.
-     * @return The class that is modeled by the annotated class.
+     * Class being modelled by the annotated class.
+     * @return The class that is modelled by the annotated class.
      */
     Class<?> value();
 }

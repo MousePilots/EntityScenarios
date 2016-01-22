@@ -1,67 +1,54 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.mousepilots.es.maven.model.generator.plugin.scratch;
 
-import java.io.Serializable;
+import java.util.List;
+import java.util.Objects;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
- *
- * @author ernsteni
+ * @author Nicky Ernste
+ * @version 1.0, 8-12-2015
  */
 @Entity
-public class ManagerAccount extends Account<Manager> implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    private Manager person;
+public class ManagerAccount extends Account{
 
-    public Long getId() {
-        return id;
+    @OneToMany
+    private List<User> subordinates;
+
+    public ManagerAccount() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public ManagerAccount(List<User> subordinates) {
+        this.subordinates = subordinates;
     }
 
-    public Manager getPerson() {
-        return person;
+    public List<User> getSubordinates() {
+        return subordinates;
     }
 
-    public void setPerson(Manager person) {
-        this.person = person;
+    public void setSubordinates(List<User> subordinates) {
+        this.subordinates = subordinates;
     }
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        int hash = 7;
+        hash = 71 * hash + Objects.hashCode(this.subordinates);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ManagerAccount)) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        ManagerAccount other = (ManagerAccount) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ManagerAccount other = (ManagerAccount) obj;
+        if (!Objects.equals(this.subordinates, other.subordinates)) {
             return false;
         }
         return true;
     }
-
-    @Override
-    public String toString() {
-        return "org.mousepilots.maptest.Model.ManagerAccount[ id=" + id + " ]";
-    }
-
 }

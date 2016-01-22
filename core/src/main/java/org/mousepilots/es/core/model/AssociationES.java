@@ -23,8 +23,8 @@ public interface AssociationES {
     AttributeES getSourceAttribute();
     
     /**
-     * Get the inversed {@link AssociationES} from the {@code this} association.
-     * @return The inversed association from {@code this} association, if there is no
+     * Get the inverse {@link AssociationES} from the {@code this} association.
+     * @return The inverse association from {@code this} association, if there is no
      * inverse {@code null} is returned.
      */
     AssociationES getInverse();
@@ -45,7 +45,7 @@ public interface AssociationES {
     
     /**
      *  Return the persistent attribute type for the association.
-     *  This method is declared here becuase you can have an association from a key in a map.
+     *  This method is declared here because you can have an association from a key in a map.
      *  @return persistent attribute type
      */
     PersistentAttributeType getPersistentAttributeType();

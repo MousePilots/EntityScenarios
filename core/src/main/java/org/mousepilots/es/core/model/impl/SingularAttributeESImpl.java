@@ -13,6 +13,7 @@ import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.TypeES;
 
 /**
+ * This class implements the SingularAttributeES interface.
  * @author Nicky Ernste
  * @version 1.0, 18-12-2015
  * @param <X> The type containing the represented attribute
@@ -197,6 +198,5 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
     @Override
     public <T> T accept(AttributeVisitor<T> visitor) {
         return visitor.visit(this);
-    }
-    
+    }    
 }
