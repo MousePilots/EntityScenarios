@@ -1,4 +1,4 @@
-package org.mousepilots.es.core.change.impl.transform;
+package org.mousepilots.es.server;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,11 +25,18 @@ import org.mousepilots.es.core.util.Transformer;
 /**
  * @author Roy Cleven
  */
-public class BidirectionalTransformer implements Transformer<Change, LinkedList<Change>> {
+public class BidirectionalTransformer implements Transformer<Change, LinkedList<Change>>,HasEntityManager{
+    
+    
+    private EntityManager entityManager;
 
-    private final EntityManager entityManager;
-
-    public BidirectionalTransformer(EntityManager entityManager) {
+    @Override
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+    
+    @Override
+    public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
@@ -116,6 +123,7 @@ public class BidirectionalTransformer implements Transformer<Change, LinkedList<
         return changesNeededToAdd;
     }
 
+    //TODO: add missing values
     private AbstractIdentifiableUpdate generateIdentifableToIdentifiableSingularUpdate(final AttributeES inverseAttribute, AbstractIdentifiableUpdate update, Object inverseId, Serializable sourceId) {
         final IdentifiableTypeES declaringType = (IdentifiableTypeES) inverseAttribute.getDeclaringType();
         final SingularAttributeES version = declaringType.getVersion(null);
@@ -125,7 +133,7 @@ public class BidirectionalTransformer implements Transformer<Change, LinkedList<
         return newChange;
     }
 
-    //missing values
+    //TODO: add missing values
     private AbstractIdentifiableUpdate generateIdentifableToIdentifiableCollectionUpdate(final AttributeES inverseAttribute, AbstractIdentifiableUpdate update, Object inverseId, Serializable sourceId) {
         final IdentifiableTypeES declaringType = (IdentifiableTypeES) inverseAttribute.getDeclaringType();
         final SingularAttributeES version = declaringType.getVersion(null);
@@ -137,6 +145,13 @@ public class BidirectionalTransformer implements Transformer<Change, LinkedList<
         return newChange;
     }
 
+    /**
+     * 
+     * @param changes
+     * @param values
+     * @param update
+     * @return 
+     */
     private boolean hasInverse(LinkedList<Change> changes, Collection<Collection<AbstractIdentifiableUpdate>> values, AbstractIdentifiableUpdate update) {
         for (Collection<AbstractIdentifiableUpdate> addedInverseChanges : values) {
             for (AbstractIdentifiableUpdate change : addedInverseChanges) {
@@ -153,6 +168,12 @@ public class BidirectionalTransformer implements Transformer<Change, LinkedList<
         return false;
     }
 
+    /**
+     * Checks if the given Update is the change for the inverse of relation which the Change changes. 
+     * @param change Change which changes a bi-directional relation
+     * @param update Possible change which changes the inverse of this relation
+     * @return True if the Update changes the inverse of the relation.
+     */
     private boolean checkIfInverse(AbstractIdentifiableUpdate change, AbstractIdentifiableUpdate update) {
         if (change instanceof IdentifiableToIdentifiableSingularAssociationAttributeUpdate) {
             IdentifiableToIdentifiableSingularAssociationAttributeUpdate inverse = (IdentifiableToIdentifiableSingularAssociationAttributeUpdate) change;

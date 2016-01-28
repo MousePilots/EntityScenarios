@@ -1,5 +1,6 @@
 package org.mousepilots.es.server;
 
+import java.util.LinkedList;
 import org.mousepilots.es.core.change.ExecutionSummary;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -7,6 +8,7 @@ import org.mousepilots.es.core.change.Change;
 import org.mousepilots.es.core.change.ChangeVisitor;
 import org.mousepilots.es.core.change.exception.IllegalChangeException;
 import org.mousepilots.es.core.change.exception.Reason;
+import org.mousepilots.es.core.change.impl.transform.IdentityTransformer;
 import org.mousepilots.es.core.model.DtoType;
 import org.mousepilots.es.core.model.MetaModelES;
 
@@ -34,7 +36,7 @@ public abstract class ChangeExecutor {
      * @return {@link ExecutionSummary} containing all the items which were changed
      * @throws IllegalChangeException When 2 changes differ from {@link DtoType}
      */
-    public ExecutionSummary execute(List<Change> changes) throws IllegalChangeException{
+    public ExecutionSummary execute(LinkedList<Change> changes) throws IllegalChangeException{
         ChangeVisitor visitor= null;
         final Change changeForDtoCheck = changes.get(0);
         DtoType selectedDtoType = null;
@@ -50,6 +52,11 @@ public abstract class ChangeExecutor {
                 selectedDtoType = DtoType.MANAGED_SUB_CLASS;
                 break;
         }
+        
+        BidirectionalTransformer bidirectionalTransformer =  new BidirectionalTransformer();
+        IdentityTransformer identityTransformer = new IdentityTransformer();
+        changes = identityTransformer.transform(bidirectionalTransformer.transform(changes));
+        
         if(visitor == null){
             throw new IllegalChangeException(changeForDtoCheck,Reason.DTO_TYPE_NOT_SUPPORTED);
         }

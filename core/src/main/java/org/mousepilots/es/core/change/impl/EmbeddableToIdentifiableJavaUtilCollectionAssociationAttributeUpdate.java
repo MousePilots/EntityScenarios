@@ -2,6 +2,7 @@ package org.mousepilots.es.core.change.impl;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import org.mousepilots.es.core.change.ChangeVisitor;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.DtoType;
@@ -19,8 +20,8 @@ public final class EmbeddableToIdentifiableJavaUtilCollectionAssociationAttribut
     public EmbeddableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate() {
     }
 
-    public EmbeddableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate(C container, U updated, HasValue containerId, AttributeES containerAttribute, AttributeES updatedAttribute, TypeES type, DtoType dtoType) {
-        super(container, updated, containerId, containerAttribute, updatedAttribute, type, dtoType);
+    public EmbeddableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate(C container, U updated, HasValue containerId, AttributeES containerAttribute, AttributeES updatedAttribute, TypeES type, DtoType dtoType, List<Serializable> additions, List<Serializable> removals) {
+        super(container, updated, containerId, containerAttribute, updatedAttribute, type, dtoType, additions, removals);
     }
 
     @Override

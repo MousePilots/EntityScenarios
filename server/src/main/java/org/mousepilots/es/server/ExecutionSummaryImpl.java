@@ -51,11 +51,22 @@ public class ExecutionSummaryImpl implements ExecutionSummary {
         itemList.add(item);
     }
 
+    /**
+     * 
+     * @return A map containing the link between client-side id's and persisted id's
+     */
     @Override
     public Map<IdentifiableTypeES, Map<Serializable, Serializable>> getClientIdToPersistetId() {
         return clientIdToPersistetId;
     }
 
+    /**
+     * Looks up the given class and operation and provides a list with all the instances which were changed in the transaction.
+     * @param <T> Class type
+     * @param javaType Class which needs to be looked up
+     * @param operations Array of operations which has to be looked up.
+     * @return list with all the changed instances of the classtype.
+     */
     @Override
     public <T> List<T> get(Class<T> javaType, CRUD... operations) {
         List<T> returnList = new ArrayList<>();
