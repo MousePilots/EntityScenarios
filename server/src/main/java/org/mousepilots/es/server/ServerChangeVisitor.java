@@ -202,6 +202,15 @@ public class ServerChangeVisitor implements ChangeVisitor {
         return embeddable;
     }
 
+    /**
+     * Updates the list of the given instance. This method is ment for updating a list which contains non-identifiables (Embeddables/Basics)
+     * @param listMember member containing the get/set for the list
+     * @param instance instance where the update has to happen on
+     * @param change the change which contains the list changes.
+     * @param removals all the instances which need to be removed from the list
+     * @param additions all the instances which need to be added to the list
+     * @throws IllegalChangeException If an instance is unable to be removed. If an instance is unable to be added.
+     */
     private static void updateListOfNonIdentifiables(final MemberES listMember, Object instance, Change change, List removals, List additions) throws IllegalChangeException {
         final Collection list = listMember.get(instance);
         for (Object removal : removals) {
@@ -217,6 +226,15 @@ public class ServerChangeVisitor implements ChangeVisitor {
         listMember.set(instance, list);
     }
 
+    /**
+     * Updates the list of the given instance. This method is ment for updating a list which contains non-identifiables (Embeddables/Basics)
+     * @param listMember member containing the get/set for the list
+     * @param instance instance where the update has to happen on
+     * @param change the change which contains the list changes.
+     * @param removals all the instances which need to be removed from the list
+     * @param additions all the instances which need to be added to the list
+     * @throws IllegalChangeException If an instance is unable to be removed. If an instance is unable to be added.
+     */
     private void updateListOfIdentifiables(final MemberES listMember, Object instance, Change change, List<Serializable> removals, List<Serializable> additions, IdentifiableTypeES targetEntity) throws IllegalChangeException {
         final Collection list = listMember.get(instance);
         for (Serializable id : removals) {

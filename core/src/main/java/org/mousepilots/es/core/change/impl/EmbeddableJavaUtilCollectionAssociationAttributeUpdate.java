@@ -30,7 +30,7 @@ public abstract class EmbeddableJavaUtilCollectionAssociationAttributeUpdate<C, 
 
     public EmbeddableJavaUtilCollectionAssociationAttributeUpdate(C container, 
             U updated, HasValue containerId, AttributeES containerAttribute,
-            AttributeES updatedAttribute, TypeES type, DtoType dtoType) {
+            AttributeES updatedAttribute, TypeES type, DtoType dtoType, List<Serializable> additions, List<Serializable> removals) {
         super(container, updated, containerId, containerAttribute, updatedAttribute, type, dtoType, null);
         WrapperUtils.wrapForChange(containerAttribute, additions, this.additions, dtoType);
         WrapperUtils.wrapForChange(containerAttribute, removals, this.removals, dtoType);

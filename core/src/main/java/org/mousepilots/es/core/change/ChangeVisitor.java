@@ -42,14 +42,14 @@ public interface ChangeVisitor {
 
     /**
      * Visit which handles the deletion change and checks if it is allowed.
-     * @param delete A 
+     * @param delete A delete change holding the values needed for the deletion of an entity
      */
     void visit(Delete delete);
 
     /**
      * Handles the change which holds an embeddable as source and has the new
      * values for a list of basic's which is contained by the embeddable.
-     * @param update 
+     * @param update a filled {@link EmbeddableJavaUtilCollectionBasicAttributeUpdate}
      */
     void visit(EmbeddableJavaUtilCollectionBasicAttributeUpdate update);
 
@@ -57,7 +57,7 @@ public interface ChangeVisitor {
      * Handles the change which holds an embeddable and has the new values for 
      * a list of associations to different embeddables which is contained by the
      * embeddable.
-     * @param update 
+     * @param update a filled {@link EmbeddableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate}
      */
     void visit(EmbeddableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate update);
 
@@ -65,7 +65,7 @@ public interface ChangeVisitor {
      * Handles the change which holds an embeddable and
      * has the new value for an assocation to a different embeddable
      * which is contained by the embeddable.
-     * @param update 
+     * @param update a filled {@link EmbeddableToEmbeddableSingularAssociationAttributeUpdate}
      */
     void visit(EmbeddableToEmbeddableSingularAssociationAttributeUpdate update);
 
@@ -73,7 +73,7 @@ public interface ChangeVisitor {
      * Handles the change which holds an embeddable and
      * has the new valeus for a list of assocations to multiple identifiable 
      * entities which is contained by the embeddable.
-     * @param update 
+     * @param update a filled {@link EmbeddableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate}
      */
     void visit(EmbeddableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate update);
 
@@ -81,35 +81,35 @@ public interface ChangeVisitor {
      * Handles the change which holds an embeddable and
      * has the new value for an assocation to an identifiable entity which is
      * contained by the embeddable.
-     * @param update 
+     * @param update a filled {@link EmbeddableToIdentifiableSingularAssociationAttributeUpdate}
      */
     void visit(EmbeddableToIdentifiableSingularAssociationAttributeUpdate update);
 
     /**
      * Handles the change which holds an embeddable and
      * the new value for a basic which is contained by the embeddable.
-     * @param update 
+     * @param update a filled {@link EmbeddableSingularBasicAttributeUpdate}
      */
     void visit(EmbeddableSingularBasicAttributeUpdate update);
 
     /**
      * Handles the change which holds an identifiable and the new values for
      * a list of basic's which is contained by the identifiable.
-     * @param update 
+     * @param update a filled {@link IdentifiableJavaUtilCollectionBasicAttributeUpdate}
      */
     void visit(IdentifiableJavaUtilCollectionBasicAttributeUpdate update);
 
     /**
      * Handles the change which holds an identifiable and the new value for
      * a basic which is contained by the identifiable.
-     * @param update 
+     * @param update a filled {@link IdentifiableSingularBasicAttributeUpdate}
      */
     void visit(IdentifiableSingularBasicAttributeUpdate update);
 
     /**
      * Handles the change which holds an identifiable and the new value for an
      * embeddable which is contained by the identifiable.
-     * @param update 
+     * @param update a filled {@link IdentifiableToEmbeddableSingularAssociationAttributeUpdate}
      */
     void visit(IdentifiableToEmbeddableSingularAssociationAttributeUpdate update);
 
@@ -117,7 +117,7 @@ public interface ChangeVisitor {
      * Handles the change which holds an identifiable and the new value for 
      * an assocation to an identifiable entity which is contained by the 
      * identifiable.
-     * @param update 
+     * @param update a filled {@link IdentifiableToIdentifiableSingularAssociationAttributeUpdate}
      */
     void visit(IdentifiableToIdentifiableSingularAssociationAttributeUpdate update);
 
@@ -125,7 +125,7 @@ public interface ChangeVisitor {
      * Handles the change which holds an identifiable and the new values
      * for a list of associations to multiple embeddables which is
      * contained by the identifiable.
-     * @param update 
+     * @param update a filled {@link IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate}
      */
     void visit(IdentifiableToEmbeddableJavaUtilCollectionAssociationAttributeUpdate update);
 
@@ -133,7 +133,7 @@ public interface ChangeVisitor {
      * Handles the change which holds an identifiable and the new values for
      * a list of associations to multiple identifiable entities which is
      * contained by the identifiable.
-     * @param update 
+     * @param update a filled {@link IdentifiableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate}
      */
     void visit(IdentifiableToIdentifiableJavaUtilCollectionAssociationAttributeUpdate update);
 
@@ -142,7 +142,7 @@ public interface ChangeVisitor {
      * a map which has an assosiaction to an identifiable entity as key and 
      * an association to an identifiable entity
      * as value.
-     * @param update 
+     * @param update a filled {@link IdentifiableToIdentifiableToIdentifiableJavaUtilMapAttributeUpdate}
      */
     void visit(IdentifiableToIdentifiableToIdentifiableJavaUtilMapAttributeUpdate update);
 
@@ -150,7 +150,7 @@ public interface ChangeVisitor {
      * handles the change which holds an identifiable and the new values for
      * a map which has an assocation to an identifiable entity as key and a 
      * non-identifiable as value.
-     * @param update 
+     * @param update a filled {@link IdentifiableToIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate}
      */
     void visit(IdentifiableToIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate update);
 
@@ -158,14 +158,14 @@ public interface ChangeVisitor {
      * Handles the change which holds an identifiable and the new values for
      * a map which has a non-identifiable as key and an association to an 
      * identifiable entity as value
-     * @param update 
+     * @param update a filled {@link IdentifiableToNonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate}
      */
     void visit(IdentifiableToNonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate update);
 
     /**
      * Handles the change which holds an identifiable and the new values for
      * a map which has a non-identifiable as key and a non-identifiable as value
-     * @param update 
+     * @param update a filled {@link IdentifiableToNonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate}
      */
     void visit(IdentifiableToNonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate update);
 
@@ -173,7 +173,7 @@ public interface ChangeVisitor {
      * Handles the change which holds an embeddable and the new values for
      * a map which has an association to an identifiable entity as key and
      * an association to an identifiably entity as key.
-     * @param update 
+     * @param update a filled {@link EmbeddableToIdentifiableToIdentifiableJavaUtilMapAttributeUpdate}
      */
     void visit(EmbeddableToIdentifiableToIdentifiableJavaUtilMapAttributeUpdate update);
 
@@ -181,7 +181,7 @@ public interface ChangeVisitor {
      * handles the change which holds an embeddable and the new values for 
      * a map which has an association to an identifiable entity as key and
      * a non-identifiable as value.
-     * @param update 
+     * @param update a filled {@link EmbeddableToIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate}
      */
     void visit(EmbeddableToIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate update);
 
@@ -189,14 +189,14 @@ public interface ChangeVisitor {
      * Handles the change which holds an embeddable and the new values for
      * a map which has an association to a non-identifiable as key and
      * an association to an identifiable entity as value.
-     * @param update 
+     * @param update a filled {@link EmbeddableToNonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate}
      */
     void visit(EmbeddableToNonIdentifiableToIdentifiableJavaUtilMapAttributeUpdate update);
     
     /**
      * Handles the change which holds an embeddable and the new values for
      * a map which has a non-identifiable as key and a non-identifiable as value
-     * @param update 
+     * @param update a filled {@link EmbeddableToNonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate}
      */
     void visit(EmbeddableToNonIdentifiableToNonIdentifiableJavaUtilMapAttributeUpdate update);
     

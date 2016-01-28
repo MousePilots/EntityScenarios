@@ -31,7 +31,7 @@ public final class EmbeddableJavaUtilCollectionBasicAttributeUpdate<C, U, A exte
 
     public EmbeddableJavaUtilCollectionBasicAttributeUpdate(C container, 
             U updated, HasValue containerId, AttributeES containerAttribute, 
-            AttributeES updatedAttribute, TypeES type, DtoType dtoType) {
+            AttributeES updatedAttribute, TypeES type, DtoType dtoType, List<Serializable> additions, List<Serializable> removals) {
         super(container, updated, containerId, containerAttribute, updatedAttribute, type, dtoType, null);
         WrapperUtils.wrapForChange(updatedAttribute, additions, this.additions, dtoType);
         WrapperUtils.wrapForChange(updatedAttribute, removals, this.removals, dtoType);
