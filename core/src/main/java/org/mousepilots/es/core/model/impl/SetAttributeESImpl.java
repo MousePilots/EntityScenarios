@@ -1,13 +1,15 @@
 package org.mousepilots.es.core.model.impl;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import org.mousepilots.es.core.model.AttributeVisitor;
+import org.mousepilots.es.core.model.AssociationES;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.MemberES;
 import org.mousepilots.es.core.model.SetAttributeES;
-import org.mousepilots.es.core.model.TypeES;
+import org.mousepilots.es.core.model.collections.Observable;
+import org.mousepilots.es.core.model.collections.ObservableSet;
 
 /**
  * @author Nicky Ernste
@@ -15,51 +17,31 @@ import org.mousepilots.es.core.model.TypeES;
  * @param <T> The type the represented Set belongs to
  * @param <E> The element type of the represented Set
  */
-public class SetAttributeESImpl<T, E>
-        extends PluralAttributeESImpl<T, Set<E>, E, Set<E>> implements SetAttributeES<T, E> {
+public class SetAttributeESImpl<T, E> extends PluralAttributeESImpl<T, Set<E>, E> implements SetAttributeES<T, E> {
 
     @Override
     public Set<E> createEmpty() {
         return new HashSet<>();
     }
 
-    /**
-     * Create a new instance.
-     * @param elementType the type of the elements for this set attribute.
-     * @param bindableType the {@link BindableType} of this set attribute.
-     * @param bindableJavaType the java type that is bound for this set attribute.
-     * @param name the name of this set attribute.
-     * @param ordinal the ordinal of this set attribute.
-     * @param javaType the java type of this set attribute.
-     * @param persistentAttributeType the {@link PersistentAttributeType} of this set attribute.
-     * @param javaMember the java {@link Member} representing this set attribute.
-     * @param readOnly whether or not this set attribute is read only.
-     * @param association whether or not this set attribute is part of an association.
-     * @param declaringType the {@link ManagedTypeES} that declared this set attribute.
-     * @param hasValueChangeConstructor the constructor that will be used when wrapping this attribute for a change.
-     * @param hasValueDtoConstructor the constructor that will be used when wrapping this attribute for a DTO.
-     */
-    public SetAttributeESImpl(TypeES<E> elementType, BindableType bindableType,
-            Class<E> bindableJavaType, String name, int ordinal,
-            Class<Set<E>> javaType, PersistentAttributeType persistentAttributeType,
-            MemberES javaMember, boolean readOnly, boolean association,
-            ManagedTypeES<T> declaringType,
-            Constructor<HasValue> hasValueChangeConstructor,
-            Constructor<HasValue> hasValueDtoConstructor) {
-        super(CollectionType.SET, elementType, bindableType, bindableJavaType,
-                name, ordinal, javaType, persistentAttributeType, javaMember,
-                readOnly, association, declaringType, hasValueChangeConstructor,
-                hasValueDtoConstructor);
+    public SetAttributeESImpl(
+            String name, 
+            int ordinal, 
+            Integer superOrdinal, 
+            Collection<Integer> subOrdinals, 
+            int typeOrdinal,
+            PersistentAttributeType persistentAttributeType, 
+            MemberES javaMember, 
+            boolean readOnly, 
+            AssociationES association, 
+            ManagedTypeES<T> declaringType, 
+            Constructor<HasValue> hasValueChangeConstructor, 
+            Constructor<HasValue> hasValueDtoConstructor,
+            CollectionType collectionType,
+            int elementTypeOrdinal,
+            BindableType bindableType,
+            Class<E> bindableJavaType){
+        super(name, ordinal, superOrdinal, subOrdinals, typeOrdinal, persistentAttributeType, javaMember, readOnly, association, declaringType, hasValueChangeConstructor, collectionType, elementTypeOrdinal, bindableType, bindableJavaType);
     }
 
-    @Override
-    public boolean isCollection() {
-        return true;
-    }
-    
-    @Override
-    public <T> T accept(AttributeVisitor<T> visitor) {
-        return visitor.visit(this);
-    }
-    
 }

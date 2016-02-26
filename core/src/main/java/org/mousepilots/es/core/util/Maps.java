@@ -6,6 +6,7 @@
 package org.mousepilots.es.core.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,46 +25,11 @@ public class Maps
    private Maps() {
    }
 
-   private interface Creator<T>
-   {
-      T create();
-   }
 
-   public static final Creator<ArrayList> ARRAY_LIST_CREATOR = new Creator<ArrayList>()
-      {
-         @Override
-         public ArrayList create()
-         {
-            return new ArrayList();
-         }
-      };
-
-   public static final Creator<TreeSet> TREE_SET_CREATOR = new Creator<TreeSet>()
-      {
-         @Override
-         public TreeSet create()
-         {
-            return new TreeSet<>();
-         }
-      };
-
-   public static final Creator<HashSet> HASH_SET_CREATOR = new Creator<HashSet>()
-      {
-         @Override
-         public HashSet create()
-         {
-            return new HashSet();
-         }
-      };
-
-   public static final Creator<HashMap> HASH_MAP_CREATOR = new Creator<HashMap>()
-      {
-         @Override
-         public HashMap create()
-         {
-            return new HashMap();
-         }
-      };
+   public static final Constructor<ArrayList>   ARRAY_LIST_CREATOR = ArrayList::new;
+   public static final Constructor<TreeSet>     TREE_SET_CREATOR = TreeSet::new;
+   public static final Constructor<HashSet>     HASH_SET_CREATOR = HashSet::new;
+   public static final Constructor<HashMap>     HASH_MAP_CREATOR = HashMap::new;
 
    public static <K extends Enum<K>, V> Map<K, V> create(Class<K> enumClass, List<K> keys, List<V> values)
    {
@@ -113,9 +79,9 @@ public class Maps
       return retval;
    }
 
-   public static <K, V> Map<K, V> create(List<V> values, Function<V, K> f)
+   public static <K, V,C extends Collection<? extends V>> Map<K, V> create(C values, Function<V, K> f)
    {
-      Map<K, V> retval = new HashMap<>();
+      final Map<K, V> retval = new HashMap<>();
       for (V value : values)
       {
          final K key = f.apply(value);
@@ -156,5 +122,12 @@ public class Maps
       }
       return null;
    }
+   
+   public static <V> V getOrDefault(Map nestedMap, V defaultValue, Object... keys)
+   {
+        final V retval = get(nestedMap, keys);
+        return retval==null ? defaultValue : retval;
+   }
+   
 
 }

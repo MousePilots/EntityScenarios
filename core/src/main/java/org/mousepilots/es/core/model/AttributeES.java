@@ -1,25 +1,22 @@
 package org.mousepilots.es.core.model;
 
+import java.util.Map;
 import javax.persistence.metamodel.Attribute;
 import org.mousepilots.es.core.change.Change;
 
 /**
  * Represents an attribute of a certain {@link TypeES}.
  *
- * @param <T> The represented type that contains the attribute.
- * @param <TA> The type of the represented attribute.
- * @param <CA> The type of the wrapped element(s) for a {@link Change}.
- * @see Attribute
+ * @param <X> The represented type that contains the attribute.
+ * @param <Y> The type of the represented attribute.
+  * @see Attribute
  * @author Roy Cleven
  * @version 1.0, 20-10-2015
  */
-public interface AttributeES<T, TA,CA> extends Attribute<T, TA>, Comparable<AttributeES>, HasOrdinal {
+public interface AttributeES<X, Y> extends Attribute<X, Y>, Comparable<AttributeES>, HasOrdinal {
 
     /**
-     * Check if {@code this} attribute is read only, meaning it only has a
-     * getter method.
-     *
-     * @return {@code true} if {@code this} attribute is read only.
+     * @return whether or not {@code this} attribute is read only in which case it has not public setter.
      * {@code false} otherwise.
      */
     boolean isReadOnly();
@@ -34,6 +31,11 @@ public interface AttributeES<T, TA,CA> extends Attribute<T, TA>, Comparable<Attr
      * specified {@code type}. {@code false} otherwise.
      */
     boolean isAssociation(AssociationTypeES type);
+    
+    /**
+     * @return the {@link TypeES} {@code t} for which {@code this.getJavaType().equals(t.getJavaType())}
+     */
+    TypeES<Y> getType();
 
     /**
      * Get the {@link AssocationES} for {@code this} attribute of the specified
@@ -46,28 +48,32 @@ public interface AttributeES<T, TA,CA> extends Attribute<T, TA>, Comparable<Attr
      * returned.
      */
     AssociationES getAssociation(AssociationTypeES type);
+    
+    /**
+     * @return the unmodifiable, non-{@code null} mapping {@link AssociationTypeES} &rarr; {@link AssociationES}
+     */
+    public Map<AssociationTypeES, AssociationES> getAssociations();
 
     /**
-     * Wraps attribute-{@code value} in a serializable container for a {@link Change}.
-     * @param value the value to wrapForChange.
-     * @param dtoType the type of {@link Dto} that needs to be wrapped.
-     * @return the container with the wrapped {@code value}.
+     * Wraps the attribute-{@code value} in a serializable container for a {@link Change}.
+     * @param value the value to wrap.
+     * @return the wrapped {@code value}.
      */
-    public HasValue wrapForChange(CA value, DtoType dtoType);
-
-    /**
-     * Wraps attribute-{@code value} in a serializable container for a DTO.
-     * @param value the value to wrapForChange.
-     * @param dtoType the type of {@link Dto} that needs to be wrapped.
-     * @return the container with the wrapped {@code value}.
-     */
-    public HasValue wrapForDTO(TA value, DtoType dtoType);
+    public HasValue wrapForChange(Y value);
 
     @Override
     public MemberES getJavaMember();
 
     @Override
-    public ManagedTypeES<T> getDeclaringType();
+    public ManagedTypeES<X> getDeclaringType();
     
-    public <T> T accept(AttributeVisitor<T> visitor);
+    /**
+     * 
+     * @param <R> the return type of the visitor
+     * @param <A> the argument type of the visitor
+     * @param visitor the visitor
+     * @param arg the argument to be passed to the visitor
+     * @return {@code visitor.accept(this,arg)}
+     */    
+    public <R,A> R accept(AttributeVisitor<R,A> visitor, A arg);
 }

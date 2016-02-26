@@ -1,13 +1,16 @@
 package org.mousepilots.es.core.model;
 
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
+import javax.persistence.metamodel.ManagedType;
 
 /**
- * Class representing an association between two entities.
+ * Representing an association between two {@link ManagedType}s. Associations are directed.
+ * This allows the representation of bidirectional associations.
+ * @author Jurjen van Geenen
  * @author Nicky Ernste
  * @version 1.0, 19-10-2015
  */
-public interface AssociationES {
+public interface AssociationES extends HasOrdinal{
     
     /**
      * Get the type of the {@code this} association.
@@ -21,6 +24,12 @@ public interface AssociationES {
      * @return The attribute that is at the source of {@code this} association.
      */
     AttributeES getSourceAttribute();
+    
+    /**
+     * Gets the association's target {@link ManagedTypeES}
+     * @return the association's target type
+     */
+     ManagedTypeES getTargetType();
     
     /**
      * Get the inversed {@link AssociationES} from the {@code this} association.

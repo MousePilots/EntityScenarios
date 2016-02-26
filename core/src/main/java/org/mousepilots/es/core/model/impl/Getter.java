@@ -9,10 +9,10 @@ package org.mousepilots.es.core.model.impl;
 public interface Getter<T,V> {
 
     /**
-     * Invoke the getter on specified {@code object}.
-     * @param object the object to invoke the getter on.
+     * Invoke the getter on specified {@code owner}.
+     * @param owner the object to invoke the getter on.
      * @return the value the getter returns.
      */
-    public V invoke(T object);
+    public V invoke(T owner);
 
 }

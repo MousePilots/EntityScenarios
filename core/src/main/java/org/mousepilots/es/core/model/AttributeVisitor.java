@@ -8,16 +8,18 @@ package org.mousepilots.es.core.model;
 /**
  *
  * @author jgeenen
+ * @param <R>
+ * @param <A>
  */
-public interface AttributeVisitor<T>{
+public interface AttributeVisitor<R,A>{
     
-    T visit(SingularAttributeES a);
+    R visit(SingularAttributeES a, A arg);
     
-    T visit(CollectionAttributeES a);
+    R visit(CollectionAttributeES a, A arg);
     
-    T visit(ListAttributeES a);
+    R visit(ListAttributeES a, A arg);
     
-    T visit(SetAttributeES a);
+    R visit(SetAttributeES a, A arg);
     
-    T visit(MapAttributeES a);
+    R visit(MapAttributeES a, A arg);
 }

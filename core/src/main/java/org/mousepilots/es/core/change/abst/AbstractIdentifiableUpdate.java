@@ -8,9 +8,9 @@ package org.mousepilots.es.core.change.abst;
 import java.io.Serializable;
 import org.mousepilots.es.core.change.CRUD;
 import org.mousepilots.es.core.model.AttributeES;
-import org.mousepilots.es.core.model.DtoType;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.IdentifiableTypeES;
+import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
 
 /**
  * @author Jurjen van Geenen
@@ -21,20 +21,18 @@ import org.mousepilots.es.core.model.IdentifiableTypeES;
 public abstract class AbstractIdentifiableUpdate<I extends Serializable, V extends Serializable> extends AbstractIdentifiableVersionedChange<I, V> {
 
     private int attributeOrdinal;
-    private AttributeES attribute;
 
     public AbstractIdentifiableUpdate() {
         super();
     }
 
-    public AbstractIdentifiableUpdate(AttributeES attribute, V version, HasValue id, IdentifiableTypeES type, DtoType dtoType) {
-        super(version, id, type, dtoType);
-        this.attribute = attribute;
+    public AbstractIdentifiableUpdate(AttributeES attribute, V version, HasValue id, IdentifiableTypeES type) {
+        super(version, id, type);
         this.attributeOrdinal = attribute.getOrdinal();
     }
 
     public final AttributeES getAttribute() {
-        return attribute;
+        return AbstractMetamodelES.getInstance().getAttribute(attributeOrdinal);
     }
 
     @Override

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -34,29 +35,26 @@ import org.mousepilots.es.core.scenario.Vertex;
  * @author jgeenen
  * @param <S> the {@link Serializer}-type {@code this} is a delegate for
  */
-public class AttributeSerializerDelegate<S extends Serializer> extends SerializerDelegate<S> implements AttributeVisitor<Object>{
+public class AttributeSerializerDelegate<S extends Serializer> extends SerializerDelegate<S> implements AttributeVisitor<Object,Object>{
 
     public AttributeSerializerDelegate(S serializer) {
         super(serializer);
     }
     
         @Override
-        public Object visit(SingularAttributeES a) {
-        final Object value = getValueToSerialize();
+        public Object visit(SingularAttributeES a, Object value) {
             if(value==null){
                 return null;
             } else {
                 if(a.isAssociation()){
                     return null;
-
                 } else {
                     return value;
                 }
             }
         }
         
-        protected <C extends Collection> C visitCollection(PluralAttributeES a, Constructor<? extends C> collectionConstructor){
-            final Collection collectionValue = (Collection) getValueToSerialize();
+        protected <C extends Collection> C visitCollection(PluralAttributeES a, Constructor<? extends C> collectionConstructor,Collection collectionValue){
             if(collectionValue==null){
                 return null;
             } else {
@@ -87,24 +85,24 @@ public class AttributeSerializerDelegate<S extends Serializer> extends Serialize
         }
 
         @Override
-        public Object visit(CollectionAttributeES a) {
-            return visitCollection(a, ArrayList::new);
+        public Object visit(CollectionAttributeES a, Object collectionValue) {
+            return visitCollection(a, ArrayList::new, (Collection) collectionValue);
         }
 
         @Override
-        public Object visit(ListAttributeES a) {
-            return visitCollection(a, ArrayList::new);
+        public Object visit(ListAttributeES a, Object collectionValue) {
+            return visitCollection(a, ArrayList::new, (List) collectionValue);
             
         }
 
         @Override
-        public Object visit(SetAttributeES a) {
-            return visitCollection(a, HashSet::new);
+        public Object visit(SetAttributeES a, Object setValue) {
+            return visitCollection(a, HashSet::new, (Set) setValue);
         }
 
         @Override
-        public Object visit(MapAttributeES a) {
-            final Map mapValue = (Map) getValueToSerialize();
+        public Object visit(MapAttributeES a, Object value) {
+            final Map mapValue = (Map) value;
             if(mapValue==null){
                 return null;
             } else {

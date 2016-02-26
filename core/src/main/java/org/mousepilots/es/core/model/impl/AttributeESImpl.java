@@ -1,9 +1,14 @@
 package org.mousepilots.es.core.model.impl;
 
 import java.lang.reflect.Member;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import javax.persistence.metamodel.Attribute;
 import org.mousepilots.es.core.model.AssociationTypeES;
 import org.mousepilots.es.core.model.AssociationES;
@@ -11,58 +16,58 @@ import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.MemberES;
 import org.mousepilots.es.core.model.HasValue;
+import org.mousepilots.es.core.model.TypeES;
+import org.mousepilots.es.core.util.StringUtils;
 
 /**
  * @author Nicky Ernste
  * @version 1.0, 18-12-2015
- * @param <T> the represented type that contains the attribute.
- * @param <TA> the type of the represented attribute.
- * @param <TC> the type to wrap for a change.
+ * @param <X> the represented type that contains the attribute.
+ * @param <Y> the type of the represented attribute.
  */
-public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC> {
+public abstract class AttributeESImpl<X, Y> implements AttributeES<X, Y> {
 
-    private final String name;
+    protected final Map<AssociationTypeES, AssociationES> associations = new EnumMap<>(AssociationTypeES.class);
     private final int ordinal;
-    private final Class<TA> javaType;
+    private final String name;
+    private final Integer superOrdinal;
+    private final SortedSet<Integer> subOrdinals = new TreeSet<>();
+    private final int typeOrdinal;
     private final Attribute.PersistentAttributeType persistentAttributeType;
     private final MemberES javaMember;
-    private final boolean readOnly, association;
-    private final ManagedTypeES<T> declaringType;
+    private final boolean readOnly;
+    private final ManagedTypeES<X> declaringType;
     private final Constructor<HasValue> hasValueChangeConstructor;
-    private final Constructor<HasValue> hasValueDtoConstructor;
-    private final Map<AssociationTypeES, AssociationES> associations
-            = new EnumMap<>(AssociationTypeES.class);
 
     /**
      * Create a new instance of this class.
      * @param name the name of this attribute.
      * @param ordinal the ordinal of this attribute.
-     * @param javaType the java type of this attribute.
+     * @param superOrdinal the value of superOrdinal
+     * @param subOrdinals the value of subOrdinals
+     * @param typeOrdinal  the ordinal of {@link #getType()}
      * @param persistentAttributeType the {@link PersistentAttributeType} of this attribute.
      * @param javaMember the java {@link Member} representing this attribute.
      * @param readOnly whether or not this attribute is read only.
-     * @param association whether or not this attribute is part of an association.
+     * @param valueAssociation the {@link AssociationTypeES#VALUE} association if any, otherwise {@code null}.
      * @param declaringType the {@link ManagedTypeES} that declared this attribute.
      * @param hasValueChangeConstructor the constructor that will be used when wrapping this attribute for a change.
-     * @param hasValueDtoConstructor the constructor that will be used when wrapping this attribute for a DTO.
      */
-    public AttributeESImpl(String name, int ordinal, Class<TA> javaType,
-            PersistentAttributeType persistentAttributeType, MemberES javaMember,
-            boolean readOnly, boolean association,
-            ManagedTypeES<T> declaringType,
-            Constructor<HasValue> hasValueChangeConstructor,
-            Constructor<HasValue> hasValueDtoConstructor) {
+    public AttributeESImpl(
+         String name, int ordinal, Integer superOrdinal, Collection<Integer> subOrdinals, int typeOrdinal, PersistentAttributeType persistentAttributeType, MemberES javaMember, boolean readOnly, AssociationES valueAssociation, ManagedTypeES<X> declaringType, Constructor<HasValue> hasValueChangeConstructor) {
         this.name = name;
         this.ordinal = ordinal;
-        this.javaType = javaType;
+        this.superOrdinal=superOrdinal;
+        if(subOrdinals!=null){
+            this.subOrdinals.addAll(subOrdinals);
+        }
+        this.typeOrdinal = typeOrdinal;
         this.persistentAttributeType = persistentAttributeType;
         this.javaMember = javaMember;
         this.readOnly = readOnly;
-        this.association = association;
+        this.associations.put(AssociationTypeES.VALUE, valueAssociation);
         this.declaringType = declaringType;
         this.hasValueChangeConstructor = hasValueChangeConstructor;
-        this.hasValueDtoConstructor = hasValueDtoConstructor;
-        AbstractMetaModelES.getInstance().register(this);
     }
 
     @Override
@@ -75,9 +80,29 @@ public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC>
         return ordinal;
     }
 
+     @Override
+     public TypeES<Y> getType() {
+          return AbstractMetamodelES.getInstance().getType(typeOrdinal);
+     }
+    
+    
+    
+    public AttributeES getSuperAttribute(){
+        return this.superOrdinal==null ? null : AbstractMetamodelES.getInstance().getAttribute(superOrdinal);
+    }
+    
+    public SortedSet< ? extends AttributeES> getSubAttributes(){
+        TreeSet retval = new TreeSet<>();
+        final AbstractMetamodelES metamodel = AbstractMetamodelES.getInstance();
+        for(Integer subOrdinal : subOrdinals){
+            retval.add(metamodel.getAttribute(subOrdinal));
+        }
+        return retval;
+    }
+
     @Override
-    public Class<TA> getJavaType() {
-        return javaType;
+    public Class<Y> getJavaType() {
+        return getType().getJavaType();
     }
 
     @Override
@@ -97,16 +122,17 @@ public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC>
 
     @Override
     public boolean isAssociation() {
-        return association;
+        return !this.associations.isEmpty();
     }
 
     @Override
-    public ManagedTypeES<T> getDeclaringType() {
+    public ManagedTypeES<X> getDeclaringType() {
         return declaringType;
     }
 
+    @Override
     public Map<AssociationTypeES, AssociationES> getAssociations() {
-        return associations;
+        return Collections.unmodifiableMap(associations);
     }
 
     @Override
@@ -118,7 +144,8 @@ public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC>
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj){
+        //all instances are singletons
         return this==obj;
     }
 
@@ -145,18 +172,14 @@ public abstract class AttributeESImpl<T, TA,TC> implements AttributeES<T, TA,TC>
         return hasValueChangeConstructor;
     }
 
-    /**
-     * Get the constructor that is used when wrapping the attribute for a DTO.
-     * @return The constructor for wrapping a DTO.
-     */
-    public Constructor<HasValue> getHasValueDtoConstructor() {
-        return hasValueDtoConstructor;
-    }
-
     @Override
     public String toString() {
-        return "Attribute name: " + getName() + ", ordinal: " + getOrdinal()
-                + ", persistentAttributeType: " + getPersistentAttributeType()
-                + ", javaClass: " + getJavaType().getName();
+        return StringUtils.createToString(
+            getClass(), 
+            Arrays.asList(
+                "name",     name,
+                "ordinal",  ordinal,
+                "type", getJavaType()
+            ));
     }
 }

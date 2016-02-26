@@ -4,9 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Version;
 import org.mousepilots.es.core.change.CRUD;
-import org.mousepilots.es.core.change.ChangeVisitor;
 import org.mousepilots.es.core.change.abst.AbstractIdentifiableVersionedChange;
-import org.mousepilots.es.core.model.DtoType;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.IdentifiableTypeES;
 
@@ -29,8 +27,8 @@ public final class Delete<I extends Serializable, V extends Serializable> extend
      * @param id id of the new object to create
      * @param version the source {@link Version}, may be {@code null}
      */
-    public Delete(V version, HasValue id, IdentifiableTypeES type, DtoType dtoType) {
-        super(version, id, type, dtoType);
+    public Delete(V version, HasValue id, IdentifiableTypeES type) {
+        super(version, id, type);
     }
 
     @Override
@@ -38,8 +36,8 @@ public final class Delete<I extends Serializable, V extends Serializable> extend
         return CRUD.DELETE;
     }
 
-    @Override
-    public void accept(ChangeVisitor changeHandler) {
-        changeHandler.visit(this);
-    }
+//    @Override
+//    public void accept(ChangeVisitor changeHandler) {
+//        changeHandler.visit(this);
+//    }
 }

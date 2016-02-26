@@ -1,5 +1,6 @@
 package org.mousepilots.es.core.model;
 
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.metamodel.SetAttribute;
 
@@ -14,6 +15,17 @@ import javax.persistence.metamodel.SetAttribute;
  * @see PluralAttributeES
  * @see SetAttribute
  */
-public interface SetAttributeES<X, E> extends PluralAttributeES<X, java.util.Set<E>, E, Set<E>>, SetAttribute<X, E>{
+public interface SetAttributeES<X, E> extends PluralAttributeES<X, java.util.Set<E>, E>, SetAttribute<X, E>{
+    @Override
+    public default <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
+        return visitor.visit(this, arg);
+    }
+
+    @Override
+    public default Set<E> createEmpty() {
+        return new HashSet<>();
+    }
+    
+    
 
 }

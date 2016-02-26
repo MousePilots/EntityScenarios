@@ -14,8 +14,13 @@ import javax.persistence.metamodel.PluralAttribute;
  * @see AttributeES
  * @see PluralAttribute
  */
-public interface PluralAttributeES<X, C, E, CA> extends AttributeES<X, C,CA>, PluralAttribute<X, C, E>, BindableES<E> {
+public interface PluralAttributeES<X, C, E> extends AttributeES<X, C>, PluralAttribute<X, C, E>, BindableES<E> {
 
     @Override
     TypeES<E> getElementType();
+    
+    /**
+     * @return a new and empty {@link Collection} or {@link Map} suitable as a value for {@code this}
+     */
+    C createEmpty();
 }

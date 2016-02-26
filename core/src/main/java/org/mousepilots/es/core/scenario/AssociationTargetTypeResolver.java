@@ -13,65 +13,52 @@ import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.MapAttributeES;
 import org.mousepilots.es.core.model.SetAttributeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
+import org.mousepilots.es.core.model.impl.ManagedTypeESImpl;
 
 /**
  *
  * @author jgeenen
  */
-public class AssociationTargetTypeResolver implements AttributeVisitor<Void>{
+public class AssociationTargetTypeResolver implements AttributeVisitor<ManagedTypeES,AssociationTypeES>{
     
-    private final AssociationTypeES associationTypeES;
-    
-    private ManagedTypeES associationTargetType;
-    
-    public AssociationTargetTypeResolver(AssociationTypeES associationTypeES) {
-        this.associationTypeES = associationTypeES;
-    }
-    
-    private void assertIsValue(){
+    private void assertIsValue(AssociationTypeES associationTypeES){
         if(associationTypeES==AssociationTypeES.KEY){
             throw new IllegalStateException("bad associationType " + associationTypeES);
         }
     }
 
-    public ManagedTypeES getAssociationTargetType() {
-        return associationTargetType;
-    }
     
     @Override
-    public Void visit(SingularAttributeES a) {
-        assertIsValue();
-        associationTargetType = (ManagedTypeES) a.getType();
-        return null;
+    public ManagedTypeES visit(SingularAttributeES a,AssociationTypeES associationTypeES) {
+        assertIsValue(associationTypeES);
+        return (ManagedTypeES) a.getType();
     }
 
     @Override
-    public Void visit(CollectionAttributeES a) {
-        assertIsValue();
-        associationTargetType = (ManagedTypeES) a.getElementType();
-        return null;
+    public ManagedTypeES visit(CollectionAttributeES a, AssociationTypeES associationTypeES) {
+        assertIsValue(associationTypeES);
+        return (ManagedTypeES) a.getElementType();
     }
 
     @Override
-    public Void visit(ListAttributeES a) {
-        assertIsValue();
-        associationTargetType = (ManagedTypeES) a.getElementType();
-        return null;
+    public ManagedTypeES visit(ListAttributeES a, AssociationTypeES associationTypeES) {
+        assertIsValue(associationTypeES);
+        return (ManagedTypeES) a.getElementType();
     }
 
     @Override
-    public Void visit(SetAttributeES a) {
-        assertIsValue();
-        associationTargetType = (ManagedTypeES) a.getElementType();
-        return null;
+    public ManagedTypeES visit(SetAttributeES a, AssociationTypeES associationTypeES) {
+        assertIsValue(associationTypeES);
+        return (ManagedTypeES) a.getElementType();
     }
 
     @Override
-    public Void visit(MapAttributeES a) {
-        associationTargetType = (ManagedTypeES) (
-            associationTypeES==AssociationTypeES.KEY ? a.getKeyType() : a.getElementType()
+    public ManagedTypeES visit(MapAttributeES a, AssociationTypeES associationTypeES){
+        return (ManagedTypeESImpl)(
+                associationTypeES==AssociationTypeES.KEY ? 
+                a.getKeyType() : 
+                a.getElementType()
         );
-        return null;
     }
 
 }

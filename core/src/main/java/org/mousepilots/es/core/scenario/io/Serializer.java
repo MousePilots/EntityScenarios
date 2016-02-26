@@ -54,8 +54,7 @@ public abstract class Serializer {
             } else {
                 if(vertex.isAllowed(CRUD.READ)){
                     final TypeSerializerDelegate typeSerializerDelegate = getTypeSerializerDelegate();
-                    typeSerializerDelegate.setValueToSerialize(value);
-                    return vertex.getType().accept(typeSerializerDelegate);
+                    return vertex.getType().accept(typeSerializerDelegate,value);
                 } else {
                     return null;
                 }
@@ -73,8 +72,7 @@ public abstract class Serializer {
     protected Object serializeAttributeValue(Vertex typeVertex, AttributeES attribute, Object value){
         if(value!=null && typeVertex.isAllowed(attribute, CRUD.READ)){
             final AttributeSerializerDelegate attributeSerializerDelegate = getAttributeSerializerDelegate();
-            attributeSerializerDelegate.setValueToSerialize(value);
-            return attribute.accept(attributeSerializerDelegate);
+            return attribute.accept(attributeSerializerDelegate,value);
         } else {
             return null;
         }

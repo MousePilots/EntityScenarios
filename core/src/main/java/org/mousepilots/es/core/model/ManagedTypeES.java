@@ -1,13 +1,10 @@
 package org.mousepilots.es.core.model;
 
-import javax.persistence.metamodel.Attribute;
+import org.mousepilots.es.core.model.proxy.Proxy;
 import javax.persistence.metamodel.ManagedType;
-import javax.persistence.metamodel.SingularAttribute;
 
 /**
- * Instances of the type {@link ManagedTypeES} represent entity, mapped
- * superclass, and embeddable types.
- *
+ * Instances of the type {@link ManagedTypeES} represent entity, mapped superclass, and embeddable types.
  * @param <T> The represented type.
  * @see TypeES
  * @see ManagedType
@@ -15,21 +12,21 @@ import javax.persistence.metamodel.SingularAttribute;
  * @version 1.0, 19-10-2015
  */
 public interface ManagedTypeES<T> extends TypeES<T>, ManagedType<T> {
+    
+    
+    Class<? extends Proxy<T>> getProxyJavaType();
 
     @Override
     <Y> SingularAttributeES<? super T, Y> getSingularAttribute(String name, Class<Y> type);
 
     @Override
-    <Y> SingularAttributeES<T, Y> getDeclaredSingularAttribute(
-            String name, Class<Y> type);
+    <Y> SingularAttributeES<T, Y> getDeclaredSingularAttribute(String name, Class<Y> type);
 
     @Override
-    <E> CollectionAttributeES<? super T, E> getCollection(String name,
-            Class<E> elementType);
+    <E> CollectionAttributeES<? super T, E> getCollection(String name, Class<E> elementType);
 
     @Override
-    <E> CollectionAttributeES<T, E> getDeclaredCollection(String name,
-            Class<E> elementType);
+    <E> CollectionAttributeES<T, E> getDeclaredCollection(String name,Class<E> elementType);
 
     @Override
     <E> SetAttributeES<? super T, E> getSet(String name, Class<E> elementType);
@@ -38,32 +35,28 @@ public interface ManagedTypeES<T> extends TypeES<T>, ManagedType<T> {
     <E> SetAttributeES<T, E> getDeclaredSet(String name, Class<E> elementType);
 
     @Override
-    <E> ListAttributeES<? super T, E> getList(String name,
-            Class<E> elementType);
+    <E> ListAttributeES<? super T, E> getList(String name, Class<E> elementType);
 
     @Override
-    <E> ListAttributeES<T, E> getDeclaredList(String name,
-            Class<E> elementType);
+    <E> ListAttributeES<T, E> getDeclaredList(String name, Class<E> elementType);
 
     @Override
-    <K, V> MapAttributeES<? super T, K, V> getMap(String name,
-            Class<K> keyType, Class<V> valueType);
+    <K, V> MapAttributeES<? super T, K, V> getMap(String name, Class<K> keyType, Class<V> valueType);
 
     @Override
-    <K, V> MapAttributeES<T, K, V> getDeclaredMap(String name,
-            Class<K> keyType, Class<V> valueType);
+    <K, V> MapAttributeES<T, K, V> getDeclaredMap(String name, Class<K> keyType, Class<V> valueType);
 
     @Override
-    Attribute<? super T, ?> getAttribute(String name);
+    AttributeES<? super T, ?> getAttribute(String name);
 
     @Override
-    Attribute<T, ?> getDeclaredAttribute(String name);
+    AttributeES<T, ?> getDeclaredAttribute(String name);
 
     @Override
-    SingularAttribute<? super T, ?> getSingularAttribute(String name);
+    SingularAttributeES<? super T, ?> getSingularAttribute(String name);
 
     @Override
-    SingularAttribute<T, ?> getDeclaredSingularAttribute(String name);
+    SingularAttributeES<T, ?> getDeclaredSingularAttribute(String name);
 
     @Override
     CollectionAttributeES<? super T, ?> getCollection(String name);
@@ -88,5 +81,22 @@ public interface ManagedTypeES<T> extends TypeES<T>, ManagedType<T> {
 
     @Override
     MapAttributeES<T, ?, ?> getDeclaredMap(String name);
+
+    /**
+     * @return whether or not {@code getJavaType()} is concrete, and has a zero-arg accessible constructor
+     */
+    boolean isInstantiable();
+
+    /**
+    * @return a new instance of {@link #getJavaType()}
+    * @throws UnsupportedOperationException if {@code !this.isInstantiable()}
+    */
+    T createInstance() throws UnsupportedOperationException;
+
+    /**
+    * @return a new and otherwise uninitialized proxy for instances of {@link #getJavaType()}
+    * @throws UnsupportedOperationException if {@code !this.isInstantiable()}
+    */
+    Proxy<T> createProxy() throws UnsupportedOperationException;
     
 }

@@ -1,17 +1,16 @@
 package org.mousepilots.es.core.model.impl;
 
 import java.util.Objects;
-import org.mousepilots.es.core.model.DtoType;
 import org.mousepilots.es.core.model.HasValue;
 
 /**
  * @author Nicky Ernste
  * @version 1.0, 20-11-2015
+ * @param <T> the wrapped value's type
  */
 public abstract class AbstractHasValueImpl<T> implements HasValue<T> {
 
     private T value;
-    private DtoType dtoType;
     
     @Override
     public final T getValue() {
@@ -23,15 +22,6 @@ public abstract class AbstractHasValueImpl<T> implements HasValue<T> {
         this.value = value;
     }
 
-    @Override
-    public DtoType getDtoType() {
-        return dtoType;
-    }
-
-    @Override
-    public void setDtoType(DtoType dtoType) {
-        this.dtoType = dtoType;
-    }
     
     @Override
     public int hashCode() {

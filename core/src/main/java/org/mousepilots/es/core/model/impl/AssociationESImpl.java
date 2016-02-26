@@ -1,56 +1,60 @@
 package org.mousepilots.es.core.model.impl;
 
+import java.util.Arrays;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import java.util.Objects;
 import org.mousepilots.es.core.model.AssociationTypeES;
 import org.mousepilots.es.core.model.AssociationES;
 import org.mousepilots.es.core.model.AttributeES;
+import org.mousepilots.es.core.model.ManagedTypeES;
+import org.mousepilots.es.core.util.StringUtils;
 
 /**
+ * @author Jurjen van Geenen
  * @author Nicky Ernste
  * @version 1.0, 27-11-2015
  */
-public class AssociationESImpl implements AssociationES {
+public final class AssociationESImpl implements AssociationES{
 
-    private final AttributeES sourceAttribute;
+    public final int ordinal; 
+    private final Integer inverseOrdinal;
+    private final int sourceAttributeOrdinal, targetTypeOrdinal;
     private final PersistentAttributeType persistentAttributeType;
-    private final AssociationES inverse;
+    private final AssociationTypeES associationType;
     private final boolean owner;
 
-    /**
-     * Create a new instance of this class.
-     * @param sourceAttribute the source attribute of this association.
-     * @param persistentAttributeType the {@link PersistentAttributeType} for this association.
-     * @param inverse the inverse of this association if it is a bidirectional association.
-     * @param owner whether or not this side of the association is the owner.
-     */
-    public AssociationESImpl(AttributeES sourceAttribute,
-            PersistentAttributeType persistentAttributeType,
-            AssociationES inverse, boolean owner) {
-        if (sourceAttribute == null){
-            throw new IllegalArgumentException(
-                    "The source attribute cannot be null.");
-        }
-        this.sourceAttribute = sourceAttribute;
+    public AssociationESImpl(
+            int ordinal, 
+            int sourceAttributeOrdinal,
+            int targetTypeOrdinal,
+            Integer inverseOrdinal,  
+            boolean owner,
+            AssociationTypeES associationType,
+            PersistentAttributeType persistentAttributeType){
+        this.ordinal = ordinal;
+        this.sourceAttributeOrdinal = sourceAttributeOrdinal;
+        this.targetTypeOrdinal = targetTypeOrdinal;
+        this.inverseOrdinal = inverseOrdinal;
         this.persistentAttributeType = persistentAttributeType;
-        this.inverse = inverse;
+        this.associationType = associationType;
         this.owner = owner;
     }
 
+
+    
     @Override
     public AssociationTypeES getAssociationType() {
-        return sourceAttribute.isAssociation(AssociationTypeES.KEY)
-                ? AssociationTypeES.KEY : AssociationTypeES.VALUE;
+         return associationType;
     }
 
     @Override
     public AttributeES getSourceAttribute() {
-        return sourceAttribute;
+        return AbstractMetamodelES.getInstance().getAttribute(sourceAttributeOrdinal);
     }
 
     @Override
-    public AssociationES getInverse() {
-        return inverse;
+    public AssociationES getInverse(){
+        return inverseOrdinal==null ? null : AbstractMetamodelES.getInstance().getAssociation(inverseOrdinal);
     }
 
     @Override
@@ -60,7 +64,7 @@ public class AssociationESImpl implements AssociationES {
 
     @Override
     public boolean isBiDirectional() {
-        return inverse != null;
+        return inverseOrdinal!=null;
     }
 
     @Override
@@ -69,27 +73,39 @@ public class AssociationESImpl implements AssociationES {
     }
 
     @Override
+    public int getOrdinal() {
+        return ordinal;
+    }
+    
+    @Override
+    public ManagedTypeES getTargetType(){
+         return (ManagedTypeES) AbstractMetamodelES.getInstance().getType(targetTypeOrdinal);
+    }
+    
+    
+
+    @Override
     public int hashCode() {
         int hash = 3;
-        hash = 37 * hash + Objects.hashCode(this.sourceAttribute);
+        hash = 37 * hash + Objects.hashCode(this.ordinal);
         return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final AssociationESImpl other = (AssociationESImpl) obj;
-        return Objects.equals(this.sourceAttribute, other.sourceAttribute);
+        return this==obj;
     }
 
     @Override
     public String toString() {
-        return "Association source: " + getSourceAttribute().getName()
-                + ", bidirectional: " + isBiDirectional() + ", owner: " + isOwner();
+         return StringUtils.createToString(
+              getClass(), 
+              Arrays.asList(
+                    "associationType",            getAssociationType(),
+                    "persistentAttributeType",    persistentAttributeType,
+                    "sourceAttribute",            getSourceAttribute(),
+                    "targetType",                 getTargetType(),
+                    "bidirectional",              inverseOrdinal!=null
+              ));
     }
 }

@@ -3,57 +3,85 @@ package org.mousepilots.es.core.model.impl;
 import java.util.Collection;
 import java.util.Set;
 import org.mousepilots.es.core.model.EntityTypeES;
-import org.mousepilots.es.core.model.TypeES;
+import org.mousepilots.es.core.model.HasValue;
+import org.mousepilots.es.core.model.proxy.Proxy;
 
 /**
  * @author Nicky Ernste
  * @version 1.0, 18-12-2015
  * @param <T> The represented entity type.
  */
-public class EntityTypeESImpl<T> extends IdentifiableTypeESImpl<T>
-    implements EntityTypeES<T>{
+public class EntityTypeESImpl<T> extends IdentifiableTypeESImpl<T> implements EntityTypeES<T> {
 
+    private final String name;
     private final BindableType bindableType;
     private final Class<T> bindableJavaType;
 
     /**
-     * Create a new instance of this class.
-     * @param bindableType the {@link BindableType} of this entity.
-     * @param bindableJavaType the java type that is bound for this entity.
-     * @param id the attribute that forms the id of this entity.
-     * @param declaredId the attribute that is declared by this entity and forms its id.
-     * @param version the attribute that is the version of this entity.
-     * @param declaredVersion the attribute that is declared by this entity and forms its version.
-     * @param idClassAttributes a set of attributes that form the id of this entity.
-     * @param singleIdAttribute whether or not this entity has a simple primary key or a composite primary key.
-     * @param versionAttribute whether or not this entity has a version attribute.
-     * @param idType the {@link TypeES} that represents the id for this entity.
-     * @param name the name of this entity.
-     * @param ordinal the ordinal of this entity.
-     * @param javaType the java type for this entity.
-     * @param persistenceType the {@link PersistenceType} for this entity.
-     * @param javaClassName the name of the java class that represents this entity.
-     * @param instantiable whether or not this entity is instanciable.
-     * @param metamodelClass the JPa meta model class for this entity.
-     * @param attributes the attributes this entity contains.
-     * @param superType the super type of this entity.
-     * @param subTypes a set of sub types for this entity.
+     *
+     * @param ordinal
+     * @param javaType
+     * @param javaTypeConstructor
+     * @param proxyType
+     * @param proxyTypeConstructor
+     * @param hasValueConstructor
+     * @param persistenceType
+     * @param metamodelClass
+     * @param attributeOrdinals
+     * @param superTypeOrdinal
+     * @param subTypeOrdinals
+     * @param idAttributeOrdinal
+     * @param declaredIdAttributeOrdinal
+     * @param versionOrdinal
+     * @param declaredVersionAttributeOrdinal
+     * @param idClassAttributeOrdinals
+     * @param singleIdAttributeOrdinal
+     * @param versionAttributeOrdinal
+     * @param idTypeOrdinal
+     * @param bindableType
+     * @param bindableJavaType
+     * @param singleIdAttribute
+     * @param versionAttribute
+     * @param idType
+     * @param name
+     * @param attributes
      */
-    public EntityTypeESImpl(BindableType bindableType, Class<T> bindableJavaType,
-            int id, int declaredId, int version, int declaredVersion,
-            Set<Integer> idClassAttributes,
-            boolean singleIdAttribute, boolean versionAttribute,
-            int idType, String name, int ordinal, Class<T> javaType,
-            PersistenceType persistenceType, String javaClassName,
-            boolean instantiable, Class<?> metamodelClass,
-            Set<Integer> attributes, int superType,
-            Collection<Integer> subTypes) {
-        super(id, declaredId, version, declaredVersion, idClassAttributes,
-                singleIdAttribute, versionAttribute, idType, name, ordinal,
-                javaType, persistenceType, javaClassName, instantiable,
-                metamodelClass, attributes, superType, subTypes);
+    public EntityTypeESImpl(
+            int ordinal,
+            Class<T> javaType,
+            Constructor<T> javaTypeConstructor,
+            Class<? extends Proxy<T>> proxyType,
+            Constructor<? extends Proxy<T>> proxyTypeConstructor,
+            Constructor<? extends HasValue<T>> hasValueConstructor,
+            PersistenceType persistenceType,
+            Class<?> metamodelClass,
+            Set<Integer> attributeOrdinals,
+            Integer superTypeOrdinal,
+            Set<Integer> subTypeOrdinals,
+            int idAttributeOrdinal,
+            Integer declaredIdAttributeOrdinal,
+            Integer versionOrdinal,
+            Integer declaredVersionAttributeOrdinal,
+            Set<Integer> idClassAttributeOrdinals,
+            boolean singleIdAttributeOrdinal,
+            boolean versionAttributeOrdinal,
+            int idTypeOrdinal,
+            BindableType bindableType,
+            Class<T> bindableJavaType,
+            boolean singleIdAttribute,
+            boolean versionAttribute,
+            int idType,
+            String name,
+            Set<Integer> attributes) {
+        super(ordinal, javaType, javaTypeConstructor, proxyType, proxyTypeConstructor, hasValueConstructor, persistenceType, metamodelClass, attributeOrdinals, superTypeOrdinal, subTypeOrdinals, 0, declaredIdAttributeOrdinal, versionOrdinal, declaredVersionAttributeOrdinal, idClassAttributeOrdinals, singleIdAttributeOrdinal, versionAttributeOrdinal, idTypeOrdinal);
         this.bindableType = bindableType;
         this.bindableJavaType = bindableJavaType;
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -65,4 +93,5 @@ public class EntityTypeESImpl<T> extends IdentifiableTypeESImpl<T>
     public Class<T> getBindableJavaType() {
         return bindableJavaType;
     }
+
 }

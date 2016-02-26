@@ -1,10 +1,10 @@
 package org.mousepilots.es.core.change.abst;
 
-import java.util.Objects;
 import org.mousepilots.es.core.change.CRUD;
 import org.mousepilots.es.core.change.Change;
-import org.mousepilots.es.core.model.DtoType;
+import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.TypeES;
+import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
 
 /**
  * @author Jurjen van Geenen
@@ -13,17 +13,14 @@ import org.mousepilots.es.core.model.TypeES;
 public abstract class AbstractChange implements Change
 {
 
-   protected AbstractChange()
-   {
-   }
+   protected AbstractChange(){}
 
    private int typeOrdinal;
-   private DtoType dtoType;
 
-   protected AbstractChange(TypeES type, DtoType dtoType)
+
+   protected AbstractChange(TypeES type)
    {
       this.typeOrdinal = type.getOrdinal();
-      this.dtoType = dtoType;
    }
 
    @Override
@@ -33,18 +30,14 @@ public abstract class AbstractChange implements Change
    }
 
    @Override
-   public final TypeES getType()
+   public final ManagedTypeES getType()
    {
-      throw new UnsupportedOperationException();
+      return (ManagedTypeES) AbstractMetamodelES.getInstance().getType(typeOrdinal);
    }
    
-   @Override
-   public final DtoType getDtoType(){
-       return dtoType;
-   }
-
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object obj)
+    {
         return this==obj;
     }
 
@@ -53,13 +46,12 @@ public abstract class AbstractChange implements Change
         int hash = 5;
         hash = 29 * hash + getClass().getCanonicalName().hashCode();
         hash = 29 * hash + this.typeOrdinal;
-        hash = 29 * hash + Objects.hashCode(this.dtoType);
         return hash;
     }
 
     @Override
     public String toString() {
-        return getClass().getCanonicalName() + "[type=" + getType() + ", dtoType=" + getDtoType() + "]";
+        return getClass().getName() + "[type=" + getType() + "]";
     }
     
     

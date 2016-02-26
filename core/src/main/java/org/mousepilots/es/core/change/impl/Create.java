@@ -2,9 +2,7 @@ package org.mousepilots.es.core.change.impl;
 
 import java.io.Serializable;
 import org.mousepilots.es.core.change.CRUD;
-import org.mousepilots.es.core.change.ChangeVisitor;
 import org.mousepilots.es.core.change.abst.AbstractIdentifiableChange;
-import org.mousepilots.es.core.model.DtoType;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.IdentifiableTypeES;
 
@@ -15,7 +13,7 @@ import org.mousepilots.es.core.model.IdentifiableTypeES;
  */
 public final class Create<I extends Serializable> extends AbstractIdentifiableChange<I> {
 
-    protected Create() {
+    protected Create(){
         super();
     }
 
@@ -26,8 +24,8 @@ public final class Create<I extends Serializable> extends AbstractIdentifiableCh
      * @param id id of the new object to create
      * @param dtoType
      */
-    public Create(HasValue id, IdentifiableTypeES type, DtoType dtoType) {
-        super(id, type, dtoType);
+    public Create(HasValue id, IdentifiableTypeES type) {
+        super(id, type);
     }
 
     @Override
@@ -35,8 +33,5 @@ public final class Create<I extends Serializable> extends AbstractIdentifiableCh
         return CRUD.CREATE;
     }
 
-    @Override
-    public void accept(ChangeVisitor changeHandler) {
-        changeHandler.visit(this);
-    }
+
 }

@@ -43,9 +43,7 @@ public class MappedSuperclassTypeESImpl<T> extends IdentifiableTypeESImpl<T>
             boolean instantiable, Class<?> metamodelClass,
             Set<Integer> attributes, int superType,
             Collection<Integer> subTypes) {
-        super(id, declaredId, version, declaredVersion, idClassAttributes,
-                singleIdAttribute, versionAttribute, idType, name, ordinal,
-                javaType, persistenceType, javaClassName, instantiable,
-                metamodelClass, attributes, superType, subTypes);
-    }
+         //TODO: check constructors
+         super(ordinal, javaType, null, null, null, null, persistenceType, metamodelClass, attributes, superType, subTypes, ordinal, declaredVersion, ordinal, declaredVersion, idClassAttributes, singleIdAttribute, versionAttribute, ordinal);
+}
 }

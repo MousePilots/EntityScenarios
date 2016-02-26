@@ -1,18 +1,17 @@
 package org.mousepilots.es.core.model.impl;
 
-import java.lang.reflect.Member;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import org.mousepilots.es.core.model.AttributeVisitor;
-import org.mousepilots.es.core.model.DtoType;
+import org.mousepilots.es.core.model.AssociationES;
+import org.mousepilots.es.core.model.AssociationTypeES;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.MapAttributeES;
 import org.mousepilots.es.core.model.MemberES;
 import org.mousepilots.es.core.model.TypeES;
+import org.mousepilots.es.core.util.StringUtils;
 
 /**
  * @author Nicky Ernste
@@ -21,102 +20,63 @@ import org.mousepilots.es.core.model.TypeES;
  * @param <K> The type of the key of the represented Map
  * @param <V> The type of the value of the represented Map
  */
-public class MapAttributeESImpl<T, K, V>
-        extends PluralAttributeESImpl<T, Map<K, V>, V, Collection<Entry<K,V>>>
-        implements MapAttributeES<T, K, V> {
+public class MapAttributeESImpl<T, K, V> extends PluralAttributeESImpl<T, Map<K, V>, V> implements MapAttributeES<T, K, V> {
 
-    private final Class<K> keyJavaType;
-    private final TypeES<K> keyType;
-    private final Constructor<HasValue> hasValueKeyChangeConstructor, hasValueKeyDtoConstructor;
+     private final int keyTypeOrdinal;
+     private final Constructor<HasValue> hasValueKeyChangeConstructor;
 
-    @Override
-    public Map<K, V> createEmpty() {
-        return new HashMap<>();
-    }
+     @Override
+     public Map<K, V> createEmpty() {
+          return new HashMap<>();
+     }
 
-    /**
-     * Create a new instance of this class.
-     * @param keyJavaType the java type that represents the keys of this map attribute.
-     * @param keyType the {@link TypeES} that represents the keys of this map attribute.
-     * @param elementType the type of the elements for this map attribute.
-     * @param bindableType the {@link BindableType} of this map attribute.
-     * @param bindableJavaType the java type that is bound for this map attribute.
-     * @param name the name of this map attribute.
-     * @param ordinal the ordinal of this map attribute.
-     * @param javaType the java type of this map attribute.
-     * @param persistentAttributeType the {@link PersistentAttributeType} of this map attribute.
-     * @param javaMember the java {@link Member} representing this map attribute.
-     * @param readOnly whether or not this map attribute is read only.
-     * @param association whether or not this map attribute is part of an association.
-     * @param declaringType the {@link ManagedTypeES} that declared this map attribute.
-     * @param hasValueKeyChangeConstructor The constructor that will be used for wrapping the key of this attribute for a change.
-     * @param hasValueChangeConstructor the constructor that will be used when wrapping this attribute for a change.
-     * @param hasValueDtoConstructor the constructor that will be used when wrapping this attribute for a DTO.
-     * @param hasValueKeyDtoConstructor the constructor that will be used when wrapping the key of this attribute for a DTO.
-     */
-    public MapAttributeESImpl(Class<K> keyJavaType, TypeES<K> keyType,
-            Constructor<HasValue> hasValueKeyChangeConstructor,
-            Constructor<HasValue> hasValueKeyDtoConstructor,
-            TypeES<V> elementType, BindableType bindableType,
-            Class<V> bindableJavaType, String name, int ordinal,
-            Class<Map<K, V>> javaType,
-            PersistentAttributeType persistentAttributeType, MemberES javaMember,
-            boolean readOnly, boolean association, ManagedTypeES<T> declaringType,
-            Constructor<HasValue> hasValueChangeConstructor,
-            Constructor<HasValue> hasValueDtoConstructor) {
-        super(CollectionType.MAP, elementType, bindableType, bindableJavaType,
-                name, ordinal, javaType, persistentAttributeType, javaMember,
-                readOnly, association, declaringType, hasValueChangeConstructor,
-                hasValueDtoConstructor);
-        this.keyJavaType = keyJavaType;
-        this.keyType = keyType;
-        this.hasValueKeyChangeConstructor = hasValueKeyChangeConstructor;
-        this.hasValueKeyDtoConstructor = hasValueKeyDtoConstructor;
-    }
+     public MapAttributeESImpl(
+          String name,
+          int ordinal,
+          Integer superOrdinal,
+          Collection<Integer> subOrdinals,
+          int typeOrdinal,
+          PersistentAttributeType persistentAttributeType,
+          MemberES javaMember,
+          boolean readOnly,
+          AssociationES keyAssociation,
+          AssociationES valueAssociation,
+          ManagedTypeES<T> declaringType,
+          Constructor<HasValue> hasValueChangeConstructor,
+          CollectionType collectionType,
+          int keyTypeOrdinal,
+          int elementTypeOrdinal,
+          BindableType bindableType,
+          Class<V> bindableJavaType,
+          Constructor<HasValue> hasValueKeyChangeConstructor) {
+          super(name, ordinal, superOrdinal, subOrdinals, typeOrdinal, persistentAttributeType, javaMember, readOnly, valueAssociation, declaringType, hasValueChangeConstructor, collectionType, elementTypeOrdinal, bindableType, bindableJavaType);
+          this.associations.put(AssociationTypeES.KEY, keyAssociation);
+          this.keyTypeOrdinal = keyTypeOrdinal;
+          this.hasValueKeyChangeConstructor = hasValueKeyChangeConstructor;
+     }
 
-    @Override
-    public Class<K> getKeyJavaType() {
-        return keyJavaType;
-    }
+     
+     @Override
+     public Class<K> getKeyJavaType() {
+          return getKeyType().getJavaType();
+     }
 
-    @Override
-    public TypeES<K> getKeyType() {
-        return keyType;
-    }
+     @Override
+     public TypeES<K> getKeyType() {
+          return AbstractMetamodelES.getInstance().getType(keyTypeOrdinal);
+     }
 
-    @Override
-    public final HasValueList wrapForChange(Collection<Entry<K,V>> values, DtoType dtoType) {
-        dtoType.assertSupported();
-        final Constructor<HasValue> hasValueChangeConstructor = getHasValueChangeConstructor();
-        ArrayList<HasValueEntry> hasValueEntries = new ArrayList<>(values.size());
-        final TypeES<V> valueType = getElementType();
-        for(Entry<K,V> entry : values){
-            final HasValue keyHV = hasValueKeyChangeConstructor.invoke();
-            SingularAttributeESImpl.setSingularValueForChange(keyHV, keyType, entry.getKey());
-            final HasValue valueHV = hasValueChangeConstructor.invoke();
-            SingularAttributeESImpl.setSingularValueForChange(valueHV, valueType, entry.getValue());
-            HasValueEntry hve = new HasValueEntry(keyHV, valueHV);
-            hasValueEntries.add(hve);
-        }
-        final HasValueList retval = new HasValueList();
-        retval.setValue(hasValueEntries);
-        return retval;
-    }
+     public Constructor<HasValue> getHasValueKeyChangeConstructor() {
+          return hasValueKeyChangeConstructor;
+     }
 
-    @Override
-    public String toString() {
-        return super.toString() + " MapAttribute keyType: "
-                + getKeyType().getJavaClassName();
-    }
+     @Override
+     public String toString() {
+          return StringUtils.createToString(getClass(), Arrays.asList(
+               "name", getName(),
+               "ordinal", getOrdinal(),
+               "javaType", getJavaType().getName() + "<" + getKeyType().getJavaType().getName() + "," + getElementType().getJavaType().getName() + ">"
+          ));
+     }
 
-    @Override
-    public boolean isCollection() {
-        return true;
-    }
-    
-    @Override
-    public <T> T accept(AttributeVisitor<T> visitor) {
-        return visitor.visit(this);
-    }
-    
 }

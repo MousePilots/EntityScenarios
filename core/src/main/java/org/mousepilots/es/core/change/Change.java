@@ -7,7 +7,6 @@ package org.mousepilots.es.core.change;
 
 import java.io.Serializable;
 import javax.persistence.metamodel.Type;
-import org.mousepilots.es.core.model.DtoType;
 import org.mousepilots.es.core.model.TypeES;
 
 /**
@@ -15,34 +14,24 @@ import org.mousepilots.es.core.model.TypeES;
  * @author Jurjen van Geenen
  * @author Roy Cleven
  */
-public interface Change extends Serializable
-{
-   /**
-    * @return the changed {@link DTO}'s {@link Type}
-    */
-   TypeES getType();
+public interface Change extends Serializable {
 
-   /**
-    * @return the operation which changed the {@link DTO}
-    */
-   CRUD operation();
+     /**
+      * @return the corresponding {@link Type}
+      */
+     TypeES getType();
 
-   /**
-    * Visitor patterns {@code accept}: accepts a {@link ChangeVisitor}.
-    * 
-    * @param changeHandler
-    */
-   void accept(ChangeVisitor changeHandler);
+     /**
+      * @return the operation which changed the {@link DTO}
+      */
+     CRUD operation();
 
-   /**
-    * @param crud
-    * @return whether or not {@code this} was caused by a {@code crud}
-    */
-   boolean is(CRUD crud);
-   
-   /**
-    * Gets the {@link DtoType} which is used for the change, which determines the type of values.
-    * @return the type of values which are eing used in {@code this}
-    */
-   DtoType getDtoType();
+     /**
+      * @param crud
+      * @return {@code operation()==crud}
+      */
+     default boolean is(CRUD crud) {
+          return crud == operation();
+     }
+
 }

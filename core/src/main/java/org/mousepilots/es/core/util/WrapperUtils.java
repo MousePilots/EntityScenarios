@@ -3,8 +3,11 @@ package org.mousepilots.es.core.util;
 import java.io.Serializable;
 import java.util.Collection;
 import org.mousepilots.es.core.model.AttributeES;
-import org.mousepilots.es.core.model.DtoType;
 import org.mousepilots.es.core.model.HasValue;
+import org.mousepilots.es.core.model.IdentifiableTypeES;
+import org.mousepilots.es.core.model.SingularAttributeES;
+import org.mousepilots.es.core.model.impl.TypeESImpl;
+import static org.mousepilots.es.core.util.IdentifiableTypeUtils.getIdAttribute;
 
 /**
  * @author Jurjen van Geenen
@@ -18,6 +21,16 @@ public class WrapperUtils {
     private WrapperUtils() {
     }
 
+     public static <E> HasValue wrapId(IdentifiableTypeES<? super E> type, E instance) {
+          if (instance == null) {
+               return null;
+          } else {
+               final SingularAttributeES idAttribute = getIdAttribute(type);
+               final Object idValue = idAttribute.getJavaMember().get(instance);
+               final TypeESImpl idType = (TypeESImpl) idAttribute.getType();
+               return idType.wrap(idValue);
+          }
+     }    
     /**
      * Wraps a collection of {@code values} into the {@code wrappers} collection
      *
@@ -26,22 +39,25 @@ public class WrapperUtils {
      * @param attribute the {@code values}' attribute
      * @param values list of values which need to be wrapped.
      * @param wrappers the collection to which the wrappers must be added
-     * @param dtoType
      * @return the wrappers
      */
-    public static <A extends Serializable, TC extends Collection<HasValue>> TC wrapForDto(AttributeES attribute, Collection<A> values, TC wrappers, DtoType dtoType) {
+    public static <A extends Serializable, TC extends Collection<HasValue>> 
+    TC wrapForDto(AttributeES attribute, Collection<A> values, TC wrappers)
+    {
         if (values != null) {
-            for(A source : values){
-                wrappers.add(attribute.wrapForDTO(values, dtoType));
+            for(A value : values){
+                wrappers.add(attribute.wrapForChange(value));
             }
         }
         return wrappers;
     }
 
-    public static <A extends Serializable, TC extends Collection<HasValue>> TC wrapForChange(AttributeES attribute, Collection<A> values, TC wrappers, DtoType dtoType) {
+    public static <A extends Serializable, TC extends Collection<HasValue>> 
+    TC wrapForChange(AttributeES attribute, Collection<A> values, TC wrappers) 
+    {
         if (values != null) {
-            for(A source : values){
-                wrappers.add(attribute.wrapForChange(source,dtoType));
+            for(A value : values){
+                wrappers.add(attribute.wrapForChange(value));
             }
         }
         return wrappers;
@@ -56,10 +72,12 @@ public class WrapperUtils {
      * @param values
      * @return
      */
-    public static <A, TC extends Collection<A>> TC unWrap(Collection<HasValue> valueWrappers, TC values) {
+    public static <A, TC extends Collection<A>> 
+    TC unWrap(Collection<HasValue> valueWrappers, TC values)
+    {
         if (valueWrappers != null) {
-            for (HasValue<A> source : valueWrappers) {
-                values.add(source.getValue());
+            for (HasValue<A> hv : valueWrappers) {
+                values.add(hv.getValue());
             }
         }
         return values;

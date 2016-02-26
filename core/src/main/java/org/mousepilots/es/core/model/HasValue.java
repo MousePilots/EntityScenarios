@@ -1,6 +1,7 @@
 package org.mousepilots.es.core.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Limits the GWT serializer generator for {@link AttributeES} attribute values {@code this}' concrete subclasses.
@@ -22,14 +23,7 @@ public interface HasValue<T> extends Serializable {
      */
     void setValue(T value);
 
-    /**
-     * @return the {@link DtoType} for the value wrapped by {@code this}
-     */
-    DtoType getDtoType();
+    
+    
 
-    /**
-     * Set the dto type of the value wrapped by {@code this}
-     * @param dtoType the new {@link DtoType}.
-     */
-    void setDtoType(DtoType dtoType);
 }

@@ -14,8 +14,8 @@ import javax.persistence.metamodel.MappedSuperclassType;
 public interface MappedSuperclassTypeES<T> extends IdentifiableTypeES<T>, MappedSuperclassType<T> {
 
     @Override
-    public default <R> R accept(TypeVisitor<R> v) {
-        return v.visit(this);
+    public default <R,A> R accept(TypeVisitor<R,A> v, A arg){
+        return v.visit(this, arg);
     }
 
     

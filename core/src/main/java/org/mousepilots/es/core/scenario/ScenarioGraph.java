@@ -26,6 +26,8 @@ import org.mousepilots.es.core.model.ManagedTypeES;
  * @author jgeenen
  */
 public class ScenarioGraph extends HasSeal implements DirectedGraph<Vertex, Arc> {
+    
+    private static final AssociationTargetTypeResolver ASSOCIATION_TARGET_TYPE_RESOLVER = new AssociationTargetTypeResolver();
 
     /**
      * A globally unique identifier for {@code this}
@@ -82,9 +84,8 @@ public class ScenarioGraph extends HasSeal implements DirectedGraph<Vertex, Arc>
         Arc retval = getArc(association);
         if (retval == null) {
             assertNotSealed();
-            final AssociationTargetTypeResolver associationTargetTypeResolver = new AssociationTargetTypeResolver(associationType);
-            attribute.accept(associationTargetTypeResolver);
-            final ManagedTypeES targetType = associationTargetTypeResolver.getAssociationTargetType();
+            
+            final ManagedTypeES targetType = (ManagedTypeES) attribute.accept(ASSOCIATION_TARGET_TYPE_RESOLVER,associationType);
             final Vertex targetVertex = getOrCreate(targetType);
             retval = new Arc(this, association, sourceVertex, targetVertex);
 

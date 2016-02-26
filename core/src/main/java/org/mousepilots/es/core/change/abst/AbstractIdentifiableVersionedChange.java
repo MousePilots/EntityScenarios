@@ -8,7 +8,6 @@ package org.mousepilots.es.core.change.abst;
 import java.io.Serializable;
 import org.mousepilots.es.core.change.HasVersion;
 import org.mousepilots.es.core.model.AttributeES;
-import org.mousepilots.es.core.model.DtoType;
 import org.mousepilots.es.core.model.IdentifiableTypeES;
 import org.mousepilots.es.core.model.HasValue;
 
@@ -29,10 +28,10 @@ public abstract class AbstractIdentifiableVersionedChange<I extends Serializable
         this.version = version;
     }
 
-    public AbstractIdentifiableVersionedChange(V version, HasValue id, IdentifiableTypeES type, DtoType dtoType) {
-        super(id, type, dtoType);
+    public AbstractIdentifiableVersionedChange(V version, HasValue id, IdentifiableTypeES type) {
+        super(id, type);
         AttributeES va = type.getVersion(version.getClass());
-        this.version = va.wrapForChange(version, dtoType);
+        this.version = va.wrapForChange(version);
     }
 
     @Override

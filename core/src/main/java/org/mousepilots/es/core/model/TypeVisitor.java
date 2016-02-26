@@ -6,16 +6,18 @@
 package org.mousepilots.es.core.model;
 
 /**
- *
+ * 
  * @author jgeenen
+ * @param <R> the return type of each {@code visit}-method
+ * @param <A> the argument type of each {@code visit}-method: put {@link Void} for none
  */
-public interface TypeVisitor<R> {
+public interface TypeVisitor<R,A> {
     
-    R visit(BasicTypeES t);
+    R visit(BasicTypeES t, A arg);
     
-    R visit(EmbeddableTypeES t);
+    R visit(EmbeddableTypeES t, A arg);
     
-    R visit(MappedSuperclassTypeES t);
+    R visit(MappedSuperclassTypeES t, A arg);
     
-    R visit(EntityTypeES t);
+    R visit(EntityTypeES t, A arg);
 }

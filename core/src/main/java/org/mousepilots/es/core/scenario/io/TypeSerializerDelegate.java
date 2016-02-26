@@ -28,7 +28,7 @@ import org.mousepilots.es.core.util.Maps;
  * @author jgeenen
  * @param <S>
  */
-public class TypeSerializerDelegate<S extends Serializer> extends SerializerDelegate<S> implements TypeVisitor<Object>{
+public class TypeSerializerDelegate<S extends Serializer> extends SerializerDelegate<S> implements TypeVisitor<Object,Object>{
     
     private final Map<IdentifiableTypeES,Map<Object,Object>> type2Id2Instance = new HashMap<>();
 
@@ -77,15 +77,13 @@ public class TypeSerializerDelegate<S extends Serializer> extends SerializerDele
             if(vertex.isAllowed(attribute, CRUD.READ)){
                 final MemberES javaMember = attribute.getJavaMember();
                 final Object attributeValue = javaMember.get(source);
-                attributeSerializer.setValueToSerialize(attributeValue);
-                final Object serializedAttributeValue = attribute.accept(attributeSerializer);
+                final Object serializedAttributeValue = attribute.accept(attributeSerializer,attributeValue);
                 javaMember.set(target, serializedAttributeValue);
             }
         }
     }
 
-    protected Object visitIdentifiable(IdentifiableTypeES t) {
-        final Object identifiable = getValueToSerialize();
+    protected Object visitIdentifiable(IdentifiableTypeES t, Object identifiable) {
         Object serializedIdentifiable = getPreSerializedValue(t, identifiable);
         if(serializedIdentifiable==null){
             serializedIdentifiable = t.createInstance();
@@ -102,14 +100,13 @@ public class TypeSerializerDelegate<S extends Serializer> extends SerializerDele
     }
 
     @Override
-    public Object visit(BasicTypeES t) {
-        return getValueToSerialize();
+    public Object visit(BasicTypeES t, Object basicTypeInstance) {
+        return basicTypeInstance;
     }
 
 
     @Override
-    public Object visit(EmbeddableTypeES t) {
-        final Object embeddable = getValueToSerialize();
+    public Object visit(EmbeddableTypeES t, Object embeddable) {
         final Set<AttributeES> attributes = t.getAttributes();
         final Object serializedEmbeddable = t.createInstance();
         copyAttributes(attributes, embeddable, serializedEmbeddable);
@@ -118,13 +115,13 @@ public class TypeSerializerDelegate<S extends Serializer> extends SerializerDele
     
 
     @Override
-    public Object visit(MappedSuperclassTypeES t) {
-        return visitIdentifiable(t);
+    public Object visit(MappedSuperclassTypeES t, Object mappedSuperClass) {
+        return visitIdentifiable(t,mappedSuperClass);
     }
     
     @Override
-    public Object visit(EntityTypeES t) {
-        return visitIdentifiable(t);
+    public Object visit(EntityTypeES t, Object entity) {
+        return visitIdentifiable(t,entity);
     }
 
 

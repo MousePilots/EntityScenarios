@@ -1,10 +1,9 @@
 package org.mousepilots.es.core.model.impl;
 
-import java.lang.reflect.Member;
+import java.util.Collection;
 import javax.persistence.Id;
 import javax.persistence.metamodel.Type;
-import org.mousepilots.es.core.model.AttributeVisitor;
-import org.mousepilots.es.core.model.DtoType;
+import org.mousepilots.es.core.model.AssociationES;
 import org.mousepilots.es.core.model.Generator;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.ManagedTypeES;
@@ -16,63 +15,40 @@ import org.mousepilots.es.core.model.TypeES;
  * @author Nicky Ernste
  * @version 1.0, 18-12-2015
  * @param <X> The type containing the represented attribute
- * @param <T> The type of the represented attribute
+ * @param <Y> The type of the represented attribute
  */
-public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
-    implements SingularAttributeES<X, T> {
+public class SingularAttributeESImpl<X, Y> extends AttributeESImpl<X, Y> implements SingularAttributeES<X, Y> {
 
     private final boolean generated;
     private final Generator generator;
     private final boolean id;
     private final boolean version;
     private final boolean optional;
-    private final TypeES<T> type;
+    private final TypeES<Y> type;
     private final BindableType bindableType;
-    private final Class<T> bindableJavaType;
+    private final Class<Y> bindableJavaType;
 
-    /**
-     * Create a new instance of this class.
-     * @param generated whether or not the value of this singular attribute is generated.
-     * @param generator if {@code generated} is {@code true} get the {@link Generator} that generated this singular attribute.
-     * @param id whether or not this attribute is part of the id of an identifiable type.
-     * @param version whether or not this attribute represents the version of an identifiable type.
-     * @param optional whether or not this singular attribute is optional.
-     * @param type the {@link TypeES} of this singular attribute.
-     * @param bindableType the {@link BindableType} of this singular attribute.
-     * @param bindableJavaType the java type that is bound for this singular attribute.
-     * @param name the name of this singular attribute.
-     * @param ordinal the ordinal of this singular attribute.
-     * @param javaType the java type of this singular attribute.
-     * @param persistentAttributeType the {@link PersistentAttributeType} of this singular attribute.
-     * @param javaMember the java {@link Member} representing this singular attribute.
-     * @param readOnly whether or not this singular attribute is read only.
-     * @param association whether or not this singular attribute is part of an association.
-     * @param declaringType the {@link ManagedTypeES} that declared this singular attribute.
-     * @param hasValueChangeConstructor the constructor that will be used when wrapping this singular attribute for a change.
-     * @param hasValueDtoConstructor the constructor that will be used when wrapping this singular attribute for a DTO.
-     */
     public SingularAttributeESImpl(
+            String name, 
+            int ordinal, 
+            Integer superOrdinal, 
+            Collection<Integer> subOrdinals, 
+            Class<Y> javaType, 
+            PersistentAttributeType persistentAttributeType, 
+            MemberES javaMember, 
+            boolean readOnly, 
+            AssociationES association, 
+            ManagedTypeES<X> declaringType, 
+            Constructor<HasValue> hasValueChangeConstructor,         
             boolean generated,
             Generator generator,
             boolean id,
             boolean version,
             boolean optional,
-            TypeES<T> type,
+            TypeES<Y> type,
             BindableType bindableType,
-            Class<T> bindableJavaType,
-            String name,
-            int ordinal,
-            Class<T> javaType,
-            PersistentAttributeType persistentAttributeType,
-            MemberES javaMember,
-            boolean readOnly,
-            boolean association,
-            ManagedTypeES<X> declaringType,
-            Constructor<HasValue> hasValueChangeConstructor,
-            Constructor<HasValue> hasValueDtoConstructor) {
-        super(name, ordinal, javaType, persistentAttributeType, javaMember,
-                readOnly, association, declaringType, hasValueChangeConstructor,
-                hasValueDtoConstructor);
+            Class<Y> bindableJavaType) {
+        super(name, ordinal, superOrdinal, subOrdinals, -1, persistentAttributeType, javaMember, readOnly, association, declaringType, hasValueChangeConstructor);
         this.generated = generated;
         this.generator = generator;
         this.id = id;
@@ -99,7 +75,7 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
     }
 
     @Override
-    public Class<T> getBindableJavaType() {
+    public Class<Y> getBindableJavaType() {
         return bindableJavaType;
     }
 
@@ -119,7 +95,7 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
     }
 
     @Override
-    public TypeES<T> getType() {
+    public TypeES<Y> getType() {
         return type;
     }
 
@@ -140,21 +116,14 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
                 hasValue.setValue(value);
                 break;
             }
-            case ENTITY :
-            case MAPPED_SUPERCLASS : {
+            case ENTITY : {
                 //Type is a entity or mapped superclass which is identifiable, so casting should be safe.
                 //Wrap the id of the identifiable.
                 IdentifiableTypeESImpl identifiableType = (IdentifiableTypeESImpl)valueType;
-                final Object id;
-                if(value == null){
-                    id = null;
-                } else {
-                    id = identifiableType.getId().getJavaMember().get(value);
-                }
+                final Object id = value == null ? null : identifiableType.getId().getJavaMember().get(value);
                 hasValue.setValue(id);
                 break;
             }
-
             default : throw new UnsupportedOperationException(
                     "unkown PersistenceType " + persistenceType + " for " + valueType
             );
@@ -162,41 +131,15 @@ public class SingularAttributeESImpl<X, T> extends AttributeESImpl<X, T, T>
     }
 
     @Override
-    public HasValue wrapForChange(T value, DtoType dtoType) {
-        if (dtoType != DtoType.MANAGED_CLASS) {
-            throw new UnsupportedOperationException("Currently only " + DtoType.MANAGED_CLASS + " is supported.");
-        }
+    public HasValue wrapForChange(Y value) {
         final HasValue hv = this.getHasValueChangeConstructor().invoke();
         setSingularValueForChange(hv, getType(), value);
         return hv;
     }
 
     @Override
-    public HasValue wrapForDTO(T value, DtoType dtoType) {
-        if (dtoType != DtoType.MANAGED_CLASS) {
-            throw new UnsupportedOperationException("Currently only " + DtoType.MANAGED_CLASS + " is supported.");
-        }
-        switch(getType().getPersistenceType()){
-            case EMBEDDABLE:
-            case ENTITY: //Should be entity.
-                //Return HasValue DTO
-                break;
-            case BASIC:
-            default: {
-                //Return HasValue T
-            }
-        }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public boolean isCollection() {
         return false;
-    }
-    
-    @Override
-    public <T> T accept(AttributeVisitor<T> visitor) {
-        return visitor.visit(this);
     }
     
 }

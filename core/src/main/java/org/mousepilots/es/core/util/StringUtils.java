@@ -28,6 +28,12 @@ public class StringUtils {
         return str == null || str.equals(" ");
     }
     
+    /**
+     * 
+     * @param clazz
+     * @param fieldValuePairs a serialized list of the form {@code field0,value0,field1,value1,...}
+     * @return 
+     */
     public static String createToString(Class clazz, List fieldValuePairs){
         StringBuilder retval = new StringBuilder(clazz.getName()).append('[');
         for(Iterator i = fieldValuePairs.iterator(); i.hasNext(); ){

@@ -1,5 +1,6 @@
 package org.mousepilots.es.core.model;
 
+import java.util.Set;
 import java.util.SortedSet;
 import javax.persistence.metamodel.Type;
 import javax.persistence.Embeddable;
@@ -16,52 +17,37 @@ import javax.persistence.MappedSuperclass;
 public interface TypeES<T> extends Type<T>, Comparable<TypeES>, HasOrdinal{
 
     /**
-    * @return the fully qualified name of {@code T}'s class
-    */
-    String getJavaClassName();
-
-    /**
-     * @return the unique name for {@code this}
-     */
-    String getName();
-
-    /**
-     * @return {@code True} when the object is instantiable. {@code False} otherwise.
-     */
-    boolean isInstantiable();
-
-    /**
-    * @return a new instance of {@link #getJavaType()}
-    * @throws UnsupportedOperationException if {@code !this.isInstantiable()}
-    */
-    T createInstance();
-
-    /**
-    * @return the JPA static meta-model class for the represented class
+    * @return the original JPA static meta-model class for the represented class
     */
     Class<?> getMetamodelClass();
 
     /**
-     * @return this type's super-types {@code s}, such that {@code s.getJavaType()} is a superclass of {@code this.getJavaType()}
-     */
-    SortedSet<TypeES<? super T>> getSuperTypes();
-
-    /**
-     * Get the super type of this type.
+     * Gets the type for {@code this.getJavaType().getSuperclass()} if existent, otherwise {@code null}
      * @return the super type.
      */
     TypeES<? super T> getSuperType();
 
     /**
-     * @return this type's sub-types {@code s}, such that {@code s.getJavaType()} is a subclass of {@code this.getJavaType()}
+     * The {@link Set} with elements {@code s} such that {@code s.getJavaType()} is a superclass of {@code this.getJavaType()}, including {@code this}. 
+     * The returned {@link Set} includes {@code this}
+     * @return this type's super-types, such that {@code s.getJavaType()} is a superclass of {@code this.getJavaType()}
+     */
+    SortedSet<TypeES<? super T>> getSuperTypes();
+
+
+    /**
+     * @return this type's sub-types {@code s}, such that {@code s.getJavaType()} is a subclass of {@code this.getJavaType()}, including {@code this}.
      */
     SortedSet<TypeES<? extends T>> getSubTypes();
     
     /**
-     * 
+     * Accepts a {@link TypeVisitor}.
      * @param <R> {@code v}'s return type
+     * @param <A> {@code v}'s argument type
      * @param v the {@link TypeVisitor}
-     * @return the value returned by {@code v}'s visit of {@code this}
+     * @param arg the argument passed to {@code v}
+     * @return the value returned by {@code v.visit(this,arg)}.
      */
-    <R> R accept(TypeVisitor<R> v);
+    <R,A> R accept(TypeVisitor<R,A> v, A arg);
+    
 }

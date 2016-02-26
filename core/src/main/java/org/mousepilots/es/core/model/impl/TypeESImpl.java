@@ -1,11 +1,14 @@
 package org.mousepilots.es.core.model.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.persistence.metamodel.Type;
+import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.TypeES;
+import org.mousepilots.es.core.util.StringUtils;
 
 /**
  * @author Nicky Ernste
@@ -13,54 +16,44 @@ import org.mousepilots.es.core.model.TypeES;
  * @param <T> The type of the represented object or attribute
  */
 public abstract class TypeESImpl<T> implements TypeES<T> {
-
-    private final String name;
-    private final int ordinal;
+    /**
+     * this {@link Type}'s unique ordinal
+     */
+    public final int ordinal;
     private final Class<T> javaType;
     private final Type.PersistenceType persistenceType;
-    private final String javaClassName;
-    private final boolean instantiable;
     private final Class<?> metamodelClass;
-    private final int superTypeOrdinal;
+    private final Integer superTypeOrdinal;
     private final SortedSet<Integer> subTypes;
+    private final Constructor<? extends HasValue<T>> hasValueConstructor;
 
     /**
-     * Create a new instance of this class.
-     * @param name the name of this type.
-     * @param ordinal the ordinal of this type.
-     * @param javaType the java type of this type.
-     * @param persistenceType the {@link PersistenceType} of this type.
-     * @param javaClassName the name of the java class for this type.
-     * @param instantiable whether or not this type is instanciable.
-     * @param metamodelClass the JPA metamodel class of this type.
-     * @param superType a super type of this type.
-     * @param subTypes a set of sub types of this type.
+     * @param ordinal the type's ordinal
+     * @param javaType the {@link Type#getJavaType()}
+     * @param persistenceType the {@link Type#getPersistenceType()}
+     * @param metamodelClass the type's original JPA meta-model class
+     * @param superTypeOrdinal the ordinal of {@code javaType}'s super-class' {@link Type}
+     * @param subTypeOrdinals the ordinals of {@code javaType}'s sub-class' {@link Type}s
+     * @param hasValueConstructor the value of hasValueConstructor
      */
     public TypeESImpl(
-            String name,
-            int ordinal,
-            Class<T> javaType,
-            PersistenceType persistenceType,
-            String javaClassName,
-            boolean instantiable,
-            Class<?> metamodelClass,
-            int superType, Collection<Integer> subTypes) {
-        this.name = name;
+         int ordinal, 
+         Class<T> javaType, 
+         PersistenceType persistenceType, 
+         Class<?> metamodelClass, 
+         Integer superTypeOrdinal, 
+         Collection<Integer> subTypeOrdinals, 
+         Constructor<? extends HasValue<T>> hasValueConstructor){
         this.ordinal = ordinal;
         this.javaType = javaType;
         this.persistenceType = persistenceType;
-        this.javaClassName = javaClassName;
-        this.instantiable = instantiable;
         this.metamodelClass = metamodelClass;
-        this.superTypeOrdinal = superType;
-        this.subTypes = new TreeSet<>(subTypes);
-        AbstractMetaModelES.getInstance().register(this);
+        this.superTypeOrdinal = superTypeOrdinal;
+        this.subTypes = new TreeSet<>(subTypeOrdinals);
+        this.hasValueConstructor=hasValueConstructor;
     }
-
-    @Override
-    public String getName() {
-        return name;
-    }
+    
+    protected void init(){}
 
     @Override
     public int getOrdinal() {
@@ -78,77 +71,64 @@ public abstract class TypeESImpl<T> implements TypeES<T> {
     }
 
     @Override
-    public String getJavaClassName() {
-        return javaClassName;
-    }
-
-    @Override
-    public boolean isInstantiable() {
-        return instantiable;
-    }
-
-    @Override
     public Class<?> getMetamodelClass() {
         return metamodelClass;
     }
 
     @Override
     public SortedSet<TypeES<? super T>> getSuperTypes() {
-        //TODO Get mulitple super types.
-        return null;
+        final SortedSet<TypeES<? super T>> supers = new TreeSet<>();
+        for(TypeES t= this; t!=null; t=t.getSuperType()){
+            supers.add(t);
+        }
+        return supers;
     }
 
     @Override
     public SortedSet<TypeES<? extends T>> getSubTypes() {
         SortedSet<TypeES<? extends T>> subs = new TreeSet<>();
-        for (int subTypeOrdinal : subTypes) {
-            subs.add(AbstractMetaModelES.getInstance().getType(subTypeOrdinal));
+        final AbstractMetamodelES metaModel = AbstractMetamodelES.getInstance();
+        for(Integer subTypeOrdinal : subTypes) {
+            subs.add(metaModel.getType(subTypeOrdinal));
         }
         return subs;
     }
-
+    
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 89 * hash + Objects.hashCode(getName());
-        hash = 89 * hash + getOrdinal();
-        return hash;
+    public TypeES<? super T> getSuperType() {
+        return AbstractMetamodelES.getInstance().getType(this.superTypeOrdinal);
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final TypeESImpl<?> other = (TypeESImpl<?>) obj;
-        if (!Objects.equals(getName(), other.getName())) {
-            return false;
-        }
-        return this.getOrdinal() == other.getOrdinal();
+    
+    public HasValue<T> wrap(T value){
+        final HasValue<T> hv = hasValueConstructor.invoke();
+        hv.setValue(value);
+        return hv;
     }
-
+        
     @Override
     public int compareTo(TypeES o) {
         return Integer.compare(getOrdinal(), o.getOrdinal());
     }
 
     @Override
-    public T createInstance() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public String toString() {
-        return "Type name: " + getName() + ", ordinal: " + getOrdinal()
-                + ", PersistenceType: " + getPersistenceType() + ", javaClass: "
-                + getJavaClassName();
+        return StringUtils.createToString(getClass(), Arrays.asList(
+                "javaType", javaType,
+                "ordinal",  ordinal));
     }
 
     @Override
-    public TypeES<? super T> getSuperType() {
-        return AbstractMetaModelES.getInstance().getType(this.superTypeOrdinal);
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + Objects.hashCode(toString());
+        return hash;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        //singleton
+        return this==obj;
+    }
+    
+    
 }
