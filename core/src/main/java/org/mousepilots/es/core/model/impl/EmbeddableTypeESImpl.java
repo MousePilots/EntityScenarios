@@ -16,19 +16,40 @@ import org.mousepilots.es.core.model.proxy.Proxy;
  */
 public class EmbeddableTypeESImpl<T> extends ManagedTypeESImpl<T> implements EmbeddableTypeES<T> {
 
+    /**
+      * @param ordinal the ordinal of this embeddable type.
+      * @param javaType the java type for this embeddable type.
+      * @param javaTypeConstructor the zero-arg constructor for the
+      * {@code javaType} if existent, otherwise {@code null}
+      * @param proxyType the {@link Proxy}-type for the {@code javaType}
+      * @param proxyTypeConstructor the zero-arg constructor for the
+      * {@code proxyType} if existent, otherwise {@code null}
+      * @param hasValueConstructor the value of hasValueConstructor
+      * @param metamodelClass the JPa meta model class for this embeddable type.
+      * @param attributeOrdinals the singular attributes that are part of this
+      * embeddable type.
+      * @param superTypeOrdinal the supertype of this embeddable type.
+      * @param subTypeOrdinals a set of sub types for this embeddable type.
+      * @param associationOrdinals
+      */
      public EmbeddableTypeESImpl(
           int ordinal,
           Class<T> javaType,
-          Constructor<T> javaTypeConstructor,
-          Class<? extends Proxy<T>> proxyType,
-          Constructor<? extends Proxy<T>> proxyTypeConstructor,
-          Constructor<? extends HasValue<T>> hasValueConstructor,
-          PersistenceType persistenceType,
           Class<?> metamodelClass,
-          Set<Integer> attributeOrdinals,
           int superTypeOrdinal,
-          Collection<Integer> subTypeOrdinals) {
-          super(ordinal, javaType, javaTypeConstructor, proxyType, proxyTypeConstructor, hasValueConstructor, persistenceType, metamodelClass, attributeOrdinals, superTypeOrdinal, subTypeOrdinals);
-
+          Collection<Integer> subTypeOrdinals,
+          Constructor<? extends HasValue<T>> hasValueConstructor,
+          Constructor<T> javaTypeConstructor,
+          Constructor<? extends Proxy<T>> proxyTypeConstructor,
+          Class<? extends Proxy<T>> proxyType,
+          Set<Integer> attributeOrdinals,
+          Collection<Integer> associationOrdinals) {
+          super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor,
+                proxyTypeConstructor, proxyType, attributeOrdinals, associationOrdinals);
      }
+     
+     @Override
+    public PersistenceType getPersistenceType(){
+        return PersistenceType.EMBEDDABLE;
+    }
 }

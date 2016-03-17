@@ -21,36 +21,53 @@ public abstract class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
     private final int idAttributeOrdinal, idTypeOrdinal;
     private final Integer declaredIdAttributeOrdinal, versionAttributeOrdinal, declaredVersionAttributeOrdinal;
     private final Set<Integer> idClassAttributes;
-    private final boolean singleIdAttribute, versionAttribute;
 
+    /**
+      * @param ordinal the ordinal of this identifiable type.
+      * @param javaType the java type for this identifiable type.
+      * @param javaTypeConstructor the zero-arg constructor for the
+      * {@code javaType} if existent, otherwise {@code null}
+      * @param proxyType the {@link Proxy}-type for the {@code javaType}
+      * @param proxyTypeConstructor the zero-arg constructor for the
+      * {@code proxyType} if existent, otherwise {@code null}
+      * @param hasValueConstructor the value of hasValueConstructor
+      * @param metamodelClass the JPa meta model class for this identifiable type.
+      * @param attributeOrdinals the singular attributes that are part of this
+      * embeddable type.
+      * @param superTypeOrdinal the supertype of this identifiable type.
+      * @param subTypeOrdinals a set of sub types for this identifiable type.
+      * @param associationOrdinals
+     * @param idClassAttributeOrdinals
+     * @param idAttributeOrdinal
+     * @param idTypeOrdinal
+     * @param declaredIdAttributeOrdinal
+     * @param versionAttributeOrdinal
+     * @param declaredVersionAttributeOrdinal
+      */
     public IdentifiableTypeESImpl(
-         int ordinal, 
+         int ordinal,
          Class<T> javaType,
-         Constructor<T> javaTypeConstructor,
-         Class<? extends Proxy<T>> proxyType, 
-         Constructor<? extends Proxy<T>> proxyTypeConstructor,
-         Constructor<? extends HasValue<T>> hasValueConstructor,
-         PersistenceType persistenceType, 
          Class<?> metamodelClass,
-         Set<Integer> attributeOrdinals, 
-         Integer superTypeOrdinal,
+         int superTypeOrdinal,
          Collection<Integer> subTypeOrdinals,
-         int idAttributeOrdinal, 
-         Integer declaredIdAttributeOrdinal, 
-         Integer versionOrdinal, 
-         Integer declaredVersionAttributeOrdinal,
+         Constructor<? extends HasValue<T>> hasValueConstructor,
+         Constructor<T> javaTypeConstructor,
+         Constructor<? extends Proxy<T>> proxyTypeConstructor,
+         Class<? extends Proxy<T>> proxyType,
+         Set<Integer> attributeOrdinals,
+         Collection<Integer> associationOrdinals,
          Set<Integer> idClassAttributeOrdinals,
-         boolean singleIdAttributeOrdinal, 
-         boolean versionAttributeOrdinal, 
-         int idTypeOrdinal){
-        super(ordinal, javaType, javaTypeConstructor, proxyType, proxyTypeConstructor, hasValueConstructor, persistenceType, metamodelClass, attributeOrdinals, superTypeOrdinal, subTypeOrdinals);
+         int idAttributeOrdinal, 
+         int idTypeOrdinal,
+         Integer declaredIdAttributeOrdinal,
+         Integer versionAttributeOrdinal,
+         Integer declaredVersionAttributeOrdinal){
+        super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor, proxyTypeConstructor, proxyType, attributeOrdinals, associationOrdinals);
         this.idAttributeOrdinal = idAttributeOrdinal;
         this.declaredIdAttributeOrdinal = declaredIdAttributeOrdinal;
-        this.versionAttributeOrdinal = versionOrdinal;
+        this.versionAttributeOrdinal = versionAttributeOrdinal;
         this.declaredVersionAttributeOrdinal = declaredVersionAttributeOrdinal;
         this.idClassAttributes = idClassAttributeOrdinals;
-        this.singleIdAttribute = singleIdAttributeOrdinal;
-        this.versionAttribute = versionAttributeOrdinal;
         this.idTypeOrdinal = idTypeOrdinal;
     }
 
@@ -97,7 +114,7 @@ public abstract class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
 
     @Override
     public TypeES<?> getIdType() {
-        return AbstractMetamodelES.getInstance().getType(idAttributeOrdinal);
+        return AbstractMetamodelES.getInstance().getType(idTypeOrdinal);
     }
 
     @Override
@@ -118,16 +135,6 @@ public abstract class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
     @Override
     public <Y> SingularAttributeES<T, Y> getDeclaredVersion(Class<Y> type) {
         return (SingularAttributeES<T, Y>) getDeclaredVersion();
-    }
-
-    @Override
-    public boolean hasSingleIdAttribute() {
-        return singleIdAttribute;
-    }
-
-    @Override
-    public boolean hasVersionAttribute() {
-        return versionAttribute;
     }
 
     @Override

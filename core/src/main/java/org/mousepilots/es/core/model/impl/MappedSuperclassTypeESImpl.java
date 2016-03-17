@@ -2,8 +2,11 @@ package org.mousepilots.es.core.model.impl;
 
 import java.util.Collection;
 import java.util.Set;
+import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.MappedSuperclassTypeES;
 import org.mousepilots.es.core.model.TypeES;
+import org.mousepilots.es.core.model.TypeVisitor;
+import org.mousepilots.es.core.model.proxy.Proxy;
 
 /**
  * @author Nicky Ernste
@@ -15,35 +18,67 @@ public class MappedSuperclassTypeESImpl<T> extends IdentifiableTypeESImpl<T>
 
     /**
      * Create a new instance of this class.
-     * @param id the attribute that forms the id of this mapped superclass type.
-     * @param declaredId the attribute that is declared by this mapped superclass type and forms its id.
-     * @param version the attribute that is the version of this mapped superclass type.
-     * @param declaredVersion the attribute that is declared by this mapped superclass type and forms its version.
-     * @param idClassAttributes a set of attributes that form the id of this mapped superclass type.
-     * @param singleIdAttribute whether or not this mapped superclass type has a simple primary key or a composite primary key.
-     * @param versionAttribute whether or not this mapped superclass type has a version attribute.
-     * @param idType the {@link TypeES} that represents the id for this mapped superclass type.
-     * @param name the name of this mapped superclass type.
      * @param ordinal the ordinal of this mapped superclass type.
      * @param javaType the java type for this mapped superclass type.
-     * @param persistenceType the {@link PersistenceType} for this mapped superclass type.
-     * @param javaClassName the name of the java class that represents this mapped superclass type.
-     * @param instantiable whether or not this mapped superclass type is instanciable.
      * @param metamodelClass the JPa meta model class for this mapped superclass type.
-     * @param attributes the attributes of this mapped super class.
-     * @param superType the super type of this mapped superclass type.
-     * @param subTypes a set of sub types for this mapped superclass type.
+     * @param superTypeOrdinal the super type of this mapped superclass type.
+     * @param subTypeOrdinals a set of sub types for this mapped superclass type.
+     * @param hasValueConstructor the value of hasValueConstructor
+     * @param javaTypeConstructor the zero-arg constructor for the
+     * @param proxyTypeConstructor the zero-arg constructor for the
+     * {@code proxyType} if existent, otherwise {@code null}
+     * @param proxyType the {@link Proxy}-type for the {@code javaType}
+     * @param attributeOrdinals the singular attributes that are part of this mapped superclass type
+     * @param associationOrdinals
+     * @param idClassAttributeOrdinals a set of attributes that form the id of this mapped superclass type.
+     * @param idAttributeOrdinal
+     * @param idTypeOrdinal
+     * @param declaredVersionAttributeOrdinal the attribute that is declared by this mapped superclass type and forms its version.
+     * @param versionAttributeOrdinal whether or not this mapped superclass type has a version attribute.
+     * @param declaredIdAttributeOrdinal
      */
     public MappedSuperclassTypeESImpl(
-            int id, int declaredId, int version, int declaredVersion,
-            Set<Integer> idClassAttributes,
-            boolean singleIdAttribute, boolean versionAttribute, int idType,
-            String name, int ordinal, Class<T> javaType,
-            PersistenceType persistenceType, String javaClassName,
-            boolean instantiable, Class<?> metamodelClass,
-            Set<Integer> attributes, int superType,
-            Collection<Integer> subTypes) {
+         int ordinal,
+         Class<T> javaType,
+         Class<?> metamodelClass,
+         int superTypeOrdinal,
+         Collection<Integer> subTypeOrdinals,
+         Constructor<? extends HasValue<T>> hasValueConstructor,
+         Constructor<T> javaTypeConstructor,
+         Constructor<? extends Proxy<T>> proxyTypeConstructor,
+         Class<? extends Proxy<T>> proxyType,
+         Set<Integer> attributeOrdinals,
+         Collection<Integer> associationOrdinals,
+         Set<Integer> idClassAttributeOrdinals,
+         int idAttributeOrdinal, 
+         int idTypeOrdinal,
+         Integer declaredIdAttributeOrdinal,
+         Integer versionAttributeOrdinal,
+         Integer declaredVersionAttributeOrdinal){
          //TODO: check constructors
-         super(ordinal, javaType, null, null, null, null, persistenceType, metamodelClass, attributes, superType, subTypes, ordinal, declaredVersion, ordinal, declaredVersion, idClassAttributes, singleIdAttribute, versionAttribute, ordinal);
+         super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor,
+                proxyTypeConstructor, proxyType, attributeOrdinals, associationOrdinals, idClassAttributeOrdinals, idAttributeOrdinal,
+                idTypeOrdinal, declaredIdAttributeOrdinal, versionAttributeOrdinal, declaredVersionAttributeOrdinal);
 }
+    
+    @Override
+    public PersistenceType getPersistenceType(){
+        return PersistenceType.MAPPED_SUPERCLASS;
+    }
+
+    //TODO: implement abstract methods from IdentifiableTypeESImpl
+    @Override
+    public <R, A> R accept(TypeVisitor<R, A> v, A arg) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean hasSingleIdAttribute() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean hasVersionAttribute() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
