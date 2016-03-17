@@ -21,7 +21,6 @@ public abstract class TypeESImpl<T> implements TypeES<T> {
      */
     public final int ordinal;
     private final Class<T> javaType;
-    private final Type.PersistenceType persistenceType;
     private final Class<?> metamodelClass;
     private final Integer superTypeOrdinal;
     private final SortedSet<Integer> subTypes;
@@ -30,7 +29,6 @@ public abstract class TypeESImpl<T> implements TypeES<T> {
     /**
      * @param ordinal the type's ordinal
      * @param javaType the {@link Type#getJavaType()}
-     * @param persistenceType the {@link Type#getPersistenceType()}
      * @param metamodelClass the type's original JPA meta-model class
      * @param superTypeOrdinal the ordinal of {@code javaType}'s super-class' {@link Type}
      * @param subTypeOrdinals the ordinals of {@code javaType}'s sub-class' {@link Type}s
@@ -39,14 +37,12 @@ public abstract class TypeESImpl<T> implements TypeES<T> {
     public TypeESImpl(
          int ordinal, 
          Class<T> javaType, 
-         PersistenceType persistenceType, 
          Class<?> metamodelClass, 
          Integer superTypeOrdinal, 
          Collection<Integer> subTypeOrdinals, 
          Constructor<? extends HasValue<T>> hasValueConstructor){
         this.ordinal = ordinal;
         this.javaType = javaType;
-        this.persistenceType = persistenceType;
         this.metamodelClass = metamodelClass;
         this.superTypeOrdinal = superTypeOrdinal;
         this.subTypes = new TreeSet<>(subTypeOrdinals);
@@ -63,11 +59,6 @@ public abstract class TypeESImpl<T> implements TypeES<T> {
     @Override
     public Class<T> getJavaType() {
         return javaType;
-    }
-
-    @Override
-    public PersistenceType getPersistenceType() {
-        return persistenceType;
     }
 
     @Override

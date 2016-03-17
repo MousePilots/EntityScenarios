@@ -2,8 +2,10 @@ package org.mousepilots.es.core.model.impl;
 
 import java.util.Collection;
 import java.util.Set;
+import javax.persistence.metamodel.Type;
 import org.mousepilots.es.core.model.EntityTypeES;
 import org.mousepilots.es.core.model.HasValue;
+import org.mousepilots.es.core.model.TypeVisitor;
 import org.mousepilots.es.core.model.proxy.Proxy;
 
 /**
@@ -18,62 +20,52 @@ public class EntityTypeESImpl<T> extends IdentifiableTypeESImpl<T> implements En
     private final Class<T> bindableJavaType;
 
     /**
-     *
-     * @param ordinal
-     * @param javaType
-     * @param javaTypeConstructor
-     * @param proxyType
-     * @param proxyTypeConstructor
-     * @param hasValueConstructor
-     * @param persistenceType
-     * @param metamodelClass
-     * @param attributeOrdinals
-     * @param superTypeOrdinal
-     * @param subTypeOrdinals
-     * @param idAttributeOrdinal
-     * @param declaredIdAttributeOrdinal
-     * @param versionOrdinal
-     * @param declaredVersionAttributeOrdinal
+      * @param ordinal the ordinal of this entity type.
+      * @param javaType the java type for this entity type.
+      * @param javaTypeConstructor the zero-arg constructor for the
+      * {@code javaType} if existent, otherwise {@code null}
+      * @param proxyType the {@link Proxy}-type for the {@code javaType}
+      * @param proxyTypeConstructor the zero-arg constructor for the
+      * {@code proxyType} if existent, otherwise {@code null}
+      * @param hasValueConstructor the value of hasValueConstructor
+      * @param metamodelClass the JPa meta model class for this entity type.
+      * @param attributeOrdinals the singular attributes that are part of this
+      * embeddable type.
+      * @param superTypeOrdinal the supertype of this entity type.
+      * @param subTypeOrdinals a set of sub types for this entity type.
+      * @param associationOrdinals
      * @param idClassAttributeOrdinals
-     * @param singleIdAttributeOrdinal
-     * @param versionAttributeOrdinal
+     * @param idAttributeOrdinal
      * @param idTypeOrdinal
+     * @param declaredIdAttributeOrdinal
+     * @param versionAttributeOrdinal
+     * @param declaredVersionAttributeOrdinal
      * @param bindableType
      * @param bindableJavaType
-     * @param singleIdAttribute
-     * @param versionAttribute
-     * @param idType
      * @param name
-     * @param attributes
-     */
+      */
     public EntityTypeESImpl(
-            int ordinal,
-            Class<T> javaType,
-            Constructor<T> javaTypeConstructor,
-            Class<? extends Proxy<T>> proxyType,
-            Constructor<? extends Proxy<T>> proxyTypeConstructor,
-            Constructor<? extends HasValue<T>> hasValueConstructor,
-            PersistenceType persistenceType,
-            Class<?> metamodelClass,
-            Set<Integer> attributeOrdinals,
-            Integer superTypeOrdinal,
-            Set<Integer> subTypeOrdinals,
-            int idAttributeOrdinal,
-            Integer declaredIdAttributeOrdinal,
-            Integer versionOrdinal,
-            Integer declaredVersionAttributeOrdinal,
-            Set<Integer> idClassAttributeOrdinals,
-            boolean singleIdAttributeOrdinal,
-            boolean versionAttributeOrdinal,
-            int idTypeOrdinal,
-            BindableType bindableType,
-            Class<T> bindableJavaType,
-            boolean singleIdAttribute,
-            boolean versionAttribute,
-            int idType,
-            String name,
-            Set<Integer> attributes) {
-        super(ordinal, javaType, javaTypeConstructor, proxyType, proxyTypeConstructor, hasValueConstructor, persistenceType, metamodelClass, attributeOrdinals, superTypeOrdinal, subTypeOrdinals, 0, declaredIdAttributeOrdinal, versionOrdinal, declaredVersionAttributeOrdinal, idClassAttributeOrdinals, singleIdAttributeOrdinal, versionAttributeOrdinal, idTypeOrdinal);
+         int ordinal,
+         Class<T> javaType,
+         Class<?> metamodelClass,
+         int superTypeOrdinal,
+         Collection<Integer> subTypeOrdinals,
+         Constructor<? extends HasValue<T>> hasValueConstructor,
+         Constructor<T> javaTypeConstructor,
+         Constructor<? extends Proxy<T>> proxyTypeConstructor,
+         Class<? extends Proxy<T>> proxyType,
+         Set<Integer> attributeOrdinals,
+         Collection<Integer> associationOrdinals,
+         Set<Integer> idClassAttributeOrdinals,
+         int idAttributeOrdinal, 
+         int idTypeOrdinal,
+         Integer declaredIdAttributeOrdinal,
+         Integer versionAttributeOrdinal,
+         Integer declaredVersionAttributeOrdinal,
+         BindableType bindableType,
+         Class<T> bindableJavaType,
+         String name){
+        super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor, proxyTypeConstructor, proxyType, attributeOrdinals, associationOrdinals, idClassAttributeOrdinals, idAttributeOrdinal, idTypeOrdinal, declaredIdAttributeOrdinal, versionAttributeOrdinal, declaredVersionAttributeOrdinal);
         this.bindableType = bindableType;
         this.bindableJavaType = bindableJavaType;
         this.name = name;
@@ -92,6 +84,27 @@ public class EntityTypeESImpl<T> extends IdentifiableTypeESImpl<T> implements En
     @Override
     public Class<T> getBindableJavaType() {
         return bindableJavaType;
+    }
+    
+    @Override
+    public PersistenceType getPersistenceType(){
+        return PersistenceType.ENTITY;
+    }
+
+    //TODO: implement abstract methods from IdentifiableTypeESImpl
+    @Override
+    public <R, A> R accept(TypeVisitor<R, A> v, A arg) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean hasSingleIdAttribute() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean hasVersionAttribute() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

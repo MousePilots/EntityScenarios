@@ -122,28 +122,27 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T> implements Mana
       * @param proxyType the {@link Proxy}-type for the {@code javaType}
       * @param proxyTypeConstructor the zero-arg constructor for the
       * {@code proxyType} if existent, otherwise {@code null}
-      * @param hasValueConstructor
-      * @param persistenceType the {@link PersistenceType} for this managed
-      * type.
+      * @param hasValueConstructor the value of hasValueConstructor
       * @param metamodelClass the JPa meta model class for this managed type.
       * @param attributeOrdinals the singular attributes that are part of this
       * managed type.
       * @param superTypeOrdinal the supertype of this managed type.
       * @param subTypeOrdinals a set of sub types for this managed type.
+     * @param associationOrdinals
       */
      public ManagedTypeESImpl(
           int ordinal,
           Class<T> javaType,
-          Constructor<T> javaTypeConstructor,
-          Class<? extends Proxy<T>> proxyType,
-          Constructor<? extends Proxy<T>> proxyTypeConstructor,
-          Constructor<? extends HasValue<T>> hasValueConstructor,
-          PersistenceType persistenceType,
           Class<?> metamodelClass,
-          Set<Integer> attributeOrdinals,
           int superTypeOrdinal,
-          Collection<Integer> subTypeOrdinals) {
-          super(ordinal, javaType, persistenceType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor);
+          Collection<Integer> subTypeOrdinals,
+          Constructor<? extends HasValue<T>> hasValueConstructor,
+          Constructor<T> javaTypeConstructor,
+          Constructor<? extends Proxy<T>> proxyTypeConstructor,
+          Class<? extends Proxy<T>> proxyType,
+          Set<Integer> attributeOrdinals,
+          Collection<Integer> associationOrdinals) {
+          super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor);
           this.javaTypeConstructor = javaTypeConstructor;
           this.proxyTypeConstructor = proxyTypeConstructor;
           this.proxyType = proxyType;
