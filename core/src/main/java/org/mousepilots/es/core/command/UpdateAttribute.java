@@ -12,9 +12,9 @@ import org.mousepilots.es.core.scenario.ServerContext;
 /**
  *
  * @author geenenju
- * @param <E>
- * @param <A>
- * @param <AD>
+ * @param <E> type of the entity/embeddable on which the attribute is defined
+ * @param <A> the attribute-javatype
+ * @param <AD> the attribute-type
  */
 public interface UpdateAttribute<E, A, AD extends AttributeES<? super E, A>> extends Serializable{
      

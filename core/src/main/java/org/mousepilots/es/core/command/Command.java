@@ -67,10 +67,10 @@ public interface Command<T,TD extends ManagedTypeES<T>> extends Serializable{
       * Accepts a {@link CommandVisitor}
       * @param <R>
       * @param <A>
-      * @param listener
+      * @param visitor
       * @param arg
-      * @return 
+      * @return {@code visitor.visit(this,arg)}
       */
-     <R,A> R accept(CommandVisitor<R,A> listener, A arg);
+     <R,A> R accept(CommandVisitor<R,A> visitor, A arg);
      
 }

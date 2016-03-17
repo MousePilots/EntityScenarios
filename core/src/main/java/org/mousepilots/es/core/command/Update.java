@@ -52,7 +52,8 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
 
      private SR reference;
      
-     private UpdateAttribute<E,A,AD> attributeUpdate;
+     private UpdateAttribute<E,A,AD> updateAttribute;
+     
 
      protected Update() {
      }
@@ -61,7 +62,7 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
           super(proxyAspect.getEntityManager(), (TD) proxyAspect.getType());
      }
 
-     protected Update(Proxy<E> proxy, AD attribute, Function<Proxy<E>, SR> referenceConstructor, UpdateAttribute<E,A,AD> attributeUpdate) {
+     protected Update(Proxy<E> proxy, AD attribute, Function<Proxy<E>, SR> referenceConstructor, UpdateAttribute<E,A,AD> updateAttribute) {
           this(proxy.__getProxyAspect());
           this.attributeOrdinal = attribute.getOrdinal();
           final ProxyAspect<E> proxyAspect = proxy.__getProxyAspect();
@@ -70,9 +71,10 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
           } else {
                reference = referenceConstructor.apply(proxy);
           }
-          this.attributeUpdate=attributeUpdate;
+          this.updateAttribute=updateAttribute;
      }
 
+     
      protected final boolean isSubjectCreated() {
           return createCommand != null;
      }
@@ -83,6 +85,10 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
 
      protected final SR getReference() {
           return reference;
+     }
+
+     public final UpdateAttribute<E, A, AD> getUpdateAttribute() {
+          return updateAttribute;
      }
 
      public final AD getAttribute() {
@@ -96,17 +102,17 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
 
      @Override
      protected final void doExecuteOnClient() {
-          this.attributeUpdate.executeOnClient(this);
+          this.updateAttribute.executeOnClient(this);
      }
 
      @Override
      protected final void doUndo() {
-          this.attributeUpdate.undo(this);
+          this.updateAttribute.undo(this);
      }
 
      @Override
      protected final void doRedo() {
-          this.attributeUpdate.redo(this);
+          this.updateAttribute.redo(this);
      }
      
      @Override
@@ -116,7 +122,7 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
           } else {
                super.setRealSubject(createCommand.getRealSubject());
           }
-          this.attributeUpdate.executeOnServer(this, serverContext);
+          this.updateAttribute.executeOnServer(this, serverContext);
      }
      
 
