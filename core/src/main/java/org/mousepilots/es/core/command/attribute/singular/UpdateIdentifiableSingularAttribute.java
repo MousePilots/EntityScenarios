@@ -7,7 +7,6 @@ package org.mousepilots.es.core.command.attribute.singular;
 
 import org.mousepilots.es.core.command.OwnedSetter;
 import org.mousepilots.es.core.command.Update;
-import org.mousepilots.es.core.command.attribute.singular.AbstractUpdateAttribute;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.IdentifiableTypeES;
 import org.mousepilots.es.core.model.SingularAttributeES;

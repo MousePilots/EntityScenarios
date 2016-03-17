@@ -7,7 +7,6 @@ package org.mousepilots.es.core.command.attribute.singular;
 
 import org.mousepilots.es.core.command.OwnedSetter;
 import org.mousepilots.es.core.command.Update;
-import org.mousepilots.es.core.command.attribute.singular.AbstractUpdateAttribute;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.MemberES;
 import org.mousepilots.es.core.model.SingularAttributeES;
@@ -32,11 +31,11 @@ final class UpdateBasicSingularAttribute<E, A> extends AbstractUpdateAttribute<E
           this.newValue = HasValue.wrapAttributeValue(attribute, newValue);
      }
      
-     private A getOldValue() {
+     public A getOldValue() {
           return HasValue.getValueNullSafe(oldValue);
      }
 
-     private A getNewValue() {
+     public A getNewValue() {
           return HasValue.getValueNullSafe(newValue);
      }
 
