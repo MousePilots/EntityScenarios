@@ -8,8 +8,8 @@ import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.MemberES;
 import org.mousepilots.es.core.model.SetAttributeES;
-import org.mousepilots.es.core.model.collections.Observable;
-import org.mousepilots.es.core.model.collections.ObservableSet;
+import org.mousepilots.es.core.model.proxy.collection.Observable;
+import org.mousepilots.es.core.model.proxy.collection.ObservableSet;
 
 /**
  * @author Nicky Ernste

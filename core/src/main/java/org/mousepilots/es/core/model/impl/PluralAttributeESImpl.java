@@ -69,7 +69,7 @@ public abstract class PluralAttributeESImpl<T, C, E> extends AttributeESImpl<T, 
     }
 
     @Override
-    public HasValue wrapForChange(C values) {
+    public HasValue wrap(C values) {
         //default implementation for java.util.Collection subclasses
         final HasValue retval = getHasValueChangeConstructor().invoke();
         final PersistentAttributeType persistentAttributeType = getPersistentAttributeType();

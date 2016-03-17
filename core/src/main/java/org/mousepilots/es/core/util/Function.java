@@ -8,8 +8,7 @@ package org.mousepilots.es.core.util;
 /**
  * @author geenenju
  */
-public interface Function<D, R>
-{
+public interface Function<D, R>{
 
    R apply(D arg);
 }

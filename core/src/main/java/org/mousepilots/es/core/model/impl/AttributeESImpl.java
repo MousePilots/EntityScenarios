@@ -111,7 +111,7 @@ public abstract class AttributeESImpl<X, Y> implements AttributeES<X, Y> {
     }
 
     @Override
-    public MemberES getJavaMember() {
+    public MemberES<X,Y> getJavaMember() {
         return javaMember;
     }
 

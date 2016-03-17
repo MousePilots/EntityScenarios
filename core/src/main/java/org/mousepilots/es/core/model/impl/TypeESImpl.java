@@ -13,7 +13,7 @@ import org.mousepilots.es.core.util.StringUtils;
 /**
  * @author Nicky Ernste
  * @version 1.0, 18-12-2015
- * @param <T> The type of the represented object or attribute
+ * @param <T> The type of the represented object or wrapAttribute
  */
 public abstract class TypeESImpl<T> implements TypeES<T> {
     /**

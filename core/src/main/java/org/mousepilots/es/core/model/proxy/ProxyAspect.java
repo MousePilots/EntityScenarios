@@ -6,85 +6,78 @@
 package org.mousepilots.es.core.model.proxy;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.concurrent.atomic.AtomicLong;
+import javax.persistence.metamodel.EmbeddableType;
 import javax.persistence.metamodel.Type;
-import org.mousepilots.es.core.change.CRUD;
-import org.mousepilots.es.core.change.impl.container.Container;
-import org.mousepilots.es.core.model.PluralAttributeES;
+import org.mousepilots.es.core.command.Command;
+import org.mousepilots.es.core.command.Create;
+import org.mousepilots.es.core.model.impl.container.Container;
+import org.mousepilots.es.core.model.impl.container.EmbeddableContainer;
+import org.mousepilots.es.core.model.ManagedTypeES;
+import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
 import org.mousepilots.es.core.model.impl.EntityManagerESImpl;
 import org.mousepilots.es.core.model.impl.ManagedTypeESImpl;
-import org.mousepilots.es.core.model.impl.PluralAttributeESImpl;
 
 /**
  *
  * @author jgeenen
  */
-public final class ProxyAspect implements Serializable {
-
-     private static final AtomicLong CREATION_ID_GENERATOR = new AtomicLong(0L);
-
-     private static final Set<CRUD> INITIAL_CLIENT_OPS = Collections.unmodifiableSet(EnumSet.of(CRUD.CREATE, CRUD.READ));
-
-     private Container container;
+public final class ProxyAspect<T> implements Serializable{
 
      private int typeOrdinal;
-
-     private Proxy proxy;
+     
+     private Container container;
 
      private transient EntityManagerESImpl entityManager;
 
-     private boolean managedMode;
+     private boolean managedMode=false;
 
-     private CRUD lastOperation;
+     private Create<T,? extends ManagedTypeES<T>> create;
+     
+     private Command<T,? extends ManagedTypeES<T>> delete;
 
-     private Long creationId;
+     protected ProxyAspect(){}
 
-     protected ProxyAspect() {
-     }
-
-     public ProxyAspect(int typeOrdinal, EntityManagerESImpl entityManager, boolean changeGenerationEnabled, CRUD obtainedBy) {
+     protected ProxyAspect(int typeOrdinal){
           this.typeOrdinal = typeOrdinal;
-          this.entityManager = entityManager;
-          this.managedMode = changeGenerationEnabled;
-          lastOperation = obtainedBy;
-          if (!INITIAL_CLIENT_OPS.contains(obtainedBy)) {
-               throw new IllegalArgumentException("a managed instance cannot be obtained by " + obtainedBy);
+     }
+     
+     public int getTypeOrdinal() {
+          return typeOrdinal;
+     }
+
+     public void setCreate(Create create) {
+          if(this.create==null || create==null){
+               this.create = create;
+          } else {
+               throw new IllegalStateException("create allready set");
           }
-          if (lastOperation == CRUD.CREATE) {
-               this.creationId = CREATION_ID_GENERATOR.getAndIncrement();
+     }
+     
+     public <C extends Create<T,? extends ManagedTypeES<T>>> C getCreate() {
+          return (C) create;
+     }
+
+     public void setDelete(Command<T,? extends ManagedTypeES<T>> delete) {
+          if(this.delete==null || delete==null){
+               this.delete = delete;
+          } else {
+               throw new IllegalStateException("delete allready set");
           }
      }
 
-     /**
-      *
-      * @return a client-unique technical id defined for creations only
-      */
-     public Long getCreationId() {
-          return creationId;
+     public Command getDelete() {
+          return delete;
+     }
+     
+     
+
+     public boolean isCreated() {
+          return create!=null;
      }
 
-     public boolean isCreatedOnClient() {
-          return creationId != null;
-     }
-
-     public ManagedTypeESImpl getType() {
+     public ManagedTypeESImpl<T> getType() {
           return (ManagedTypeESImpl) AbstractMetamodelES.getInstance().getType(typeOrdinal);
-     }
-
-     public Proxy getProxy() {
-          return proxy;
-     }
-
-     public <T> void setProxy(Proxy<T> proxy) {
-          final SortedSet<PluralAttributeESImpl> pluralAttributes = proxy.__getProxyAspect().getType().getPluralAttributes();
-          for (PluralAttributeES a : pluralAttributes) {
-
-          }
      }
 
      public Container getContainer() {
@@ -101,14 +94,6 @@ public final class ProxyAspect implements Serializable {
                     throw new IllegalStateException();
                }
           }
-     }
-
-     public CRUD getLastOperation() {
-          return lastOperation;
-     }
-
-     public void setLastOperation(CRUD lastOperation) {
-          this.lastOperation = lastOperation;
      }
 
      /**

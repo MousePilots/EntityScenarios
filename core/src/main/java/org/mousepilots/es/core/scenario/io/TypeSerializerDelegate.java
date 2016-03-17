@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.mousepilots.es.core.change.CRUD;
+import org.mousepilots.es.core.command.CRUD;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.BasicTypeES;
 import org.mousepilots.es.core.model.EmbeddableTypeES;

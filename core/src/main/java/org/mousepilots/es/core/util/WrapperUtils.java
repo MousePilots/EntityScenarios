@@ -21,22 +21,42 @@ public class WrapperUtils {
     private WrapperUtils() {
     }
 
-     public static <E> HasValue wrapId(IdentifiableTypeES<? super E> type, E instance) {
+     public static <E,ID> HasValue<ID> getWrappedId(IdentifiableTypeES<? super E> type, E instance) {
           if (instance == null) {
                return null;
           } else {
                final SingularAttributeES idAttribute = getIdAttribute(type);
                final Object idValue = idAttribute.getJavaMember().get(instance);
-               final TypeESImpl idType = (TypeESImpl) idAttribute.getType();
-               return idType.wrap(idValue);
+               return wrapValue(idAttribute, idValue);
           }
      }    
+     
+     public static <E,V> HasValue<V> getWrappedVersion(IdentifiableTypeES<? super E> type, E instance) {
+          if (instance == null || !type.hasVersionAttribute()) {
+               return null;
+          } else {
+               final SingularAttributeES versionAttribute = type.getVersion(null);
+               final Object version = versionAttribute.getJavaMember().get(instance);
+               return wrapValue(versionAttribute, version);
+          }
+     }    
+     
+
+     public static <T> HasValue<T> wrapValue(final SingularAttributeES<?,T> attribute, final T value) {
+          if(value==null){
+               return null;
+          } else {
+               final TypeESImpl<T> valueType = (TypeESImpl) attribute.getType();
+               return valueType.wrap(value);
+          }
+     }
+     
     /**
      * Wraps a collection of {@code values} into the {@code wrappers} collection
      *
      * @param <A>
      * @param <TC>
-     * @param attribute the {@code values}' attribute
+     * @param attribute the {@code values}' wrapAttribute
      * @param values list of values which need to be wrapped.
      * @param wrappers the collection to which the wrappers must be added
      * @return the wrappers
@@ -46,7 +66,7 @@ public class WrapperUtils {
     {
         if (values != null) {
             for(A value : values){
-                wrappers.add(attribute.wrapForChange(value));
+                wrappers.add(attribute.wrap(value));
             }
         }
         return wrappers;
@@ -57,7 +77,7 @@ public class WrapperUtils {
     {
         if (values != null) {
             for(A value : values){
-                wrappers.add(attribute.wrapForChange(value));
+                wrappers.add(attribute.wrap(value));
             }
         }
         return wrappers;
@@ -73,7 +93,7 @@ public class WrapperUtils {
      * @return
      */
     public static <A, TC extends Collection<A>> 
-    TC unWrap(Collection<HasValue> valueWrappers, TC values)
+    TC unWrap(Collection<HasValue<A>> valueWrappers, TC values)
     {
         if (valueWrappers != null) {
             for (HasValue<A> hv : valueWrappers) {

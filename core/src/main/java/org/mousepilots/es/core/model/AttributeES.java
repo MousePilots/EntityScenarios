@@ -2,7 +2,7 @@ package org.mousepilots.es.core.model;
 
 import java.util.Map;
 import javax.persistence.metamodel.Attribute;
-import org.mousepilots.es.core.change.Change;
+
 
 /**
  * Represents an attribute of a certain {@link TypeES}.
@@ -55,14 +55,14 @@ public interface AttributeES<X, Y> extends Attribute<X, Y>, Comparable<Attribute
     public Map<AssociationTypeES, AssociationES> getAssociations();
 
     /**
-     * Wraps the attribute-{@code value} in a serializable container for a {@link Change}.
+     * Wraps the attribute-{@code value} in a serializable container
      * @param value the value to wrap.
      * @return the wrapped {@code value}.
      */
-    public HasValue wrapForChange(Y value);
+    public HasValue wrap(Y value);
 
     @Override
-    public MemberES getJavaMember();
+    public MemberES<X,Y> getJavaMember();
 
     @Override
     public ManagedTypeES<X> getDeclaringType();

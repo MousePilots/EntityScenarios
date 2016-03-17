@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Roy Cleven
  * @version 1.0, 19-10-2015
  */
-public interface Generator<T extends Serializable>{
+public interface Generator<T>{
 
     /**
      * Generate a new key for the specified type.

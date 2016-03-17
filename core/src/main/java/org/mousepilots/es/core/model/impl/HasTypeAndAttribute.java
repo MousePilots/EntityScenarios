@@ -14,7 +14,7 @@ import org.mousepilots.es.core.model.TypeES;
  * @param <T>
  * @param <A>
  */
-public class HasTypeAndAttribute<T extends TypeES,A extends AttributeES> extends HasType<T>{
+public class HasTypeAndAttribute<T extends TypeES,A extends AttributeES> extends HasTypeImpl<T>{
     
     private int attributeOrdinal;
     

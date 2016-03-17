@@ -24,7 +24,7 @@ public interface SingularAttributeES<X, T> extends AttributeES<X, T>, BindableES
    /**
     * @return the {@link Generator} if {@link #isGenerated()}, otherwise {@code null}
     */
-    Generator getGenerator();
+    Generator<T> getGenerator();
 
     @Override
     TypeES<T> getType();

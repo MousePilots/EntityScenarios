@@ -4,15 +4,18 @@ import java.util.Objects;
 import org.mousepilots.es.core.model.MemberES;
 
 /**
+ * @author Jurjen van Geenen
  * @author Nicky Ernste
  * @version 1.0, 25-11-2015
+ * @param <X>
+ * @param <Y>
  */
-public class PropertyMember implements MemberES {
+public class PropertyMember<X,Y> implements MemberES<X,Y> {
 
     private final Class<?> declaringClass;
     private final String name;
-    private final Getter getter;
-    private final Setter setter;
+    private final Getter<X,Y> getter;
+    private final Setter<X,Y> setter;
     private final int modifiers;
 
     /**
@@ -23,8 +26,7 @@ public class PropertyMember implements MemberES {
      * @param setter the setter for this member.
      * @param modifiers the modifiers for this member.
      */
-    public PropertyMember(Class<?> declaringClass, String name, Getter getter,
-            Setter setter, int modifiers) {
+    public PropertyMember(Class<?> declaringClass, String name, Getter<X,Y> getter, Setter<X,Y> setter, int modifiers) {
         this.declaringClass = declaringClass;
         this.name = name;
         this.getter = getter;
@@ -33,12 +35,12 @@ public class PropertyMember implements MemberES {
     }
 
     @Override
-    public <T> T get(Object instance) {
-        return (T) getter.invoke(instance);
+    public Y get(X instance) {
+        return getter.invoke(instance);
     }
 
     @Override
-    public void set(Object instance, Object value) {
+    public void set(X instance, Y value) {
         setter.invoke(instance, value);
     }
 
@@ -59,7 +61,7 @@ public class PropertyMember implements MemberES {
 
     @Override
     public boolean isSynthetic() {
-        //Might have to get this from the constructor, if synthetic members exist.
+        //TODO Might have to get this from the constructor, if synthetic members exist.
         return false;
     }
 

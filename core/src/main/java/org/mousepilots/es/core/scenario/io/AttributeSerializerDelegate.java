@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.mousepilots.es.core.change.CRUD;
+import org.mousepilots.es.core.command.CRUD;
 import org.mousepilots.es.core.model.AssociationES;
 import org.mousepilots.es.core.model.AssociationTypeES;
 import org.mousepilots.es.core.model.AttributeES;

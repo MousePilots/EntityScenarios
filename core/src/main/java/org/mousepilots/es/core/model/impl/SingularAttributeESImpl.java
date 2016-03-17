@@ -14,8 +14,8 @@ import org.mousepilots.es.core.model.TypeES;
 /**
  * @author Nicky Ernste
  * @version 1.0, 18-12-2015
- * @param <X> The type containing the represented attribute
- * @param <Y> The type of the represented attribute
+ * @param <X> The type containing the represented wrapAttribute
+ * @param <Y> The type of the represented wrapAttribute
  */
 public class SingularAttributeESImpl<X, Y> extends AttributeESImpl<X, Y> implements SingularAttributeES<X, Y> {
 
@@ -131,7 +131,7 @@ public class SingularAttributeESImpl<X, Y> extends AttributeESImpl<X, Y> impleme
     }
 
     @Override
-    public HasValue wrapForChange(Y value) {
+    public HasValue wrap(Y value) {
         final HasValue hv = this.getHasValueChangeConstructor().invoke();
         setSingularValueForChange(hv, getType(), value);
         return hv;

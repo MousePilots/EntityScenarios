@@ -8,21 +8,19 @@ package org.mousepilots.es.core.model.proxy;
 import java.io.Serializable;
 
 /**
- * A proxy 
+ * Represents a Proxy for a remote managed instance. 
  * @author jgeenen
- * @param <T> 
+ * @param <T> the type of the proxied subject
  */
 public interface Proxy<T> extends Serializable{
-    
-    
     
     /**
      * @return {@code this}' {@link ProxyAspect} which is never {@code null}
      */
-    public ProxyAspect __getProxyAspect();
+    public ProxyAspect<T> __getProxyAspect();
     
     /**
-     * @return {@code this} {@link Proxy} subject: the 
+     * @return a typecast of {@code this} to {@code T}
      */
     default T __subject(){
         return (T) this;

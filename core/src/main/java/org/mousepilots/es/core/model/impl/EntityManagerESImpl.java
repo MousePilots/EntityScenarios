@@ -5,13 +5,11 @@
  */
 package org.mousepilots.es.core.model.impl;
 
-import org.mousepilots.es.core.model.proxy.ProxyAspect;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import javax.persistence.FlushModeType;
 import javax.persistence.LockModeType;
 import javax.persistence.Query;
@@ -21,62 +19,70 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
-import org.mousepilots.es.core.change.Change;
-import org.mousepilots.es.core.change.impl.Create;
+import org.mousepilots.es.core.command.ClientState;
+import org.mousepilots.es.core.command.Command;
+import org.mousepilots.es.core.command.ClientStateTransitionListener;
+import org.mousepilots.es.core.command.CreateEmbeddable;
+import org.mousepilots.es.core.command.CreateEntity;
+import org.mousepilots.es.core.model.EmbeddableTypeES;
 import org.mousepilots.es.core.model.EntityTypeES;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.util.Maps;
 import org.mousepilots.es.core.model.EntityManager;
-import org.mousepilots.es.core.model.Generator;
-import org.mousepilots.es.core.model.IdentifiableTypeES;
-import org.mousepilots.es.core.model.proxy.Proxy;
-import org.mousepilots.es.core.util.IdentifiableTypeUtils;
 import org.mousepilots.es.core.model.MetamodelES;
+import org.mousepilots.es.core.model.proxy.Proxy;
 
 /**
  *
  * @author jgeenen
  */
-public class EntityManagerESImpl implements EntityManager {
+public class EntityManagerESImpl implements EntityManager,ClientStateTransitionListener {
 
      private final MetamodelES metaModel;
 
      private final Map<Class, Map<Object, Object>> entityClass2id2entity = new HashMap<>();
+     
+     private final EntityTransactionEsImpl entityTransaction = new EntityTransactionEsImpl();
 
      protected EntityManagerESImpl(MetamodelES metaModel) {
           this.metaModel = metaModel;
      }
+     
+     private <T,ID> void registerEntity(Proxy<T> proxy,ID id){
+          final Map<Object, Object> id2entity = Maps.getOrCreate(
+               entityClass2id2entity, 
+               proxy.__getProxyAspect().getType().getJavaType(),
+               HashMap::new);
+          id2entity.put(id, proxy);
+     }
+     
+     
+     
+     @Override
+     public final <E,ID> E create(EntityTypeES<E> type, ID id){
+          final CreateEntity<E,ID> createEntity = new CreateEntity<>(this,type,id);
+          createEntity.executeOnClient();
+          final Proxy<E> proxy = createEntity.getProxy();
+          registerEntity(proxy, id);
+          return proxy.__subject();
+     }
 
      @Override
-     public final <E> E create(ManagedTypeES<E> type, Object id) {
-          final Proxy<E> proxy = type.createProxy();
-          final ProxyAspect proxyAspect = proxy.__getProxyAspect();
-          proxyAspect.setEntityManager(this);
-          if (type instanceof IdentifiableTypeES) {
-               final IdentifiableTypeES identifiableType = (IdentifiableTypeES) type;
-               final SingularAttributeES idAttribute = IdentifiableTypeUtils.getIdAttribute(identifiableType);
-               idAttribute.getJavaMember().set(proxy, idAttribute.isGenerated());
-               final Object actualId;
-               if (idAttribute.isGenerated()) {
-                    final Generator generator = idAttribute.getGenerator();
-                    actualId = generator.generate();
-                    idAttribute.getJavaMember().set(proxy, actualId);
-               } else {
-                    if (id == null) {
-                         throw new IllegalArgumentException("id must not be null for " + type);
-                    } else {
-                         actualId = id;
-                    }
-               }
-               idAttribute.getJavaMember().set(proxy, actualId);
-               if (proxyAspect.isManagedMode()) {
-                    //todo verhuizen naar Impl
-                    Change change = new Create(idAttribute.wrapForChange(id), identifiableType);
-               }
-          }
-          return (E) proxy;
+     public <E> E create(EntityTypeES<E> type) {
+          return create(type, null);
      }
+     
+     
+
+     @Override
+     public <E> E create(EmbeddableTypeES<E> type) {
+          final CreateEmbeddable<E> createEmbeddable = new CreateEmbeddable(this,type);
+          createEmbeddable.executeOnClient();
+          return createEmbeddable.getProxy().__subject();
+     }
+     
+     
 
      @Override
      public void persist(Object entity) {
@@ -89,8 +95,13 @@ public class EntityManagerESImpl implements EntityManager {
      }
 
      @Override
-     public void remove(Object entity) {
-          throw new UnsupportedOperationException("Not supported yet.");
+     public void remove(Object entity){
+          String error = null;
+          if(entity instanceof Proxy){
+               Proxy proxy = (Proxy) entity;
+          } else {
+               throw new IllegalArgumentException(entity + " is no proxy managed by " + this);
+          }
      }
 
      @Override
@@ -308,8 +319,8 @@ public class EntityManagerESImpl implements EntityManager {
      }
 
      @Override
-     public EntityTransaction getTransaction() {
-          throw new UnsupportedOperationException("Not supported yet.");
+     public EntityTransactionEsImpl getTransaction() {
+          return entityTransaction;
      }
 
      @Override
@@ -347,4 +358,17 @@ public class EntityManagerESImpl implements EntityManager {
           throw new UnsupportedOperationException("Not supported yet.");
      }
 
+     @Override
+     public void beforeStateChange(Command command, ClientState nextState) {
+          //TODO
+          throw new UnsupportedOperationException("Not supported yet.");
+     }
+
+     @Override
+     public void afterStateChange(Command command, ClientState previousState) {
+          //TODO
+          throw new UnsupportedOperationException("Not supported yet.");
+     }
+     
+     
 }

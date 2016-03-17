@@ -2,7 +2,7 @@ package org.mousepilots.es.core.model.impl;
 
 import java.util.Collection;
 import java.util.Set;
-import org.mousepilots.es.core.change.impl.container.EmbeddableContainer;
+import org.mousepilots.es.core.model.impl.container.EmbeddableContainer;
 import org.mousepilots.es.core.model.EmbeddableTypeES;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.MemberES;

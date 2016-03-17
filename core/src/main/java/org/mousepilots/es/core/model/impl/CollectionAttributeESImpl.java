@@ -7,7 +7,7 @@ import org.mousepilots.es.core.model.CollectionAttributeES;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.MemberES;
-import org.mousepilots.es.core.model.collections.ObservableCollection;
+import org.mousepilots.es.core.model.proxy.collection.ObservableCollection;
 
 /**
  * @author Nicky Ernste

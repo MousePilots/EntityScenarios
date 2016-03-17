@@ -8,7 +8,7 @@ package org.mousepilots.es.core.scenario.io;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.metamodel.ManagedType;
-import org.mousepilots.es.core.change.CRUD;
+import org.mousepilots.es.core.command.CRUD;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.scenario.ScenarioGraph;

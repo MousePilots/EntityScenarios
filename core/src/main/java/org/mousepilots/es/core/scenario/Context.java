@@ -6,15 +6,20 @@
 package org.mousepilots.es.core.scenario;
 
 import java.util.Collection;
+import javax.persistence.EntityManager;
+
 
 /**
  *
  * @author jgeenen
+ * @param <E>
  */
-public interface Context {
-    
-    String getUserName();
-    
-    Collection<String> getRoles();
-    
+public interface Context<E extends EntityManager> {
+
+     String getUserName();
+
+     Collection<String> getRoles();
+
+     E getEntityManager();
+
 }
