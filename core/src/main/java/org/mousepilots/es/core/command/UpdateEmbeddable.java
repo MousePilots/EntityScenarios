@@ -24,7 +24,7 @@ public final class UpdateEmbeddable<E,A,AD extends AttributeES<?super E,A>> exte
           super(); 
      }
 
-     public UpdateEmbeddable(Proxy<E> proxy, AD attribute, UpdateAttribute<E,A,AD> attributeUpdate) {
+     public UpdateEmbeddable(Proxy<E> proxy, AD attribute, UpdateAttribute<E,A,AD,?> attributeUpdate) {
           super(proxy, attribute,EmbeddableReference::new,attributeUpdate);
      }
 

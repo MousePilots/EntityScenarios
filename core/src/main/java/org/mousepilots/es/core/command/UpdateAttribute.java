@@ -16,14 +16,31 @@ import org.mousepilots.es.core.scenario.ServerContext;
  * @param <A> the attribute-javatype
  * @param <AD> the attribute-type
  */
-public interface UpdateAttribute<E, A, AD extends AttributeES<? super E, A>> extends Serializable{
+public interface UpdateAttribute<E, A, AD extends AttributeES<? super E, A>,MS> extends Serializable{
      
      void executeOnClient(Update<E,?,A,AD,?> update);
      
      void undo(Update<E,?,A,AD,?> update);
      
-     void redo(Update<E,?,A,AD,?> update);
+     
+    default A getAttributeValueOnClient(Update<E, ?, A, AD, ?> update) {
+        return update.getAttribute().getJavaMember().get(update.getProxy().__subject());
+    }
+
+    default A getAttributeValueOnServer(Update<E, ?, A, AD, ?> update) {
+        return update.getAttribute().getJavaMember().get(update.getRealSubject());
+    }
+     
+     
+     default void redo(Update<E,?,A,AD,?> update){
+          executeOnClient(update);
+     }
+     
+     MS getModificationOnServer(ServerContext serverContext);
      
      void executeOnServer(Update<E,?,A,AD,?> update, ServerContext serverContext);
+     
+     
+     <R,A> R accept(UpdateAttributeVisitor<R,A> visitor, A arg);
      
 }

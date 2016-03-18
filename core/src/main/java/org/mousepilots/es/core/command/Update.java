@@ -52,7 +52,7 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
 
      private SR reference;
      
-     private UpdateAttribute<E,A,AD> updateAttribute;
+     private UpdateAttribute<E,A,AD,?> updateAttribute;
      
 
      protected Update() {
@@ -62,7 +62,7 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
           super(proxyAspect.getEntityManager(), (TD) proxyAspect.getType());
      }
 
-     protected Update(Proxy<E> proxy, AD attribute, Function<Proxy<E>, SR> referenceConstructor, UpdateAttribute<E,A,AD> updateAttribute) {
+     protected Update(Proxy<E> proxy, AD attribute, Function<Proxy<E>, SR> referenceConstructor, UpdateAttribute<E,A,AD,?> updateAttribute) {
           this(proxy.__getProxyAspect());
           this.attributeOrdinal = attribute.getOrdinal();
           final ProxyAspect<E> proxyAspect = proxy.__getProxyAspect();
@@ -87,7 +87,7 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
           return reference;
      }
 
-     public final UpdateAttribute<E, A, AD> getUpdateAttribute() {
+     public final UpdateAttribute<E, A, AD,?> getUpdateAttribute() {
           return updateAttribute;
      }
 

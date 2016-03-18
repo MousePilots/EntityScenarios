@@ -38,7 +38,7 @@ public final class NewManagedValue<E,TD extends ManagedTypeES<E>> extends Value<
           encodedServerValue = proxyAspect.getCreate();
      }
      
-     public NewManagedValue(Proxy<E> proxy) {
+     NewManagedValue(Proxy<E> proxy) {
           this(proxy,proxy.__getProxyAspect());
      }
      

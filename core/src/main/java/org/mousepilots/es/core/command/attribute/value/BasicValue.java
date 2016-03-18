@@ -20,7 +20,7 @@ public class BasicValue<T> extends Value<T,T,HasValue<T>, BasicTypeESImpl<T>> {
      
      private BasicValue(){}
 
-     protected BasicValue(BasicTypeESImpl<T> type, T value) {
+     BasicValue(BasicTypeESImpl<T> type, T value) {
           super(type.getOrdinal(), value);
           encodedServerValue = type.wrap(value);
      }

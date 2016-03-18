@@ -24,7 +24,7 @@ public final class UpdateEntity<E, ID, V, A, AD extends AttributeES<? super E, A
 
      private UpdateEntity(){}
 
-     public UpdateEntity(Proxy<E> proxy, AD attribute,UpdateAttribute<E,A,AD> attributeUpdate){
+     public UpdateEntity(Proxy<E> proxy, AD attribute,UpdateAttribute<E,A,AD,?> attributeUpdate){
           super(proxy, attribute,IdentifiableReference::new,attributeUpdate);
      }
 

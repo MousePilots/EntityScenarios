@@ -6,7 +6,6 @@
 package org.mousepilots.es.core.command;
 
 import org.mousepilots.es.core.model.impl.container.Container;
-import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.model.EmbeddableTypeES;
 
 /**

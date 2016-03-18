@@ -32,7 +32,7 @@ public final class ExistingEmbeddableValue<E> extends Value<Proxy<E>,E,HasValue<
           return encodedServerValue;
      }
      
-     public ExistingEmbeddableValue(Proxy<E> proxy){
+     ExistingEmbeddableValue(Proxy<E> proxy){
           this((EmbeddableTypeESImpl<E>) proxy.__getProxyAspect().getType(), proxy);
      }
 

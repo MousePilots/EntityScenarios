@@ -27,7 +27,7 @@ public final class ExistingEntityValue<E,ID> extends Value<Proxy<E>,E,HasValue<I
           wrappedId = WrapperUtils.getWrappedId(type, entity.__subject());
      }
      
-     public ExistingEntityValue(Proxy<E> entity){
+     ExistingEntityValue(Proxy<E> entity){
           this((EntityTypeESImpl<E>)entity.__getProxyAspect().getType(),entity);
      }
 
