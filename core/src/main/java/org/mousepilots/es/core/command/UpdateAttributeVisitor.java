@@ -15,6 +15,8 @@ import org.mousepilots.es.core.model.PluralAttributeES;
 /**
  *
  * @author geenenju
+ * @param <O>
+ * @param <I>
  */
 public interface UpdateAttributeVisitor<O,I> {
     
