@@ -8,6 +8,7 @@ package org.mousepilots.es.core.model.impl.ref;
 import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.model.impl.HasTypeImpl;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  * A serializable reference to a managed instance
@@ -33,6 +34,7 @@ public abstract class SerializableReference<T,TD extends TypeES<T>> extends HasT
       * @param serverContext
       * @return the managed reference
       */
+     @GwtIncompatible
      public abstract T resolve(ServerContext serverContext);
      
 }

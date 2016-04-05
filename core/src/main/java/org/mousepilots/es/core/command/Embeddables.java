@@ -18,10 +18,10 @@ import org.mousepilots.es.core.model.proxy.ProxyAspect;
  */
 public class Embeddables {
 
-    private static final String MOVED_EMBEDDABLE_EXCEPTION_MESSAGE = "1%2s is no newly created embeddable";
+    private static final String MOVED_EMBEDDABLE_EXCEPTION_MESSAGE = " is no newly created embeddable";
 
     private static void doThrowNotNew(Proxy proxy) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException(String.format(MOVED_EMBEDDABLE_EXCEPTION_MESSAGE, proxy));
+        throw new UnsupportedOperationException(proxy + MOVED_EMBEDDABLE_EXCEPTION_MESSAGE);
     }
 
     public static void assertIfEmbeddableThenCreated(Proxy proxy) throws UnsupportedOperationException {

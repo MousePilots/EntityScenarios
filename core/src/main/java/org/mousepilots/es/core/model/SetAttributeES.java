@@ -16,6 +16,12 @@ import javax.persistence.metamodel.SetAttribute;
  * @see SetAttribute
  */
 public interface SetAttributeES<X, E> extends PluralAttributeES<X, java.util.Set<E>, E>, SetAttribute<X, E>{
+
+    @Override
+    public default CollectionType getCollectionType() {
+        return CollectionType.SET;
+    }
+    
     @Override
     public default <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
         return visitor.visit(this, arg);

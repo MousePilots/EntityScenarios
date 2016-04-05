@@ -6,11 +6,11 @@ import java.util.Objects;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.AttributeVisitor;
 import org.mousepilots.es.core.model.CollectionAttributeES;
-import org.mousepilots.es.core.model.EntityManager;
 import org.mousepilots.es.core.model.ListAttributeES;
 import org.mousepilots.es.core.model.MapAttributeES;
 import org.mousepilots.es.core.model.SetAttributeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
+import org.mousepilots.es.core.model.EntityManagerES;
 
 /**
  * Locates the managed equivalent of a detached embeddable in the server-side {@link EntityManager}.

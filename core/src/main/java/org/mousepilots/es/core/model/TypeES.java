@@ -16,10 +16,7 @@ import javax.persistence.MappedSuperclass;
  */
 public interface TypeES<T> extends Type<T>, Comparable<TypeES>, HasOrdinal{
 
-    /**
-    * @return the original JPA static meta-model class for the represented class
-    */
-    Class<?> getMetamodelClass();
+
 
     /**
      * Gets the type for {@code this.getJavaType().getSuperclass()} if existent, otherwise {@code null}
@@ -40,6 +37,8 @@ public interface TypeES<T> extends Type<T>, Comparable<TypeES>, HasOrdinal{
      */
     SortedSet<TypeES<? extends T>> getSubTypes();
     
+    HasValue<T> wrap(T value);
+    
     /**
      * Accepts a {@link TypeVisitor}.
      * @param <R> {@code v}'s return type
@@ -49,5 +48,7 @@ public interface TypeES<T> extends Type<T>, Comparable<TypeES>, HasOrdinal{
      * @return the value returned by {@code v.visit(this,arg)}.
      */
     <R,A> R accept(TypeVisitor<R,A> v, A arg);
+    
+    
     
 }

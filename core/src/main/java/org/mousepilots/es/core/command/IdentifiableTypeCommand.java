@@ -5,12 +5,11 @@
  */
 package org.mousepilots.es.core.command;
 
-import org.mousepilots.es.core.command.Command;
-import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.model.IdentifiableTypeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
+import org.mousepilots.es.core.model.impl.IdentifiableTypeESImpl;
 import org.mousepilots.es.core.scenario.ServerContext;
-import org.mousepilots.es.core.util.IdentifiableTypeUtils;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  *
@@ -25,7 +24,8 @@ public interface IdentifiableTypeCommand<T,ID,TD extends IdentifiableTypeES<T>> 
       * @return {@code this}' id-attribute
       */
      default SingularAttributeES<? super T, ID> getIdAttribute(){
-          return (SingularAttributeES) IdentifiableTypeUtils.getIdAttribute(getType());
+         final IdentifiableTypeESImpl type = (IdentifiableTypeESImpl) getType();
+          return (type).getId();
      }
      
      /**
@@ -38,7 +38,7 @@ public interface IdentifiableTypeCommand<T,ID,TD extends IdentifiableTypeES<T>> 
       * @param serverContext
       * @return 
       */
-     @Override
+     @Override @GwtIncompatible
      default T resolveSubject(ServerContext serverContext){
           return serverContext.find(getType(), getId());
      }

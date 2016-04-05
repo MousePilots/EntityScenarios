@@ -13,6 +13,7 @@ import org.mousepilots.es.core.command.attribute.value.ValueFactory;
 import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  *
@@ -40,12 +41,12 @@ public final class UpdateSingularAttribute<E,A> implements UpdateAttribute<E, A,
         update.getAttribute().getJavaMember().set(update.getProxy().__subject(), oldValue);
     }
 
-    @Override
+    @Override @GwtIncompatible
     public A getModificationOnServer(ServerContext serverContext) {
         return serializableValue.getServerValue(serverContext);
     }
     
-    @Override
+    @Override @GwtIncompatible
     public void executeOnServer(Update<E, ?, A, SingularAttributeES<? super E, A>, ?> update, ServerContext serverContext) {
         final E realSubject = update.getRealSubject();
         final A serverValue = serializableValue==null ? null : serializableValue.getServerValue(serverContext);

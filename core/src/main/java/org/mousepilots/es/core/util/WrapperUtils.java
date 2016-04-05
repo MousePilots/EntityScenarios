@@ -27,7 +27,7 @@ public class WrapperUtils {
           } else {
                final SingularAttributeES idAttribute = getIdAttribute(type);
                final Object idValue = idAttribute.getJavaMember().get(instance);
-               return wrapValue(idAttribute, idValue);
+               return (HasValue<ID>) wrapValue(idAttribute, idValue);
           }
      }    
      
@@ -37,7 +37,7 @@ public class WrapperUtils {
           } else {
                final SingularAttributeES versionAttribute = type.getVersion(null);
                final Object version = versionAttribute.getJavaMember().get(instance);
-               return wrapValue(versionAttribute, version);
+               return (HasValue<V>) wrapValue(versionAttribute, version);
           }
      }    
      
@@ -51,55 +51,9 @@ public class WrapperUtils {
           }
      }
      
-    /**
-     * Wraps a collection of {@code values} into the {@code wrappers} collection
-     *
-     * @param <A>
-     * @param <TC>
-     * @param attribute the {@code values}' wrapAttribute
-     * @param values list of values which need to be wrapped.
-     * @param wrappers the collection to which the wrappers must be added
-     * @return the wrappers
-     */
-    public static <A extends Serializable, TC extends Collection<HasValue>> 
-    TC wrapForDto(AttributeES attribute, Collection<A> values, TC wrappers)
-    {
-        if (values != null) {
-            for(A value : values){
-                wrappers.add(attribute.wrap(value));
-            }
-        }
-        return wrappers;
-    }
 
-    public static <A extends Serializable, TC extends Collection<HasValue>> 
-    TC wrapForChange(AttributeES attribute, Collection<A> values, TC wrappers) 
-    {
-        if (values != null) {
-            for(A value : values){
-                wrappers.add(attribute.wrap(value));
-            }
-        }
-        return wrappers;
-    }
 
-    /**
-     * Unwraps a collection of {@code valueWrappers}
-     *
-     * @param <A>
-     * @param <TC>
-     * @param valueWrappers
-     * @param values
-     * @return
-     */
-    public static <A, TC extends Collection<A>> 
-    TC unWrap(Collection<HasValue<A>> valueWrappers, TC values)
-    {
-        if (valueWrappers != null) {
-            for (HasValue<A> hv : valueWrappers) {
-                values.add(hv.getValue());
-            }
-        }
-        return values;
-    }
+
+
+
 }

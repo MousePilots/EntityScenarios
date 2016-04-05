@@ -13,7 +13,21 @@ public interface MetamodelES extends Metamodel{
     @Override
     <X> EntityTypeES<X> entity(Class<X> cls);
     
-    
+    /**
+     * Gets the {@code instance}'s {@link TypeES}
+     * @param <X>
+     * @param instance
+     * @return 
+     * @throws NullPointerException if {@code instance==null}
+     */
+    default <X> TypeES<X> typeByInstance(X instance) throws NullPointerException{
+        if(instance==null){
+            throw new NullPointerException("instance must not be null");
+        } else {
+            final Class<X> instanceClass = (Class<X>) instance.getClass();
+            return type(instanceClass);
+        }
+    }
     
     <X> TypeES<X> type(Class<X> cls);
 

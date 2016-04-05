@@ -13,6 +13,10 @@ import javax.persistence.metamodel.ManagedType;
  */
 public interface ManagedTypeES<T> extends TypeES<T>, ManagedType<T> {
     
+    /**
+    * @return the original JPA static meta-model class for the represented class
+    */
+    Class<?> getMetamodelClass();    
     
     Class<? extends Proxy<T>> getProxyJavaType();
 

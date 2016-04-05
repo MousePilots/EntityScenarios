@@ -13,28 +13,13 @@ import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
  *
  * @author jgeenen
  */
-public interface EntityManagerFactory extends javax.persistence.EntityManagerFactory{
+public interface EntityManagerFactory{
 
-    @Override
-    public default void close() {
     
-    }
+    EntityManagerES createEntityManager();
 
-    @Override
-    public default EntityManager createEntityManager() {
-        throw new UnsupportedOperationException("TODO");
-        //return new EntityManagerESImpl(getMetamodel());
-    }
-
-    @Override
     public default MetamodelES getMetamodel() {
         return AbstractMetamodelES.getInstance();
     }
-    
-    
-    
-    
-    
-    
     
 }

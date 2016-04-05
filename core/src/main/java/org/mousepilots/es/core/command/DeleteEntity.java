@@ -6,35 +6,31 @@
 package org.mousepilots.es.core.command;
 
 import javax.persistence.EntityManager;
-import org.mousepilots.es.core.command.IdentifiableTypeCommand;
 import org.mousepilots.es.core.model.EntityTypeES;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.proxy.Proxy;
-import org.mousepilots.es.core.model.proxy.ProxyAspect;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 import org.mousepilots.es.core.util.WrapperUtils;
 
 /**
  *
  * @author geenenju
- * @param <T>
+ * @param <E>
  * @param <ID>
  */
-public final class DeleteEntity<T,ID> extends AbstractCommand<T, EntityTypeES<T>> implements IdentifiableTypeCommand<T, ID, EntityTypeES<T>>{
+public final class DeleteEntity<E,ID> extends Delete<E, EntityTypeES<E>> implements IdentifiableTypeCommand<E, ID, EntityTypeES<E>>{
 
      private HasValue<ID> id;
      
-     private transient Proxy<T> deleted;
-     
-     public DeleteEntity(EntityTypeES<T> type, Proxy<T> proxy) {
-          super(null, type);
-          this.id = WrapperUtils.getWrappedId(type, proxy.__subject());
-          setProxy(proxy);
+     private DeleteEntity(){
+         super();
      }
-
-     @Override
-     public CRUD getOperation() {
-          return CRUD.DELETE;
+     
+     public DeleteEntity(Proxy<E> proxy) {
+          super(proxy);
+          this.id = WrapperUtils.getWrappedId(getType(), proxy.__subject());
+          setProxy(proxy);
      }
 
      @Override
@@ -42,33 +38,11 @@ public final class DeleteEntity<T,ID> extends AbstractCommand<T, EntityTypeES<T>
           return id.getValue();
      }
 
-     @Override
-     protected void doExecuteOnClient(){
-          deleted = getProxy();
-          final ProxyAspect aspect = deleted.__getProxyAspect();
-          aspect.setEntityManager(null);
-          aspect.setDelete(this);
-     }
-
-     @Override
-     protected void doUndo() {
-          final ProxyAspect aspect = deleted.__getProxyAspect();
-          aspect.setDelete(null);
-          aspect.setEntityManager(getClientEntityManager());
-          setProxy(deleted);
-     }
-
-     @Override
-     protected void doRedo() {
-          doExecuteOnClient();
-     }
-
-     @Override
+     @Override @GwtIncompatible
      public void executeOnServer(ServerContext serverContext) {
           final EntityManager entityManager = serverContext.getEntityManager();
-          final Class<T> javaType = getType().getJavaType();
-          final ID id = getId();
-          final T subject = entityManager.find(javaType, id);
+          final Class<E> javaType = getType().getJavaType();
+          final E subject = entityManager.find(javaType, getId());
           setRealSubject(subject);
           entityManager.remove(subject);
           serverContext.onExecuteOnServer(this);

@@ -1,38 +1,148 @@
 package org.mousepilots.es.maven.model.generator.model.type;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.persistence.metamodel.Type.PersistenceType;
+import org.mousepilots.es.core.model.HasValue;
+import org.mousepilots.es.core.model.TypeES;
+import org.mousepilots.es.core.model.impl.TypeESImpl;
+import org.mousepilots.es.core.model.impl.hv.HasCollection;
+import org.mousepilots.es.core.model.impl.hv.HasList;
+import org.mousepilots.es.core.model.impl.hv.HasMap;
+import org.mousepilots.es.core.model.impl.hv.HasSet;
+import org.mousepilots.es.core.util.Maps;
 import org.mousepilots.es.maven.model.generator.model.Descriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescriptor;
-import org.mousepilots.es.maven.model.generator.plugin.ReflectionUtils;
 
 /**
  * Descriptor of the {@link javax.persistence.metamodel.Type} of JPA.
  * @author Nicky Ernste
  * @version 1.0, 14-12-2015
  */
-public class TypeDescriptor extends Descriptor<PersistenceType> {
+public abstract class TypeDescriptor extends Descriptor<PersistenceType> {
+
+    private static final Map<Class<? extends Object>, Class<? extends HasValue>> PRECONFIGURED_TYPE_TO_HASVALUE_TYPE = Maps.create(
+        Arrays.asList(Collection.class,     List.class,     Set.class,      Map.class),
+        Arrays.asList(HasCollection.class,  HasList.class,  HasSet.class,   HasMap.class)
+    );
 
     private static final Set<TypeDescriptor> INSTANCES = new TreeSet<>();
-    private final Class<?> metaModelClass;
     private Collection<TypeDescriptor> subTypes;
+    private HasValueDescriptor hasValueDescriptor;
+    
+    
+    private final Class<? extends HasValue> getPreconfiguredHasValueClass(){
+        final Class javaType = getJavaType();
+        final Set<Entry<Class<? extends Object>, Class<? extends HasValue>>> entrySet = PRECONFIGURED_TYPE_TO_HASVALUE_TYPE.entrySet();
+        //try and exact match
+        for(Entry<Class<? extends Object>, Class<? extends HasValue>> entry : entrySet){
+            final Class<? extends Object> preconfiguredType = entry.getKey();
+            if(preconfiguredType==javaType){
+                return entry.getValue();
+            }
+        }
+        //try supertype match
+        for(Entry<Class<? extends Object>, Class<? extends HasValue>> entry : entrySet){
+            final Class<? extends Object> preconfiguredType = entry.getKey();
+            if(preconfiguredType.isAssignableFrom(javaType)){
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+    
+    public final boolean requiredHasValueClassGeneration(){
+        return getPreconfiguredHasValueClass()==null && getSuper()==null;
+    }
+    
+    protected String getHasValueConstructorReference(){
+        final Class<? extends HasValue> preconfiguredHasValueClass = getPreconfiguredHasValueClass();
+        if(preconfiguredHasValueClass==null){
+            final TypeDescriptor superTypeDescriptor = getSuper();
+            if(superTypeDescriptor==null){
+                return getHasValueDescriptor().getHasValueImplClassCanonicalName() + "::new";
+            } else {
+                return superTypeDescriptor.getHasValueConstructorReference();
+            }
+        } else {
+            return preconfiguredHasValueClass.getCanonicalName() + "::new";
+        }
+        
+    }
+    
+    
+    
+    
+
+    @Override
+    protected Map<String, String> getConstructorParameterToValue() {
+        final Map<String,String> cp2v = new HashMap<>();
+        cp2v.put("ordinal", getOrdinal().toString());
+        cp2v.put("javaType", getJavaTypeCanonicalName()+ ".class");
+        cp2v.put("superTypeOrdinal", getSuperTypeOrdinal());
+        cp2v.put("subTypeOrdinals", Descriptor.AsCollection(getSubTypes(), td -> td.getOrdinal().toString()));
+        cp2v.put("hasValueConstructor", getHasValueConstructorReference());
+        return cp2v;
+    }
+    
+    public String getMetaModelExtensionClassCanonicalName(){
+        return getJavaTypeCanonicalName().concat(DESCRIPTOR_CLASS_SUFFIX);
+    }
+    
+    public final String getMetamodelExtensionClassDeclaration(){
+        final StringBuilder sb = new StringBuilder("public class ").append(getJavaTypeSimpleName()).append(DESCRIPTOR_CLASS_SUFFIX);
+        final TypeDescriptor superType = getSuper();
+        if(superType!=null){
+            sb.append(" extends ").append(superType.getJavaTypeCanonicalName()).append(DESCRIPTOR_CLASS_SUFFIX);
+        }
+        
+        return sb.toString();
+    }
+
+    @Override
+    public Class<? extends TypeES> getDeclaredClass() {
+        return TypeES.class;
+    }
+
+    @Override
+    protected Class<? extends TypeESImpl> getImplementationClass() {
+        return TypeESImpl.class;
+    }
+
+
+    @Override
+    protected String getGenericsString() {
+        return "<" + getJavaTypeCanonicalName()+ ">";
+    }
+
+    @Override
+    public String getDeclaredVariableName() {
+        return "__TYPE";
+    }
+    
 
     /**
      * Create a new instance of this class.
-     * @param metaModelClass the JPA meta model class that models this type.
      * @param name the name of this type.
      * @param ordinal the ordinal of this type.
      * @param javaType the java type of this type.
      * @param persistenceType the {@link PersistenceType} of this type.
      */
-    public TypeDescriptor(Class<?> metaModelClass,
-            PersistenceType persistenceType, String name, Class javaType,
+    public TypeDescriptor(
+            PersistenceType persistenceType, 
+            String name, 
+            Class javaType,
             int ordinal) {
         super(persistenceType, name, javaType, ordinal);
-        this.metaModelClass = metaModelClass;
         subTypes = new ArrayList<>();
         INSTANCES.add(this);
     }
@@ -44,6 +154,14 @@ public class TypeDescriptor extends Descriptor<PersistenceType> {
         return INSTANCES;
     }
 
+    public HasValueDescriptor getHasValueDescriptor() {
+        return hasValueDescriptor;
+    }
+
+    public void setHasValueDescriptor(HasValueDescriptor hasValueDescriptor) {
+        this.hasValueDescriptor = hasValueDescriptor;
+    }
+
     /**
      * The fully qualified name of the meta-model class this' meta-model class is a subclass of.
      * @return
@@ -53,18 +171,14 @@ public class TypeDescriptor extends Descriptor<PersistenceType> {
         return superDescriptor == null ? null : superDescriptor.getDescriptorClassFullName();
     }
 
-    public Class<?> getMetaModelClass() {
-        return metaModelClass;
-    }
-
     /**
      * Get a specific instance of a descriptor.
-     * @param javaClass The class to get a descriptor of.
+     * @param javaType The class to get a descriptor of.
      * @return A {@link TypeDescriptor} of the specified class, or {@code null} if none was found.
      */
-    public static TypeDescriptor getInstance(Class javaClass){
+    public static TypeDescriptor getInstance(Class javaType){
         for (TypeDescriptor typeDescriptor : INSTANCES){
-            if (typeDescriptor.getJavaType() == javaClass) {
+            if (typeDescriptor.getJavaType() == javaType) {
                 return typeDescriptor;
             }
         }
@@ -78,6 +192,13 @@ public class TypeDescriptor extends Descriptor<PersistenceType> {
      * @return the {@link AttributeDescriptor} with the specified {@code name} or {@code null} if the attribute was not found.
      */
     public AttributeDescriptor getAttribute(String name){
+        for(AttributeDescriptor ad : AttributeDescriptor.getAll()){
+            if(ad.getName().equals(name)){
+                if(ad.getDeclaringTypeDescriptor().getJavaType().isAssignableFrom(getJavaType())){
+                    return ad;
+                }
+            }
+        }
         return null;
     }
 
@@ -87,6 +208,12 @@ public class TypeDescriptor extends Descriptor<PersistenceType> {
      */
     public TypeDescriptor getSuper(){
         return getInstance(getJavaType().getSuperclass());
+    }
+    
+    public String getSuperTypeOrdinal(){
+        final TypeDescriptor superType = getSuper();
+        return superType==null ? "null" : superType.getOrdinal().toString();
+        
     }
 
     /**
@@ -110,12 +237,26 @@ public class TypeDescriptor extends Descriptor<PersistenceType> {
      * @return {@code true} if this type can be instantiated, or {@code false} otherwise.
      */
     public boolean isInstantiable(){
-        return ReflectionUtils.isInstantiable(getJavaType());
+        final Class javaType = getJavaType();
+        if(Modifier.isAbstract(javaType.getModifiers())){
+            return false;
+        } else {
+            for(Constructor c : javaType.getConstructors()){
+                if(c.getParameterCount()==0){
+                    final int modifiers = c.getModifiers();
+                    return Modifier.isProtected(modifiers) || Modifier.isPublic(modifiers);
+                }
+            }
+            return false;
+        }
     }
-
-    @Override
-    public String getStringRepresentation() {
-        return "";
+    
+    public String getJavaTypeConstructorReference(){
+        if(isInstantiable()){
+            return this.getJavaTypeCanonicalName() + "::new";
+        } else {
+            return "null";
+        }
     }
 
     public Collection<TypeDescriptor> getSubTypes() {

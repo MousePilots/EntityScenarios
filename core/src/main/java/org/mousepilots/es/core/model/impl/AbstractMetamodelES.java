@@ -23,6 +23,7 @@ import org.mousepilots.es.core.model.MappedSuperclassTypeES;
 import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.model.TypeVisitor;
 import org.mousepilots.es.core.model.MetamodelES;
+import org.mousepilots.es.core.util.CollectionUtils;
 
 /**
  * @author Nicky Ernste
@@ -82,11 +83,6 @@ public abstract class AbstractMetamodelES implements MetamodelES {
         return ordinalToType.get(ordinal);
     }
 
-    static <T, C extends Collection<T>> void ensureAdded(C collection, T t) throws IllegalStateException {
-        if(!collection.add(t)) {
-            throw new IllegalStateException("duplicate entry of " + t);
-        }
-    }
 
     private final TypeVisitor<Void, Void> typeRegistrar = new TypeVisitor<Void, Void>() {
 
@@ -97,15 +93,18 @@ public abstract class AbstractMetamodelES implements MetamodelES {
 
         private <T extends ManagedTypeES> void performManagedTypeRegistration(Collection<T> collection, T t) {
             performCommonRegistration(t);
-            javaTypeToType.put(t.getProxyJavaType(), t);
-            ensureAdded(collection, t);
-
+            final Class proxyJavaType = t.getProxyJavaType();
+            if(proxyJavaType!=null){
+                javaTypeToType.put(proxyJavaType, t);
+            }
+            CollectionUtils.ensureAdded(collection, t);
+            CollectionUtils.ensureAdded(managedTypes, t);
         }
 
         @Override
         public Void visit(BasicTypeES t, Void arg) {
             performCommonRegistration(t);
-            ensureAdded(basicTypes, t);
+            CollectionUtils.ensureAdded(basicTypes, t);
             return null;
         }
 
@@ -129,13 +128,12 @@ public abstract class AbstractMetamodelES implements MetamodelES {
     };
 
     protected AbstractMetamodelES(Collection<TypeESImpl<?>> types) {
-         //register
+         //register types
         for (TypeESImpl t : types) {
             t.accept(typeRegistrar, null);
         }
-        for (TypeESImpl t : types) {
-            t.init();
-        }
+        
+        //register declared attributes and associations
         for(ManagedTypeES t : managedTypes){
              //register declared attributes only
              final Set<AttributeES> declaredAttributes = t.getDeclaredAttributes();
@@ -149,6 +147,12 @@ public abstract class AbstractMetamodelES implements MetamodelES {
                        }
                   }
              }
+        }
+        setInstance(this);
+        for(int round=0; round<2; round++){
+            for (TypeESImpl t : types) {
+                t.init(round);
+            }
         }
     }
 

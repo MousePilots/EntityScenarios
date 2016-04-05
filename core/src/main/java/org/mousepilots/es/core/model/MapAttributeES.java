@@ -18,16 +18,18 @@ import javax.persistence.metamodel.MapAttribute;
 public interface MapAttributeES<T,K,V> extends PluralAttributeES<T, java.util.Map<K,V>,V>, MapAttribute<T, K, V> {
 
     @Override
-    TypeES<K> getKeyType();
-    
-    @Override
-    public default <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
-        return visitor.visit(this, arg);
+    public default CollectionType getCollectionType() {
+        return CollectionType.MAP;
     }
 
     @Override
     public default Map<K, V> createEmpty() {
         return new HashMap<>();
+    }
+
+    @Override
+    public default <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
+        return visitor.visit(this, arg);
     }
     
 }

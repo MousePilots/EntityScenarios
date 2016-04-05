@@ -10,10 +10,11 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.mousepilots.es.maven.model.generator.model.type.BasicTypeDescriptor;
-import org.mousepilots.es.maven.model.generator.model.type.EmbeddableTypeDescriptor;
-import org.mousepilots.es.maven.model.generator.model.type.EntityTypeDescriptor;
-import org.mousepilots.es.maven.model.generator.model.type.MappedSuperClassDescriptor;
+import org.mousepilots.es.core.util.Function;
+import org.mousepilots.es.core.util.StringUtils;
+import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescriptor;
+import org.mousepilots.es.maven.model.generator.model.type.HasValueDescriptor;
+import org.mousepilots.es.maven.model.generator.model.type.ManagedTypeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
 
 /**
@@ -101,48 +102,10 @@ public class MetaModelWriter {
      * generated meta models to disk.
      */
     public void writeAbstractTypeImpls() throws MojoExecutionException {
+        final Template template = velocityEngine.getTemplate("templates/TypeESImpl.vsl");
         for (TypeDescriptor td : TypeDescriptor.getAll()) {
             final VelocityContext context = createContext();
-            Template template;
-            if (td.getSuper() != null) {
-                context.put("superType", td.getSuper().getOrdinal());
-            } else {
-                context.put("superType", -1);
-            }
-            context.put("subTypes", DescriptorUtils.printSubTypes(td));
-            switch (td.getPersistenceType()) {
-                case BASIC:
-                default:
-                    context.put("td", (BasicTypeDescriptor) td);
-                    template = velocityEngine.getTemplate("templates/BasicTypeImpl.vsl");
-                    break;
-                case EMBEDDABLE:
-                    EmbeddableTypeDescriptor etd = (EmbeddableTypeDescriptor) td;
-                    context.put("td", etd);
-                    context.put("attributes", DescriptorUtils.printAttributesList(etd.getAttributes()));
-                    template = velocityEngine.getTemplate("templates/EmbeddableImpl.vsl");
-                    break;
-                case MAPPED_SUPERCLASS:
-                    MappedSuperClassDescriptor mscd = (MappedSuperClassDescriptor) td;
-                    context.put("td", mscd);
-                    context.put("attributes", DescriptorUtils.printAttributesList(mscd.getAttributes()));
-                    context.put("idClassAttributes", DescriptorUtils.printIdClassAttributes(mscd.getIdClassAttribute()));
-                    context.put("idType", DescriptorUtils.printType(mscd.getIdType()));
-                    template = velocityEngine.getTemplate("templates/MappedSuperClassImpl.vsl");
-                    break;
-                case ENTITY:
-                    EntityTypeDescriptor enTd = (EntityTypeDescriptor) td;
-                    context.put("td", enTd);
-                    context.put("attributes", DescriptorUtils.printAttributesList(enTd.getAttributes()));
-                    context.put("idClassAttributes", DescriptorUtils.printIdClassAttributes(enTd.getIdClassAttribute()));
-                    context.put("idType", DescriptorUtils.printType(enTd.getIdType()));
-                    template = velocityEngine.getTemplate("templates/EntityImpl.vsl");
-                    break;
-            }
-            if (td.getSuper() != null) {
-                //Class has a parent.
-                context.put("extendsClass", td.getSuper());
-            }
+            context.put("td", td);
             StringWriter writer = new StringWriter();
             template.merge(context, writer);
             classToDisk(writer, td.getDescriptorClassFullName());
@@ -154,25 +117,44 @@ public class MetaModelWriter {
      * @throws MojoExecutionException if something goes wrong when writing the
      * generated meta models to disk.
      */
-    public void writeHasValuesTypes() throws MojoExecutionException {
+    public void writeHasValueImpls() throws MojoExecutionException {
+        Template template = velocityEngine.getTemplate("templates/HasValueImpl.vsl");
         for (TypeDescriptor td : TypeDescriptor.getAll()){
-            final VelocityContext context = createContext();
-            Template template = null;
-            switch (td.getPersistenceType()){
-                case BASIC:
-                    context.put("td", (BasicTypeDescriptor)td);
-                    template = velocityEngine.getTemplate("templates/ValueWrapperImpl.vsl");
-                    break;
-            }
-            if (template != null) {
+            if(td.requiredHasValueClassGeneration()){
+                final VelocityContext context = createContext();
+                final HasValueDescriptor hasValueDescriptor = td.getHasValueDescriptor();
+                context.put("hvd", hasValueDescriptor);
                 StringWriter writer = new StringWriter();
                 template.merge(context, writer);
-                classToDisk(writer, "wrappers." + td.getJavaTypeSimpleName() + "Wrapper");
+                classToDisk(writer, hasValueDescriptor.getHasValueImplClassCanonicalName());
+            }
+        }
+    }
+    
+    public void writeProxyImpls() throws MojoExecutionException{
+        Template template = velocityEngine.getTemplate("templates/proxy/ProxyImpl.vsl");
+        for (TypeDescriptor td : TypeDescriptor.getAll()){
+            if(td instanceof ManagedTypeDescriptor && td.isInstantiable()){
+                ManagedTypeDescriptor mtd = (ManagedTypeDescriptor) td;
+                final VelocityContext context = createContext();
+                context.put("td", mtd);
+                StringWriter writer = new StringWriter();
+                template.merge(context, writer);
+                classToDisk(writer, mtd.getProxyClassCanonicalName());
             }
         }
     }
 
     public void writeMetaModel() throws MojoExecutionException {
-        //TODO write the meta model implementation class.
+        Template template = velocityEngine.getTemplate("templates/AbstractMetaModelImpl.vsl");
+        final VelocityContext context = createContext();
+        context.put("package", "org.mousepilots.es.test.domain");
+        Function<TypeDescriptor,String> transformer = td -> "(TypeESImpl) " + td.getDescriptorClassFullName() + "." + td.getDeclaredVariableName();
+        context.put("types",StringUtils.append(TypeDescriptor.getAll(), transformer, ",\n\t\t\t\t"));
+        context.put("attributeDescriptors",AttributeDescriptor.getAll());
+        StringWriter writer = new StringWriter();
+        template.merge(context, writer);
+        classToDisk(writer, "org.mousepilots.es.test.domain.MetamodelImpl");
+        
     }
 }

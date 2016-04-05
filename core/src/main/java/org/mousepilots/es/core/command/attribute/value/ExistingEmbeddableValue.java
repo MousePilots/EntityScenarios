@@ -10,6 +10,7 @@ import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.impl.EmbeddableTypeESImpl;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  *
@@ -36,7 +37,7 @@ public final class ExistingEmbeddableValue<E> extends Value<Proxy<E>,E,HasValue<
           this((EmbeddableTypeESImpl<E>) proxy.__getProxyAspect().getType(), proxy);
      }
 
-     @Override
+     @Override @GwtIncompatible
      protected E decode(HasValue<E> encodedServerValue, ServerContext serverContext) {
           return encodedServerValue.getValue();
      }

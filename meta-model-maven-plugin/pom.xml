@@ -6,7 +6,7 @@
         <artifactId>EntityScenarios</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>meta-model-maven-plugin</artifactId>
+    <artifactId>es-meta-model-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <dependencies>
         <dependency>
@@ -50,7 +50,7 @@
         </dependency>
         <dependency>
             <groupId>org.mousepilots</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>es-core</artifactId>
             <version>0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

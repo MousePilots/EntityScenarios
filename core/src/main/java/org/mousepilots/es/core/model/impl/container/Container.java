@@ -23,6 +23,7 @@ import org.mousepilots.es.core.model.impl.HasTypeAndAttribute;
 import org.mousepilots.es.core.model.impl.IdentifiableTypeESImpl;
 import org.mousepilots.es.core.model.impl.TypeESImpl;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  * A {@link Container} allows finding an embeddable.
@@ -142,6 +143,7 @@ public abstract class Container<T, MT extends ManagedTypeES<T>, A extends Attrib
       * @param serverContext
       * @return the managed instance corresponding to {@code this} 
       */
+     @GwtIncompatible
      public abstract T resolve(ServerContext serverContext);
 
      public abstract Container copy();

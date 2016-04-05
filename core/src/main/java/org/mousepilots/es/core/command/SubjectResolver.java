@@ -6,6 +6,7 @@
 package org.mousepilots.es.core.command;
 
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  * Resolves the server-side managed subject of a {@code Command}
@@ -19,5 +20,6 @@ public interface SubjectResolver<E> {
       * @param serverContext
       * @return the managed subject
       */
-     public E resolveSubject(ServerContext serverContext);
+    @GwtIncompatible
+     E resolveSubject(ServerContext serverContext);
 }

@@ -10,6 +10,7 @@ import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.EmbeddableTypeES;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  *
@@ -28,7 +29,7 @@ public final class UpdateEmbeddable<E,A,AD extends AttributeES<?super E,A>> exte
           super(proxy, attribute,EmbeddableReference::new,attributeUpdate);
      }
 
-     @Override
+     @Override @GwtIncompatible
      public E resolveSubject(ServerContext serverContext) {
           if(isSubjectCreated()){
                return getCreateCommand().getRealSubject();

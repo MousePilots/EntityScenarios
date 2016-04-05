@@ -18,6 +18,7 @@ import org.mousepilots.es.core.command.attribute.value.ValueFactory;
 import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.model.impl.MapAttributeESImpl;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  *
@@ -70,7 +71,7 @@ public final class RemoveFromMap<E, K, V>  extends UpdateMap<E, K, V, Set<K>> {
      * @param serverContext
      * @return the set of keys (to be) removed from the map by {@code this}
      */
-    @Override
+    @Override @GwtIncompatible
     public Set<K> getModificationOnServer(ServerContext serverContext) {
         if(modification==null){
             final Set<K> modifiableModification = new HashSet<>();
@@ -82,7 +83,7 @@ public final class RemoveFromMap<E, K, V>  extends UpdateMap<E, K, V, Set<K>> {
         return modification;
     }
 
-    @Override
+    @Override @GwtIncompatible
     public void executeOnServer(Update<E, ?, Map<K, V>, MapAttributeESImpl<? super E, K, V>, ?> update, ServerContext serverContext) {
         final Map<K, V> map = getAttributeValueOnServer(update);
         final Set<K> keySet = map.keySet();

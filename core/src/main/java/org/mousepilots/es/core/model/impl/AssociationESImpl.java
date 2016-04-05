@@ -14,7 +14,7 @@ import org.mousepilots.es.core.util.StringUtils;
  * @author Nicky Ernste
  * @version 1.0, 27-11-2015
  */
-public final class AssociationESImpl implements AssociationES{
+public final class AssociationESImpl<X,Y> implements AssociationES<X,Y>{
 
     public final int ordinal; 
     private final Integer inverseOrdinal;
@@ -48,12 +48,12 @@ public final class AssociationESImpl implements AssociationES{
     }
 
     @Override
-    public AttributeES getSourceAttribute() {
+    public AttributeES<X,Y> getSourceAttribute() {
         return AbstractMetamodelES.getInstance().getAttribute(sourceAttributeOrdinal);
     }
 
     @Override
-    public AssociationES getInverse(){
+    public AssociationES<Y,X> getInverse(){
         return inverseOrdinal==null ? null : AbstractMetamodelES.getInstance().getAssociation(inverseOrdinal);
     }
 
@@ -78,8 +78,8 @@ public final class AssociationESImpl implements AssociationES{
     }
     
     @Override
-    public ManagedTypeES getTargetType(){
-         return (ManagedTypeES) AbstractMetamodelES.getInstance().getType(targetTypeOrdinal);
+    public ManagedTypeES<Y> getTargetType(){
+         return (ManagedTypeES<Y>) AbstractMetamodelES.getInstance().getType(targetTypeOrdinal);
     }
     
     

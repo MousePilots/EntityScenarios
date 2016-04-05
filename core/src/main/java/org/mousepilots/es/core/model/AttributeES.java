@@ -52,14 +52,7 @@ public interface AttributeES<X, Y> extends Attribute<X, Y>, Comparable<Attribute
     /**
      * @return the unmodifiable, non-{@code null} mapping {@link AssociationTypeES} &rarr; {@link AssociationES}
      */
-    public Map<AssociationTypeES, AssociationES> getAssociations();
-
-    /**
-     * Wraps the attribute-{@code value} in a serializable container
-     * @param value the value to wrap.
-     * @return the wrapped {@code value}.
-     */
-    public HasValue wrap(Y value);
+    public Map<AssociationTypeES, AssociationES<X,Y>> getAssociations();
 
     @Override
     public MemberES<X,Y> getJavaMember();

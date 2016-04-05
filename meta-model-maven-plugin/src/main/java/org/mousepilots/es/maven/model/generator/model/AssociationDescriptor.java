@@ -1,5 +1,6 @@
 package org.mousepilots.es.maven.model.generator.model;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescriptor;
@@ -12,7 +13,8 @@ import org.mousepilots.es.core.model.AssociationTypeES;
  * @version 1.0, 4-12-2015
  */
 public class AssociationDescriptor {
-
+    private static final AtomicInteger ORDINAL_GENERATOR = new AtomicInteger(0);
+    private final int ordinal = ORDINAL_GENERATOR.getAndIncrement();
     private final AttributeDescriptor sourceAttribute;
     private final Attribute.PersistentAttributeType persistentAttributeType;
     private final boolean owner;
@@ -42,6 +44,10 @@ public class AssociationDescriptor {
         this.associationInverseTargetAttributeType = associationInverseTargetAttributeType;
     }
 
+    public Integer getOrdinal() {
+        return ordinal;
+    }
+    
     /**
      * Get the {@code sourceAttribute} of this association.
      * @return the source attribute.
@@ -62,7 +68,7 @@ public class AssociationDescriptor {
      * Check if the {@code sourceAttribute} is the owner of this association.
      * @return {@code true} if the {@code sourceAttribute} is the owner, {@code false} otherwise.
      */
-    public boolean isOwner() {
+    public Boolean isOwner() {
         return owner;
     }
 
@@ -96,4 +102,31 @@ public class AssociationDescriptor {
                 .append(", Is owner: ").append(isOwner());
         return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 41 * hash + this.ordinal;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AssociationDescriptor other = (AssociationDescriptor) obj;
+        if (this.ordinal != other.ordinal) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

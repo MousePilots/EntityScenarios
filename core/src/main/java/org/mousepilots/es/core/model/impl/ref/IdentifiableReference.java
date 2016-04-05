@@ -10,6 +10,7 @@ import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.impl.IdentifiableTypeESImpl;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 import org.mousepilots.es.core.util.IdentifiableTypeUtils;
 import org.mousepilots.es.core.util.WrapperUtils;
 
@@ -45,7 +46,7 @@ public final class IdentifiableReference<T,ID,V> extends SerializableReference<T
           return HasValue.getValueNullSafe(version);
      }
      
-     @Override
+     @Override @GwtIncompatible
      public final T resolve(ServerContext serverContext) {
           final ID clientId = getId();
           final IdentifiableTypeESImpl<T> type = getType();

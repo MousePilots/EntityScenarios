@@ -51,6 +51,13 @@ abstract class AbstractObservableCollection<E,C extends Collection<E>,O extends 
                public E next() {
                     return delegate.next();
                }
+
+              @Override
+              public void remove() {
+                  throw new UnsupportedOperationException();
+              }
+               
+               
           };
      }
 

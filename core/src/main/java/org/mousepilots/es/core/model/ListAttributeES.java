@@ -15,15 +15,22 @@ import javax.persistence.metamodel.ListAttribute;
  * @version 1.0, 19-10-2015
  */
 public interface ListAttributeES<T, E> extends PluralAttributeES<T, java.util.List<E>,E>, ListAttribute<T, E> {
+
+    @Override
+    public default CollectionType getCollectionType() {
+        return CollectionType.LIST;
+    }
+    
+    @Override
+    public default List<E> createEmpty() {
+        return new ArrayList<>();
+    }
+    
     @Override
     public default <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
         return visitor.visit(this, arg);
     }
 
-    @Override
-    public default List<E> createEmpty() {
-        return new ArrayList<>();
-    }
     
     
 

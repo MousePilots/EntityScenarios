@@ -10,7 +10,7 @@ import javax.persistence.metamodel.ManagedType;
  * @author Nicky Ernste
  * @version 1.0, 19-10-2015
  */
-public interface AssociationES extends HasOrdinal{
+public interface AssociationES<X,Y> extends HasOrdinal{
     
     /**
      * Get the type of the {@code this} association.
@@ -23,20 +23,20 @@ public interface AssociationES extends HasOrdinal{
      * Get the {@link AttributeES} that is the source of {@code this} association.
      * @return The attribute that is at the source of {@code this} association.
      */
-    AttributeES getSourceAttribute();
+    AttributeES<X,Y> getSourceAttribute();
     
     /**
      * Gets the association's target {@link ManagedTypeES}
      * @return the association's target type
      */
-     ManagedTypeES getTargetType();
+     ManagedTypeES<Y> getTargetType();
     
     /**
      * Get the inversed {@link AssociationES} from the {@code this} association.
      * @return The inversed association from {@code this} association, if there is no
      * inverse {@code null} is returned.
      */
-    AssociationES getInverse();
+    AssociationES<? super Y, ? super X> getInverse();
     
     /**
      * Check if {@code this} is the owning side of the association.

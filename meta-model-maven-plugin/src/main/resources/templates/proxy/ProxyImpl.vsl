@@ -1,0 +1,27 @@
+## Velocity Template.
+package ${td.getPackageName()};
+
+/**
+ * Client-side {@link org.mousepilots.es.core.model.proxy.Proxy} for {@link ${td.getJavaTypeCanonicalName()}}
+ */
+public final class ${td.getProxyClassSimpleName()} extends ${td.getJavaTypeSimpleName()} implements org.mousepilots.es.core.model.proxy.Proxy<${td.getJavaTypeSimpleName()}>{
+
+    private transient final org.mousepilots.es.core.model.proxy.ProxyAspect<${td.getJavaTypeSimpleName()}> __proxyAspect = new org.mousepilots.es.core.model.proxy.ProxyAspect(${td.ordinal});
+
+    public org.mousepilots.es.core.model.proxy.ProxyAspect<${td.getJavaTypeSimpleName()}> __getProxyAspect(){
+        return __proxyAspect;
+    }
+
+#foreach($ad in ${td.getDeclaredAttributes()})
+#if(${ad.getProxyGetterDeclaration()})
+
+${ad.getProxyGetterDeclaration()}
+
+#end
+#if(${ad.getProxySetterDeclaration()})
+
+${ad.getProxySetterDeclaration()}
+
+#end
+#end
+}

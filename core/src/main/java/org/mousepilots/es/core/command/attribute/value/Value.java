@@ -7,10 +7,10 @@ package org.mousepilots.es.core.command.attribute.value;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.model.impl.HasTypeImpl;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 
 public abstract class Value<CV,SV,EV, TD extends TypeES> extends HasTypeImpl<TD>{
@@ -22,6 +22,7 @@ public abstract class Value<CV,SV,EV, TD extends TypeES> extends HasTypeImpl<TD>
           return clientValues;
      }
      
+     @GwtIncompatible
      public static <SV, L extends List<SV>> L collectServerValues(ServerContext serverContext, Collection<? extends Value<?,SV,?,?>> values, L serverValues){
           for(Value<?,SV,?,?> value : values){
                serverValues.add(value.getServerValue(serverContext));
@@ -30,7 +31,7 @@ public abstract class Value<CV,SV,EV, TD extends TypeES> extends HasTypeImpl<TD>
      }
      
      
-     private static final AtomicLong ID_GENERATOR = new AtomicLong(0);
+     private static long ID_GENERATOR = 0;
      
      private long id;
 
@@ -38,7 +39,7 @@ public abstract class Value<CV,SV,EV, TD extends TypeES> extends HasTypeImpl<TD>
      
      private transient SV serverValue;
      
-     
+     @GwtIncompatible
      protected abstract SV decode(EV encodedServerValue,ServerContext serverContext);
      
      protected abstract EV getEncodedServerValue();
@@ -48,7 +49,7 @@ public abstract class Value<CV,SV,EV, TD extends TypeES> extends HasTypeImpl<TD>
      protected Value(int typeOrdinal, CV clientValue){
           super(typeOrdinal);
           this.clientValue = clientValue;
-          this.id=ID_GENERATOR.getAndIncrement();
+          this.id=ID_GENERATOR++;
      }
      
      
@@ -56,6 +57,7 @@ public abstract class Value<CV,SV,EV, TD extends TypeES> extends HasTypeImpl<TD>
           return clientValue;
      }
      
+     @GwtIncompatible
      public final SV getServerValue(ServerContext serverContext){
           final EV encodedServerValue = getEncodedServerValue();
           if(serverValue==null && encodedServerValue!=null){

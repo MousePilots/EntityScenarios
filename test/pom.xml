@@ -8,9 +8,9 @@
     </parent>
     <artifactId>test</artifactId>
     <packaging>pom</packaging>
-    <name>test</name>
+    <name>es-test</name>
     <modules>
         <module>domain</module>
-    <module>web</module>
+        <module>web</module>
   </modules>
 </project>

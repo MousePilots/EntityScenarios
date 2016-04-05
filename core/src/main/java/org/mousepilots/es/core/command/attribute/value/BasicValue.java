@@ -8,6 +8,7 @@ package org.mousepilots.es.core.command.attribute.value;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.impl.BasicTypeESImpl;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  *
@@ -30,7 +31,7 @@ public class BasicValue<T> extends Value<T,T,HasValue<T>, BasicTypeESImpl<T>> {
           return encodedServerValue;
      }
 
-     @Override
+     @Override @GwtIncompatible
      protected T decode(HasValue<T> encodedServerValue, ServerContext serverContext) {
           return HasValue.getValueNullSafe(encodedServerValue);
      }

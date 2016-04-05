@@ -12,6 +12,7 @@ import org.mousepilots.es.core.model.IdentifiableTypeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.impl.TypeESImpl;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 import org.mousepilots.es.core.util.IdentifiableTypeUtils;
 
 /**
@@ -55,7 +56,7 @@ public final class IdentifiableContainer<T, I> extends Container<T, Identifiable
           return id.getValue();
      }
 
-     @Override
+     @Override @GwtIncompatible
      public final T resolve(ServerContext serverContext) throws NullPointerException {
           final I clientId = getId();
           final IdentifiableTypeES<T> type = getType();

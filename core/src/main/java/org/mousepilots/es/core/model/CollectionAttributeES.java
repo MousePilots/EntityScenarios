@@ -15,9 +15,15 @@ import javax.persistence.metamodel.CollectionAttribute;
 public interface CollectionAttributeES<T, E> extends PluralAttributeES<T, java.util.Collection<E>, E>, CollectionAttribute<T, E> {
 
     @Override
+    public default CollectionType getCollectionType() {
+        return CollectionType.COLLECTION;
+    }
+
+    @Override
     public default <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
         return visitor.visit(this, arg);
     }
 
+    
     
 }

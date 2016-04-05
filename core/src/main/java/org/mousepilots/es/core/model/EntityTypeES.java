@@ -12,7 +12,21 @@ import javax.persistence.metamodel.EntityType;
  * @version 1.0, 19-10-2015
  */
 public interface EntityTypeES<T> extends IdentifiableTypeES<T>, EntityType<T>, BindableES<T> {
+
+    @Override
+    default BindableType getBindableType() {
+        return BindableType.ENTITY_TYPE;
+    }
+
+    @Override
+    default Class<T> getBindableJavaType() {
+        return getJavaType();
+    }
     
+    @Override
+    default PersistenceType getPersistenceType(){
+        return PersistenceType.ENTITY;
+    }    
     @Override
     public default <R,A> R accept(TypeVisitor<R,A> v, A arg){
         return v.visit(this, arg);

@@ -10,6 +10,7 @@ import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.model.proxy.ProxyAspect;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  *
@@ -23,7 +24,7 @@ public final class NewManagedValue<E,TD extends ManagedTypeES<E>> extends Value<
      
      private NewManagedValue(){}
 
-     @Override
+     @Override @GwtIncompatible
      protected E decode(Create<E,? extends ManagedTypeES<E>> encodedServerValue, ServerContext serverContext) {
           return encodedServerValue.getRealSubject();
      }

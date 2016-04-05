@@ -1,0 +1,20 @@
+package ${hvd.packageName};
+
+/**
+ * Serializable wrapper for {@link ${hvd.valueClassCanonicalName}}
+ */
+@javax.annotation.Generated(value="${esNameAndVersion}", date="${currentDate}")
+public final class ${hvd.hasValueImplClassSimpleName} extends ${hvd.getHasValueClassName()}<${hvd.valueClassCanonicalName}>{
+
+    private ${hvd.valueClassCanonicalName} value;
+
+    @Override
+    public ${hvd.valueClassCanonicalName} getValue(){
+        return value;
+    }
+
+    @Override
+    public void setValue(${hvd.valueClassCanonicalName} value){
+        this.value=value;
+    }
+}

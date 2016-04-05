@@ -11,7 +11,7 @@
     <artifactId>web</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>web</name>
+    <name>es-test-web</name>
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,24 +25,24 @@
         </dependency>
         <dependency>
             <groupId>org.mousepilots</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>es-core</artifactId>
             <version>0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.mousepilots</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>es-core</artifactId>
             <version>0.1-SNAPSHOT</version>
             <scope>provided</scope>
             <classifier>sources</classifier>
         </dependency>
         <dependency>
             <groupId>org.mousepilots</groupId>
-            <artifactId>domain</artifactId>
+            <artifactId>es-test-domain</artifactId>
             <version>0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.mousepilots</groupId>
-            <artifactId>domain</artifactId>
+            <artifactId>es-test-domain</artifactId>
             <version>0.1-SNAPSHOT</version>
             <classifier>sources</classifier>
             <scope>provided</scope>
@@ -68,12 +68,16 @@
             <version>5.0.3</version>
             <scope>provided</scope>
         </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+            </dependency>
     </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.mousepilots</groupId>
-                <artifactId>meta-model-maven-plugin</artifactId>
+                <artifactId>es-meta-model-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <configuration>
                     <packageName>org.mousepilots.es.test.domain</packageName>
@@ -81,13 +85,13 @@
                 <dependencies>
                     <dependency>
                         <groupId>org.mousepilots</groupId>
-                        <artifactId>domain</artifactId>
-                        <version>0.1-SNAPSHOT</version>
+                        <artifactId>es-test-domain</artifactId>
+                        <version>${project.version}</version>
                     </dependency>
                 </dependencies>
                 <executions>
                     <execution>
-                        <phase>process-classes</phase>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -106,6 +110,14 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <noServer>true</noServer>
+                    <hostedWebapp>${webappDirectory}</hostedWebapp>
+                    <extraParam>true</extraParam>
+                    <extra>${project.build.directory}/extra</extra>
+                    <extraJvmArgs>-Xmx1024m</extraJvmArgs>
+                    <runTarget>http://localhost:8080/${project.artifactId}/index.html</runTarget>
+                </configuration>
             </plugin>            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

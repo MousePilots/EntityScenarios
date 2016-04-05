@@ -5,12 +5,12 @@
  */
 package org.mousepilots.es.core.scenario;
 
-import org.mousepilots.es.core.model.impl.EntityManagerESImpl;
+import org.mousepilots.es.core.model.impl.EntityManagerImpl;
 
 /**
  *
  * @author geenenju
  */
-public interface ClientContext extends Context<EntityManagerESImpl>{
+public interface ClientContext extends Context<EntityManagerImpl>{
      
 }

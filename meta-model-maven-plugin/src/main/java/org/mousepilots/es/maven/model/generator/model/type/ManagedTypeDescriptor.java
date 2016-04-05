@@ -1,11 +1,22 @@
 package org.mousepilots.es.maven.model.generator.model.type;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import javax.persistence.metamodel.Type;
 import javax.persistence.metamodel.Type.PersistenceType;
+import org.mousepilots.es.core.model.AssociationTypeES;
+import org.mousepilots.es.core.model.ManagedTypeES;
+import org.mousepilots.es.core.model.TypeES;
+import org.mousepilots.es.core.model.impl.ManagedTypeESImpl;
+import org.mousepilots.es.core.model.impl.TypeESImpl;
+import org.mousepilots.es.core.util.StringUtils;
+import org.mousepilots.es.maven.model.generator.model.AssociationDescriptor;
+import org.mousepilots.es.maven.model.generator.model.Descriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.CollectionAttributeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.ListAttributeDescriptor;
@@ -21,7 +32,10 @@ import org.mousepilots.es.maven.model.generator.model.attribute.SingularAttribut
  */
 public class ManagedTypeDescriptor extends TypeDescriptor {
 
-    private SortedSet<AttributeDescriptor> attributes = new TreeSet<>();
+    
+    private static final String PROXY_SUFFIX = "_ES_Proxy";
+    private SortedSet<AttributeDescriptor> declaredAttributes = new TreeSet<>();
+    private final Class<?> metaModelClass;
 
     /**
      * Create a new instance of this class.
@@ -31,47 +45,125 @@ public class ManagedTypeDescriptor extends TypeDescriptor {
      * @param javaType the java type of this type.
      * @param persistenceType the {@link PersistenceType} of this type.
      */
-    public ManagedTypeDescriptor(Class<?> metaModelClass,
-            PersistenceType persistenceType, String name, Class javaType,
-            int ordinal) {
-        super(metaModelClass, persistenceType, name, javaType, ordinal);
+    public ManagedTypeDescriptor(
+            Class<?> metaModelClass,
+            PersistenceType persistenceType, 
+            String name, 
+            Class javaType,
+            int ordinal){
+        super(persistenceType, name, javaType, ordinal);
+        this.metaModelClass = metaModelClass;
     }
 
+
+    @Override
+    public Class<? extends TypeES> getDeclaredClass() {
+        return ManagedTypeES.class;
+    }
+    @Override
+    protected Class<? extends TypeESImpl> getImplementationClass() {
+        return ManagedTypeESImpl.class;
+    }
+    
+    private Set<AssociationDescriptor> getAssociations(){
+        HashSet<AssociationDescriptor> retval = new HashSet<>();
+        for(AttributeDescriptor ad : getAttributes()){
+            for(AssociationTypeES at : AssociationTypeES.values()){
+                final AssociationDescriptor a = ad.getAssociation(at);
+                if(a!=null){
+                    retval.add(a);
+                }
+            }
+        }
+        return retval;
+    }
+
+    @Override
+    protected Map<String, String> getConstructorParameterToValue() {
+        final Map<String, String> cp2v = super.getConstructorParameterToValue();
+        cp2v.put("metamodelClass",      getMetaModelClass().getSimpleName() + ".class");
+        cp2v.put("javaTypeConstructor", getJavaTypeConstructorReference());
+        cp2v.put("proxyType",           getProxyClass());
+        cp2v.put("proxyTypeConstructor",getProxyConstructorReferenence());
+        cp2v.put("attributeOrdinals",   Descriptor.AsCollection(getAttributes(), a -> a.getOrdinal().toString()));
+        cp2v.put("associationOrdinals", Descriptor.AsCollection(getAssociations(), a -> a.getOrdinal().toString()));
+        cp2v.put("declaredAttributes",  Descriptor.AsCollection(getDeclaredAttributes(), ad -> ad.getName()));
+        return cp2v;
+    }
+    
+    
+    public final Class<?> getMetaModelClass() {
+        return metaModelClass;
+    }    
+
+    public String getProxyClass(){
+        return isInstantiable() ? getJavaTypeCanonicalName() + PROXY_SUFFIX  + ".class": "null";
+    }
+    
+    
+    public String getProxyClassCanonicalName(){
+        return isInstantiable() ? getJavaTypeCanonicalName() + PROXY_SUFFIX : "null";
+    }
+
+    public String getProxyClassSimpleName(){
+        return isInstantiable() ? getJavaTypeSimpleName() + PROXY_SUFFIX : "null";
+    }
+    
+    public String getProxyConstructorReferenence(){
+        return isInstantiable() ? getProxyClassCanonicalName() + "::new" : "null";
+    }
     /**
-     * Get the attributes of this managed type.
-     * @return a set of attributes.
+     * Get the declaredAttributes of this managed type.
+     * @return a set of declaredAttributes.
      */
-    public SortedSet<AttributeDescriptor> getAttributes() {
-        return attributes;
+    public final SortedSet<AttributeDescriptor> getAttributes(){
+        final SortedSet<AttributeDescriptor> allAttributes = new TreeSet<>();
+        allAttributes.addAll(declaredAttributes);
+        for(TypeDescriptor td = getSuper(); td!=null && td instanceof ManagedTypeDescriptor; td=td.getSuper()){
+            ManagedTypeDescriptor superTypeDescriptor = (ManagedTypeDescriptor) td;
+            for(AttributeDescriptor superAttributeDescriptor : superTypeDescriptor.getDeclaredAttributes()){
+                boolean addSuperAttributeDescriptor=true;
+                for(AttributeDescriptor added : allAttributes){
+                    if(added.getName().equals(superAttributeDescriptor.getName())){
+                        addSuperAttributeDescriptor=false;
+                        break;
+                    }
+                }
+                if(addSuperAttributeDescriptor){
+                    allAttributes.add(superAttributeDescriptor);
+                }
+            }
+        }
+        return allAttributes;
     }
 
     /**
-     * Set the attributes of this managed type.
-     * @param attributes a set of attributes.
+     * Set the declaredAttributes of this managed type.
+     * @param attributes a set of declaredAttributes.
      */
-    public void setAttributes(SortedSet<AttributeDescriptor> attributes) {
-        this.attributes = attributes;
+    public final void setDeclaredAttributes(SortedSet<AttributeDescriptor> attributes) {
+        this.declaredAttributes = attributes;
     }
 
     /**
-     * Get the attributes declared by this managed type.
-     * @return a set of declared attributes, or an empty set if there are no declared attributes.
+     * Get the declaredAttributes declared by this managed type.
+     * @return a set of declared declaredAttributes, or an empty set if there are no declared declaredAttributes.
      */
-    public SortedSet<AttributeDescriptor> getDeclaredAttributes() {
-        return retainDeclared(new TreeSet<>(getAttributes()));
+    public final SortedSet<AttributeDescriptor> getDeclaredAttributes() {
+        return declaredAttributes;
     }
 
     /**
-     * Get all multi-valued attributes (Collection-, Set-, List-, and Map-valued attributes) of this managed type.
-     * @return a set of plural attributes, or an empty set if there are no plural attributes.
+     * Get all multi-valued declaredAttributes (Collection-, Set-, List-, and Map-valued declaredAttributes) of this managed type.
+     * @return a set of plural declaredAttributes, or an empty set if there are no plural declaredAttributes.
      */
     public SortedSet<PluralAttributeDescriptor> getPluralAttributes(){
         return getAttributeDescriptors(PluralAttributeDescriptor.class);
     }
 
     /**
-     * Get all multi-valued attributes (Collection-, Set-, List-, and Map-valued attributes) declared by this managed type
-     * @return a set of declared plural attributes, or an empty set if there are no declared attributes.
+     * Get all multi-valued declaredAttributes (Collection-, Set-, List-, and Map-valued declaredAttributes) declared by this managed type
+     * @return a set of declared plural declaredAttributes, or an empty set if there are no declared declaredAttributes.
      */
     public SortedSet<PluralAttributeDescriptor> getDeclaredPluralAttributes(){
         final SortedSet<PluralAttributeDescriptor> retval = getAttributeDescriptors(PluralAttributeDescriptor.class);
@@ -79,16 +171,16 @@ public class ManagedTypeDescriptor extends TypeDescriptor {
     }
 
     /**
-     * Get the single-valued attributes of this managed type.
-     * @return a set of singular attributes, or an empty set if there are no singular attributes.
+     * Get the single-valued declaredAttributes of this managed type.
+     * @return a set of singular declaredAttributes, or an empty set if there are no singular declaredAttributes.
      */
     public SortedSet<SingularAttributeDescriptor> getSingularAttributes(){
         return getAttributeDescriptors(SingularAttributeDescriptor.class);
     }
 
     /**
-     * Get the single-valued attributes declared by this managed type.
-     * @return a set of declared singular attributes, or an empty set if there are no declared singular attributes.
+     * Get the single-valued declaredAttributes declared by this managed type.
+     * @return a set of declared singular declaredAttributes, or an empty set if there are no declared singular declaredAttributes.
      */
     public SortedSet<SingularAttributeDescriptor> getDeclaredSingularAttributes(){
         final SortedSet<SingularAttributeDescriptor> retval = getAttributeDescriptors(SingularAttributeDescriptor.class);
@@ -96,16 +188,16 @@ public class ManagedTypeDescriptor extends TypeDescriptor {
     }
 
     /**
-     * Get the Collection-valued attributes of thiss managed type.
-     * @return a set of collection attributes, or an empty set if there are no collection attributes.
+     * Get the Collection-valued declaredAttributes of thiss managed type.
+     * @return a set of collection declaredAttributes, or an empty set if there are no collection declaredAttributes.
      */
     public SortedSet<CollectionAttributeDescriptor> getCollectionAttributes(){
         return getAttributeDescriptors(CollectionAttributeDescriptor.class);
     }
 
     /**
-     * Get the Collection-valued attributes declared by this managed type.
-     * @return a set of declared collection attributes, or an empty set if there are no declared collection attributes.
+     * Get the Collection-valued declaredAttributes declared by this managed type.
+     * @return a set of declared collection declaredAttributes, or an empty set if there are no declared collection declaredAttributes.
      */
     public SortedSet<CollectionAttributeDescriptor> getDeclaredCollectionAttributes(){
         final SortedSet<CollectionAttributeDescriptor> retval = getAttributeDescriptors(CollectionAttributeDescriptor.class);
@@ -113,16 +205,16 @@ public class ManagedTypeDescriptor extends TypeDescriptor {
     }
 
     /**
-     * Get the List-valued attributes of this managed type.
-     * @return a set of list attributes, or an empty set if there are no list attributes.
+     * Get the List-valued declaredAttributes of this managed type.
+     * @return a set of list declaredAttributes, or an empty set if there are no list declaredAttributes.
      */
     public SortedSet<ListAttributeDescriptor> getListAttributes(){
         return getAttributeDescriptors(ListAttributeDescriptor.class);
     }
 
     /**
-     * Get the List-valued attributes declared by this managed type.
-     * @return a set of declared list attributes, or an empty set if there are no declared list attributes.
+     * Get the List-valued declaredAttributes declared by this managed type.
+     * @return a set of declared list declaredAttributes, or an empty set if there are no declared list declaredAttributes.
      */
     public SortedSet<ListAttributeDescriptor> getDeclaredListAttributes(){
         final SortedSet<ListAttributeDescriptor> retval = getAttributeDescriptors(ListAttributeDescriptor.class);
@@ -130,16 +222,16 @@ public class ManagedTypeDescriptor extends TypeDescriptor {
     }
 
     /**
-     * Get the Set-valued attributes of the managed type.
-     * @return a set of set attributes, or an empty set if there a no set attributes.
+     * Get the Set-valued declaredAttributes of the managed type.
+     * @return a set of set declaredAttributes, or an empty set if there a no set declaredAttributes.
      */
     public SortedSet<SetAttributeDescriptor> getSetAttributes(){
         return getAttributeDescriptors(SetAttributeDescriptor.class);
     }
 
     /**
-     * Get the Set-valued attributes declared by the managed type.
-     * @return a set of declared set attributes, or an empty set if there a no declared set attributes.
+     * Get the Set-valued declaredAttributes declared by the managed type.
+     * @return a set of declared set declaredAttributes, or an empty set if there a no declared set declaredAttributes.
      */
     public SortedSet<SetAttributeDescriptor> getDeclaredSetAttributes(){
         final SortedSet<SetAttributeDescriptor> retval = getAttributeDescriptors(SetAttributeDescriptor.class);
@@ -147,16 +239,16 @@ public class ManagedTypeDescriptor extends TypeDescriptor {
     }
 
     /**
-     * Get the Map-valued attributes of the managed type.
-     * @return a list of map attributes, or an empty set if there a no map attributes.
+     * Get the Map-valued declaredAttributes of the managed type.
+     * @return a list of map declaredAttributes, or an empty set if there a no map declaredAttributes.
      */
     public SortedSet<MapAttributeDescriptor> getMapAttributes(){
         return getAttributeDescriptors(MapAttributeDescriptor.class);
     }
 
     /**
-     * Get the Map-valued attributes declared by the managed type.
-     * @return a list of declared map attributes, or an empty set if there a no declared map attributes.
+     * Get the Map-valued declaredAttributes declared by the managed type.
+     * @return a list of declared map declaredAttributes, or an empty set if there a no declared map declaredAttributes.
      */
     public SortedSet<MapAttributeDescriptor> getDeclaredMapAttributes(){
         final SortedSet<MapAttributeDescriptor> retval = getAttributeDescriptors(MapAttributeDescriptor.class);
@@ -164,10 +256,10 @@ public class ManagedTypeDescriptor extends TypeDescriptor {
     }
 
     /**
-     * Retain only the declared attributes from a set of attributes.
-     * @param <T> the type of attributes to get the declared attributes from.
-     * @param retval a set of attributes to get the declared attributes from.
-     * @return a set that contains only the attributes that are declared of the specified type.
+     * Retain only the declared declaredAttributes from a set of declaredAttributes.
+     * @param <T> the type of declaredAttributes to get the declared declaredAttributes from.
+     * @param retval a set of declaredAttributes to get the declared declaredAttributes from.
+     * @return a set that contains only the declaredAttributes that are declared of the specified type.
      */
     private <T extends AttributeDescriptor> SortedSet<T> retainDeclared(final SortedSet<T> retval) {
         for(Iterator<T> i = retval.iterator(); i.hasNext(); ){
@@ -224,4 +316,5 @@ public class ManagedTypeDescriptor extends TypeDescriptor {
             return superType.getAttribute(name);
         }
     }
+
 }

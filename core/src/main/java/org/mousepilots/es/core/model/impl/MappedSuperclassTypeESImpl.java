@@ -2,10 +2,9 @@ package org.mousepilots.es.core.model.impl;
 
 import java.util.Collection;
 import java.util.Set;
+import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.MappedSuperclassTypeES;
-import org.mousepilots.es.core.model.TypeES;
-import org.mousepilots.es.core.model.TypeVisitor;
 import org.mousepilots.es.core.model.proxy.Proxy;
 
 /**
@@ -13,8 +12,7 @@ import org.mousepilots.es.core.model.proxy.Proxy;
  * @version 1.0, 18-12-2015
  * @param <T> The represented entity type
  */
-public class MappedSuperclassTypeESImpl<T> extends IdentifiableTypeESImpl<T>
-    implements MappedSuperclassTypeES<T> {
+public class MappedSuperclassTypeESImpl<T> extends IdentifiableTypeESImpl<T> implements MappedSuperclassTypeES<T> {
 
     /**
      * Create a new instance of this class.
@@ -29,6 +27,7 @@ public class MappedSuperclassTypeESImpl<T> extends IdentifiableTypeESImpl<T>
      * {@code proxyType} if existent, otherwise {@code null}
      * @param proxyType the {@link Proxy}-type for the {@code javaType}
      * @param attributeOrdinals the singular attributes that are part of this mapped superclass type
+     * @param declaredAttributes
      * @param associationOrdinals
      * @param idClassAttributeOrdinals a set of attributes that form the id of this mapped superclass type.
      * @param idAttributeOrdinal
@@ -41,44 +40,24 @@ public class MappedSuperclassTypeESImpl<T> extends IdentifiableTypeESImpl<T>
          int ordinal,
          Class<T> javaType,
          Class<?> metamodelClass,
-         int superTypeOrdinal,
+         Integer superTypeOrdinal,
          Collection<Integer> subTypeOrdinals,
-         Constructor<? extends HasValue<T>> hasValueConstructor,
+         Constructor<? extends HasValue<? super T>> hasValueConstructor,
          Constructor<T> javaTypeConstructor,
          Constructor<? extends Proxy<T>> proxyTypeConstructor,
          Class<? extends Proxy<T>> proxyType,
-         Set<Integer> attributeOrdinals,
+         Collection<Integer> attributeOrdinals,
+         Collection<AttributeES<T, ?>> declaredAttributes,
          Collection<Integer> associationOrdinals,
-         Set<Integer> idClassAttributeOrdinals,
+         Collection<Integer> idClassAttributeOrdinals,
          int idAttributeOrdinal, 
          int idTypeOrdinal,
          Integer declaredIdAttributeOrdinal,
          Integer versionAttributeOrdinal,
          Integer declaredVersionAttributeOrdinal){
-         //TODO: check constructors
          super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor,
-                proxyTypeConstructor, proxyType, attributeOrdinals, associationOrdinals, idClassAttributeOrdinals, idAttributeOrdinal,
+                proxyTypeConstructor, proxyType, attributeOrdinals, declaredAttributes, associationOrdinals, idClassAttributeOrdinals, idAttributeOrdinal,
                 idTypeOrdinal, declaredIdAttributeOrdinal, versionAttributeOrdinal, declaredVersionAttributeOrdinal);
-}
+    }
     
-    @Override
-    public PersistenceType getPersistenceType(){
-        return PersistenceType.MAPPED_SUPERCLASS;
-    }
-
-    //TODO: implement abstract methods from IdentifiableTypeESImpl
-    @Override
-    public <R, A> R accept(TypeVisitor<R, A> v, A arg) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean hasSingleIdAttribute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean hasVersionAttribute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }

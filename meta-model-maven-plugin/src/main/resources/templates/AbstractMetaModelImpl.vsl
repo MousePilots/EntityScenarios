@@ -1,11 +1,12 @@
 ## Velocity Template.
 package $package;
 
-import org.mousepilots.es.shared.impl.AbstractMetaModel;
-import org.mousepilots.es.shared.impl.AbstractType;
-import org.mousepilots.es.shared.model.Attribute;
-import org.mousepilots.es.shared.model.MetaModel;
-import org.mousepilots.es.shared.model.Type;
+import java.util.Arrays;
+import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.Type;
+import org.mousepilots.es.core.model.MetamodelES;
+import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
+import org.mousepilots.es.core.model.impl.TypeESImpl;
 
 
 /**
@@ -15,24 +16,21 @@ import org.mousepilots.es.shared.model.Type;
  * @author Jurjen van Geenen
  */
 @javax.annotation.Generated(value = "org.mousepilots.es.maven.model.generator.plugin.MetaModelGeneratorMojo")
-public final class MetaModelImpl extends AbstractMetaModel{
+public final class MetamodelImpl extends AbstractMetamodelES{
 
-    public static final MetaModel INSTANCE = new MetaModelImpl(${typeDescriptors.size()}, ${attributeDescriptors.size()});
+    public static final MetamodelImpl INSTANCE = new MetamodelImpl();
 
-    public static void init(){
-        
-    }
+    /**
+     * To be invoked once before using generated classes or the EntityScenario api
+     */
+    public static void init(){}
     
-    private void registerTypes(){
-        #foreach($td in $typeDescriptors)
-        super.register((AbstractType) ${td.abstractDescriptorImplClassName}.INSTANCE );
-        #end
-    }
-    
-    private MetaModelImpl(int numberOfTypes, int numberOfAttributes) {
-        super(numberOfTypes, numberOfAttributes);
-        this.registerTypes();
-        super.onRegistrationsComplete();
+    private MetamodelImpl(){
+        super(
+            Arrays.asList(
+                $types
+            )
+        );
     }
     
    

@@ -20,6 +20,7 @@ import org.mousepilots.es.core.model.EmbeddableTypeES;
 import org.mousepilots.es.core.model.PluralAttributeES;
 import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  *
@@ -59,7 +60,7 @@ public final class UpdateCollection<E,EL,A extends Collection<EL>, AD extends Pl
         collectionOperation.inverse().execute(getAttributeValueOnClient(update), values);
     }
 
-    @Override
+    @Override @GwtIncompatible
     public List<EL> getModificationOnServer(ServerContext serverContext) {
         if(values==null){
             final List<EL> modifiableValues = new ArrayList<>(serializableValues.size());
@@ -69,7 +70,7 @@ public final class UpdateCollection<E,EL,A extends Collection<EL>, AD extends Pl
         return values;
     }
 
-    @Override
+    @Override @GwtIncompatible
     public void executeOnServer(Update<E, ?, A, AD, ?> update, ServerContext serverContext) {
         collectionOperation.execute(getAttributeValueOnServer(update), getModificationOnServer(serverContext));
     }

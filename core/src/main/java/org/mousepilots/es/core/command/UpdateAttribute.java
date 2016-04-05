@@ -8,6 +8,7 @@ package org.mousepilots.es.core.command;
 import java.io.Serializable;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  *
@@ -36,8 +37,10 @@ public interface UpdateAttribute<E, A, AD extends AttributeES<? super E, A>,MS> 
           executeOnClient(update);
      }
      
+     @GwtIncompatible
      MS getModificationOnServer(ServerContext serverContext);
      
+     @GwtIncompatible
      void executeOnServer(Update<E,?,A,AD,?> update, ServerContext serverContext);
      
      

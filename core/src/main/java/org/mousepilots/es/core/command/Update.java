@@ -13,6 +13,7 @@ import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.model.proxy.ProxyAspect;
 import org.mousepilots.es.core.scenario.ServerContext;
 import org.mousepilots.es.core.util.Function;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  * Represents an update (change of attribute-value) to an entity- or embeddable.
@@ -115,7 +116,7 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
           this.updateAttribute.redo(this);
      }
      
-     @Override
+     @Override @GwtIncompatible
      public final void executeOnServer(ServerContext serverContext){
           if(createCommand==null){
                super.setRealSubject(resolveSubject(serverContext));
@@ -123,6 +124,7 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
                super.setRealSubject(createCommand.getRealSubject());
           }
           this.updateAttribute.executeOnServer(this, serverContext);
+          serverContext.onExecuteOnServer(this);
      }
      
 

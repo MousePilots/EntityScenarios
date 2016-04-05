@@ -4,9 +4,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +30,12 @@ import org.mousepilots.es.maven.model.generator.model.type.IdentifiableTypeDescr
 import org.mousepilots.es.maven.model.generator.model.type.ManagedTypeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
 import org.mousepilots.es.core.model.AssociationTypeES;
+import org.mousepilots.es.core.model.AttributeES;
+import org.mousepilots.es.core.model.impl.AssociationESImpl;
+import org.mousepilots.es.core.model.impl.AttributeESImpl;
+import org.mousepilots.es.core.model.impl.LazyProperty;
+import org.mousepilots.es.core.model.impl.PropertyMember;
+import org.mousepilots.es.core.util.LazyValue;
 import org.mousepilots.es.core.util.StringUtils;
 
 /**
@@ -36,11 +44,23 @@ import org.mousepilots.es.core.util.StringUtils;
  * @author Nicky Ernste
  * @version 1.0, 4-12-2015
  */
-public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttributeType> {
+public abstract class AttributeDescriptor extends Descriptor<Attribute.PersistentAttributeType> {
 
-    private TypeDescriptor declaringTypeDescriptor;
+    private static final Map<Class<? extends Annotation>, Attribute.PersistentAttributeType> ANNOTATION_TO_PERSISTENT_ATTRIBUTE_TYPE = new HashMap<>();
+
+    static {
+        ANNOTATION_TO_PERSISTENT_ATTRIBUTE_TYPE.put(OneToOne.class, Attribute.PersistentAttributeType.ONE_TO_ONE);
+        ANNOTATION_TO_PERSISTENT_ATTRIBUTE_TYPE.put(OneToMany.class, Attribute.PersistentAttributeType.ONE_TO_MANY);
+        ANNOTATION_TO_PERSISTENT_ATTRIBUTE_TYPE.put(ManyToOne.class, Attribute.PersistentAttributeType.MANY_TO_ONE);
+        ANNOTATION_TO_PERSISTENT_ATTRIBUTE_TYPE.put(ManyToMany.class, Attribute.PersistentAttributeType.MANY_TO_MANY);
+        ANNOTATION_TO_PERSISTENT_ATTRIBUTE_TYPE.put(ElementCollection.class, Attribute.PersistentAttributeType.ELEMENT_COLLECTION);
+        ANNOTATION_TO_PERSISTENT_ATTRIBUTE_TYPE.put(EmbeddedId.class, Attribute.PersistentAttributeType.EMBEDDED);
+        ANNOTATION_TO_PERSISTENT_ATTRIBUTE_TYPE.put(Embedded.class, Attribute.PersistentAttributeType.EMBEDDED);
+    }
     private static final Set<AttributeDescriptor> INSTANCES = new TreeSet<>();
-
+    
+    private TypeDescriptor declaringTypeDescriptor;
+    
     /**
      * Create a new instance of this descriptor.
      *
@@ -62,18 +82,29 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
         return INSTANCES;
     }
 
+    private String getterSetterSuffix() {
+        final String name = getName();
+        final String suffix = name.substring(0, 1).toUpperCase() + name.substring(1);
+        return suffix;
+    }
+
+    @Override
+    protected String getDeclaredVariableName() {
+        return getName();
+    }
+    
+
+
     /**
      * Try to find a getter method for this attribute.
      *
-     * @return A {@link Method} that represents the get method for this
-     * attribute.
-     * @throws IllegalStateException If no getter method could be found. Which
-     * could mean the JavaBeans naming convention was not used.
+     * @return A {@link Method} that represents the get method for this attribute.
+     * @throws IllegalStateException If no getter method could be found. Which could mean the JavaBeans naming convention was not used.
      */
     public Method getGetterMethod() {
         final List<String> expectedNames;
-        final String suffix = getName().substring(0, 1).toUpperCase() + getName().substring(1);
         final Class declaringJavaType = getDeclaringTypeDescriptor().getJavaType();
+        final String suffix = getterSetterSuffix();
         if (getJavaType() == Boolean.class || getJavaType() == boolean.class) {
             expectedNames = Arrays.asList(new String[]{"get" + suffix, "is" + suffix});
         } else {
@@ -87,29 +118,23 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
                         Level.SEVERE, null, ex);
             }
         }
-        throw new IllegalStateException("Cannot find the getter for "
-                + declaringJavaType.getCanonicalName() + "." + getName());
+        throw new IllegalStateException("Cannot find the getter for property " + declaringJavaType.getCanonicalName() + "." + getName());
     }
 
     /**
      * Try to find a setter method for this attribute.
      *
-     * @return A {@link Method} representing the setter method for this
-     * attribute or {@code null} if no setter was found. When no setter is found
-     * it could mean that this attribute is read only, or that the JavaBeans
-     * naming convention was not followed.
+     * @return A {@link Method} representing the setter method for this attribute or {@code null} if no setter was found. When no setter is found it could mean that this attribute is read only, or
+     * that the JavaBeans naming convention was not followed.
      */
-    private Method getSetterMethod() {
-        final List<String> expectedNames;
-        final String suffix = getName().substring(0, 1).toUpperCase()
-                + getName().substring(1);
+    public Method getSetterMethod() {
         final Class declaringJavaType = getDeclaringTypeDescriptor().getJavaType();
-        expectedNames = Arrays.asList(new String[]{"set" + suffix});
+        final List<String> expectedNames = Arrays.asList(new String[]{"set" + getterSetterSuffix()});
         for (String expectedName : expectedNames) {
             try {
-                return declaringJavaType.getMethod(expectedName);
+                return declaringJavaType.getMethod(expectedName, getJavaTypeDescriptor().getJavaType());
             } catch (NoSuchMethodException ex) {
-                //There is no setter method which means this attribute is read only.
+                System.out.println(ex);
             } catch (SecurityException ex) {
                 Logger.getLogger(AttributeDescriptor.class.getName())
                         .log(Level.SEVERE, null, ex);
@@ -118,12 +143,21 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
         return null;
     }
 
+    public Set<AttributeDescriptor> getSubDescriptors() {
+        Set<AttributeDescriptor> subAttributes = new HashSet<>();
+        for (TypeDescriptor td : getDeclaringTypeDescriptor().getSubTypes()) {
+            final AttributeDescriptor subAttribute = td.getAttribute(getName());
+            if (subAttribute != null && this != subAttribute) {
+                subAttributes.add(subAttribute);
+            }
+        }
+        return subAttributes;
+    }
+
     /**
-     * Check if this attribute is read only. Read-only meaning there is no way
-     * to set the value of this attribute.
+     * Check if this attribute is read only. Read-only meaning there is no way to set the value of this attribute.
      *
-     * @return {@code true} if this attribute is read only, {@code false}
-     * otherwise.
+     * @return {@code true} if this attribute is read only, {@code false} otherwise.
      */
     public boolean isReadOnly() {
         return getSetterMethod() == null;
@@ -132,8 +166,7 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
     /**
      * Check if this attribute is a collection.
      *
-     * @return {@code true} if this attribute is a collection, {@code false}
-     * otherwise.
+     * @return {@code true} if this attribute is a collection, {@code false} otherwise.
      */
     public boolean isCollection() {
         return Map.class.isAssignableFrom(getJavaType())
@@ -143,8 +176,7 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
     /**
      * Check if the attribute is part of an association with another attribute.
      *
-     * @return {@code true} if this attribute is part of an association,
-     * {@code false} otherwise.
+     * @return {@code true} if this attribute is part of an association, {@code false} otherwise.
      */
     public boolean isAssociation() {
         for (TypeDescriptor typeDescriptor : TypeDescriptor.getAll()) {
@@ -156,12 +188,9 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
     }
 
     /**
-     * Gets the super attribute for this attribute. A super attribute is an
-     * attribute with the same name, declared on a super class of {@code this}
-     * declaring type.
+     * Gets the super attribute for this attribute. A super attribute is an attribute with the same name, declared on a super class of {@code this} declaring type.
      *
-     * @return the super attribute for this attribute if existent. Otherwise
-     * {@code null}.
+     * @return the super attribute for this attribute if existent. Otherwise {@code null}.
      */
     public AttributeDescriptor getSuper() {
         TypeDescriptor aSuper = getDeclaringTypeDescriptor().getSuper();
@@ -172,19 +201,33 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
         }
     }
 
+    private final LazyValue<AssociationDescriptor> valueAssociationDesciptor = new LazyValue<>(() -> {
+        return this.createAssociation(AssociationTypeES.VALUE);
+    }),
+            keyAssociationDesciptor = new LazyValue<>(() -> {
+                return this.createAssociation(AssociationTypeES.KEY);
+            });
+
+    public final AssociationDescriptor getAssociation(AssociationTypeES associationType) {
+        switch (associationType) {
+            case KEY:
+                return keyAssociationDesciptor.getValue();
+            case VALUE:
+                return valueAssociationDesciptor.getValue();
+            default:
+                throw new IllegalArgumentException(associationType.name());
+        }
+    }
+
     /**
      * Get the association this attribute has with another attribute.
      *
      * @param associationType The type of association you want to get.
-     * @return An {@link AssociationDescriptor} describing the association of
-     * this attribute with another. or {@code null} if the persistence type of
-     * the attribute is Basic. Or {@code null} if the {@code associationType} is
-     * {@code KEY} but {@code this} is not an instance of
-     * {@link MapAttributeDescriptor}.
-     * @throws IllegalStateException If the owning side of a bidirectional
-     * association could not be found.
+     * @return An {@link AssociationDescriptor} describing the association of this attribute with another. or {@code null} if the persistence type of the attribute is Basic. Or {@code null} if the
+     * {@code associationType} is {@code KEY} but {@code this} is not an instance of {@link MapAttributeDescriptor}.
+     * @throws IllegalStateException If the owning side of a bidirectional association could not be found.
      */
-    public final AssociationDescriptor getAssociation(AssociationTypeES associationType) {
+    private AssociationDescriptor createAssociation(AssociationTypeES associationType) {
         /* references sub-types. Implementations could be spread over sub-types,
          but then those would have to refer to one another
          e.g. OneToMany <--> ManyToOne*/
@@ -350,8 +393,7 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
     /**
      * Get the name of the getter method for this attribute.
      *
-     * @return the name of the getter method or {@code null} if the getter
-     * method was not found.
+     * @return the name of the getter method or {@code null} if the getter method was not found.
      */
     public String getGetterMethodName() {
         final Method getterMethod = getGetterMethod();
@@ -361,8 +403,7 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
     /**
      * Get the name of the setter method for this attribute if it exists.
      *
-     * @return the name of the setter method or {@code null} if the attribute is
-     * read only.
+     * @return the name of the setter method or {@code null} if the attribute is read only.
      */
     public String getSetterMethodName() {
         final Method setterMethod = getSetterMethod();
@@ -379,19 +420,33 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
     }
 
     /**
+     * @return {@code this} attribute's javaType's descriptor
+     */
+    public TypeDescriptor getJavaTypeDescriptor() {
+        return TypeDescriptor.getInstance(getJavaType());
+    }
+
+    /**
      * Set the descriptor that is the declarer of this attribute.
      *
      * @param declaringTypeDescriptor the declarer of this attribute.
      */
     public void setDeclaringTypeDescriptor(TypeDescriptor declaringTypeDescriptor) {
         this.declaringTypeDescriptor = declaringTypeDescriptor;
-    }    
+    }
+
+    public String getProxyGetterDeclaration() {
+        return null;
+    }
+
+    public String getProxySetterDeclaration() {
+        return null;
+    }
 
     /**
      * Try to get the {@link Field} for this attribute.
      *
-     * @return The {@link Field} for this attribute, or {@code null} if the
-     * field could not be found.
+     * @return The {@link Field} for this attribute, or {@code null} if the field could not be found.
      */
     public Field getField() {
         for (Class clazz = getDeclaringTypeDescriptor().getJavaType(); clazz != Object.class; clazz = clazz.getSuperclass()) {
@@ -408,8 +463,7 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
     /**
      * @param <T> A type that extends {@link Annotation}.
      * @param annotationClass The annotation to look for.
-     * @return the first attribute found which is annotated with
-     * {@code annotationClass}
+     * @return the first attribute found which is annotated with {@code annotationClass}
      */
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
         AnnotatedElement[] elements = new AnnotatedElement[]{getField(), getGetterMethod()};
@@ -423,20 +477,10 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
     }
 
     /**
-     * @return the persistent attribute type based on the annotation for this
-     * attribute.
+     * @return the persistent attribute type based on the annotation for this attribute.
      */
     public final Attribute.PersistentAttributeType getPersistentAttributeType() {
-        Map<Class<? extends Annotation>, Attribute.PersistentAttributeType> typeMap = new HashMap<>();
-        typeMap.put(OneToOne.class, Attribute.PersistentAttributeType.ONE_TO_ONE);
-        typeMap.put(OneToMany.class, Attribute.PersistentAttributeType.ONE_TO_MANY);
-        typeMap.put(ManyToOne.class, Attribute.PersistentAttributeType.MANY_TO_ONE);
-        typeMap.put(ManyToMany.class, Attribute.PersistentAttributeType.MANY_TO_MANY);
-        typeMap.put(ElementCollection.class, Attribute.PersistentAttributeType.ELEMENT_COLLECTION);
-        typeMap.put(EmbeddedId.class, Attribute.PersistentAttributeType.EMBEDDED);
-        typeMap.put(Embedded.class, Attribute.PersistentAttributeType.EMBEDDED);
-
-        for (Map.Entry<Class<? extends Annotation>, Attribute.PersistentAttributeType> entry : typeMap.entrySet()) {
+        for (Map.Entry<Class<? extends Annotation>, Attribute.PersistentAttributeType> entry : ANNOTATION_TO_PERSISTENT_ATTRIBUTE_TYPE.entrySet()) {
             if (getAnnotation(entry.getKey()) != null) {
                 return entry.getValue();
             }
@@ -444,8 +488,82 @@ public class AttributeDescriptor extends Descriptor<Attribute.PersistentAttribut
         return Attribute.PersistentAttributeType.BASIC;
     }
 
-    @Override
-    public String getStringRepresentation() {
-        return "";
+    public abstract Class< ? extends AttributeES> getDeclaredClass();
+
+    public abstract Class< ? extends AttributeESImpl> getImplementationClass();
+
+    /**
+     * @return the {@code this}' generic java-type, obtained from {@code this} field or getter
+     */
+    public final Type getGenericJavaType() {
+        final Field field = getField();
+        if (field != null) {
+            return field.getGenericType();
+        } else {
+            return getGetterMethod().getGenericReturnType();
+        }
     }
+
+    public abstract String getGenericsString();
+
+    protected final String getAssociationInstantiation(AssociationTypeES associationType) {
+        final AssociationDescriptor a = getAssociation(associationType);
+        if (a == null) {
+            return "null";
+        } else {
+            final AssociationDescriptor inverse = a.getInverse();
+            final String retval
+                    = "new " + AssociationESImpl.class.getCanonicalName() + "<>("
+                    + StringUtils.append(", ",
+                            a.getOrdinal().toString(),
+                            a.getSourceAttribute().getOrdinal().toString(),
+                            a.getTargetTypeDescriptor().getOrdinal().toString(),
+                            inverse == null ? "null" : inverse.getOrdinal().toString(),
+                            a.isOwner().toString(),
+                            AssociationTypeES.class.getCanonicalName() + "." + associationType.name(),
+                            Attribute.PersistentAttributeType.class.getCanonicalName() + "." + a.getPersistentAttributeType().name()
+                    )
+                    + ")";
+            return retval;
+        }
+    }
+
+    private String getPropertyMemberInstantiation() {
+        final String declaringClassCanonicalName = getDeclaringTypeDescriptor().getJavaTypeCanonicalName();
+        final StringBuilder retval = new StringBuilder()
+                .append("new ").append(PropertyMember.class.getCanonicalName())
+                .append("<>(")
+                .append(declaringClassCanonicalName).append(".class, ")
+                .append("\"").append(getName()).append("\", ")
+                .append(getGetterMethodName() == null ? "null" : declaringClassCanonicalName + "::" + getGetterMethodName()).append(", ")
+                .append(getSetterMethodName() == null ? "null" : declaringClassCanonicalName + "::" + getSetterMethodName()).append(", ")
+                .append(getGetterMethod().getModifiers())
+                .append(")");
+        return retval.toString();
+    }
+
+    @Override
+    protected Map<String, String> getConstructorParameterToValue() {
+        final AttributeDescriptor superAttribute = getSuper();
+        final Set<AttributeDescriptor> subDescriptors = getSubDescriptors();
+        final Map<String, String> ca = new HashMap<>();
+        ca.put("name", StringUtils.quote(getName()));
+        ca.put("ordinal", getOrdinal().toString());
+        ca.put("typeOrdinal", getJavaTypeDescriptor().getOrdinal().toString());
+        ca.put("declaringTypeOrdinal", getDeclaringTypeDescriptor().getOrdinal().toString());
+        ca.put("superOrdinal", superAttribute == null ? "null" : superAttribute.getOrdinal().toString());
+        ca.put(
+                "subOrdinals",
+                subDescriptors.isEmpty()
+                        ? "java.util.Collections.emptySet()"
+                        : "java.util.Arrays.asList(" + StringUtils.append(subDescriptors, a -> a.getOrdinal().toString(), ", ") + ")"
+        );
+        ca.put("persistentAttributeType", "javax.persistence.metamodel.Attribute.PersistentAttributeType." + getPersistentAttributeType().name());
+        ca.put("javaMember", getPropertyMemberInstantiation());
+        ca.put("valueAssociation", getAssociationInstantiation(AssociationTypeES.VALUE));
+        return ca;
+    }
+
+    public abstract <I, O> O accept(AttributeDescriptorVisitor<I, O> visitor, I arg);
+
 }

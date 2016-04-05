@@ -3,12 +3,13 @@ package org.mousepilots.es.core.model.impl;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import org.mousepilots.es.core.command.attribute.SetObserverImpl;
 import org.mousepilots.es.core.model.AssociationES;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.MemberES;
 import org.mousepilots.es.core.model.SetAttributeES;
-import org.mousepilots.es.core.model.proxy.collection.Observable;
+import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.model.proxy.collection.ObservableSet;
 
 /**
@@ -24,24 +25,27 @@ public class SetAttributeESImpl<T, E> extends PluralAttributeESImpl<T, Set<E>, E
         return new HashSet<>();
     }
 
+    @Override
+    protected Set<E> createObserved(Proxy<T> proxy, Set<E> value) {
+        ObservableSet<E> retval = new ObservableSet<>(value);
+        retval.addListener(new SetObserverImpl<>(proxy,this));
+        return retval;
+    }
+
     public SetAttributeESImpl(
             String name, 
             int ordinal, 
+            int typeOrdinal, 
+            int declaringTypeOrdinal, 
             Integer superOrdinal, 
             Collection<Integer> subOrdinals, 
-            int typeOrdinal,
             PersistentAttributeType persistentAttributeType, 
-            MemberES javaMember, 
-            boolean readOnly, 
-            AssociationES association, 
-            ManagedTypeES<T> declaringType, 
-            Constructor<HasValue> hasValueChangeConstructor, 
-            Constructor<HasValue> hasValueDtoConstructor,
-            CollectionType collectionType,
-            int elementTypeOrdinal,
-            BindableType bindableType,
-            Class<E> bindableJavaType){
-        super(name, ordinal, superOrdinal, subOrdinals, typeOrdinal, persistentAttributeType, javaMember, readOnly, association, declaringType, hasValueChangeConstructor, collectionType, elementTypeOrdinal, bindableType, bindableJavaType);
+            PropertyMember<T, Set<E>> javaMember, 
+            AssociationES valueAssociation, 
+            int elementTypeOrdinal) {
+        super(name, ordinal, typeOrdinal, declaringTypeOrdinal, superOrdinal, subOrdinals, persistentAttributeType, javaMember, valueAssociation, elementTypeOrdinal);
     }
+
+    
 
 }

@@ -11,6 +11,7 @@ import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.impl.EmbeddableTypeESImpl;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  *
@@ -33,7 +34,7 @@ public final class EmbeddableReference<E> extends SerializableReference<E, Embed
           this.container = embeddable.__getProxyAspect().getContainer().copy();
      }
 
-     @Override
+     @Override @GwtIncompatible
      public E resolve(ServerContext serverContext){
           final Object managedContainer = this.container.resolve(serverContext);
           return EmbeddableLocator.locate(container, managedContainer, embeddable.getValue());

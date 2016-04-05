@@ -30,7 +30,7 @@ import org.mousepilots.es.maven.model.generator.model.type.BasicTypeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.EmbeddableTypeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.EntityTypeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.IdentifiableTypeDescriptor;
-import org.mousepilots.es.maven.model.generator.model.type.MappedSuperClassDescriptor;
+import org.mousepilots.es.maven.model.generator.model.type.MappedSuperclassDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
 
 /**
@@ -191,7 +191,7 @@ public final class DescriptorUtils {
             case EMBEDDABLE:
                 return printEmbeddableType((EmbeddableTypeDescriptor) td);
             case MAPPED_SUPERCLASS:
-                return printMappedSupperClass((MappedSuperClassDescriptor) td);
+                return printMappedSupperClass((MappedSuperclassDescriptor) td);
             case ENTITY:
                 return printEntityType((EntityTypeDescriptor) td);
             default:
@@ -250,7 +250,7 @@ public final class DescriptorUtils {
         return sb.toString();
     }
 
-    public static String printMappedSupperClass(MappedSuperClassDescriptor mscd){
+    public static String printMappedSupperClass(MappedSuperclassDescriptor mscd){
         if (mscd == null) {
             return "null";
         }

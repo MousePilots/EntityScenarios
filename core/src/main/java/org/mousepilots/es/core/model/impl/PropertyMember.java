@@ -38,10 +38,18 @@ public class PropertyMember<X,Y> implements MemberES<X,Y> {
     public Y get(X instance) {
         return getter.invoke(instance);
     }
+    
+    public boolean isReadOnly(){
+        return setter==null;
+    }
 
     @Override
-    public void set(X instance, Y value) {
-        setter.invoke(instance, value);
+    public void set(X instance, Y value) throws UnsupportedOperationException{
+        if(isReadOnly()){
+            throw new UnsupportedOperationException(this + " is read-only");
+        } else {
+            setter.invoke(instance, value);
+        }
     }
 
     @Override

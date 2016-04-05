@@ -23,4 +23,5 @@ public interface PluralAttributeES<X, C, E> extends AttributeES<X, C>, PluralAtt
      * @return a new and empty {@link Collection} or {@link Map} suitable as a value for {@code this}
      */
     C createEmpty();
+    
 }

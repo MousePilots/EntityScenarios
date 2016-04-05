@@ -1,6 +1,12 @@
 package org.mousepilots.es.maven.model.generator.model.attribute;
 
+import java.util.Map;
 import javax.persistence.metamodel.PluralAttribute.CollectionType;
+import org.mousepilots.es.core.model.AssociationTypeES;
+import org.mousepilots.es.core.model.AttributeES;
+import org.mousepilots.es.core.model.MapAttributeES;
+import org.mousepilots.es.core.model.impl.AttributeESImpl;
+import org.mousepilots.es.core.model.impl.MapAttributeESImpl;
 import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
 
 /**
@@ -22,10 +28,37 @@ public class MapAttributeDescriptor extends PluralAttributeDescriptor {
      */
     public MapAttributeDescriptor(TypeDescriptor elementType, String name,
             Class keyJavaType, Class valueJavaType, int ordinal) {
-        super(CollectionType.MAP, elementType, name, valueJavaType, ordinal);
+        super(elementType, name, valueJavaType, ordinal);
         this.keyJavaType = keyJavaType;
     }
 
+    @Override
+    public Class getJavaType() {
+        return Map.class;
+    }
+
+    
+    
+    @Override
+    public CollectionType getCollectionType() {
+        return CollectionType.MAP;
+    }
+
+    @Override
+    public String getGenericsString(){
+        final String[] parts = super.getGenericsString().split(",");
+        return parts[0] + "," + getKeyJavaType().getCanonicalName() + "," + parts[1];
+    }
+
+    
+    @Override
+    protected Map<String, String> getConstructorParameterToValue() {
+        final Map<String, String> cp2v = super.getConstructorParameterToValue();
+        cp2v.put("keyTypeOrdinal", getKeyType().getOrdinal().toString());
+        cp2v.put("keyAssociation", getAssociationInstantiation(AssociationTypeES.KEY));
+        return cp2v;
+    }    
+    
     /**
      * Get the java type of the key for this map attribute.
      * @return the type of the key.
@@ -41,4 +74,20 @@ public class MapAttributeDescriptor extends PluralAttributeDescriptor {
     public TypeDescriptor getKeyType(){
         return TypeDescriptor.getInstance(getKeyJavaType());
     }
+
+    @Override
+    public Class<? extends AttributeES> getDeclaredClass() {
+        return MapAttributeES.class;
+    }
+
+    @Override
+    public Class<? extends AttributeESImpl> getImplementationClass() {
+        return MapAttributeESImpl.class;
+    }
+    
+    @Override
+    public <I, O> O accept(AttributeDescriptorVisitor<I, O> visitor, I arg) {
+        return visitor.visit(this, arg);
+    }
+    
 }

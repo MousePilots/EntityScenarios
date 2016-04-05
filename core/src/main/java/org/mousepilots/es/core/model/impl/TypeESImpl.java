@@ -21,15 +21,13 @@ public abstract class TypeESImpl<T> implements TypeES<T> {
      */
     public final int ordinal;
     private final Class<T> javaType;
-    private final Class<?> metamodelClass;
     private final Integer superTypeOrdinal;
     private final SortedSet<Integer> subTypes;
-    private final Constructor<? extends HasValue<T>> hasValueConstructor;
+    private final Constructor<? extends HasValue<? super T>> hasValueConstructor;
 
     /**
      * @param ordinal the type's ordinal
      * @param javaType the {@link Type#getJavaType()}
-     * @param metamodelClass the type's original JPA meta-model class
      * @param superTypeOrdinal the ordinal of {@code javaType}'s super-class' {@link Type}
      * @param subTypeOrdinals the ordinals of {@code javaType}'s sub-class' {@link Type}s
      * @param hasValueConstructor the value of hasValueConstructor
@@ -37,19 +35,17 @@ public abstract class TypeESImpl<T> implements TypeES<T> {
     public TypeESImpl(
          int ordinal, 
          Class<T> javaType, 
-         Class<?> metamodelClass, 
          Integer superTypeOrdinal, 
          Collection<Integer> subTypeOrdinals, 
-         Constructor<? extends HasValue<T>> hasValueConstructor){
+         Constructor<? extends HasValue<? super T>> hasValueConstructor){
         this.ordinal = ordinal;
         this.javaType = javaType;
-        this.metamodelClass = metamodelClass;
         this.superTypeOrdinal = superTypeOrdinal;
         this.subTypes = new TreeSet<>(subTypeOrdinals);
         this.hasValueConstructor=hasValueConstructor;
     }
     
-    protected void init(){}
+    protected void init(int round){}
 
     @Override
     public int getOrdinal() {
@@ -59,11 +55,6 @@ public abstract class TypeESImpl<T> implements TypeES<T> {
     @Override
     public Class<T> getJavaType() {
         return javaType;
-    }
-
-    @Override
-    public Class<?> getMetamodelClass() {
-        return metamodelClass;
     }
 
     @Override
@@ -90,10 +81,11 @@ public abstract class TypeESImpl<T> implements TypeES<T> {
         return AbstractMetamodelES.getInstance().getType(this.superTypeOrdinal);
     }
     
+    @Override
     public HasValue<T> wrap(T value){
-        final HasValue<T> hv = hasValueConstructor.invoke();
+        final HasValue<? super T> hv = hasValueConstructor.invoke();
         hv.setValue(value);
-        return hv;
+        return (HasValue<T>) hv;
     }
         
     @Override

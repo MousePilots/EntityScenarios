@@ -6,7 +6,7 @@
 package org.mousepilots.es.core.command;
 
 /**
- *
+ * Enumerates the possible states of a {@link Command} on the client which created the command
  * @author geenenju
  */
 public enum ClientState {
@@ -31,7 +31,16 @@ public enum ClientState {
                return UNDONE;
           }
      };
-
+     /**
+      * @return the one and only possible next state after {@code this}
+      */
      public abstract ClientState getNext();
+     
+     public final void assertValidNextState(ClientState next) throws IllegalStateException{
+         final ClientState expected = getNext();
+         if(expected!=next){
+             throw new IllegalStateException("expected: " + expected + ", encountered: " + next);
+         }
+     }
      
 }

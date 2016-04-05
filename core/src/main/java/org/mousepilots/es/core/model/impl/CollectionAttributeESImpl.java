@@ -2,11 +2,10 @@ package org.mousepilots.es.core.model.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.mousepilots.es.core.command.attribute.CollectionObserverImpl;
 import org.mousepilots.es.core.model.AssociationES;
 import org.mousepilots.es.core.model.CollectionAttributeES;
-import org.mousepilots.es.core.model.HasValue;
-import org.mousepilots.es.core.model.ManagedTypeES;
-import org.mousepilots.es.core.model.MemberES;
+import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.model.proxy.collection.ObservableCollection;
 
 /**
@@ -17,27 +16,27 @@ import org.mousepilots.es.core.model.proxy.collection.ObservableCollection;
  */
 public class CollectionAttributeESImpl<T, E> extends PluralAttributeESImpl<T, Collection<E>, E> implements CollectionAttributeES<T, E> {
 
+    
+    public CollectionAttributeESImpl(String name, int ordinal, int typeOrdinal, int declaringTypeOrdinal, Integer superOrdinal, Collection<Integer> subOrdinals, PersistentAttributeType persistentAttributeType, PropertyMember<T, Collection<E>> javaMember, AssociationES valueAssociation, int elementTypeOrdinal) {
+        super(name, ordinal, typeOrdinal, declaringTypeOrdinal, superOrdinal, subOrdinals, persistentAttributeType, javaMember, valueAssociation, elementTypeOrdinal);
+    }
+
     @Override
     public Collection<E> createEmpty() {
         return new ArrayList<>();
     }
 
-    public CollectionAttributeESImpl(
-            String name, 
-            int ordinal, 
-            Integer superOrdinal, 
-            Collection<Integer> subOrdinals,
-            int typeOrdinal,
-            PersistentAttributeType persistentAttributeType, 
-            MemberES javaMember, 
-            boolean readOnly, 
-            AssociationES association, 
-            ManagedTypeES<T> declaringType, 
-            Constructor<HasValue> hasValueChangeConstructor, 
-            CollectionType collectionType,
-            int elementTypeOrdinal,
-            BindableType bindableType,
-            Class<E> bindableJavaType){
-        super(name, ordinal, superOrdinal, subOrdinals, typeOrdinal, persistentAttributeType, javaMember, readOnly, association, declaringType, hasValueChangeConstructor, collectionType, elementTypeOrdinal, bindableType, bindableJavaType);
+    @Override
+    protected Collection<E> createObserved(Proxy<T> proxy, Collection<E> value) {
+        ObservableCollection<E> retval = new ObservableCollection<>(value);
+        retval.addListener(new CollectionObserverImpl(proxy, this));
+        return retval;
     }
+
+    
+    
+    
+    
+
+
 }

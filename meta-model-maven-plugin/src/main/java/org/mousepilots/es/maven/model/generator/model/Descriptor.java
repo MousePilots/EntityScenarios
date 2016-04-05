@@ -1,6 +1,14 @@
 package org.mousepilots.es.maven.model.generator.model;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import javax.persistence.metamodel.Type;
+import org.mousepilots.es.core.util.Function;
+import org.mousepilots.es.core.util.StringUtils;
 
 /**
  * Generic descriptor that holds the common attributes for all sub descriptors.
@@ -13,7 +21,21 @@ import javax.persistence.metamodel.Type;
  * {@link javax.persistence.metamodel.Attribute.PersistentAttributeType}.
  */
 public abstract class Descriptor<T> implements Comparable<Descriptor> {
-
+    
+    public static final String DESCRIPTOR_CLASS_SUFFIX = "_ES";
+    
+    protected static final String EMPTY_SET = "java.util.Collections.emptySet()";
+    
+    protected static <T> String AsCollection(Collection<T> elements, Function<T,String> transformer){
+        if(elements == null){
+            return "null";
+        }         
+        if(elements.isEmpty()){
+            return EMPTY_SET;
+        } else {
+            return "java.util.Arrays.asList(" + StringUtils.append(elements, transformer, ", ") + ")";
+        }
+    }
     private Descriptor<T> superDescriptor;
     private T persistenceType;
     private final String name;
@@ -45,12 +67,15 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
         this(null, name, javaType, ordinal);
     }
 
+      
     /**
      * @return the {@link Type.PersistenceType} of this descriptor.
      */
     public T getPersistenceType() {
         return persistenceType;
     }
+    
+    protected abstract String getDeclaredVariableName();
 
     /**
      * Set the {@link Type.PersistenceType} of this descriptor.
@@ -84,7 +109,7 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
     /**
      * @return the ordinal of this descriptor.
      */
-    public int getOrdinal() {
+    public Integer getOrdinal() {
         return ordinal;
     }
 
@@ -97,10 +122,10 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
     }
 
     /**
-     * @return the (canonical) class name of the {@link AbstractType}} implementation of this descriptor.
+     * @return the (canonical) class name of the extended metamodel class described by {@code this}.
      */
     public String getDescriptorClassFullName() {
-        return getJavaTypeCanonicalName() + "_ES";
+        return getJavaTypeCanonicalName() + DESCRIPTOR_CLASS_SUFFIX;
     }
 
     /**
@@ -165,6 +190,15 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
     public int compareTo(Descriptor o) {
         return Integer.compare(getOrdinal(), o.getOrdinal());
     }
+    
+    protected abstract Map<String,String> getConstructorParameterToValue();
+    
+    protected abstract Class<?> getImplementationClass();  
+    
+    public abstract Class<?> getDeclaredClass();
+    
+    protected abstract String getGenericsString();
+    
 
     /**
      * Get a string representation on how to initialise this attribute
@@ -173,5 +207,30 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
      * @return a string to initialise this attribute descriptor to insert into
      * the velocity generator.
      */
-    public abstract String getStringRepresentation();
+    
+    public final String getStringRepresentation(){
+        final Class<?> implementationClass = getImplementationClass();
+        final Constructor<?> constructor = implementationClass.getConstructors()[0];
+        final List<String> parameterValues = new ArrayList<>(constructor.getParameterCount());
+        final Map<String, String> constructorParameterToValue = getConstructorParameterToValue();
+        for(Parameter p : constructor.getParameters()){
+            final String value = constructorParameterToValue.get(p.getName());
+            if(value==null){
+                throw new IllegalStateException("no value for constructor parameter " + p + " of " + implementationClass + " when for " + this);
+            } else {
+                parameterValues.add(value);
+            }
+        }
+        final String generics = getGenericsString();
+        final String params = StringUtils.append(parameterValues, s -> s, ",\n\t");
+        final String retval = new StringBuilder()
+                .append("public static final ")
+                .append(getDeclaredClass().getCanonicalName()).append(generics).append(" ")
+                .append(getDeclaredVariableName()).append(" = ").append("new ").append(implementationClass.getCanonicalName()).append(generics)
+                .append("(\n\t").append(params).append(");")
+                .toString();
+        return retval;
+    }
+
+    
 }

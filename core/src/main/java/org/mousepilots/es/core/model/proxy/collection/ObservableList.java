@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  *
@@ -102,7 +103,7 @@ public class ObservableList<E> extends AbstractObservableCollection<E, List<E>, 
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
+    @GwtIncompatible @Override
     public void sort(Comparator<? super E> c) {
         this.subject.sort(c);
     }

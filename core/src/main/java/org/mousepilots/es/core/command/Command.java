@@ -9,6 +9,7 @@ import java.io.Serializable;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
  *
@@ -61,6 +62,7 @@ public interface Command<T,TD extends ManagedTypeES<T>> extends Serializable{
       * executes {@code this} on the server: musn't be called on the client
       * @param serverContext 
       */
+     @GwtIncompatible
      void executeOnServer(final ServerContext serverContext);
      
      /**

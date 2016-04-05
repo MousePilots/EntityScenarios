@@ -1,8 +1,10 @@
 package org.mousepilots.es.maven.model.generator.controller;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.MapAttribute;
@@ -24,6 +27,8 @@ import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 import org.apache.maven.plugin.logging.Log;
+import org.mousepilots.es.core.util.Maps;
+import org.mousepilots.es.core.util.Producer;
 import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.CollectionAttributeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.ListAttributeDescriptor;
@@ -33,8 +38,9 @@ import org.mousepilots.es.maven.model.generator.model.attribute.SingularAttribut
 import org.mousepilots.es.maven.model.generator.model.type.BasicTypeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.EmbeddableTypeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.EntityTypeDescriptor;
+import org.mousepilots.es.maven.model.generator.model.type.HasValueDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.ManagedTypeDescriptor;
-import org.mousepilots.es.maven.model.generator.model.type.MappedSuperClassDescriptor;
+import org.mousepilots.es.maven.model.generator.model.type.MappedSuperclassDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
 
 /**
@@ -48,14 +54,9 @@ public class TypeGenerator {
 
     private final AtomicInteger ordinal = new AtomicInteger(0);
     private final Log log;
+    private final String basicTypeBasePackageName = "org.mousepilots.es.test.client.domain.es.impl";
 
-    private static final Comparator<Class> CLASS_COMPARATOR = new Comparator<Class>() {
-
-        @Override
-        public int compare(Class o1, Class o2) {
-            return o1.getCanonicalName().compareTo(o2.getCanonicalName());
-        }
-    };
+    private static final Comparator<Class> CLASS_COMPARATOR = (Class o1, Class o2) -> o1.getCanonicalName().compareTo(o2.getCanonicalName());
 
     private static final Map<Class<? extends PluralAttribute>, Class> PLURAL_ATTRIBUTE_TO_COLLECTION_CLASS;
 
@@ -87,35 +88,53 @@ public class TypeGenerator {
         addSubTypes(retval); //Step 3
         addBasicTypeDescriptors(retval, jpaMetaModelClasses); //Step 4
         addAttributeTypeDescriptors(retval, jpaMetaModelClasses); //Step 5
+        addHasValueImpls(retval);
         return retval;
     }
-
+    
     /**
      * Add all of the managed type descriptors to the {@code typeDescriptors}.
      *
      * @param typeDescriptors The set to put the created managed type
      * descriptors into.
-     * @param jpaMetaModelClasses The set of Java classes to create the
-     * descriptors for.
+     * @param jpaMetaModelClasses The set of Java classes to create the descriptors for.
      * @throws IllegalStateException The persistence type cannot be determined.
      */
     private void addManagedTypeDescriptors(final SortedSet<TypeDescriptor> typeDescriptors, Set<Class<?>> jpaMetaModelClasses) throws IllegalStateException {
-        final TreeSet<Class> sortedClasses = new TreeSet<>(CLASS_COMPARATOR);
-        sortedClasses.addAll(jpaMetaModelClasses);
-        for (Class<?> managedClass : sortedClasses) {
-            final Class javaType = managedClass.getAnnotation(StaticMetamodel.class).value();
+        final TreeSet<Class> sortedMetaModelClasses = new TreeSet<>(CLASS_COMPARATOR);
+        sortedMetaModelClasses.addAll(jpaMetaModelClasses);
+        for (Class<?> metaModelClass : sortedMetaModelClasses) {
+            final Class javaType = metaModelClass.getAnnotation(StaticMetamodel.class).value();
             final TypeDescriptor td;
-            if (javaType.getAnnotation(Embeddable.class) != null) {
+            Embeddable embeddable;
+            Entity entity;
+            MappedSuperclass mappedSuperclass;
+            if((embeddable = (Embeddable) javaType.getAnnotation(Embeddable.class)) != null) {
                 //embeddable
-                td = new EmbeddableTypeDescriptor(managedClass, javaType.getSimpleName(), javaType, ordinal.getAndIncrement());
-            } else if (javaType.getAnnotation(MappedSuperclass.class) != null) {
+                td = new EmbeddableTypeDescriptor(
+                        metaModelClass, 
+                        javaType.getSimpleName(), 
+                        javaType, 
+                        ordinal.getAndIncrement()
+                );
+            } else if((mappedSuperclass = (MappedSuperclass) javaType.getAnnotation(MappedSuperclass.class)) != null) {
                 //mapped superclass
-                td = new MappedSuperClassDescriptor(managedClass, javaType.getSimpleName(), javaType, ordinal.getAndIncrement());
-            } else if (javaType.getAnnotation(Entity.class) != null) {
-                //entity
-                td = new EntityTypeDescriptor(managedClass, javaType.getSimpleName(), javaType, ordinal.getAndIncrement());
-            } else {
-                throw new IllegalStateException("unable to determine PersistenceType for " + managedClass);
+                td = new MappedSuperclassDescriptor(
+                        metaModelClass, 
+                        javaType.getSimpleName(), 
+                        javaType, 
+                        ordinal.getAndIncrement()
+                );
+            } else if((entity = (Entity) javaType.getAnnotation(Entity.class)) != null) {
+                final String name = entity.name();
+                td = new EntityTypeDescriptor(
+                        metaModelClass, 
+                        name==null || name.isEmpty() ? javaType.getSimpleName() : name.trim(), 
+                        javaType, 
+                        ordinal.getAndIncrement()
+                );
+            } else{
+                throw new IllegalStateException("unable to determine PersistenceType for " + metaModelClass);
             }
             typeDescriptors.add(td);
         }
@@ -129,6 +148,17 @@ public class TypeGenerator {
     private void addSuperDescriptors(SortedSet<TypeDescriptor> typeDescriptors) {
         for (TypeDescriptor td : typeDescriptors){
             td.setSuperDescriptor(td.getSuper());
+        }
+    }
+    
+    private void addHasValueImpls(SortedSet<TypeDescriptor> typeDescriptors){
+        HasValueDescriptor.Factory f = new HasValueDescriptor.Factory("org.mousepilots.es.test.domain");
+        final Collection<Class> jpaCollectionClasses = Arrays.asList(Collection.class,List.class,Set.class,Map.class);
+        for(TypeDescriptor td : typeDescriptors){
+            td.setHasValueDescriptor(f.getInstance(td.getJavaType()));
+//            if(!jpaCollectionClasses.contains(td.getJavaType())){
+//                
+//            }
         }
     }
 
@@ -167,7 +197,7 @@ public class TypeGenerator {
                     final TypeDescriptor td = TypeDescriptor.getInstance(attributeJavaType);
                     if (td == null) {
                         basicTypeDescriptors.add(
-                                new BasicTypeDescriptor(metaModelClass, attributeJavaType.getSimpleName(), attributeJavaType, ordinal.getAndIncrement())
+                                new BasicTypeDescriptor(this.basicTypeBasePackageName, attributeJavaType.getSimpleName(), attributeJavaType, ordinal.getAndIncrement())
                         );
                     }
                 }
@@ -176,7 +206,7 @@ public class TypeGenerator {
                     final TypeDescriptor td = TypeDescriptor.getInstance(javaFieldType);
                     if (td == null) {
                         basicTypeDescriptors.add(
-                                new BasicTypeDescriptor(metaModelClass, javaFieldType.getSimpleName(), javaFieldType, ordinal.getAndIncrement())
+                                new BasicTypeDescriptor(this.basicTypeBasePackageName, javaFieldType.getSimpleName(), javaFieldType, ordinal.getAndIncrement())
                         );
                     }
                 }
@@ -195,22 +225,17 @@ public class TypeGenerator {
      */
     private void addAttributeTypeDescriptors(final SortedSet<TypeDescriptor> managedTypeDescriptors, Set<Class<?>> jpaMetaModelClasses) {
         for (Class<?> metaModelClass : jpaMetaModelClasses) {
-            final SortedSet<AttributeDescriptor> classAttributes = new TreeSet<>();
-            ManagedTypeDescriptor modelDescriptor = null;
-
-            //Look for the corresponding type descriptor to add the attributes to.
-            String modelName = metaModelClass.getSimpleName().substring(0, metaModelClass.getSimpleName().length() - 1); //Remove the trailing underscore.
-            for (TypeDescriptor td : managedTypeDescriptors) {
-                if (td.getName().equals(modelName)) {
-                    modelDescriptor = (ManagedTypeDescriptor) td;
-                    break;
-                }
-            }
-
+            final SortedSet<AttributeDescriptor> declaredAttributes = new TreeSet<>();
+            final Class<?> declaringJavaType = metaModelClass.getAnnotation(StaticMetamodel.class).value();
+            final ManagedTypeDescriptor declaringTypeDescriptor = TypeDescriptor.getInstance(declaringJavaType, ManagedTypeDescriptor.class);
             for (Field metaModelField : metaModelClass.getDeclaredFields()) {
                 final Class<?> metaModelFieldType = metaModelField.getType();
+//                if(!Attribute.class.isAssignableFrom(metaModelClass)){
+//                    log.info("ignoring metamodel field " + metaModelField + " since it is not assignable from " + Attribute.class);
+//                    continue;
+//                }
                 final Class[] attributeJavaTypes = getGenericTypes(metaModelField, getGenericTypeIndices(metaModelFieldType));
-                AttributeDescriptor ad = null;
+                AttributeDescriptor ad=null;
 
                 if (metaModelFieldType == SingularAttribute.class) {
                     ad = new SingularAttributeDescriptor(metaModelField.getName(), attributeJavaTypes[0], ordinal.getAndIncrement());
@@ -225,21 +250,16 @@ public class TypeGenerator {
                         ad = new ListAttributeDescriptor(td, metaModelField.getName(), attributeJavaTypes[0], ordinal.getAndIncrement());
                     } else if (javaFieldType == Map.class) {
                         ad = new MapAttributeDescriptor(td, metaModelField.getName(), attributeJavaTypes[1], attributeJavaTypes[0], ordinal.getAndIncrement());
-                    } else {
-                        //Set
+                    } else if (javaFieldType == Set.class){
                         ad = new SetAttributeDescriptor(td, metaModelField.getName(), attributeJavaTypes[0], ordinal.getAndIncrement());
+                    } else {
+                        throw new IllegalStateException("unkown javaType for " + metaModelField);
                     }
                 }
-                if (ad != null) {
-                    ad.setDeclaringTypeDescriptor(modelDescriptor);
-                    classAttributes.add(ad);
-                }
+                ad.setDeclaringTypeDescriptor(declaringTypeDescriptor);
+                declaredAttributes.add(ad);
             }
-            if (modelDescriptor != null) {
-                modelDescriptor.setAttributes(classAttributes);
-            } else {
-                log.warn("Could not find the type descriptor for: " + metaModelClass.getSimpleName());
-            }
+            declaringTypeDescriptor.setDeclaredAttributes(declaredAttributes);
         }
     }
 

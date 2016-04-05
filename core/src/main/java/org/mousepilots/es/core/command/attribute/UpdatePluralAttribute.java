@@ -7,7 +7,6 @@ package org.mousepilots.es.core.command.attribute;
 
 import org.mousepilots.es.core.command.UpdateAttribute;
 import org.mousepilots.es.core.model.PluralAttributeES;
-import org.mousepilots.es.core.scenario.ServerContext;
 
 /**
  *

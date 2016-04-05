@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.persistence.metamodel.SingularAttribute;
+import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.IdentifiableTypeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
@@ -20,7 +21,7 @@ public abstract class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
 
     private final int idAttributeOrdinal, idTypeOrdinal;
     private final Integer declaredIdAttributeOrdinal, versionAttributeOrdinal, declaredVersionAttributeOrdinal;
-    private final Set<Integer> idClassAttributes;
+    private final Set<Integer> idClassAttributes = new TreeSet<>();
 
     /**
       * @param ordinal the ordinal of this identifiable type.
@@ -48,26 +49,27 @@ public abstract class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
          int ordinal,
          Class<T> javaType,
          Class<?> metamodelClass,
-         int superTypeOrdinal,
+         Integer superTypeOrdinal,
          Collection<Integer> subTypeOrdinals,
-         Constructor<? extends HasValue<T>> hasValueConstructor,
+         Constructor<? extends HasValue<? super T>> hasValueConstructor,
          Constructor<T> javaTypeConstructor,
          Constructor<? extends Proxy<T>> proxyTypeConstructor,
          Class<? extends Proxy<T>> proxyType,
-         Set<Integer> attributeOrdinals,
+         Collection<Integer> attributeOrdinals,
+         Collection<AttributeES<T, ?>> declaredAttributes,
          Collection<Integer> associationOrdinals,
-         Set<Integer> idClassAttributeOrdinals,
+         Collection<Integer> idClassAttributeOrdinals,
          int idAttributeOrdinal, 
          int idTypeOrdinal,
          Integer declaredIdAttributeOrdinal,
          Integer versionAttributeOrdinal,
          Integer declaredVersionAttributeOrdinal){
-        super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor, proxyTypeConstructor, proxyType, attributeOrdinals, associationOrdinals);
+        super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor, proxyTypeConstructor, proxyType, attributeOrdinals, declaredAttributes, associationOrdinals);
         this.idAttributeOrdinal = idAttributeOrdinal;
         this.declaredIdAttributeOrdinal = declaredIdAttributeOrdinal;
         this.versionAttributeOrdinal = versionAttributeOrdinal;
         this.declaredVersionAttributeOrdinal = declaredVersionAttributeOrdinal;
-        this.idClassAttributes = idClassAttributeOrdinals;
+        this.idClassAttributes.addAll(idClassAttributeOrdinals);
         this.idTypeOrdinal = idTypeOrdinal;
     }
 
@@ -147,4 +149,20 @@ public abstract class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
     public IdentifiableTypeES<? super T> getSupertype() {
         return (IdentifiableTypeES<T>)super.getSuperType();
     }
+
+    @Override
+    public final boolean hasSingleIdAttribute() {
+        return true;
+    }
+
+    @Override
+    public final boolean hasVersionAttribute() {
+        return versionAttributeOrdinal!=null;
+    }
+    
+    
+    
+    
+    
+    
 }

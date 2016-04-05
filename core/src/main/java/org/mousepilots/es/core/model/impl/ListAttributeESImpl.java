@@ -1,13 +1,11 @@
 package org.mousepilots.es.core.model.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.mousepilots.es.core.command.attribute.ListObserverImpl;
 import org.mousepilots.es.core.model.AssociationES;
-import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.ListAttributeES;
-import org.mousepilots.es.core.model.ManagedTypeES;
-import org.mousepilots.es.core.model.MemberES;
+import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.model.proxy.collection.ObservableList;
 
 /**
@@ -21,25 +19,22 @@ public class ListAttributeESImpl<T, E> extends PluralAttributeESImpl<T, List<E>,
     public ListAttributeESImpl(
             String name, 
             int ordinal, 
+            int typeOrdinal, 
+            int declaringTypeOrdinal, 
             Integer superOrdinal, 
             Collection<Integer> subOrdinals, 
-            int typeOrdinal,
             PersistentAttributeType persistentAttributeType, 
-            MemberES javaMember, 
-            boolean readOnly, 
-            AssociationES association, 
-            ManagedTypeES<T> declaringType, 
-            Constructor<HasValue> hasValueChangeConstructor, 
-            CollectionType collectionType,
-            int elementTypeOrdinal,
-            BindableType bindableType,
-            Class<E> bindableJavaType){
-        super(name, ordinal, superOrdinal, subOrdinals,typeOrdinal, persistentAttributeType, javaMember, readOnly, association, declaringType, hasValueChangeConstructor, collectionType, elementTypeOrdinal, bindableType, bindableJavaType);
+            PropertyMember<T, List<E>> javaMember, 
+            AssociationES valueAssociation, 
+            int elementTypeOrdinal) {
+        super(name, ordinal, typeOrdinal, declaringTypeOrdinal, superOrdinal, subOrdinals, persistentAttributeType, javaMember, valueAssociation, elementTypeOrdinal);
     }
 
     @Override
-    public List<E> createEmpty() {
-        return new ArrayList<>();
+    protected List<E> createObserved(Proxy<T> proxy, List<E> value) {
+        ObservableList<E> retval = new ObservableList<>(value);
+        retval.addListener(new ListObserverImpl<>(proxy, this));
+        return retval;
     }
 
 }

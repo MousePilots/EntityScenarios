@@ -6,7 +6,7 @@
         <artifactId>test</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>domain</artifactId>
+    <artifactId>es-test-domain</artifactId>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
@@ -35,10 +35,6 @@
                             <goal>add-source</goal>
                         </goals>
                         <configuration>
-                            <!-- 
-                                adds hibernate annotation processor generated sources as a source folder
-                                otherwise sources are not picked up by maven source-plugin
-                            -->
                             <sources>
                                 <source>target/generated-sources/annotations</source>
                             </sources>

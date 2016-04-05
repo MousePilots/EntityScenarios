@@ -1,5 +1,6 @@
 package org.mousepilots.es.core.util;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -9,7 +10,43 @@ import java.util.List;
  * @version 1.0, 16-11-2015
  */
 public class StringUtils {
+    
+    public static String quote(String s){
+        return '"' + s + '"';
+    }
 
+    public static <X> String append(Collection<X> parts, Function<X,String> transformer, String separator){
+        StringBuilder sb = new StringBuilder();
+        boolean separatorRequired=false;
+        for(X part : parts){
+            if(part!=null){
+                final String s = transformer.apply(part);
+                if(separatorRequired){
+                    sb.append(separator);
+                }
+                sb.append(s);
+                separatorRequired=true;
+             }
+         }
+        return sb.toString();
+        
+    }
+    
+    public static String append(String seperator, String... parts){
+        StringBuilder sb = new StringBuilder();
+        boolean separatorRequired=false;
+        for(String part : parts){
+            if(part!=null && !part.isEmpty()){
+                if(separatorRequired){
+                    sb.append(seperator);
+                }
+                sb.append(part);
+                separatorRequired=true;
+             }
+         }
+        return sb.toString();
+    }
+    
     /**
      * Check if a {@link String} is either {@code null} or is an empty string.
      * @param str The {@link String} to check.

@@ -10,6 +10,7 @@ import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.impl.EntityTypeESImpl;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.GwtIncompatible;
 import org.mousepilots.es.core.util.WrapperUtils;
 
 /**
@@ -36,7 +37,7 @@ public final class ExistingEntityValue<E,ID> extends Value<Proxy<E>,E,HasValue<I
           return wrappedId;
      }
      
-     @Override
+     @Override @GwtIncompatible
      protected E decode(HasValue<ID> encodedServerValue, ServerContext serverContext){
           if(encodedServerValue==null){
                return null;
