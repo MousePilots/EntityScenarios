@@ -52,7 +52,7 @@ public final class EmbeddableContainer<E> extends Container<E,EmbeddableTypeES<E
     public Container copy(){
          final EmbeddableTypeESImpl<E> type = (EmbeddableTypeESImpl<E>) getType();
          final E embeddable = getEmbeddable();
-         final E copy = type.copy(embeddable);
+         final E copy = type.shallowClone(embeddable);
          final EmbeddableContainer<E> retval = new EmbeddableContainer<>(type, getAttribute(), copy);
          retval.setParent(parent.copy());
          final Object mapKey = getMapKey();

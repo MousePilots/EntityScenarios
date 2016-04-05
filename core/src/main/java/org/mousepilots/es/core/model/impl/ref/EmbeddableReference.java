@@ -30,7 +30,7 @@ public final class EmbeddableReference<E> extends SerializableReference<E, Embed
      public EmbeddableReference(Proxy<E> embeddable) {
           super(embeddable.__getProxyAspect().getType().getOrdinal());
           final EmbeddableTypeESImpl<E> type = getType();
-          this.embeddable = type.wrap(type.copy(embeddable.__subject()));
+          this.embeddable = type.wrap(type.shallowClone(embeddable.__subject()));
           this.container = embeddable.__getProxyAspect().getContainer().copy();
      }
 

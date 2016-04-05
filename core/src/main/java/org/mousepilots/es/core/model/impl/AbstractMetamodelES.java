@@ -191,6 +191,11 @@ public abstract class AbstractMetamodelES implements MetamodelES {
         }
         return null;
     }
+    
+    @Override
+    public Set<BasicTypeES<?>> getBasicTypes(){
+        return Collections.unmodifiableSet(basicTypes);
+    }
 
     @Override
     public Set<ManagedType<?>> getManagedTypes() {

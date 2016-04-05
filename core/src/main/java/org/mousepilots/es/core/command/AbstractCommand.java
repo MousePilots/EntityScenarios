@@ -86,7 +86,7 @@ public abstract class AbstractCommand<T, TD extends ManagedTypeES<T>> implements
      * @throws IllegalStateException if already set
      */
     protected final void setProxy(Proxy<T> proxy) throws IllegalStateException {
-        if (this.proxy == null) {
+        if (this.proxy == null || proxy==null) {
             this.proxy = proxy;
         } else {
             throw new IllegalStateException("proxy was set allready");

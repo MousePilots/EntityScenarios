@@ -78,7 +78,7 @@ public abstract class TypeESImpl<T> implements TypeES<T> {
     
     @Override
     public TypeES<? super T> getSuperType() {
-        return AbstractMetamodelES.getInstance().getType(this.superTypeOrdinal);
+        return this.superTypeOrdinal==null ? null : AbstractMetamodelES.getInstance().getType(this.superTypeOrdinal);
     }
     
     @Override

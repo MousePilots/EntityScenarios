@@ -102,6 +102,8 @@ public class TestMetaModel {
         final EntityManagerImpl entityManager = (EntityManagerImpl) entityManagerFactory.createEntityManager();
         Command command = new CreateEntity(entityManager,ManagerAccount_ES.__TYPE,null);
         command.executeOnClient();
+        command.undoOnClient();
+        command.redoOnClient();
         for(ManagedTypeESImpl t : managedTypes){
             if(t.isInstantiable()){
                 final Object javaTypeInstance = t.createInstance();

@@ -1,5 +1,6 @@
 package org.mousepilots.es.core.model;
 
+import java.util.Set;
 import javax.persistence.metamodel.Metamodel;
 
 /**
@@ -47,4 +48,6 @@ public interface MetamodelES extends Metamodel{
 
     @Override
     <X> EmbeddableTypeES<X> embeddable(Class<X> cls);
+
+    Set<BasicTypeES<?>> getBasicTypes();
 }

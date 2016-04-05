@@ -398,7 +398,7 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T> implements Mana
      * @param instance the instance to be copied
      * @return a shallow clone of {@code instance} with only simple, singular attribute values copied
      */
-    public T copy(T instance) {
+    public T shallowClone(T instance) {
         final T shallowClone = this.createInstance();
         for (SingularAttributeES<? super T, ?> singularAttribute : singularAttributes) {
             if (!singularAttribute.isAssociation()) {
@@ -410,7 +410,8 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T> implements Mana
         return shallowClone;
     }
 
-    public Class getMetamodelClass() {
+    @Override
+    public final Class getMetamodelClass() {
         return metamodelClass;
     }
 

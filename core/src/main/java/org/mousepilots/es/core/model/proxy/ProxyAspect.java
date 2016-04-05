@@ -106,7 +106,7 @@ public final class ProxyAspect<T>{
     }
 
     public void setEntityManager(EntityManagerImpl entityManager) {
-        if (this.entityManager == null) {
+        if (this.entityManager == null || entityManager==null) {
             this.entityManager = entityManager;
         } else {
             throw new IllegalStateException("this' managed type instance is allready managed by " + this.entityManager);

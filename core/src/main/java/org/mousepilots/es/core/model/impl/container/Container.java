@@ -57,7 +57,7 @@ public abstract class Container<T, MT extends ManagedTypeES<T>, A extends Attrib
                     return null;
                } else {
                     final EmbeddableTypeESImpl embeddableTypeES = (EmbeddableTypeESImpl) t;
-                    final Object copy = embeddableTypeES.copy(key);
+                    final Object copy = embeddableTypeES.shallowClone(key);
                     return embeddableTypeES.wrap(copy);
                }
           }
