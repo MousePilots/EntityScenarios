@@ -10,7 +10,8 @@
     <packaging>pom</packaging>
     <name>es-test</name>
     <modules>
-        <module>domain</module>
-        <module>web</module>
-  </modules>
+        <module>es-test-domain</module>
+        <module>es-test-domain-mmx</module>
+        <module>es-test-web</module>
+    </modules>
 </project>

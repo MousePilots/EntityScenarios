@@ -1,13 +1,10 @@
 package org.mousepilots.es.core.model.impl;
 
 import java.util.Collection;
-import java.util.Set;
 import org.mousepilots.es.core.model.AttributeES;
-import org.mousepilots.es.core.model.impl.container.EmbeddableContainer;
 import org.mousepilots.es.core.model.EmbeddableTypeES;
 import org.mousepilots.es.core.model.HasValue;
-import org.mousepilots.es.core.model.MemberES;
-import org.mousepilots.es.core.model.SingularAttributeES;
+import org.mousepilots.es.core.model.TypeVisitor;
 import org.mousepilots.es.core.model.proxy.Proxy;
 
 /**
@@ -51,5 +48,10 @@ public class EmbeddableTypeESImpl<T> extends ManagedTypeESImpl<T> implements Emb
     @Override
     public PersistenceType getPersistenceType() {
         return PersistenceType.EMBEDDABLE;
+    }
+
+    @Override
+    public final <R, A> R accept(TypeVisitor<R, A> v, A arg) {
+        return v.visit(this, arg);
     }
 }

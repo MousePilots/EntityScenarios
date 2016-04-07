@@ -18,12 +18,4 @@ public interface CollectionAttributeES<T, E> extends PluralAttributeES<T, java.u
     public default CollectionType getCollectionType() {
         return CollectionType.COLLECTION;
     }
-
-    @Override
-    public default <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
-        return visitor.visit(this, arg);
-    }
-
-    
-    
 }

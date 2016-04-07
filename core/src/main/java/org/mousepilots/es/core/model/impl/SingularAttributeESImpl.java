@@ -2,6 +2,7 @@ package org.mousepilots.es.core.model.impl;
 
 import java.util.Collection;
 import org.mousepilots.es.core.model.AssociationES;
+import org.mousepilots.es.core.model.AttributeVisitor;
 import org.mousepilots.es.core.model.Generator;
 import org.mousepilots.es.core.model.SingularAttributeES;
 
@@ -77,5 +78,9 @@ public final class SingularAttributeESImpl<X, Y> extends AttributeESImpl<X, Y> i
     @Override
     public boolean isCollection() {
         return false;
+    }
+
+    public final <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
+        return visitor.visit(this, arg);
     }
 }

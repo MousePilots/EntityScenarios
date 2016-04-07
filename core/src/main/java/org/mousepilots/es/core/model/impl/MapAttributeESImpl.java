@@ -6,6 +6,7 @@ import java.util.Map;
 import org.mousepilots.es.core.command.attribute.MapObserverImpl;
 import org.mousepilots.es.core.model.AssociationES;
 import org.mousepilots.es.core.model.AssociationTypeES;
+import org.mousepilots.es.core.model.AttributeVisitor;
 import org.mousepilots.es.core.model.MapAttributeES;
 import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.model.proxy.Proxy;
@@ -65,6 +66,10 @@ public final class MapAttributeESImpl<T, K, V> extends PluralAttributeESImpl<T, 
                 "ordinal", getOrdinal(),
                 "javaType", getJavaType().getName() + "<" + getKeyType().getJavaType().getName() + "," + getElementType().getJavaType().getName() + ">"
         ));
+    }
+
+    public final <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
+        return visitor.visit(this, arg);
     }
 
 }

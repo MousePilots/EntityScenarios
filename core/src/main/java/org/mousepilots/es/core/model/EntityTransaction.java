@@ -5,6 +5,9 @@
  */
 package org.mousepilots.es.core.model;
 
+import java.util.List;
+import org.mousepilots.es.core.command.Command;
+
 /**
  *
  * @author geenenju
@@ -14,6 +17,8 @@ public interface EntityTransaction{
      boolean hasRedo();
 
      boolean hasUndo();
+     
+     List<Command> getCommands();
 
      /**
       * Redoes the effect of the last undone change

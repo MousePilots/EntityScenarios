@@ -5,9 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.mousepilots.es.core.command.attribute.SetObserverImpl;
 import org.mousepilots.es.core.model.AssociationES;
-import org.mousepilots.es.core.model.HasValue;
-import org.mousepilots.es.core.model.ManagedTypeES;
-import org.mousepilots.es.core.model.MemberES;
+import org.mousepilots.es.core.model.AttributeVisitor;
 import org.mousepilots.es.core.model.SetAttributeES;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.model.proxy.collection.ObservableSet;
@@ -44,6 +42,10 @@ public class SetAttributeESImpl<T, E> extends PluralAttributeESImpl<T, Set<E>, E
             AssociationES valueAssociation, 
             int elementTypeOrdinal) {
         super(name, ordinal, typeOrdinal, declaringTypeOrdinal, superOrdinal, subOrdinals, persistentAttributeType, javaMember, valueAssociation, elementTypeOrdinal);
+    }
+
+    public final <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
+        return visitor.visit(this, arg);
     }
 
     

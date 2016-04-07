@@ -5,6 +5,7 @@ import java.util.Set;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.MappedSuperclassTypeES;
+import org.mousepilots.es.core.model.TypeVisitor;
 import org.mousepilots.es.core.model.proxy.Proxy;
 
 /**
@@ -58,6 +59,11 @@ public class MappedSuperclassTypeESImpl<T> extends IdentifiableTypeESImpl<T> imp
          super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor,
                 proxyTypeConstructor, proxyType, attributeOrdinals, declaredAttributes, associationOrdinals, idClassAttributeOrdinals, idAttributeOrdinal,
                 idTypeOrdinal, declaredIdAttributeOrdinal, versionAttributeOrdinal, declaredVersionAttributeOrdinal);
+    }
+
+    @Override
+    public final <R, A> R accept(TypeVisitor<R, A> v, A arg) {
+        return v.visit(this, arg);
     }
     
 }

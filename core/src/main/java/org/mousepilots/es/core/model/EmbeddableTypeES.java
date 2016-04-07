@@ -12,9 +12,4 @@ import javax.persistence.metamodel.EmbeddableType;
  * @version 1.0, 19-10-2015
  */
 public interface EmbeddableTypeES<T> extends EmbeddableType<T>, ManagedTypeES<T> {
-
-    @Override
-    default <R,A> R accept(TypeVisitor<R,A> v, A arg){
-        return v.visit(this, arg);
-    }
 }

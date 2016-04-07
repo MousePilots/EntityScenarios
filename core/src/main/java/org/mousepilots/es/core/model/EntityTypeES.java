@@ -27,8 +27,4 @@ public interface EntityTypeES<T> extends IdentifiableTypeES<T>, EntityType<T>, B
     default PersistenceType getPersistenceType(){
         return PersistenceType.ENTITY;
     }    
-    @Override
-    public default <R,A> R accept(TypeVisitor<R,A> v, A arg){
-        return v.visit(this, arg);
-    }
 }

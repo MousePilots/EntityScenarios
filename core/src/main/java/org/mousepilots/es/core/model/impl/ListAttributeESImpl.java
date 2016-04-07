@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import org.mousepilots.es.core.command.attribute.ListObserverImpl;
 import org.mousepilots.es.core.model.AssociationES;
+import org.mousepilots.es.core.model.AttributeVisitor;
 import org.mousepilots.es.core.model.ListAttributeES;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.model.proxy.collection.ObservableList;
@@ -35,6 +36,10 @@ public class ListAttributeESImpl<T, E> extends PluralAttributeESImpl<T, List<E>,
         ObservableList<E> retval = new ObservableList<>(value);
         retval.addListener(new ListObserverImpl<>(proxy, this));
         return retval;
+    }
+
+    public final <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
+        return visitor.visit(this, arg);
     }
 
 }

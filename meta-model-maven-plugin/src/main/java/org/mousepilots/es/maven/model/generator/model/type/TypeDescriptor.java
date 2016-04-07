@@ -2,10 +2,10 @@ package org.mousepilots.es.maven.model.generator.model.type;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,6 +18,7 @@ import org.mousepilots.es.core.model.impl.TypeESImpl;
 import org.mousepilots.es.core.model.impl.hv.HasCollection;
 import org.mousepilots.es.core.model.impl.hv.HasList;
 import org.mousepilots.es.core.model.impl.hv.HasMap;
+import org.mousepilots.es.core.model.impl.hv.HasNumber;
 import org.mousepilots.es.core.model.impl.hv.HasSet;
 import org.mousepilots.es.core.util.Maps;
 import org.mousepilots.es.maven.model.generator.model.Descriptor;
@@ -31,16 +32,15 @@ import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescrip
 public abstract class TypeDescriptor extends Descriptor<PersistenceType> {
 
     private static final Map<Class<? extends Object>, Class<? extends HasValue>> PRECONFIGURED_TYPE_TO_HASVALUE_TYPE = Maps.create(
-        Arrays.asList(Collection.class,     List.class,     Set.class,      Map.class),
-        Arrays.asList(HasCollection.class,  HasList.class,  HasSet.class,   HasMap.class)
+        Arrays.asList(Collection.class,     List.class,     Set.class,      Map.class,      Number.class),
+        Arrays.asList(HasCollection.class,  HasList.class,  HasSet.class,   HasMap.class,   HasNumber.class)
     );
 
     private static final Set<TypeDescriptor> INSTANCES = new TreeSet<>();
-    private Collection<TypeDescriptor> subTypes;
     private HasValueDescriptor hasValueDescriptor;
     
     
-    private final Class<? extends HasValue> getPreconfiguredHasValueClass(){
+    private Class<? extends HasValue> getPreconfiguredHasValueClass(){
         final Class javaType = getJavaType();
         final Set<Entry<Class<? extends Object>, Class<? extends HasValue>>> entrySet = PRECONFIGURED_TYPE_TO_HASVALUE_TYPE.entrySet();
         //try and exact match
@@ -143,7 +143,6 @@ public abstract class TypeDescriptor extends Descriptor<PersistenceType> {
             Class javaType,
             int ordinal) {
         super(persistenceType, name, javaType, ordinal);
-        subTypes = new ArrayList<>();
         INSTANCES.add(this);
     }
 
@@ -259,11 +258,14 @@ public abstract class TypeDescriptor extends Descriptor<PersistenceType> {
         }
     }
 
-    public Collection<TypeDescriptor> getSubTypes() {
-        return subTypes;
+    public final Set<TypeDescriptor> getSubTypes() {
+        Set<TypeDescriptor> retval = new HashSet<>();
+        for(TypeDescriptor td : TypeDescriptor.getAll()){
+            if(getJavaType().isAssignableFrom(td.getJavaType())){
+                retval.add(td);
+            }
+        }
+        return retval;
     }
 
-    public void setSubTypes(Collection<TypeDescriptor> subTypes) {
-        this.subTypes = subTypes;
-    }
 }

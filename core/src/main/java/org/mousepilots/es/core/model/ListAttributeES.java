@@ -26,10 +26,6 @@ public interface ListAttributeES<T, E> extends PluralAttributeES<T, java.util.Li
         return new ArrayList<>();
     }
     
-    @Override
-    public default <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
-        return visitor.visit(this, arg);
-    }
 
     
     

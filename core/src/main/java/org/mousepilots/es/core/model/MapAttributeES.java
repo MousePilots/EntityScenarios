@@ -27,9 +27,5 @@ public interface MapAttributeES<T,K,V> extends PluralAttributeES<T, java.util.Ma
         return new HashMap<>();
     }
 
-    @Override
-    public default <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
-        return visitor.visit(this, arg);
-    }
     
 }

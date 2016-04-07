@@ -6,6 +6,7 @@
 package org.mousepilots.es.core.model.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.model.EntityTransaction;
@@ -74,5 +75,12 @@ public class EntityTransactionImpl implements EntityTransaction {
             throw new IllegalStateException("nothing to be redone");
         }
     }
+
+    @Override
+    public List<Command> getCommands() {
+        return new ArrayList(this.commands.subList(0, commandInsertionIndex));
+    }
+    
+    
 
 }

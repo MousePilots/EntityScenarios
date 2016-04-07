@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.mousepilots.es.core.command.attribute.CollectionObserverImpl;
 import org.mousepilots.es.core.model.AssociationES;
+import org.mousepilots.es.core.model.AttributeVisitor;
 import org.mousepilots.es.core.model.CollectionAttributeES;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.model.proxy.collection.ObservableCollection;
@@ -31,6 +32,10 @@ public class CollectionAttributeESImpl<T, E> extends PluralAttributeESImpl<T, Co
         ObservableCollection<E> retval = new ObservableCollection<>(value);
         retval.addListener(new CollectionObserverImpl(proxy, this));
         return retval;
+    }
+
+    public final <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
+        return visitor.visit(this, arg);
     }
 
     

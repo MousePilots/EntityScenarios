@@ -31,7 +31,7 @@ public abstract class AttributeESImpl<X, Y> implements AttributeES<X, Y> {
     private final SortedSet<Integer> subOrdinals = new TreeSet<>();
     private final Attribute.PersistentAttributeType persistentAttributeType;
     private final PropertyMember<X,Y> javaMember;
-    protected final Map<AssociationTypeES, AssociationES<X,Y>> associations = new EnumMap<>(AssociationTypeES.class);
+    protected final Map<AssociationTypeES, AssociationES<X,?>> associations = new EnumMap<>(AssociationTypeES.class);
 
     protected AttributeESImpl(
             String name,
@@ -116,7 +116,7 @@ public abstract class AttributeESImpl<X, Y> implements AttributeES<X, Y> {
     }
 
     @Override
-    public final Map<AssociationTypeES, AssociationES<X,Y>> getAssociations() {
+    public final Map<AssociationTypeES, AssociationES<X,?>> getAssociations() {
         return Collections.unmodifiableMap(associations);
     }
 
@@ -140,7 +140,7 @@ public abstract class AttributeESImpl<X, Y> implements AttributeES<X, Y> {
     }
 
     @Override
-    public AssociationES getAssociation(AssociationTypeES type) {
+    public AssociationES<X,?> getAssociation(AssociationTypeES type) {
         return associations.get(type);
     }
 

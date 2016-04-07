@@ -22,10 +22,6 @@ public interface SetAttributeES<X, E> extends PluralAttributeES<X, java.util.Set
         return CollectionType.SET;
     }
     
-    @Override
-    public default <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
-        return visitor.visit(this, arg);
-    }
 
     @Override
     public default Set<E> createEmpty() {

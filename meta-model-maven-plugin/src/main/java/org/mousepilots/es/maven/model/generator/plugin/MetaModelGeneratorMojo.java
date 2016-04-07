@@ -51,7 +51,7 @@ public class MetaModelGeneratorMojo extends AbstractMojo {
     /**
      * The project folder in which generated sources are put. The plugin should have this folder and all sub-folders to itself.
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated-sources", readonly = true)
+    @Parameter(defaultValue = "${project.build.directory}/generated-sources/es", readonly = true)
     private File generatedSourceDir;
 
     /**

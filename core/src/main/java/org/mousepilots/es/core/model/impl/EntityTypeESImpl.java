@@ -4,6 +4,7 @@ import java.util.Collection;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.EntityTypeES;
 import org.mousepilots.es.core.model.HasValue;
+import org.mousepilots.es.core.model.TypeVisitor;
 import org.mousepilots.es.core.model.proxy.Proxy;
 
 /**
@@ -68,6 +69,12 @@ public final class EntityTypeESImpl<T> extends IdentifiableTypeESImpl<T> impleme
     public String getName() {
         return name;
     }
+    
+    @Override
+    public <R,A> R accept(TypeVisitor<R,A> v, A arg){
+        return v.visit(this, arg);
+    }
+    
 
 
 

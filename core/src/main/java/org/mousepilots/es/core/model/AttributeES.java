@@ -47,12 +47,12 @@ public interface AttributeES<X, Y> extends Attribute<X, Y>, Comparable<Attribute
      * specified {@link AssociationTypeES} if any. Otherwise {@code null} is
      * returned.
      */
-    AssociationES getAssociation(AssociationTypeES type);
+    AssociationES<X,?> getAssociation(AssociationTypeES type);
     
     /**
      * @return the unmodifiable, non-{@code null} mapping {@link AssociationTypeES} &rarr; {@link AssociationES}
      */
-    public Map<AssociationTypeES, AssociationES<X,Y>> getAssociations();
+    public Map<AssociationTypeES, AssociationES<X,?>> getAssociations();
 
     @Override
     public MemberES<X,Y> getJavaMember();

@@ -3,6 +3,7 @@ package org.mousepilots.es.core.model.impl;
 import java.util.Collection;
 import org.mousepilots.es.core.model.BasicTypeES;
 import org.mousepilots.es.core.model.HasValue;
+import org.mousepilots.es.core.model.TypeVisitor;
 
 /**
  * @author Nicky Ernste
@@ -31,4 +32,10 @@ public class BasicTypeESImpl<T> extends TypeESImpl<T> implements BasicTypeES<T> 
     public final PersistenceType getPersistenceType(){
         return PersistenceType.BASIC;
     }
+    
+    @Override
+    public <R,A> R accept(TypeVisitor<R,A> v, A arg){
+        return v.visit(this, arg);
+    }
+    
 }

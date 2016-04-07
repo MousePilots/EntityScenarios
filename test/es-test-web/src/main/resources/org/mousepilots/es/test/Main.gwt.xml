@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='Main'>
+    <inherits name="org.mousepilots.es.Core"/>
+    <inherits name="org.mousepilots.es.test.Domain"/>
+    <entry-point class="org.mousepilots.es.test.client.Main" />
+    <source path="client"/>
+ </module>
