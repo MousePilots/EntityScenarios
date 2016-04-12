@@ -14,6 +14,10 @@ import org.mousepilots.es.test.domain.MetamodelImpl;
  * @author geenenju
  */
 public class AbstractTest{
+    
+    static {
+        MetamodelImpl.init();
+    }
 
     protected final Logger getLogger() {
         return Logger.getLogger(getClass().getName());

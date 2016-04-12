@@ -33,7 +33,6 @@ import org.mousepilots.es.core.model.AssociationTypeES;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.impl.AssociationESImpl;
 import org.mousepilots.es.core.model.impl.AttributeESImpl;
-import org.mousepilots.es.core.model.impl.LazyProperty;
 import org.mousepilots.es.core.model.impl.PropertyMember;
 import org.mousepilots.es.core.util.LazyValue;
 import org.mousepilots.es.core.util.StringUtils;

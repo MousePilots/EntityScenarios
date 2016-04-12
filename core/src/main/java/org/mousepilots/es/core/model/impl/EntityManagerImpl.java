@@ -110,7 +110,6 @@ public class EntityManagerImpl implements EntityManagerES{
                     if (proxyAspect.isDeleted()) {
                         throw new IllegalArgumentException(entity + " was removed allready");
                     }
-                    final EntityTypeES entityTypeES = (EntityTypeES) type;
                     final DeleteEntity deleteEntity = new DeleteEntity(proxy);
                     deleteEntity.executeOnClient();
                 } else {

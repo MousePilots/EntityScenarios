@@ -5,7 +5,6 @@
  */
 package org.mousepilots.es.core.command;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
 import org.mousepilots.es.core.model.impl.EntityManagerImpl;
@@ -125,6 +124,7 @@ public abstract class AbstractCommand<T, TD extends ManagedTypeES<T>> implements
 
     @Override
     public final void executeOnClient() {
+        getClientEntityManager().getTransaction().associate(this);
         performTransition(ClientState.EXECUTED, this::doExecuteOnClient);
     }
 

@@ -6,7 +6,6 @@
 package org.mousepilots.es.core.model.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.model.EntityTransaction;
@@ -28,7 +27,7 @@ public class EntityTransactionImpl implements EntityTransaction {
         }
     }
 
-    protected final void associate(Command command) throws IllegalStateException{
+    public final void associate(Command command) throws IllegalStateException{
         if (commands.contains(command)) {
             throw new IllegalStateException(command + " is allready associated to " + this);
         }

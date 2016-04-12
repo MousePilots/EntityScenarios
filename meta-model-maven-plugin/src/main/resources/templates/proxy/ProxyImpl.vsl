@@ -12,7 +12,7 @@ public final class ${td.getProxyClassSimpleName()} extends ${td.getJavaTypeSimpl
         return __proxyAspect;
     }
 
-#foreach($ad in ${td.getDeclaredAttributes()})
+#foreach($ad in ${td.getAttributes()})
 #if(${ad.getProxyGetterDeclaration()})
 
 ${ad.getProxyGetterDeclaration()}
