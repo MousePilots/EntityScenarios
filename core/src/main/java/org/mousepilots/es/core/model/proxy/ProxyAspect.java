@@ -121,4 +121,10 @@ public final class ProxyAspect<T>{
         this.managedMode = managedMode;
     }
 
+    public void doUnmanaged(Runnable r){
+        boolean wasManagedMode = isManagedMode();
+        setManagedMode(false);
+        r.run();
+        setManagedMode(wasManagedMode);
+    }
 }

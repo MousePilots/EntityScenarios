@@ -37,7 +37,7 @@ public abstract class PluralAttributeDescriptor extends AttributeDescriptor{
 
     @Override
     public String getGenericsString() {
-        return "<" + StringUtils.append(
+        return "<" + String.join(
                         ", ", 
                         getDeclaringTypeDescriptor().getJavaTypeCanonicalName(),
                         getElementType().getJavaTypeCanonicalName()
@@ -53,15 +53,15 @@ public abstract class PluralAttributeDescriptor extends AttributeDescriptor{
     }
 
     @Override
-    public final String getProxyGetterDeclaration(){
+    public final String getProxyGetterDeclaration(TypeDescriptor hasAttribute){
         final Method getter = this.getGetterMethod(), setter = getSetterMethod();
         if(getter==null || setter==null){
             throw new IllegalStateException(getField() + " requires a getter and setter");
         }
-        final String genericString = getter.toGenericString();
+        final GenericMethodInfo methodInfo = new GenericMethodInfo(hasAttribute.getJavaType(), getter);
         final String methodDeclaration = 
                 "\t@Override\n" + 
-                "\t" + genericString.replace(getter.getDeclaringClass().getName() + ".", "") + "{\n" + 
+                "\t public " + methodInfo.getReturnType() + " " + getter.getName() + "(){\n" + 
                 "\t\t return " + PluralAttributes.class.getCanonicalName() + ".get( this, " + this.getOrdinal() + ", super::" + getter.getName() + ", super::" + setter.getName() + ");\n" + 
                 "\t}";
         
@@ -69,18 +69,18 @@ public abstract class PluralAttributeDescriptor extends AttributeDescriptor{
     }
 
     @Override
-    public final String getProxySetterDeclaration() {
+    public final String getProxySetterDeclaration(TypeDescriptor hasAttribute) {
         final Method getter = this.getGetterMethod(), setter = getSetterMethod();
         if(getter==null || setter==null){
             throw new IllegalStateException(getField() + " requires a getter and setter");
         }
         final String genericTypeString = "<" + getDeclaringTypeDescriptor().getJavaTypeCanonicalName() + "," + getter.getGenericReturnType().toString() + ">";
         System.out.println("genericTypeString for : " + getter + ": " + genericTypeString);
-        final String genericString = setter.toGenericString();
+        final GenericMethodInfo methodInfo = new GenericMethodInfo(hasAttribute.getJavaType(), setter);
         final String parameterName = setter.getParameters()[0].getName();
         final String methodDeclaration = 
                 "\t@Override\n" + 
-                "\t" + genericString.replace(setter.getDeclaringClass().getName() + ".", "").replace(")", " " + parameterName + ")") + "{\n" + 
+                "\t public void " + setter.getName() + "(" + methodInfo.getParameterTypes().get(0) + " " + parameterName + "){\n" + 
                 "\t\t" + PluralAttributes.class.getCanonicalName() + ".set( this, " + this.getOrdinal() + ", super::" + setter.getName() + ", " + parameterName + ");\n" + 
                 "\t}";
         

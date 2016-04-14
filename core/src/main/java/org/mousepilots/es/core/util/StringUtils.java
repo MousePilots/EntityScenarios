@@ -15,7 +15,7 @@ public class StringUtils {
         return '"' + s + '"';
     }
 
-    public static <X> String append(Collection<X> parts, Function<X,String> transformer, String separator){
+    public static <X> String join(Collection<X> parts, Function<X,String> transformer, String separator){
         StringBuilder sb = new StringBuilder();
         boolean separatorRequired=false;
         for(X part : parts){
@@ -30,21 +30,6 @@ public class StringUtils {
          }
         return sb.toString();
         
-    }
-    
-    public static String append(String seperator, String... parts){
-        StringBuilder sb = new StringBuilder();
-        boolean separatorRequired=false;
-        for(String part : parts){
-            if(part!=null && !part.isEmpty()){
-                if(separatorRequired){
-                    sb.append(seperator);
-                }
-                sb.append(part);
-                separatorRequired=true;
-             }
-         }
-        return sb.toString();
     }
     
     /**

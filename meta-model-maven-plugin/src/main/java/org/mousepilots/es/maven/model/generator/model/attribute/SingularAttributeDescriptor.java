@@ -16,6 +16,7 @@ import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.impl.AttributeESImpl;
 import org.mousepilots.es.core.model.impl.DescendingLongGenerator;
 import org.mousepilots.es.core.model.impl.SingularAttributeESImpl;
+import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
 
 /**
  * Descriptor of the {@link javax.persistence.metamodel.SingularAttribute} of JPA.
@@ -132,16 +133,16 @@ public final class SingularAttributeDescriptor extends AttributeDescriptor {
     }
     
     @Override
-    public final String getProxySetterDeclaration() {
+    public final String getProxySetterDeclaration(TypeDescriptor hasAttribute) {
         final Method setter = getSetterMethod();
         if(setter==null){
             return null;
         } else {
-            final String genericString = setter.toGenericString();
             final String parameterName = setter.getParameters()[0].getName();
+            final GenericMethodInfo methodInfo = new GenericMethodInfo(hasAttribute.getJavaType(), setter);
             final String methodDeclaration = 
                     "\t@Override\n" + 
-                    "\t" + genericString.replace(setter.getDeclaringClass().getName() + ".", "").replace(")", " " + parameterName + ")") + "{\n" + 
+                    "\t public void " + setter.getName() + "(" + methodInfo.getParameterTypes().get(0) + " " + parameterName + "){\n" + 
                     "\t\t" + SingularAttributes.class.getCanonicalName() + ".set( this, " + this.getOrdinal() + ", super::" + setter.getName() + ", " + parameterName + ");\n" + 
                     "\t}";
 

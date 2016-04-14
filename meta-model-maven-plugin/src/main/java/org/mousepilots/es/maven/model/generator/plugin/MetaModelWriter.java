@@ -150,7 +150,7 @@ public class MetaModelWriter {
         final VelocityContext context = createContext();
         context.put("package", "org.mousepilots.es.test.domain");
         Function<TypeDescriptor,String> transformer = td -> "(TypeESImpl) " + td.getDescriptorClassFullName() + "." + td.getDeclaredVariableName();
-        context.put("types",StringUtils.append(TypeDescriptor.getAll(), transformer, ",\n\t\t\t\t"));
+        context.put("types",StringUtils.join(TypeDescriptor.getAll(), transformer, ",\n\t\t\t\t"));
         context.put("attributeDescriptors",AttributeDescriptor.getAll());
         StringWriter writer = new StringWriter();
         template.merge(context, writer);

@@ -47,85 +47,84 @@ import org.mousepilots.es.core.util.GwtIncompatible;
  */
 public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends AttributeES<? super E, A>, SR extends SerializableReference> extends AbstractCommand<E, TD> implements SubjectResolver<E> {
 
-     private int attributeOrdinal;
+    private int attributeOrdinal;
 
-     private Create<E, TD> createCommand;
+    private Create<E, TD> createCommand;
 
-     private SR reference;
-     
-     private UpdateAttribute<E,A,AD,?> updateAttribute;
-     
+    private SR reference;
 
-     protected Update() {
-     }
+    private UpdateAttribute<E, A, AD, ?> updateAttribute;
 
-     private Update(ProxyAspect proxyAspect) {
-          super(proxyAspect.getEntityManager(), (TD) proxyAspect.getType());
-     }
+    protected Update() {
+    }
 
-     protected Update(Proxy<E> proxy, AD attribute, Function<Proxy<E>, SR> referenceConstructor, UpdateAttribute<E,A,AD,?> updateAttribute) {
-          this(proxy.__getProxyAspect());
-          this.attributeOrdinal = attribute.getOrdinal();
-          final ProxyAspect<E> proxyAspect = proxy.__getProxyAspect();
-          if (proxyAspect.isCreated()) {
-               createCommand = (Create) proxyAspect.getCreate();
-          } else {
-               reference = referenceConstructor.apply(proxy);
-          }
-          this.updateAttribute=updateAttribute;
-     }
+    private Update(ProxyAspect proxyAspect) {
+        super(proxyAspect.getEntityManager(), (TD) proxyAspect.getType());
+    }
 
-     
-     protected final boolean isSubjectCreated() {
-          return createCommand != null;
-     }
+    protected Update(Proxy<E> proxy, AD attribute, Function<Proxy<E>, SR> referenceConstructor, UpdateAttribute<E, A, AD, ?> updateAttribute) {
+        this(proxy.__getProxyAspect());
+        setProxy(proxy);
+        this.attributeOrdinal = attribute.getOrdinal();
+        final ProxyAspect<E> proxyAspect = proxy.__getProxyAspect();
+        if (proxyAspect.isCreated()) {
+            createCommand = (Create) proxyAspect.getCreate();
+        } else {
+            reference = referenceConstructor.apply(proxy);
+        }
+        this.updateAttribute = updateAttribute;
+    }
 
-     protected final Create<E, TD> getCreateCommand() {
-          return createCommand;
-     }
+    protected final boolean isSubjectCreated() {
+        return createCommand != null;
+    }
 
-     protected final SR getReference() {
-          return reference;
-     }
+    protected final Create<E, TD> getCreateCommand() {
+        return createCommand;
+    }
 
-     public final UpdateAttribute<E, A, AD,?> getUpdateAttribute() {
-          return updateAttribute;
-     }
+    protected final SR getReference() {
+        return reference;
+    }
 
-     public final AD getAttribute() {
-          return (AD) AbstractMetamodelES.getInstance().getAttribute(attributeOrdinal);
-     }
+    public final UpdateAttribute<E, A, AD, ?> getUpdateAttribute() {
+        return updateAttribute;
+    }
 
-     @Override
-     public final CRUD getOperation() {
-          return CRUD.UPDATE;
-     }
+    public final AD getAttribute() {
+        return (AD) AbstractMetamodelES.getInstance().getAttribute(attributeOrdinal);
+    }
 
-     @Override
-     protected final void doExecuteOnClient() {
-          this.updateAttribute.executeOnClient(this);
-     }
+    @Override
+    public final CRUD getOperation() {
+        return CRUD.UPDATE;
+    }
 
-     @Override
-     protected final void doUndo() {
-          this.updateAttribute.undo(this);
-     }
+    @Override
+    protected final void doExecuteOnClient() {
+        this.updateAttribute.executeOnClient(this);
+    }
 
-     @Override
-     protected final void doRedo() {
-          this.updateAttribute.redo(this);
-     }
-     
-     @Override @GwtIncompatible
-     public final void executeOnServer(ServerContext serverContext){
-          if(createCommand==null){
-               super.setRealSubject(resolveSubject(serverContext));
-          } else {
-               super.setRealSubject(createCommand.getRealSubject());
-          }
-          this.updateAttribute.executeOnServer(this, serverContext);
-          serverContext.onExecuteOnServer(this);
-     }
-     
+    @Override
+    protected final void doUndo() {
+        this.updateAttribute.undo(this);
+    }
+
+    @Override
+    protected final void doRedo() {
+        this.updateAttribute.redo(this);
+    }
+
+    @Override
+    @GwtIncompatible
+    public final void executeOnServer(ServerContext serverContext) {
+        if (createCommand == null) {
+            super.setRealSubject(resolveSubject(serverContext));
+        } else {
+            super.setRealSubject(createCommand.getRealSubject());
+        }
+        this.updateAttribute.executeOnServer(this, serverContext);
+        serverContext.onExecuteOnServer(this);
+    }
 
 }

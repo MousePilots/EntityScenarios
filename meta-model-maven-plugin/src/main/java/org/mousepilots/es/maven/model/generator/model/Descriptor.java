@@ -33,7 +33,7 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
         if(elements.isEmpty()){
             return EMPTY_SET;
         } else {
-            return "java.util.Arrays.asList(" + StringUtils.append(elements, transformer, ", ") + ")";
+            return "java.util.Arrays.asList(" + StringUtils.join(elements, transformer, ", ") + ")";
         }
     }
     private Descriptor<T> superDescriptor;
@@ -222,7 +222,7 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
             }
         }
         final String generics = getGenericsString();
-        final String params = StringUtils.append(parameterValues, s -> s, ",\n\t");
+        final String params = StringUtils.join(parameterValues, s -> s, ",\n\t");
         final String retval = new StringBuilder()
                 .append("public static final ")
                 .append(getDeclaredClass().getCanonicalName()).append(generics).append(" ")

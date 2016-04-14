@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import org.mousepilots.es.core.model.impl.hv.AbstractHasValue;
-import org.mousepilots.es.core.util.StringUtils;
 
 /**
  *
@@ -56,8 +55,8 @@ public final class HasValueDescriptor<T> implements Comparable<HasValueDescripto
     private HasValueDescriptor(String basePackage, Class<T> valueClass) {
         this.valueClassCanonicalName = valueClass.getCanonicalName();
         this.hasValueImplClassSimpleName = "Has" + valueClass.getSimpleName() + "_ES";
-        this.packageName = StringUtils.append(".", basePackage, valueClass.getPackage().getName());
-        this.hasValueImplClassCanonicalName = StringUtils.append(".", this.packageName, this.hasValueImplClassSimpleName);
+        this.packageName = String.join(".", basePackage, valueClass.getPackage().getName());
+        this.hasValueImplClassCanonicalName = String.join(".", this.packageName, this.hasValueImplClassSimpleName);
     }
 
     public String getPackageName() {

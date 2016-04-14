@@ -14,6 +14,7 @@ import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
 import org.mousepilots.es.core.model.impl.ManagedTypeESImpl;
 import org.mousepilots.es.core.model.proxy.Proxy;
+import org.mousepilots.es.core.model.proxy.ProxyAspect;
 import org.mousepilots.es.core.util.Framework;
 
 /**
@@ -53,10 +54,11 @@ public final class SingularAttributes {
      public static <E, A> void set(Proxy<E> proxy, int singularAttributeOrdinal, OwnedSetter<A> superSetter, A newValue) {
           final AbstractMetamodelES metamodel = AbstractMetamodelES.getInstance();
           final SingularAttributeES<? super E, A> attribute = (SingularAttributeES<? super E, A>) metamodel.getAttribute(singularAttributeOrdinal);
-          if(proxy.__getProxyAspect().isManagedMode()) {
+         final ProxyAspect<E> proxyAspect = proxy.__getProxyAspect();
+          if(proxyAspect.isManagedMode()) {
                final UpdateAttribute<E, A, SingularAttributeES<? super E, A>,A> attributeUpdate = new UpdateSingularAttribute<>(attribute,proxy,newValue);
                final Update<E, ?, A, SingularAttributeES<? super E, A>, ?> update = createUpdate(proxy, attribute, attributeUpdate);
-               update.executeOnClient();
+               proxyAspect.doUnmanaged(() -> update.executeOnClient());
           } else {
                superSetter.set(newValue);
           }

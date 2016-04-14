@@ -31,8 +31,10 @@ public class CommandTest extends AbstractTest{
         final Manager manager = entityManager.create(Manager_ES.__TYPE);
         final ManagerAccount account = entityManager.create(ManagerAccount_ES.__TYPE);
         manager.setAccount(account);
-        final List<Command> commands = entityManager.getTransaction().getCommands();
-        Assert.assertTrue(commands.size()==3);
+        Assert.assertTrue(entityManager.getTransaction().getCommands().size()==3);
+        entityManager.getTransaction().undo();
+        Assert.assertTrue(entityManager.getTransaction().getCommands().size()==2);
+        Assert.assertNull(manager.getAccount());
         
     }
     

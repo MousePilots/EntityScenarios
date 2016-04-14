@@ -13,14 +13,14 @@ public final class ${td.getProxyClassSimpleName()} extends ${td.getJavaTypeSimpl
     }
 
 #foreach($ad in ${td.getAttributes()})
-#if(${ad.getProxyGetterDeclaration()})
+#if(${ad.getProxyGetterDeclaration($td)})
 
-${ad.getProxyGetterDeclaration()}
+${ad.getProxyGetterDeclaration($td)}
 
 #end
-#if(${ad.getProxySetterDeclaration()})
+#if(${ad.getProxySetterDeclaration($td)})
 
-${ad.getProxySetterDeclaration()}
+${ad.getProxySetterDeclaration($td)}
 
 #end
 #end

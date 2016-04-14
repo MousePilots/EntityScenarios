@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.model.EntityTransaction;
+import org.mousepilots.es.core.model.proxy.ProxyAspect;
 
 /**
  *
@@ -54,7 +55,8 @@ public class EntityTransactionImpl implements EntityTransaction {
     public void undo() throws IllegalStateException {
         if (hasUndo()) {
             final Command command = commands.get(--commandInsertionIndex);
-            command.undoOnClient();
+            final ProxyAspect proxyAspect = command.getProxy().__getProxyAspect();
+            proxyAspect.doUnmanaged(() -> command.undoOnClient());
         } else {
             throw new IllegalStateException("nothing to undo");
         }

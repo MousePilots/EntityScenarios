@@ -434,11 +434,11 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
         this.declaringTypeDescriptor = declaringTypeDescriptor;
     }
 
-    public String getProxyGetterDeclaration() {
+    public String getProxyGetterDeclaration(TypeDescriptor hasAttribute) {
         return null;
     }
 
-    public String getProxySetterDeclaration() {
+    public String getProxySetterDeclaration(TypeDescriptor hasAttribute) {
         return null;
     }
 
@@ -513,14 +513,15 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
             final AssociationDescriptor inverse = a.getInverse();
             final String retval
                     = "new " + AssociationESImpl.class.getCanonicalName() + "<>("
-                    + StringUtils.append(", ",
-                            a.getOrdinal().toString(),
-                            a.getSourceAttribute().getOrdinal().toString(),
-                            a.getTargetTypeDescriptor().getOrdinal().toString(),
-                            inverse == null ? "null" : inverse.getOrdinal().toString(),
-                            a.isOwner().toString(),
-                            AssociationTypeES.class.getCanonicalName() + "." + associationType.name(),
-                            Attribute.PersistentAttributeType.class.getCanonicalName() + "." + a.getPersistentAttributeType().name()
+                    + String.join(
+                        ", ",
+                        a.getOrdinal().toString(),
+                        a.getSourceAttribute().getOrdinal().toString(),
+                        a.getTargetTypeDescriptor().getOrdinal().toString(),
+                        inverse == null ? "null" : inverse.getOrdinal().toString(),
+                        a.isOwner().toString(),
+                        AssociationTypeES.class.getCanonicalName() + "." + associationType.name(),
+                        Attribute.PersistentAttributeType.class.getCanonicalName() + "." + a.getPersistentAttributeType().name()
                     )
                     + ")";
             return retval;
@@ -555,7 +556,7 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
                 "subOrdinals",
                 subDescriptors.isEmpty()
                         ? "java.util.Collections.emptySet()"
-                        : "java.util.Arrays.asList(" + StringUtils.append(subDescriptors, a -> a.getOrdinal().toString(), ", ") + ")"
+                        : "java.util.Arrays.asList(" + StringUtils.join(subDescriptors, a -> a.getOrdinal().toString(), ", ") + ")"
         );
         ca.put("persistentAttributeType", "javax.persistence.metamodel.Attribute.PersistentAttributeType." + getPersistentAttributeType().name());
         ca.put("javaMember", getPropertyMemberInstantiation());
