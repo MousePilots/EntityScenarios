@@ -9,6 +9,7 @@ import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
 import org.mousepilots.es.core.model.impl.EntityManagerImpl;
 import org.mousepilots.es.core.model.proxy.Proxy;
+import org.mousepilots.es.core.util.Framework;
 
 /**
  *
@@ -103,7 +104,8 @@ public abstract class AbstractCommand<T, TD extends ManagedTypeES<T>> implements
      * @param subject
      * @throws IllegalStateException if already set and {@code subject!=null}
      */
-    protected final void setRealSubject(T subject) throws IllegalStateException {
+    @Framework
+    public final void setRealSubject(T subject) throws IllegalStateException {
         if (this.subject == null || subject == null) {
             this.subject = subject;
         } else {

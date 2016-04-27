@@ -1,6 +1,7 @@
 package org.mousepilots.es.core.model.impl;
 
 import java.util.Collection;
+import java.util.Set;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.EntityTypeES;
 import org.mousepilots.es.core.model.HasValue;
@@ -18,29 +19,28 @@ public final class EntityTypeESImpl<T> extends IdentifiableTypeESImpl<T> impleme
 
 
     /**
-      * @param ordinal the ordinal of this entity type.
-      * @param javaType the java type for this entity type.
-      * @param javaTypeConstructor the zero-arg constructor for the
-      * {@code javaType} if existent, otherwise {@code null}
-      * @param proxyType the {@link Proxy}-type for the {@code javaType}
-      * @param proxyTypeConstructor the zero-arg constructor for the
-      * {@code proxyType} if existent, otherwise {@code null}
-      * @param hasValueConstructor the value of hasValueConstructor
-      * @param metamodelClass the JPa meta model class for this entity type.
-      * @param attributeOrdinals the singular attributes that are part of this
-      * embeddable type.
-      * @param superTypeOrdinal the supertype of this entity type.
-      * @param subTypeOrdinals a set of sub types for this entity type.
+     * 
+     * @param ordinal
+     * @param javaType
+     * @param metamodelClass
+     * @param superTypeOrdinal
+     * @param subTypeOrdinals
+     * @param hasValueConstructor
+     * @param javaTypeConstructor
+     * @param getOwners
+     * @param proxyTypeConstructor
+     * @param proxyType
+     * @param attributeOrdinals
      * @param declaredAttributes
-      * @param associationOrdinals
+     * @param associationOrdinals
      * @param idClassAttributeOrdinals
      * @param idAttributeOrdinal
      * @param idTypeOrdinal
      * @param declaredIdAttributeOrdinal
      * @param versionAttributeOrdinal
      * @param declaredVersionAttributeOrdinal
-     * @param name
-      */
+     * @param name 
+     */
     public EntityTypeESImpl(
          int ordinal,
          Class<T> javaType,
@@ -49,6 +49,7 @@ public final class EntityTypeESImpl<T> extends IdentifiableTypeESImpl<T> impleme
          Collection<Integer> subTypeOrdinals,
          Constructor<? extends HasValue<? super T>> hasValueConstructor,
          Constructor<T> javaTypeConstructor,
+         Getter<? super T, Set<String>> getOwners,
          Constructor<? extends Proxy<T>> proxyTypeConstructor,
          Class<? extends Proxy<T>> proxyType,
          Collection<Integer> attributeOrdinals,
@@ -61,7 +62,7 @@ public final class EntityTypeESImpl<T> extends IdentifiableTypeESImpl<T> impleme
          Integer versionAttributeOrdinal,
          Integer declaredVersionAttributeOrdinal,
          String name){
-        super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor, proxyTypeConstructor, proxyType, attributeOrdinals, declaredAttributes, associationOrdinals, idClassAttributeOrdinals, idAttributeOrdinal, idTypeOrdinal, declaredIdAttributeOrdinal, versionAttributeOrdinal, declaredVersionAttributeOrdinal);
+        super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor, getOwners, proxyTypeConstructor, proxyType, attributeOrdinals, declaredAttributes, associationOrdinals, idClassAttributeOrdinals, idAttributeOrdinal, idTypeOrdinal, declaredIdAttributeOrdinal, versionAttributeOrdinal, declaredVersionAttributeOrdinal);
         this.name = name;
     }
 

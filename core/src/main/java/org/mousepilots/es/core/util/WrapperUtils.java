@@ -1,8 +1,5 @@
 package org.mousepilots.es.core.util;
 
-import java.io.Serializable;
-import java.util.Collection;
-import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.IdentifiableTypeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
@@ -27,7 +24,7 @@ public class WrapperUtils {
           } else {
                final SingularAttributeES idAttribute = getIdAttribute(type);
                final Object idValue = idAttribute.getJavaMember().get(instance);
-               return (HasValue<ID>) wrapValue(idAttribute, idValue);
+               return wrapValue(idAttribute, idValue);
           }
      }    
      
@@ -37,7 +34,7 @@ public class WrapperUtils {
           } else {
                final SingularAttributeES versionAttribute = type.getVersion(null);
                final Object version = versionAttribute.getJavaMember().get(instance);
-               return (HasValue<V>) wrapValue(versionAttribute, version);
+               return wrapValue(versionAttribute, version);
           }
      }    
      

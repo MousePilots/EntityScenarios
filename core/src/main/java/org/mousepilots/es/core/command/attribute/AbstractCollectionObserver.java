@@ -27,7 +27,7 @@ public class AbstractCollectionObserver<E,EL,C extends Collection<EL>,AD extends
     
 
     protected void createAndExecute(C subject, CollectionOperation collectionOperation, Collection<EL> elements){
-        super.createandExecute(new UpdateCollection<>(getAttribute().getElementType(),CollectionOperation.ADD,subject,elements));
+        super.createandExecute(new UpdateCollection<>(getAttribute().getElementType(),collectionOperation,subject,elements));
     }
     
     @Override

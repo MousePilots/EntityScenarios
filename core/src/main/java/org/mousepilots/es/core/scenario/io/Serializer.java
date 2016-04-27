@@ -11,6 +11,7 @@ import javax.persistence.metamodel.ManagedType;
 import org.mousepilots.es.core.command.CRUD;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.ManagedTypeES;
+import org.mousepilots.es.core.scenario.Context;
 import org.mousepilots.es.core.scenario.ScenarioGraph;
 import org.mousepilots.es.core.scenario.Vertex;
 
@@ -21,18 +22,25 @@ import org.mousepilots.es.core.scenario.Vertex;
  * @author jgeenen
  */
 public abstract class Serializer {
+    
+    private final Context context;
 
     private final ScenarioGraph scenarioGraph;
 
-    public Serializer(ScenarioGraph scenarioGraph) {
+    public Serializer(Context context, ScenarioGraph scenarioGraph){
+        this.context = context;
         this.scenarioGraph = scenarioGraph;
     }
 
     /**
      * @return {@code this}' {@link ScenarioGraph}
      */
-    public ScenarioGraph getScenarioGraph() {
+    protected final ScenarioGraph getScenarioGraph() {
         return scenarioGraph;
+    }
+
+    protected final Context getContext() {
+        return context;
     }
     
     protected abstract AttributeSerializerDelegate getAttributeSerializerDelegate();
@@ -52,7 +60,7 @@ public abstract class Serializer {
             if(vertex==null){
                 return null;
             } else {
-                if(vertex.isAllowed(CRUD.READ)){
+                if(vertex.isAllowedOnType(CRUD.READ,context)){
                     final TypeSerializerDelegate typeSerializerDelegate = getTypeSerializerDelegate();
                     return vertex.getType().accept(typeSerializerDelegate,value);
                 } else {
@@ -70,7 +78,7 @@ public abstract class Serializer {
      * @return if {@link CRUD#READ} is allowed for the {@code value}'s {@code attribute} in the {@link #scenarioGraph}: the serialized {@code value}, otherwise {@code null}
      */
     protected Object serializeAttributeValue(Vertex typeVertex, AttributeES attribute, Object value){
-        if(value!=null && typeVertex.isAllowed(attribute, CRUD.READ)){
+        if(value!=null && typeVertex.isAllowedOnAttribute(attribute, CRUD.READ, context)){
             final AttributeSerializerDelegate attributeSerializerDelegate = getAttributeSerializerDelegate();
             return attribute.accept(attributeSerializerDelegate,value);
         } else {

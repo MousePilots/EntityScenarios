@@ -16,26 +16,26 @@ import org.mousepilots.es.core.model.proxy.Proxy;
 public class MappedSuperclassTypeESImpl<T> extends IdentifiableTypeESImpl<T> implements MappedSuperclassTypeES<T> {
 
     /**
-     * Create a new instance of this class.
-     * @param ordinal the ordinal of this mapped superclass type.
-     * @param javaType the java type for this mapped superclass type.
-     * @param metamodelClass the JPa meta model class for this mapped superclass type.
-     * @param superTypeOrdinal the super type of this mapped superclass type.
-     * @param subTypeOrdinals a set of sub types for this mapped superclass type.
-     * @param hasValueConstructor the value of hasValueConstructor
-     * @param javaTypeConstructor the zero-arg constructor for the
-     * @param proxyTypeConstructor the zero-arg constructor for the
-     * {@code proxyType} if existent, otherwise {@code null}
-     * @param proxyType the {@link Proxy}-type for the {@code javaType}
-     * @param attributeOrdinals the singular attributes that are part of this mapped superclass type
+     * 
+     * @param ordinal
+     * @param javaType
+     * @param metamodelClass
+     * @param superTypeOrdinal
+     * @param subTypeOrdinals
+     * @param hasValueConstructor
+     * @param javaTypeConstructor
+     * @param getOwners
+     * @param proxyTypeConstructor
+     * @param proxyType
+     * @param attributeOrdinals
      * @param declaredAttributes
      * @param associationOrdinals
-     * @param idClassAttributeOrdinals a set of attributes that form the id of this mapped superclass type.
+     * @param idClassAttributeOrdinals
      * @param idAttributeOrdinal
      * @param idTypeOrdinal
-     * @param declaredVersionAttributeOrdinal the attribute that is declared by this mapped superclass type and forms its version.
-     * @param versionAttributeOrdinal whether or not this mapped superclass type has a version attribute.
      * @param declaredIdAttributeOrdinal
+     * @param versionAttributeOrdinal
+     * @param declaredVersionAttributeOrdinal 
      */
     public MappedSuperclassTypeESImpl(
          int ordinal,
@@ -45,6 +45,7 @@ public class MappedSuperclassTypeESImpl<T> extends IdentifiableTypeESImpl<T> imp
          Collection<Integer> subTypeOrdinals,
          Constructor<? extends HasValue<? super T>> hasValueConstructor,
          Constructor<T> javaTypeConstructor,
+         Getter<? super T, Set<String>> getOwners,
          Constructor<? extends Proxy<T>> proxyTypeConstructor,
          Class<? extends Proxy<T>> proxyType,
          Collection<Integer> attributeOrdinals,
@@ -56,7 +57,7 @@ public class MappedSuperclassTypeESImpl<T> extends IdentifiableTypeESImpl<T> imp
          Integer declaredIdAttributeOrdinal,
          Integer versionAttributeOrdinal,
          Integer declaredVersionAttributeOrdinal){
-         super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor,
+         super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor,getOwners,
                 proxyTypeConstructor, proxyType, attributeOrdinals, declaredAttributes, associationOrdinals, idClassAttributeOrdinals, idAttributeOrdinal,
                 idTypeOrdinal, declaredIdAttributeOrdinal, versionAttributeOrdinal, declaredVersionAttributeOrdinal);
     }

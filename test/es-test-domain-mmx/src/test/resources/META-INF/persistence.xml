@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence 
+    version="2.1" 
+    xmlns="http://xmlns.jcp.org/xml/ns/persistence" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="mmx_test" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <class>org.mousepilots.es.test.domain.entities.Account</class>
+    <class>org.mousepilots.es.test.domain.entities.BasicMap</class>
+    <class>org.mousepilots.es.test.domain.entities.EmbeddableMap</class>
+    <class>org.mousepilots.es.test.domain.entities.EntityMap</class>
+    <class>org.mousepilots.es.test.domain.entities.Manager</class>
+    <class>org.mousepilots.es.test.domain.entities.ManagerAccount</class>
+    <class>org.mousepilots.es.test.domain.entities.Phone</class>
+    <class>org.mousepilots.es.test.domain.entities.Role</class>
+    <class>org.mousepilots.es.test.domain.entities.User</class>
+    <class>org.mousepilots.es.test.domain.entities.WorkEnvironment</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <shared-cache-mode>NONE</shared-cache-mode>
+    <properties>
+      <!-- Common properties -->
+      <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+      <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:derby:memory:mmx_test_db;create=true"/>
+      <property name="javax.persistence.jdbc.user" value=""/>
+      <property name="javax.persistence.jdbc.password" value=""/>
+    </properties>
+  </persistence-unit>
+</persistence>

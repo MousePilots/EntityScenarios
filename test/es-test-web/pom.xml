@@ -105,7 +105,7 @@
                     <runTarget>index.html</runTarget>
                     <htmlunit>FF38</htmlunit>
                     <generateDirectory>${project.build.directory}/generated-sources</generateDirectory>
-                    <!--<style>DETAILED</style>-->
+                    <!-- <style>DETAILED</style> -->
                     <noServer>true</noServer>
                     <hostedWebapp>${webappDirectory}</hostedWebapp>
                     <extraParam>true</extraParam>

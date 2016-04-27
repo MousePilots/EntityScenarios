@@ -14,6 +14,7 @@ import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.impl.EntityManagerImpl;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.scenario.ServerContext;
+import org.mousepilots.es.core.util.Framework;
 import org.mousepilots.es.core.util.GwtIncompatible;
 import org.mousepilots.es.core.util.WrapperUtils;
 
@@ -31,7 +32,8 @@ public final class CreateEntity<E, ID> extends Create<E, EntityTypeES<E>> implem
         super();
     }
 
-    private void assignId(final E entity) {
+    @Framework
+    public void assignId(final E entity) {
         final SingularAttributeES<? super E, ID> idAttribute = getIdAttribute();
         final MemberES<? super E, ID> javaMember = idAttribute.getJavaMember();
         javaMember.set(entity, getId());

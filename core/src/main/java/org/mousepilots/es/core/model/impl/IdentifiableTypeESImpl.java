@@ -24,27 +24,27 @@ public abstract class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
     private final Set<Integer> idClassAttributes = new TreeSet<>();
 
     /**
-      * @param ordinal the ordinal of this identifiable type.
-      * @param javaType the java type for this identifiable type.
-      * @param javaTypeConstructor the zero-arg constructor for the
-      * {@code javaType} if existent, otherwise {@code null}
-      * @param proxyType the {@link Proxy}-type for the {@code javaType}
-      * @param proxyTypeConstructor the zero-arg constructor for the
-      * {@code proxyType} if existent, otherwise {@code null}
-      * @param hasValueConstructor the value of hasValueConstructor
-      * @param metamodelClass the JPa meta model class for this identifiable type.
-      * @param attributeOrdinals the singular attributes that are part of this
-      * embeddable type.
-      * @param superTypeOrdinal the supertype of this identifiable type.
-      * @param subTypeOrdinals a set of sub types for this identifiable type.
-      * @param associationOrdinals
+     * 
+     * @param ordinal
+     * @param javaType
+     * @param metamodelClass
+     * @param superTypeOrdinal
+     * @param subTypeOrdinals
+     * @param hasValueConstructor
+     * @param javaTypeConstructor
+     * @param getOwners
+     * @param proxyTypeConstructor
+     * @param proxyType
+     * @param attributeOrdinals
+     * @param declaredAttributes
+     * @param associationOrdinals
      * @param idClassAttributeOrdinals
      * @param idAttributeOrdinal
      * @param idTypeOrdinal
      * @param declaredIdAttributeOrdinal
      * @param versionAttributeOrdinal
-     * @param declaredVersionAttributeOrdinal
-      */
+     * @param declaredVersionAttributeOrdinal 
+     */
     public IdentifiableTypeESImpl(
          int ordinal,
          Class<T> javaType,
@@ -53,6 +53,7 @@ public abstract class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
          Collection<Integer> subTypeOrdinals,
          Constructor<? extends HasValue<? super T>> hasValueConstructor,
          Constructor<T> javaTypeConstructor,
+         Getter<? super T, Set<String>> getOwners,
          Constructor<? extends Proxy<T>> proxyTypeConstructor,
          Class<? extends Proxy<T>> proxyType,
          Collection<Integer> attributeOrdinals,
@@ -64,7 +65,7 @@ public abstract class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
          Integer declaredIdAttributeOrdinal,
          Integer versionAttributeOrdinal,
          Integer declaredVersionAttributeOrdinal){
-        super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor, proxyTypeConstructor, proxyType, attributeOrdinals, declaredAttributes, associationOrdinals);
+        super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor, getOwners, proxyTypeConstructor, proxyType, attributeOrdinals, declaredAttributes, associationOrdinals);
         this.idAttributeOrdinal = idAttributeOrdinal;
         this.declaredIdAttributeOrdinal = declaredIdAttributeOrdinal;
         this.versionAttributeOrdinal = versionAttributeOrdinal;

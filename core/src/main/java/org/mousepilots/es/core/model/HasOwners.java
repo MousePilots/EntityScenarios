@@ -5,16 +5,16 @@
  */
 package org.mousepilots.es.core.model;
 
-import java.util.Collection;
+import java.util.Set;
 
 /**
- * Functional interface which providers the usernames of the owners of an entity.
+ * Provides the usernames owning an instance of a {@link ManagedTypeES}'s java type.
  * @author jgeenen
- * @param <C> some {@link Collection} of {@link String}s
  */
-public interface HasOwners<C extends Collection<String>> {
-    /**
-     * @return the usernames of the owners of an entity
-     */
-    C getOwners();
+public interface HasOwners{
+    
+    public static final String ANNOTATION_NAME="ProvidesOwners";
+    
+    @ProvidesOwners
+    Set<String> getOwners();
 }

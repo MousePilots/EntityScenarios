@@ -30,7 +30,6 @@ public final class DeleteEntity<E,ID> extends Delete<E, EntityTypeES<E>> impleme
      public DeleteEntity(Proxy<E> proxy) {
           super(proxy);
           this.id = WrapperUtils.getWrappedId(getType(), proxy.__subject());
-          setProxy(proxy);
      }
 
      @Override

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
@@ -53,6 +54,13 @@ public class MetaModelGeneratorMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}/generated-sources/es", readonly = true)
     private File generatedSourceDir;
+    
+    /**
+     * Allows you to specify a list of properties which do not comply with the Java Beans Standard. The getters and/or setters
+     * of such properties cannot be found automatically by the plugin.
+     */
+    @Parameter
+    private List<PropertyDefinition> nonJavaBeansCompliantProperties;
 
     /**
      * Contains an in-memory representation of the reflections xml report of the domain project
@@ -98,6 +106,9 @@ public class MetaModelGeneratorMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if(nonJavaBeansCompliantProperties!=null){
+            nonJavaBeansCompliantProperties.forEach(p -> getLog().info(p.toString()));
+        }
         if (executed) {
             return;
         } else {

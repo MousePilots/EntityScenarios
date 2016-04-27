@@ -13,10 +13,8 @@ import java.util.List;
 import org.mousepilots.es.core.command.Update;
 import org.mousepilots.es.core.command.Embeddables;
 import org.mousepilots.es.core.command.UpdateAttributeVisitor;
-import org.mousepilots.es.core.command.attribute.UpdatePluralAttribute;
 import org.mousepilots.es.core.command.attribute.value.Value;
 import org.mousepilots.es.core.command.attribute.value.ValueFactory;
-import org.mousepilots.es.core.model.EmbeddableTypeES;
 import org.mousepilots.es.core.model.PluralAttributeES;
 import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.scenario.ServerContext;
@@ -42,6 +40,7 @@ public final class UpdateCollection<E,EL,A extends Collection<EL>, AD extends Pl
         if(operation==CollectionOperation.ADD){
             Embeddables.assertIfEmbeddableThenCreated(elementType, (Collection) values);
         }
+        this.collectionOperation = collectionOperation;
         this.values = operation.getNet(collection, values);
         this.serializableValues = ValueFactory.create(elementType, values, LinkedList::new);
     }

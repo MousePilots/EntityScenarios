@@ -6,7 +6,10 @@
 package org.mousepilots.es.test.shared;
 
 import java.util.logging.Logger;
+import org.mousepilots.es.core.model.EntityManagerES;
+import org.mousepilots.es.core.model.EntityManagerFactory;
 import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
+import org.mousepilots.es.core.model.impl.EntityManagerFactoryImpl;
 import org.mousepilots.es.test.domain.MetamodelImpl;
 
 /**
@@ -19,6 +22,12 @@ public class AbstractTest{
         MetamodelImpl.init();
     }
 
+    private final EntityManagerFactory entityManagerFactory = new EntityManagerFactoryImpl();
+
+    protected final EntityManagerES createEntityManager(){
+        return entityManagerFactory.createEntityManager();
+    }
+    
     protected final Logger getLogger() {
         return Logger.getLogger(getClass().getName());
     }

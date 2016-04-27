@@ -18,7 +18,7 @@ import org.mousepilots.es.core.util.GwtIncompatible;
  * @param <TD>
  */
 public interface Command<T,TD extends ManagedTypeES<T>> extends Serializable{
-     
+    
      ClientState getClientState();
      
      /**

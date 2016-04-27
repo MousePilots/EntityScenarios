@@ -2,6 +2,7 @@ package org.mousepilots.es.test.domain.entities;
 
 import org.mousepilots.es.test.domain.BaseEntity;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.ElementCollection;
@@ -20,12 +21,12 @@ import org.mousepilots.es.test.domain.Person;
  */
 @Entity
 @Table(name = "Users")
-public abstract class User<A extends Account> extends Person {
+public abstract class User<A extends Account> extends Person{
     
     private static final long serialVersionUID = 1L;
     private String userName;
 
-    @OneToOne
+    @OneToOne(targetEntity = Account.class)
     private A account;
 
     @ElementCollection
@@ -66,7 +67,10 @@ public abstract class User<A extends Account> extends Person {
         this.account = account;
     }
 
-
+    @ProvidesOwners
+    public Set<String> getOwners(){
+        return Collections.singleton(userName);
+    }
 
     public String getUserName() {
         return userName;

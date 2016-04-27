@@ -5,6 +5,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.List;
+import java.util.function.Predicate;
 import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.model.EntityManagerES;
 import org.mousepilots.es.core.model.EntityManagerFactory;
@@ -49,6 +50,9 @@ public class Main implements EntryPoint {
                 Window.alert("success");
             }
         });
+        
+        Predicate<Object> predicate = o -> true;
+        Window.alert(predicate.test(null) + "");
 
     }
 

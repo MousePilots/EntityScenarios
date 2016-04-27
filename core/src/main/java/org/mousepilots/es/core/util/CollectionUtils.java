@@ -18,5 +18,14 @@ public class CollectionUtils {
             throw new IllegalStateException("duplicate entry of " + t);
         }
     }
+
+    public static <T> boolean containsAny(Collection<T> collection, Collection<T> referenceElements) {
+        for (T referenceElement : referenceElements) {
+            if (collection.contains(referenceElement)) {
+                return true;
+            }
+        }
+        return false;
+    }
     
 }

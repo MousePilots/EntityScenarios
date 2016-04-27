@@ -36,6 +36,7 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T> implements Mana
     private final Class<?> metamodelClass;
     private final Class<? extends Proxy<T>> proxyType;
     private final Constructor<T> javaTypeConstructor;
+    private final Getter<? super T, Set<String>> getOwners;
     private final Constructor<? extends Proxy<T>> proxyTypeConstructor;
 
     private final SortedSet<Integer> attributeOrdinals = new TreeSet<>(), associationOrdinals = new TreeSet<>();
@@ -122,6 +123,7 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T> implements Mana
      * @param ordinal the ordinal of this managed type.
      * @param javaType the java type for this managed type.
      * @param javaTypeConstructor the zero-arg constructor for the {@code javaType} if existent, otherwise {@code null}
+     * @param getOwners 
      * @param proxyType the {@link Proxy}-type for the {@code javaType}
      * @param proxyTypeConstructor the zero-arg constructor for the {@code proxyType} if existent, otherwise {@code null}
      * @param hasValueConstructor the value of hasValueConstructor
@@ -140,6 +142,7 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T> implements Mana
             Collection<Integer> subTypeOrdinals,
             Constructor<? extends HasValue<? super T>> hasValueConstructor,
             Constructor<T> javaTypeConstructor,
+            Getter<? super T, Set<String>> getOwners,
             Constructor<? extends Proxy<T>> proxyTypeConstructor,
             Class<? extends Proxy<T>> proxyType,
             Collection<Integer> attributeOrdinals,
@@ -147,6 +150,7 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T> implements Mana
             Collection<Integer> associationOrdinals) {
         super(ordinal, javaType, superTypeOrdinal, subTypeOrdinals, hasValueConstructor);
         this.javaTypeConstructor = javaTypeConstructor;
+        this.getOwners = getOwners;
         this.proxyTypeConstructor = proxyTypeConstructor;
         this.proxyType = proxyType;
         this.metamodelClass = metamodelClass;
@@ -375,6 +379,20 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T> implements Mana
             return javaTypeConstructor.invoke();
         } else {
             throw new UnsupportedOperationException(getJavaType() + "is not concrete or has no accessible zero arg constructor");
+        }
+    }
+    
+    @Override
+    public final boolean supportsHasOwners(){
+        return this.getOwners!=null;
+    }
+    
+    @Override
+    public final Set<String> getOwners(T instance) throws UnsupportedOperationException{
+        if(supportsHasOwners()){
+            return this.getOwners.invoke(instance);
+        } else {
+            throw new UnsupportedOperationException(this.getJavaType() + " does not provide means to determine the owner(s) of sn instance");
         }
     }
 

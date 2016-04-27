@@ -30,9 +30,11 @@ public class ServerContextImpl extends AbstractServerContext{
     }
 
     @Override
-    public Collection<String> getRoles() {
-        return Collections.EMPTY_LIST;
+    public boolean isUserInRole(String role) {
+        return true;
     }
+
+    
 
     @Override
     public EntityManager getEntityManager() {

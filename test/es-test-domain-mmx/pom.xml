@@ -19,6 +19,23 @@
             <artifactId>es-test-domain</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>10.12.1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+            <scope>test</scope>
+        </dependency>
+        
     </dependencies>
     <build>
         <plugins>
@@ -28,6 +45,13 @@
                 <version>${project.version}</version>
                 <configuration>
                     <packageName>org.mousepilots.es.test.domain</packageName>
+                    <nonJavaBeansCompliantProperties>
+                        <propertyDefinition>
+                            <declaringClass>declaringClass</declaringClass>
+                            <name>name</name>
+                            <getter>getter</getter>
+                        </propertyDefinition>
+                    </nonJavaBeansCompliantProperties>
                 </configuration>
                 <dependencies>
                     <dependency>

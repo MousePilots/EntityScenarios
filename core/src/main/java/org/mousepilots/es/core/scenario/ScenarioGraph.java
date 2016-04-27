@@ -17,8 +17,6 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.WeightedGraph;
 import org.mousepilots.es.core.model.AssociationES;
-import org.mousepilots.es.core.model.AssociationTypeES;
-import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.ManagedTypeES;
 
 /**
@@ -27,8 +25,6 @@ import org.mousepilots.es.core.model.ManagedTypeES;
  */
 public class ScenarioGraph extends HasSeal implements DirectedGraph<Vertex, Arc> {
     
-    private static final AssociationTargetTypeResolver ASSOCIATION_TARGET_TYPE_RESOLVER = new AssociationTargetTypeResolver();
-
     /**
      * A globally unique identifier for {@code this}
      */
@@ -43,62 +39,21 @@ public class ScenarioGraph extends HasSeal implements DirectedGraph<Vertex, Arc>
         this.scenario = scenario;
     }
 
-    /**
-     * Seals {@code this} against modifications
-     */
-    @Override
-    public void seal() {
-        if (!isSealed()) {
-            class2Vertex = Collections.unmodifiableMap(class2Vertex);
-            type2Vertex = Collections.unmodifiableMap(type2Vertex);
-            vertices = Collections.unmodifiableSet(vertices);
-            arcs = Collections.unmodifiableSet(arcs);
-            association2Arc = Collections.unmodifiableMap(association2Arc);
-            for (Set<? extends Element> elements : Arrays.asList(vertices, arcs)) {
-                for (Element element : elements) {
-                    element.seal();
-                }
-            }
-            super.seal();
-        }
-    }
-
-    /**
-     * Gets (or creates if absent) the arc {@code this} &rarr the association's
-     * target {@link Vertex}
-     *
-     * @param sourceVertex the {@link Arc#getSource()}
-     * @param attribute the {@link Arc#getAssociation()}'s {@link AttributeES}
-     * @param associationType
-     * @return
-     */
-    
-    protected Arc getOrCreate(Vertex sourceVertex, AttributeES attribute, AssociationTypeES associationType)  throws IllegalArgumentException, IllegalStateException{
-        final AssociationES association = attribute.getAssociation(associationType);
-        if (association == null) {
-            throw new IllegalArgumentException(attribute + " is no association");
-        }
-        if (sourceVertex.getScenarioGraph() != this) {
-            throw new IllegalArgumentException(sourceVertex + " is not contained in " + this);
-        }
-        Arc retval = getArc(association);
-        if (retval == null) {
+    protected Arc getOrCreate(AssociationES association){
+        Arc arc = getArc(association);
+        if(arc==null){
             assertNotSealed();
-            
-            final ManagedTypeES targetType = (ManagedTypeES) attribute.accept(ASSOCIATION_TARGET_TYPE_RESOLVER,associationType);
-            final Vertex targetVertex = getOrCreate(targetType);
-            retval = new Arc(this, association, sourceVertex, targetVertex);
-
+            arc = new Arc(this, association);
+            final Vertex sourceVertex = arc.getSource();
+            final Vertex targetVertex = arc.getTarget();
             sourceVertex.getSuccessors().add(targetVertex);
             targetVertex.getPredecessors().add(sourceVertex);
-            sourceVertex.getTouching().add(retval);
-            targetVertex.getTouching().add(retval);
-
-            association2Arc.put(association, retval);
-            arcs.add(retval);
+            sourceVertex.getTouching().add(arc);
+            targetVertex.getTouching().add(arc);
+            association2Arc.put(association, arc);
+            arcs.add(arc);
         }
-        return retval;
-
+        return arc;
     }
     
     public Vertex getVertex(Class javaType){
@@ -131,13 +86,14 @@ public class ScenarioGraph extends HasSeal implements DirectedGraph<Vertex, Arc>
         if (vertex == null) {
             assertNotSealed();
             vertex = new Vertex(this, managedType);
+            class2Vertex.put(managedType.getProxyJavaType(), vertex);
             class2Vertex.put(managedType.getJavaType(), vertex);
             type2Vertex.put(managedType, vertex);
             vertices.add(vertex);
         }
         return vertex;
     }
-
+    
     public Set<Arc> getArcs() {
         return arcs;
     }
@@ -192,7 +148,7 @@ public class ScenarioGraph extends HasSeal implements DirectedGraph<Vertex, Arc>
     @Override
     public EdgeFactory<Vertex, Arc> getEdgeFactory() {
         return (Vertex sourceVertex, Vertex targetVertex) -> {
-            throw new UnsupportedOperationException("structural modification is unsupported yet.");
+            throw new UnsupportedOperationException("structural modification is unsupported");
         };
 
     }
@@ -238,7 +194,24 @@ public class ScenarioGraph extends HasSeal implements DirectedGraph<Vertex, Arc>
     public Set<Arc> edgesOf(Vertex vertex) {
         return vertex.getTouching();
     }
-
+    
+    @Override
+    public void seal() {
+        if (!isSealed()) {
+            class2Vertex = Collections.unmodifiableMap(class2Vertex);
+            type2Vertex = Collections.unmodifiableMap(type2Vertex);
+            vertices = Collections.unmodifiableSet(vertices);
+            arcs = Collections.unmodifiableSet(arcs);
+            association2Arc = Collections.unmodifiableMap(association2Arc);
+            for (Set<? extends Element> elements : Arrays.asList(this.vertices, this.arcs)) {
+                for (Element element : elements) {
+                    element.seal();
+                }
+            }
+            super.seal();
+        }
+    }
+    
     @Override
     public boolean removeAllEdges(Collection<? extends Arc> edges) throws UnsupportedOperationException{
         throw new UnsupportedOperationException("structural modification is unsupported.");

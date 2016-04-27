@@ -1,7 +1,7 @@
 package org.mousepilots.es.maven.model.generator.model.type;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -10,11 +10,12 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.persistence.metamodel.Type.PersistenceType;
 import org.mousepilots.es.core.model.AssociationTypeES;
+import org.mousepilots.es.core.model.HasOwners;
 import org.mousepilots.es.core.model.ManagedTypeES;
+import org.mousepilots.es.core.model.ProvidesOwners;
 import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.model.impl.ManagedTypeESImpl;
 import org.mousepilots.es.core.model.impl.TypeESImpl;
-import org.mousepilots.es.core.util.StringUtils;
 import org.mousepilots.es.maven.model.generator.model.AssociationDescriptor;
 import org.mousepilots.es.maven.model.generator.model.Descriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescriptor;
@@ -77,11 +78,25 @@ public class ManagedTypeDescriptor extends TypeDescriptor {
         }
         return retval;
     }
+    
+    protected String getHasOwnersMethodReference(){
+        for(Method method : getJavaType().getDeclaredMethods()){
+            if(Set.class.isAssignableFrom(method.getReturnType()) && method.getParameterCount()==0){
+                for(Annotation a : method.getAnnotations()){
+                    if(a.annotationType().getSimpleName().equals(ProvidesOwners.class.getSimpleName())){
+                        return getJavaTypeSimpleName() + "::" + method.getName();
+                    }
+                }
+            }
+        }
+        return "null";
+    }
 
     @Override
     protected Map<String, String> getConstructorParameterToValue() {
         final Map<String, String> cp2v = super.getConstructorParameterToValue();
         cp2v.put("metamodelClass",      getMetaModelClass().getSimpleName() + ".class");
+        cp2v.put("getOwners",           getHasOwnersMethodReference());
         cp2v.put("javaTypeConstructor", getJavaTypeConstructorReference());
         cp2v.put("proxyType",           getProxyClass());
         cp2v.put("proxyTypeConstructor",getProxyConstructorReferenence());

@@ -1,6 +1,6 @@
 package org.mousepilots.es.core.scenario.io;
 
-import javax.persistence.EntityManager;
+import org.mousepilots.es.core.scenario.Context;
 import org.mousepilots.es.core.scenario.ScenarioGraph;
 
 /**
@@ -18,8 +18,8 @@ public class ManagedTypeSerializer extends Serializer{
     private final TypeSerializerDelegate<ManagedTypeSerializer> 
             typeSerializerDelegate = new TypeSerializerDelegate(this);
     
-    public ManagedTypeSerializer(ScenarioGraph scenarioGraph) {
-        super(scenarioGraph);
+    public ManagedTypeSerializer(Context context, ScenarioGraph scenarioGraph) {
+        super(context, scenarioGraph);
     }
     
     @Override

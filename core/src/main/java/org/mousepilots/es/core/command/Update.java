@@ -75,7 +75,7 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
         this.updateAttribute = updateAttribute;
     }
 
-    protected final boolean isSubjectCreated() {
+    public final boolean isSubjectCreated() {
         return createCommand != null;
     }
 

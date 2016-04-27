@@ -6,8 +6,8 @@
 
 /**
  *
- * @author geenenju
+ * @author ap34wv
  */
-public class EsTest {
-     
+public class newClass {
+    
 }

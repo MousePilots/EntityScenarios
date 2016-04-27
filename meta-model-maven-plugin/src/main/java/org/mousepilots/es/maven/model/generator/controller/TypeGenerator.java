@@ -1,6 +1,5 @@
 package org.mousepilots.es.maven.model.generator.controller;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -18,7 +17,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.MapAttribute;
@@ -27,8 +25,6 @@ import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 import org.apache.maven.plugin.logging.Log;
-import org.mousepilots.es.core.util.Maps;
-import org.mousepilots.es.core.util.Producer;
 import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.CollectionAttributeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.ListAttributeDescriptor;
@@ -106,10 +102,10 @@ public class TypeGenerator {
         for (Class<?> metaModelClass : sortedMetaModelClasses) {
             final Class javaType = metaModelClass.getAnnotation(StaticMetamodel.class).value();
             final TypeDescriptor td;
-            Embeddable embeddable;
-            Entity entity;
-            MappedSuperclass mappedSuperclass;
-            if((embeddable = (Embeddable) javaType.getAnnotation(Embeddable.class)) != null) {
+            final Embeddable embeddable = (Embeddable) javaType.getAnnotation(Embeddable.class);
+            final Entity entity = (Entity) javaType.getAnnotation(Entity.class);
+            final MappedSuperclass mappedSuperclass = (MappedSuperclass) javaType.getAnnotation(MappedSuperclass.class);
+            if(embeddable != null){
                 //embeddable
                 td = new EmbeddableTypeDescriptor(
                         metaModelClass, 
@@ -117,7 +113,7 @@ public class TypeGenerator {
                         javaType, 
                         ordinal.getAndIncrement()
                 );
-            } else if((mappedSuperclass = (MappedSuperclass) javaType.getAnnotation(MappedSuperclass.class)) != null) {
+            } else if(mappedSuperclass != null) {
                 //mapped superclass
                 td = new MappedSuperclassDescriptor(
                         metaModelClass, 
@@ -125,7 +121,7 @@ public class TypeGenerator {
                         javaType, 
                         ordinal.getAndIncrement()
                 );
-            } else if((entity = (Entity) javaType.getAnnotation(Entity.class)) != null) {
+            } else if(entity != null) {
                 final String name = entity.name();
                 td = new EntityTypeDescriptor(
                         metaModelClass, 
@@ -152,13 +148,9 @@ public class TypeGenerator {
     }
     
     private void addHasValueImpls(SortedSet<TypeDescriptor> typeDescriptors){
-        HasValueDescriptor.Factory f = new HasValueDescriptor.Factory("org.mousepilots.es.test.domain");
-        final Collection<Class> jpaCollectionClasses = Arrays.asList(Collection.class,List.class,Set.class,Map.class);
+        final HasValueDescriptor.Factory f = new HasValueDescriptor.Factory("org.mousepilots.es.test.domain");
         for(TypeDescriptor td : typeDescriptors){
             td.setHasValueDescriptor(f.getInstance(td.getJavaType()));
-//            if(!jpaCollectionClasses.contains(td.getJavaType())){
-//                
-//            }
         }
     }
 
@@ -184,8 +176,7 @@ public class TypeGenerator {
      * determined earlier.
      * @param jpaMetaModelClasses The set of meta model classes to create the
      * basic type descriptors from.
-     * @throws IllegalStateException If the persistence type could not be
-     * determined.
+     * @throws IllegalStateException If the persistence type could not be determined.
      */
     private void addBasicTypeDescriptors(final SortedSet<TypeDescriptor> managedTypeDescriptors, Set<Class<?>> jpaMetaModelClasses) throws IllegalStateException {
         SortedSet<BasicTypeDescriptor> basicTypeDescriptors = new TreeSet<>();
@@ -197,7 +188,12 @@ public class TypeGenerator {
                     final TypeDescriptor td = TypeDescriptor.getInstance(attributeJavaType);
                     if (td == null) {
                         basicTypeDescriptors.add(
-                                new BasicTypeDescriptor(this.basicTypeBasePackageName, attributeJavaType.getSimpleName(), attributeJavaType, ordinal.getAndIncrement())
+                            new BasicTypeDescriptor(
+                                this.basicTypeBasePackageName, 
+                                attributeJavaType.getSimpleName(), 
+                                attributeJavaType, 
+                                ordinal.getAndIncrement()
+                            )
                         );
                     }
                 }

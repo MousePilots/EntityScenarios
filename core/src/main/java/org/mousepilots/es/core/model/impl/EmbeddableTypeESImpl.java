@@ -1,6 +1,7 @@
 package org.mousepilots.es.core.model.impl;
 
 import java.util.Collection;
+import java.util.Set;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.EmbeddableTypeES;
 import org.mousepilots.es.core.model.HasValue;
@@ -18,6 +19,7 @@ public class EmbeddableTypeESImpl<T> extends ManagedTypeESImpl<T> implements Emb
      * @param ordinal the ordinal of this embeddable type.
      * @param javaType the java type for this embeddable type.
      * @param javaTypeConstructor the zero-arg constructor for the {@code javaType} if existent, otherwise {@code null}
+     * @param getOwners 
      * @param proxyType the {@link Proxy}-type for the {@code javaType}
      * @param proxyTypeConstructor the zero-arg constructor for the {@code proxyType} if existent, otherwise {@code null}
      * @param hasValueConstructor the value of hasValueConstructor
@@ -36,13 +38,14 @@ public class EmbeddableTypeESImpl<T> extends ManagedTypeESImpl<T> implements Emb
             Collection<Integer> subTypeOrdinals,
             Constructor<? extends HasValue<T>> hasValueConstructor,
             Constructor<T> javaTypeConstructor,
+            Getter<? super T, Set<String>> getOwners,
             Constructor<? extends Proxy<T>> proxyTypeConstructor,
             Class<? extends Proxy<T>> proxyType,
             Collection<Integer> attributeOrdinals,
             Collection<AttributeES<T, ?>> declaredAttributes,
             Collection<Integer> associationOrdinals) {
         super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor,
-                proxyTypeConstructor, proxyType, attributeOrdinals, declaredAttributes, associationOrdinals);
+                getOwners, proxyTypeConstructor, proxyType, attributeOrdinals, declaredAttributes, associationOrdinals);
     }
 
     @Override

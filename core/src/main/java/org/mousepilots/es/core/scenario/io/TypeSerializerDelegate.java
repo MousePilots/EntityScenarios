@@ -19,6 +19,7 @@ import org.mousepilots.es.core.model.MappedSuperclassTypeES;
 import org.mousepilots.es.core.model.MemberES;
 import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.TypeVisitor;
+import org.mousepilots.es.core.scenario.Context;
 import org.mousepilots.es.core.scenario.ScenarioGraph;
 import org.mousepilots.es.core.scenario.Vertex;
 import org.mousepilots.es.core.util.Maps;
@@ -73,8 +74,9 @@ public class TypeSerializerDelegate<S extends Serializer> extends SerializerDele
         final ScenarioGraph scenarioGraph = getParent().getScenarioGraph();
         final Vertex vertex = scenarioGraph.getVertex(source.getClass());
         final AttributeSerializerDelegate attributeSerializer = getParent().getAttributeSerializerDelegate();
+        final Context context = getParent().getContext();
         for(AttributeES attribute : attributes){
-            if(vertex.isAllowed(attribute, CRUD.READ)){
+            if(vertex.isAllowedOnAttribute(attribute, CRUD.READ, context)){
                 final MemberES javaMember = attribute.getJavaMember();
                 final Object attributeValue = javaMember.get(source);
                 final Object serializedAttributeValue = attribute.accept(attributeSerializer,attributeValue);

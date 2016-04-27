@@ -14,18 +14,18 @@ import org.mousepilots.es.core.util.StringUtils;
  *
  * @author jgeenen
  */
-public class Arc extends Element {
+public class Arc extends Element{
     
-    final AssociationES association;
-    final Vertex source;
+    private final AssociationES association;
+    private final Vertex source;
     private final Vertex target;
     private final String stringValue;
 
-    protected Arc(ScenarioGraph scenarioGraph, AssociationES association, Vertex source, Vertex target) {
+    protected Arc(ScenarioGraph scenarioGraph, AssociationES association) {
         super(scenarioGraph);
         this.association = association;
-        this.source = source;
-        this.target = target;
+        this.source = scenarioGraph.getOrCreate(association.getSourceAttribute().getDeclaringType());
+        this.target = scenarioGraph.getOrCreate(association.getTargetType());
         stringValue = StringUtils.createToString(
             Arc.class, 
             Arrays.asList(

@@ -1,5 +1,6 @@
 package org.mousepilots.es.core.model;
 
+import java.util.Set;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import javax.persistence.metamodel.ManagedType;
 
@@ -96,6 +97,22 @@ public interface ManagedTypeES<T> extends TypeES<T>, ManagedType<T> {
     * @throws UnsupportedOperationException if {@code !this.isInstantiable()}
     */
     T createInstance() throws UnsupportedOperationException;
+    
+    
+    /**
+     * Returns whether or not {@code this.getJavaType()} provides a method for determining the owner(s) of an instance. See 
+     * {@link ProvidesOwners} on how to configure such a method.
+     * @return whether or not {@code this.getJavaType()} provides a method for determining the owner(s) of an instance
+     */
+    boolean supportsHasOwners();
+    
+    /**
+     * 
+     * @param instance
+     * @return the user-names of the owner(s) of the {@code instance}
+     * @throws UnsupportedOperationException if {@code !this.supportsHasOwners()} 
+     */
+    Set<String> getOwners(T instance)  throws UnsupportedOperationException;
 
     /**
     * @return a new and otherwise uninitialized proxy for instances of {@link #getJavaType()}
