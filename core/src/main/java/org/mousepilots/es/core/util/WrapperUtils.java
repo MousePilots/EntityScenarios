@@ -22,8 +22,8 @@ public class WrapperUtils {
           if (instance == null) {
                return null;
           } else {
-               final SingularAttributeES idAttribute = getIdAttribute(type);
-               final Object idValue = idAttribute.getJavaMember().get(instance);
+               final SingularAttributeES<? super E,ID> idAttribute = (SingularAttributeES<? super E,ID>) getIdAttribute(type);
+               final ID idValue = idAttribute.getJavaMember().get(instance);
                return wrapValue(idAttribute, idValue);
           }
      }    
@@ -32,9 +32,9 @@ public class WrapperUtils {
           if (instance == null || !type.hasVersionAttribute()) {
                return null;
           } else {
-               final SingularAttributeES versionAttribute = type.getVersion(null);
-               final Object version = versionAttribute.getJavaMember().get(instance);
-               return wrapValue(versionAttribute, version);
+               final SingularAttributeES<? super E,V> versionAttribute = type.getVersion(null);
+               final V version = versionAttribute.getJavaMember().get(instance);
+               return WrapperUtils.wrapValue(versionAttribute, version);
           }
      }    
      
