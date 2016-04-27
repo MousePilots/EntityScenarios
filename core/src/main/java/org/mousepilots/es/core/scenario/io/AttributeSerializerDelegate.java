@@ -67,7 +67,7 @@ public class AttributeSerializerDelegate<S extends Serializer> extends Serialize
                     } else {
                         C retval = null;
                         final Vertex target = arc.getTarget();
-                        if(target.isAllowedOnType(CRUD.READ,serializer.getContext())){
+                        if(target.getTypeAuthorizationStatusBeforeProcessing(CRUD.READ,serializer.getContext())){
                             retval = collectionConstructor.invoke();
                             final S parent = getParent();
                             for(Object o : collectionValue){

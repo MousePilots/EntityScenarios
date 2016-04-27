@@ -11,14 +11,20 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import org.mousepilots.es.core.command.CRUD;
+import org.mousepilots.es.core.command.Command;
+import org.mousepilots.es.core.model.ManagedTypeES;
+import org.mousepilots.es.core.util.Framework;
 import org.mousepilots.es.core.util.StringUtils;
 
-/**
- *
- * @author ap34wv
- */
-public class Authorization implements Serializable{
-     
+@Framework
+final class Authorization implements Serializable{
+    
+    static enum Status {
+        AUTHORIZED,
+        UNAUTHORIZED,
+        BEFORE_COMMIT_VALIDATION_REQUIRED;
+    }
+    
     private final boolean ownershipRequired;
     
     private final String userName;
@@ -27,30 +33,14 @@ public class Authorization implements Serializable{
     
     private final Set<CRUD> operations;
     
-    protected Authorization(boolean ownershipRequired, String userName, Set<String> roles, Set<CRUD> operations) {
+    Authorization(boolean ownershipRequired, String userName, Set<String> roles, Set<CRUD> operations) {
         this.ownershipRequired = ownershipRequired;
         this.userName = userName;
         this.roles = Collections.unmodifiableSet(roles);
         this.operations = Collections.unmodifiableSet(operations);
     }
 
-    public boolean isOwnershipRequired() {
-        return ownershipRequired;
-    }
-    
-    public String getUserName() {
-        return userName;
-    }
-
-    public Set<String> getRoles() {
-        return roles;
-    }
-
-    public Set<CRUD> getOperations() {
-        return operations;
-    }
-    
-    public boolean isGranted(Context context,CRUD operation) {
+    private boolean satisfiesBeforeProcessingProcessingConstraints(CRUD operation, Context context) {
         if (!operations.contains(operation)) {
             return false;
         }
@@ -59,11 +49,68 @@ public class Authorization implements Serializable{
         }
         return this.roles.isEmpty() || context.hasRoleIn(roles);
     }
+    
+    /**
+     * @return whether or not {@code this} requires ownership of the managed instance to which {@link #operations} apply
+     */
+    boolean isOwnershipRequired() {
+        return ownershipRequired;
+    }
+    
+    /**
+     * @return the required user-name if any, otherwise {@code null}
+     */
+    String getUserName() {
+        return userName;
+    }
+
+    /**
+     * @return the roles, any of which is required, if any, otherwise an empty set
+     */
+    Set<String> getRoles() {
+        return roles;
+    }
+
+    /**
+     * @return 
+     */
+    Set<CRUD> getOperations() {
+        return operations;
+    }
+    
+    boolean isGrantableBeforeProcessing(){
+        return !isOwnershipRequired();
+    }
+
+    boolean isGrantedBeforeProcessing(Context context,CRUD operation){
+        if(isOwnershipRequired()){
+            return false;
+        } else {
+            return satisfiesBeforeProcessingProcessingConstraints(operation, context);
+        }
+    }
+
+    boolean isGrantedAfterProcessing(Context context, Command command){
+        if(satisfiesBeforeProcessingProcessingConstraints(CRUD.CREATE, context)){
+            if(isOwnershipRequired()){
+                final Object realSubject = command.getRealSubject();
+                final ManagedTypeES type = command.getType();
+                final Set<String> owners = type.getOwners(realSubject);
+                return owners.contains(this.getUserName());
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+    
 
     @Override
     public String toString() {
         return StringUtils.createToString(
             getClass(), Arrays.asList(
+                "ownershipRequired", ownershipRequired,    
                 "userName", userName,
                 "roles", "[" + StringUtils.join(roles, r -> r, ",") + "]",
                 "operations", "[" + StringUtils.join(operations, o -> o.toString(), ",") + "]"
@@ -74,9 +121,10 @@ public class Authorization implements Serializable{
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 59 * hash + Objects.hashCode(this.userName);
-        hash = 59 * hash + Objects.hashCode(this.roles);
-        hash = 59 * hash + Objects.hashCode(this.operations);
+        hash = 37 * hash + (this.ownershipRequired ? 1 : 0);
+        hash = 37 * hash + Objects.hashCode(this.userName);
+        hash = 37 * hash + Objects.hashCode(this.roles);
+        hash = 37 * hash + Objects.hashCode(this.operations);
         return hash;
     }
 
@@ -92,6 +140,9 @@ public class Authorization implements Serializable{
             return false;
         }
         final Authorization other = (Authorization) obj;
+        if (this.ownershipRequired != other.ownershipRequired) {
+            return false;
+        }
         if (!Objects.equals(this.userName, other.userName)) {
             return false;
         }
@@ -103,6 +154,7 @@ public class Authorization implements Serializable{
         }
         return true;
     }
+
     
     
 }

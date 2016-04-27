@@ -73,7 +73,7 @@ public final class ScenarioGraphs extends HasSeal{
                 this.vertex = scenarioGraph.getOrCreate(managedType);
             }
             
-            protected abstract class AbstractAuthorizationBuilder extends AuthorizationBuilder<VertexBuilder>{
+            private abstract class AbstractAuthorizationBuilder extends AuthorizationBuilder<VertexBuilder>{
 
                 @Override
                 protected final Vertex getVertex() {

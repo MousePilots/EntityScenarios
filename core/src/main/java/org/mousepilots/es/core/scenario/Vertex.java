@@ -10,11 +10,11 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import org.mousepilots.es.core.command.CRUD;
+import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.util.Maps;
@@ -23,7 +23,7 @@ import org.mousepilots.es.core.util.StringUtils;
 /**
  * Represents a {@link ManagedTypeES} within a {@link ScenarioGraph}
  */
-public class Vertex extends Element {
+public final class Vertex extends Element {
 
     /**
      * The possible operations at the attribute level are {@link CRUD#READ} and
@@ -51,7 +51,7 @@ public class Vertex extends Element {
         }
     }
 
-    protected Vertex(ScenarioGraph graph, ManagedTypeES managedType) {
+    Vertex(ScenarioGraph graph, ManagedTypeES managedType) {
         super(graph);
         this.type = managedType;
         stringValue = StringUtils.createToString(Vertex.class,
@@ -62,14 +62,14 @@ public class Vertex extends Element {
         );
     }
 
-    protected void addTypeLevelAuthorization(Authorization authorization) {
+    void addTypeLevelAuthorization(Authorization authorization) {
         assertNotSealed();
         if(!typeAuthorizations.add(authorization)){
             throw new IllegalStateException("duplicate authorization for " + getType() + ": " + authorization);
         }
     }
     
-    protected void addAttributeLevelAuthorization(AttributeES attribute, Authorization authorization){
+    void addAttributeLevelAuthorization(AttributeES attribute, Authorization authorization){
         assertNotSealed();
         assertAttributeOccurs(attribute);
         final Set<CRUD> operations = authorization.getOperations();
@@ -91,14 +91,34 @@ public class Vertex extends Element {
      * @param context
      * @return whether or not the {@code operation} is allowed on {@link #getType()} within the specified {@code context} 
      */
-    public boolean isAllowedOnType(CRUD operation, Context context) {
+    Authorization.Status getTypeAuthorizationStatusBeforeProcessing(CRUD operation, Context context) {
+        Authorization.Status status = Authorization.Status.UNAUTHORIZED;
         for(Authorization typeAuthorization : typeAuthorizations){
-            if(typeAuthorization.isGranted(context, operation)){
-                return true;
+            if(typeAuthorization.isGrantableBeforeProcessing()){
+                if(typeAuthorization.isGrantedBeforeProcessing(context, operation)){
+                    status = Authorization.Status.AUTHORIZED;
+                    return status;
+                }
+            } else {
+                status = Authorization.Status.BEFORE_COMMIT_VALIDATION_REQUIRED;
             }
         }
-        return false;
+        return status;
     }
+    
+    /**
+     * @param operation
+     * @param context
+     * @return whether or not the {@code operation} is allowed on {@link #getType()} within the specified {@code context} 
+     */
+    Authorization.Status getTypeAuthorizationStatusAfterProcessing(Command command, Context context) {
+        for(Authorization typeAuthorization : typeAuthorizations){
+            if(typeAuthorization.isGrantedAfterProcessing(context, command)){
+                return Authorization.Status.AUTHORIZED;
+            }
+        }
+        return Authorization.Status.UNAUTHORIZED;
+    }    
     
     /**
      * 
@@ -112,7 +132,7 @@ public class Vertex extends Element {
         final Set<Authorization> authorizations = this.attributeAuthroizations.get(attributeES);
         if(authorizations!=null){
             for(Authorization authorization : authorizations){
-                if(authorization.isGranted(context, operation)){
+                if(authorization.isGrantedBeforeProcessing(context, operation)){
                     return true;
                 }
             }

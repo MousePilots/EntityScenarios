@@ -392,7 +392,7 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T> implements Mana
         if(supportsHasOwners()){
             return this.getOwners.invoke(instance);
         } else {
-            throw new UnsupportedOperationException(this.getJavaType() + " does not provide means to determine the owner(s) of sn instance");
+            throw new UnsupportedOperationException(this.getJavaType() + " does not provide means to determine the owner(s) of an instance");
         }
     }
 

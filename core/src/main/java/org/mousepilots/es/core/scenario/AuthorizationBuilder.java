@@ -16,10 +16,10 @@ import org.mousepilots.es.core.command.CRUD;
  * @author ap34wv
  * @param <T>
  */
-public abstract class AuthorizationBuilder<T> {
+abstract class AuthorizationBuilder<T> {
     
     private boolean requireOwnership=false;
-    private String userName;
+    private String userName=null;
     private final Set<String> roles = new HashSet<>();
     private final Set<CRUD> operations = EnumSet.noneOf(CRUD.class);
     
@@ -59,7 +59,7 @@ public abstract class AuthorizationBuilder<T> {
      * @param operations
      * @return
      */
-    public AuthorizationBuilder<T> allowOperations(CRUD... operations) {
+    public AuthorizationBuilder<T> forOperations(CRUD... operations) {
         this.operations.addAll(Arrays.asList(operations));
         return this;
     }

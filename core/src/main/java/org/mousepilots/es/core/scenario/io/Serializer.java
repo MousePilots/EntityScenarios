@@ -60,7 +60,7 @@ public abstract class Serializer {
             if(vertex==null){
                 return null;
             } else {
-                if(vertex.isAllowedOnType(CRUD.READ,context)){
+                if(vertex.getTypeAuthorizationStatusBeforeProcessing(CRUD.READ,context)){
                     final TypeSerializerDelegate typeSerializerDelegate = getTypeSerializerDelegate();
                     return vertex.getType().accept(typeSerializerDelegate,value);
                 } else {
