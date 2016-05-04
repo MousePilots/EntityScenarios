@@ -34,7 +34,7 @@ public final class UpdateEmbeddable<E,A,AD extends AttributeES<?super E,A>> exte
           if(isSubjectCreated()){
                return getCreateCommand().getRealSubject();
           } else {
-               return getReference().resolve(serverContext);
+               return getSerializableReference().resolve(serverContext);
           }
      }
 

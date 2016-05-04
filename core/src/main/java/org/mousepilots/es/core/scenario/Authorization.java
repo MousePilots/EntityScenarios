@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import org.mousepilots.es.core.command.CRUD;
-import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.util.Framework;
 import org.mousepilots.es.core.util.StringUtils;
@@ -19,11 +18,7 @@ import org.mousepilots.es.core.util.StringUtils;
 @Framework
 final class Authorization implements Serializable{
     
-    static enum Status {
-        AUTHORIZED,
-        UNAUTHORIZED,
-        BEFORE_COMMIT_VALIDATION_REQUIRED;
-    }
+    
     
     private final boolean ownershipRequired;
     
@@ -40,14 +35,43 @@ final class Authorization implements Serializable{
         this.operations = Collections.unmodifiableSet(operations);
     }
 
-    private boolean satisfiesBeforeProcessingProcessingConstraints(CRUD operation, Context context) {
+    /**
+     * 
+     * @param <T>
+     * @param type
+     * @param instance required <em>iff</em> {@code stage==}{@link ProcessingStage#AFTER}
+     * @param operation
+     * @param context
+     * @param stage
+     * @return 
+     */
+    <T> AuthorizationStatus getStatus(ManagedTypeES<? super T> type, T instance, CRUD operation, Context context, ProcessingStage stage) {
         if (!operations.contains(operation)) {
-            return false;
+            return AuthorizationStatus.UNAUTHORIZED;
         }
         if (this.userName != null && !this.userName.equals(context.getUserName())) {
-            return false;
+            return AuthorizationStatus.UNAUTHORIZED;
         }
-        return this.roles.isEmpty() || context.hasRoleIn(roles);
+        if(!this.roles.isEmpty() && !context.hasRoleIn(this.roles)){
+            return AuthorizationStatus.UNAUTHORIZED;
+        }
+        switch(stage){
+            case BEFORE : {
+                return isGrantableBeforeProcessing() ? AuthorizationStatus.AUTHORIZED : AuthorizationStatus.REQUIRES_PROCESSING;
+            }
+            case AFTER: {
+                if(isOwnershipRequired()){
+                    final Set owners = type.getOwners(instance);
+                    if(!owners.contains(context.getUserName())){
+                        return AuthorizationStatus.UNAUTHORIZED;
+                    }
+                }
+                return AuthorizationStatus.AUTHORIZED;
+            }
+            default: {
+                throw new IllegalStateException("unknown stage " + stage);
+            }
+        }
     }
     
     /**
@@ -78,33 +102,12 @@ final class Authorization implements Serializable{
         return operations;
     }
     
+    /**
+     * @return whether or {@code this} is grantable before processing. E.g. checking ownership of a managed instance requires processing
+     */
     boolean isGrantableBeforeProcessing(){
         return !isOwnershipRequired();
     }
-
-    boolean isGrantedBeforeProcessing(Context context,CRUD operation){
-        if(isOwnershipRequired()){
-            return false;
-        } else {
-            return satisfiesBeforeProcessingProcessingConstraints(operation, context);
-        }
-    }
-
-    boolean isGrantedAfterProcessing(Context context, Command command){
-        if(satisfiesBeforeProcessingProcessingConstraints(CRUD.CREATE, context)){
-            if(isOwnershipRequired()){
-                final Object realSubject = command.getRealSubject();
-                final ManagedTypeES type = command.getType();
-                final Set<String> owners = type.getOwners(realSubject);
-                return owners.contains(this.getUserName());
-            } else {
-                return true;
-            }
-        } else {
-            return false;
-        }
-    }
-    
 
     @Override
     public String toString() {

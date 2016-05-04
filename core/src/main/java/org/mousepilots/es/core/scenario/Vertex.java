@@ -16,6 +16,7 @@ import java.util.Set;
 import org.mousepilots.es.core.command.CRUD;
 import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.model.AttributeES;
+import org.mousepilots.es.core.model.HasAttribute;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.util.Maps;
 import org.mousepilots.es.core.util.StringUtils;
@@ -30,6 +31,34 @@ public final class Vertex extends Element {
      * {@link CRUD#UPDATE}
      */
     public static final Set<CRUD> ATTRIBUTE_LEVEL_OPERATIONS = Collections.unmodifiableSet(EnumSet.of(CRUD.READ, CRUD.UPDATE));
+    
+    private static AuthorizationStatus getAuthorizationStatus(
+            Set<Authorization> authorizations, 
+            Command command, 
+            Context context, 
+            ProcessingStage stage){
+        AuthorizationStatus returnedStatus = AuthorizationStatus.UNAUTHORIZED;
+        if(authorizations!=null){
+            for(Authorization typeAuthorization : authorizations){
+                final AuthorizationStatus typeAuthorizationStatus = typeAuthorization.getStatus(
+                    command.getType(),
+                    command.getRealSubject(),
+                    command.getOperation(),
+                    context,
+                    stage
+                );
+                switch(typeAuthorizationStatus){
+                    case AUTHORIZED : {
+                        return AuthorizationStatus.AUTHORIZED;
+                    }
+                    case REQUIRES_PROCESSING : {
+                        returnedStatus = AuthorizationStatus.REQUIRES_PROCESSING;
+                    }
+                }
+            }
+        }
+        return returnedStatus;
+    }      
 
     private final ManagedTypeES type;
 
@@ -42,7 +71,7 @@ public final class Vertex extends Element {
 
     //unexposed fields
     private final Set<Authorization> typeAuthorizations = new HashSet<>();
-    private final Map<AttributeES, Set<Authorization>> attributeAuthroizations = new HashMap<>();
+    private final Map<AttributeES, Set<Authorization>> attributeAuthorizations = new HashMap<>();
     private final String stringValue;
 
     private void assertAttributeOccurs(AttributeES attribute) throws IllegalArgumentException {
@@ -50,15 +79,56 @@ public final class Vertex extends Element {
             throw new IllegalArgumentException(attribute + " does not occur on " + getType());
         }
     }
+    
+    private static Authorization[] getFirstAmbiguousPair(Set<Authorization> authorizations){
+        final Authorization[] authArray = authorizations.toArray(new Authorization[authorizations.size()]);
+        for(int i=0; i<authArray.length-1; i++){
+            for(int j=i+1; j<authArray.length; i++){
+                final Authorization ai = authArray[i], aj= authArray[j];
+                final boolean ambiguous = 
+                        !Collections.disjoint(ai.getOperations(), aj.getOperations()) &&
+                        !Collections.disjoint(ai.getRoles(), aj.getRoles()) &&
+                        Objects.equals(ai.getUserName(), aj.getUserName());
+                if(ambiguous){
+                    return new Authorization[]{ai,aj};
+                }
+            }
+        }
+        return null;
+    }
+    
+    void assertTypeAuthorizationsAreNotAmbiguous(){
+        final Authorization[] ambiguousTypeAuthorizations = getFirstAmbiguousPair(typeAuthorizations);
+        if(ambiguousTypeAuthorizations!=null){
+            throw new IllegalStateException(
+                    "authorizations " + ambiguousTypeAuthorizations[0] + ", " + 
+                    ambiguousTypeAuthorizations[1] + " for " + this + " are ambiguous"
+            );
+        }
+    }
+    
+    void assertAttributeAuthorizationsAreNotAmbiguous(AttributeES attribute){
+        final Set<Authorization> authorizations = attributeAuthorizations.get(attribute);
+        if(authorizations!=null){
+            final Authorization[] ambiguousAttributeAuthorizations = getFirstAmbiguousPair(authorizations);
+            if(ambiguousAttributeAuthorizations!=null){
+                throw new IllegalStateException(
+                        "authorizations " + ambiguousAttributeAuthorizations[0] + ", " + 
+                        ambiguousAttributeAuthorizations[1] + " for attribute " + attribute + " on " + this + " are ambiguous"
+                );
+            }
+        }
+    }
+    
 
     Vertex(ScenarioGraph graph, ManagedTypeES managedType) {
         super(graph);
         this.type = managedType;
         stringValue = StringUtils.createToString(Vertex.class,
-                Arrays.asList(
-                        "scenario", graph.scenario,
-                        "type", type
-                )
+            Arrays.asList(
+                "scenario", graph.scenario,
+                "type", type
+            )
         );
     }
 
@@ -80,66 +150,58 @@ public final class Vertex extends Element {
                     + StringUtils.join(ATTRIBUTE_LEVEL_OPERATIONS, o -> o.name(), ", ") + " are allowed"
             );
         }
-        final Set<Authorization> authorizations = Maps.getOrCreate(attributeAuthroizations, attribute, HashSet::new);
+        final Set<Authorization> authorizations = Maps.getOrCreate(attributeAuthorizations, attribute, HashSet::new);
         if(!authorizations.add(authorization)){
             throw new IllegalStateException("duplicate authorization for " + attribute + ": " + authorization);
         }
     }
 
-    /**
-     * @param operation
-     * @param context
-     * @return whether or not the {@code operation} is allowed on {@link #getType()} within the specified {@code context} 
-     */
-    Authorization.Status getTypeAuthorizationStatusBeforeProcessing(CRUD operation, Context context) {
-        Authorization.Status status = Authorization.Status.UNAUTHORIZED;
-        for(Authorization typeAuthorization : typeAuthorizations){
-            if(typeAuthorization.isGrantableBeforeProcessing()){
-                if(typeAuthorization.isGrantedBeforeProcessing(context, operation)){
-                    status = Authorization.Status.AUTHORIZED;
-                    return status;
-                }
-            } else {
-                status = Authorization.Status.BEFORE_COMMIT_VALIDATION_REQUIRED;
-            }
-        }
-        return status;
-    }
-    
-    /**
-     * @param operation
-     * @param context
-     * @return whether or not the {@code operation} is allowed on {@link #getType()} within the specified {@code context} 
-     */
-    Authorization.Status getTypeAuthorizationStatusAfterProcessing(Command command, Context context) {
-        for(Authorization typeAuthorization : typeAuthorizations){
-            if(typeAuthorization.isGrantedAfterProcessing(context, command)){
-                return Authorization.Status.AUTHORIZED;
-            }
-        }
-        return Authorization.Status.UNAUTHORIZED;
-    }    
-    
-    /**
-     * 
-     * @param attributeES
-     * @param operation
-     * @param context
-     * @return whether or not the {@code operation} is allowed on the {@link attribute} within the specified {@code context}
-     */
-    public boolean isAllowedOnAttribute(AttributeES attributeES, CRUD operation, Context context){
-        assertAttributeOccurs(attributeES);
-        final Set<Authorization> authorizations = this.attributeAuthroizations.get(attributeES);
-        if(authorizations!=null){
-            for(Authorization authorization : authorizations){
-                if(authorization.isGrantedBeforeProcessing(context, operation)){
-                    return true;
-                }
-            }
-        } 
-        return false;
+    private AuthorizationStatus getTypeAuthorizationStatus(Command command, Context context, ProcessingStage stage) {
+        return Vertex.getAuthorizationStatus(typeAuthorizations, command, context, stage);
     }
 
+    private AuthorizationStatus getAttributeAuthorizationStatus(Command command, AttributeES attribute, Context context, ProcessingStage stage) {
+        return Vertex.getAuthorizationStatus(attributeAuthorizations.get(attribute), command, context, stage);
+    }
+    
+    public AuthorizationStatus getAuthorizationStatus(Command command, Context context, ProcessingStage stage){
+        final AuthorizationStatus typeLevelStatus = this.getTypeAuthorizationStatus(command, context, stage);
+        if(typeLevelStatus!=AuthorizationStatus.UNAUTHORIZED && command instanceof HasAttribute){
+            final HasAttribute hasAttribute = (HasAttribute) command;
+            final AttributeES attribute = hasAttribute.getAttribute();
+            final AuthorizationStatus attributeLevelStatus = this.getAttributeAuthorizationStatus(command, attribute, context, stage);
+            return attributeLevelStatus.least(typeLevelStatus);
+        } else {
+            return typeLevelStatus;
+        }
+    }
+
+    protected boolean isReadable(Context context){
+        for(Authorization authorization : typeAuthorizations){
+            if(authorization.getStatus(type, null, CRUD.READ, context, ProcessingStage.BEFORE)==AuthorizationStatus.AUTHORIZED){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public Set<AttributeES> getReadableAttributes(Context context){
+        if(isReadable(context)){
+            final Set<AttributeES> retval = new HashSet<>();
+            for( Map.Entry<AttributeES, Set<Authorization>> entry : this.attributeAuthorizations.entrySet() ) {
+                for(Authorization authorization : entry.getValue()){
+                    if(authorization.getStatus(type, null, CRUD.READ, context, ProcessingStage.BEFORE)==AuthorizationStatus.AUTHORIZED){
+                        retval.add(entry.getKey());
+                        break;
+                    }
+                }
+            }
+            return retval;
+        } else {
+            return Collections.EMPTY_SET;
+        }
+    }
+    
     @Override
     public void seal() {
         if (!isSealed()) {

@@ -17,6 +17,7 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.WeightedGraph;
 import org.mousepilots.es.core.model.AssociationES;
+import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.ManagedTypeES;
 
 /**
@@ -68,7 +69,15 @@ public class ScenarioGraph extends HasSeal implements DirectedGraph<Vertex, Arc>
         return association2Arc.get(association);
     }
     
-    
+    public Set<Vertex> getReadableTypes(Context context){
+        Set<Vertex> retval = new HashSet<>();
+        for(Vertex vertex : vertices){
+            if(vertex.isReadable(context)){
+                retval.add(vertex);
+            }
+        }
+        return retval;
+    }
 
     /**
      * <p>

@@ -5,42 +5,48 @@
  */
 package org.mousepilots.es.core.scenario;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import org.mousepilots.es.core.command.CRUD;
 import org.mousepilots.es.core.command.Command;
-import org.mousepilots.es.core.command.Update;
-import org.mousepilots.es.core.scenario.ScenarioException.Reason;
+import org.mousepilots.es.core.model.ManagedTypeES;
 
 /**
  *
  * @author ap34wv
+ * @param <EM>
+ * @param <C>
  */
-public class BeforeProcessingValidator{
-
-    private List<Command> unauthorizedCommands;
+public class BeforeProcessingValidator<EM,C extends Context<EM>> extends AbstractValidator<EM, C>{
     
-    public void validate(List<Command> commands, ScenarioGraph graph, ServerContext context) throws IllegalCommandException{
-        for(Command command : commands){
-            final Vertex vertex = graph.getVertex(command.getType());
+    private final List<Command> toBeValidatedAfterProcessing = new LinkedList<>();
+
+    @Override
+    public void validate() throws ScenarioException {
+        final ScenarioGraph scenarioGraph = getScenarioGraph();
+        final C context = getContext();
+        final ProcessingStage stage = getStage();
+        for(Command command : getCommands()){
+            final ManagedTypeES type = command.getType();
+            final Vertex vertex = scenarioGraph.getVertex(type);
             if(vertex==null){
-                throw new IllegalCommandException(command, Reason.TYPE_NOT_IN_GRAPH);
+                throw new IllegalCommandException(
+                    command, 
+                    ScenarioException.Reason.TYPE_NOT_IN_GRAPH
+                );
             }
-            final CRUD operation = command.getOperation();
-            switch(operation){
-                //type level validator
-                default : {
-                    if(!vertex.getTypeAuthorizationStatusBeforeProcessing(operation, context)){
-                        throw new IllegalCommandException(command, Reason.OPERATION_NOT_ALLOWED_ON_TYPE);
-                    }
-                }
-                
-                case UPDATE : {
-                    final Update update = (Update) command;
-                    if(!vertex.isAllowedOnAttribute(update.getAttribute(), operation,context)){
-                        throw new IllegalCommandException(command, Reason.OPERATION_NOT_ALLOWED_ON_ATTRIBUTE);
-                    }
-                }
+            switch(vertex.getAuthorizationStatus(command, context, stage)){
+                case AUTHORIZED : break;
+                case REQUIRES_PROCESSING : toBeValidatedAfterProcessing.add(command); break;
+                case UNAUTHORIZED : throw new IllegalCommandException(command, ScenarioException.Reason.COMMAND_NOT_ALLOWED);
             }
         }
+    }
+
+    /**
+     * @return the {@link Command}s to be validated at {@link ProcessingStage#AFTER}
+     */
+    public List<Command> getToBeValidatedAfterProcessing() {
+        return Collections.unmodifiableList(toBeValidatedAfterProcessing);
     }
 }

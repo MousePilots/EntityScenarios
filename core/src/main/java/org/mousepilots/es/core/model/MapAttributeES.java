@@ -23,6 +23,11 @@ public interface MapAttributeES<T,K,V> extends PluralAttributeES<T, java.util.Ma
     }
 
     @Override
+    public TypeES<K> getKeyType();
+    
+    
+
+    @Override
     public default Map<K, V> createEmpty() {
         return new HashMap<>();
     }

@@ -3,6 +3,7 @@ package org.mousepilots.es.core.model.impl.container;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import javax.persistence.EntityManager;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.AttributeVisitor;
 import org.mousepilots.es.core.model.CollectionAttributeES;
@@ -10,14 +11,13 @@ import org.mousepilots.es.core.model.ListAttributeES;
 import org.mousepilots.es.core.model.MapAttributeES;
 import org.mousepilots.es.core.model.SetAttributeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
-import org.mousepilots.es.core.model.EntityManagerES;
 
 /**
  * Locates the managed equivalent of a detached embeddable in the server-side {@link EntityManager}.
  * 
  */
 public class EmbeddableLocator {
-
+    
     /**
      * Locates the managed equivalent {@code mt} of a detached embeddable {@code detachedTarget}, being the target of an association between the entity or embeddable {@code managedSource}.
      * The corresponding association has source attribute {@code container.getAttribute()}.

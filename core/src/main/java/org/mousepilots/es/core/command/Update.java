@@ -7,6 +7,7 @@ package org.mousepilots.es.core.command;
 
 import org.mousepilots.es.core.model.impl.ref.SerializableReference;
 import org.mousepilots.es.core.model.AttributeES;
+import org.mousepilots.es.core.model.HasAttribute;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
 import org.mousepilots.es.core.model.proxy.Proxy;
@@ -45,13 +46,13 @@ import org.mousepilots.es.core.util.GwtIncompatible;
  * @param <AD>
  * @param <SR>
  */
-public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends AttributeES<? super E, A>, SR extends SerializableReference> extends AbstractCommand<E, TD> implements SubjectResolver<E> {
+public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends AttributeES<? super E, A>, SR extends SerializableReference> extends AbstractCommand<E, TD> implements SubjectResolver<E>, HasAttribute{
 
     private int attributeOrdinal;
 
     private Create<E, TD> createCommand;
 
-    private SR reference;
+    private SR serializableReference;
 
     private UpdateAttribute<E, A, AD, ?> updateAttribute;
 
@@ -62,7 +63,7 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
         super(proxyAspect.getEntityManager(), (TD) proxyAspect.getType());
     }
 
-    protected Update(Proxy<E> proxy, AD attribute, Function<Proxy<E>, SR> referenceConstructor, UpdateAttribute<E, A, AD, ?> updateAttribute) {
+    protected Update(Proxy<E> proxy, AD attribute, Function<Proxy<E>, SR> serializableReferenceConstructor, UpdateAttribute<E, A, AD, ?> updateAttribute) {
         this(proxy.__getProxyAspect());
         setProxy(proxy);
         this.attributeOrdinal = attribute.getOrdinal();
@@ -70,7 +71,7 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
         if (proxyAspect.isCreated()) {
             createCommand = (Create) proxyAspect.getCreate();
         } else {
-            reference = referenceConstructor.apply(proxy);
+            serializableReference = serializableReferenceConstructor.apply(proxy);
         }
         this.updateAttribute = updateAttribute;
     }
@@ -79,18 +80,19 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
         return createCommand != null;
     }
 
-    protected final Create<E, TD> getCreateCommand() {
+    public final Create<E, TD> getCreateCommand() {
         return createCommand;
     }
 
-    protected final SR getReference() {
-        return reference;
+    protected final SR getSerializableReference() {
+        return serializableReference;
     }
 
     public final UpdateAttribute<E, A, AD, ?> getUpdateAttribute() {
         return updateAttribute;
     }
 
+    @Override
     public final AD getAttribute() {
         return (AD) AbstractMetamodelES.getInstance().getAttribute(attributeOrdinal);
     }

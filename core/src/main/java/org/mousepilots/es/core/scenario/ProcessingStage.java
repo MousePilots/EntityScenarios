@@ -5,10 +5,6 @@
  */
 package org.mousepilots.es.core.scenario;
 
-/**
- *
- * @author jgeenen
- */
-public class BeforeCommitValidator {
-    
+public enum ProcessingStage {
+    BEFORE, AFTER
 }

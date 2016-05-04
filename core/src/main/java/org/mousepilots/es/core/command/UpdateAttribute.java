@@ -17,13 +17,12 @@ import org.mousepilots.es.core.util.GwtIncompatible;
  * @param <A> the attribute-javatype
  * @param <AD> the attribute-type
  */
-public interface UpdateAttribute<E, A, AD extends AttributeES<? super E, A>,MS> extends Serializable{
-     
-     void executeOnClient(Update<E,?,A,AD,?> update);
-     
-     void undo(Update<E,?,A,AD,?> update);
-     
-     
+public interface UpdateAttribute<E, A, AD extends AttributeES<? super E, A>, MS> extends Serializable {
+
+    void executeOnClient(Update<E, ?, A, AD, ?> update);
+
+    void undo(Update<E, ?, A, AD, ?> update);
+
     default A getAttributeValueOnClient(Update<E, ?, A, AD, ?> update) {
         return update.getAttribute().getJavaMember().get(update.getProxy().__subject());
     }
@@ -31,19 +30,17 @@ public interface UpdateAttribute<E, A, AD extends AttributeES<? super E, A>,MS> 
     default A getAttributeValueOnServer(Update<E, ?, A, AD, ?> update) {
         return update.getAttribute().getJavaMember().get(update.getRealSubject());
     }
-     
-     
-     default void redo(Update<E,?,A,AD,?> update){
-          executeOnClient(update);
-     }
-     
-     @GwtIncompatible
-     MS getModificationOnServer(ServerContext serverContext);
-     
-     @GwtIncompatible
-     void executeOnServer(Update<E,?,A,AD,?> update, ServerContext serverContext);
-     
-     
-     <R,A> R accept(UpdateAttributeVisitor<R,A> visitor, A arg);
-     
+
+    default void redo(Update<E, ?, A, AD, ?> update) {
+        executeOnClient(update);
+    }
+
+    @GwtIncompatible
+    MS getModificationOnServer(ServerContext serverContext);
+
+    @GwtIncompatible
+    void executeOnServer(Update<E, ?, A, AD, ?> update, ServerContext serverContext);
+
+    <R, A> R accept(UpdateAttributeVisitor<R, A> visitor, A arg);
+
 }

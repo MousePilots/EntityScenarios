@@ -33,7 +33,7 @@ public final class UpdateEntity<E, ID, V, A, AD extends AttributeES<? super E, A
           if(super.isSubjectCreated()){
                return IdentifiableTypeUtils.getId(getType(), getCreateCommand().getRealSubject());
           } else {
-               return getReference().getId();
+               return getSerializableReference().getId();
           }
      }
 
@@ -41,7 +41,7 @@ public final class UpdateEntity<E, ID, V, A, AD extends AttributeES<? super E, A
           if(super.isSubjectCreated()){
                return IdentifiableTypeUtils.getVersion(getType(), getCreateCommand().getRealSubject());
           } else {
-               return getReference().getVersion();
+               return getSerializableReference().getVersion();
           }
      }
 

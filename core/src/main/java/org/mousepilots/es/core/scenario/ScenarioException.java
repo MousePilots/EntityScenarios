@@ -10,8 +10,9 @@ package org.mousepilots.es.core.scenario;
  * @author ap34wv
  */
 public class ScenarioException extends RuntimeException{
-    
+
     public static enum Reason{
+        COMMAND_NOT_ALLOWED,
         OPERATION_NOT_ALLOWED_ON_TYPE,
         OPERATION_NOT_ALLOWED_ON_ATTRIBUTE,
         TYPE_NOT_IN_GRAPH;

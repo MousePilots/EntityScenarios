@@ -22,7 +22,7 @@ abstract class AuthorizationBuilder<T> {
     private String userName=null;
     private final Set<String> roles = new HashSet<>();
     private final Set<CRUD> operations = EnumSet.noneOf(CRUD.class);
-    
+
     protected abstract Vertex getVertex();
 
     /**
@@ -64,9 +64,13 @@ abstract class AuthorizationBuilder<T> {
         return this;
     }
 
-    protected final Authorization buildAuthorization() {
+    protected final Authorization doBuildAuthorization() {
         if (operations.isEmpty()) {
             throw new IllegalStateException("the specification of one or more operations is mandatory");
+        }
+        
+        if(operations.contains(CRUD.READ) && requireOwnership){
+            throw new IllegalStateException("operation " + CRUD.READ + " on " + getVertex().getType() + " must not require ownership");
         }
         return new Authorization(requireOwnership, userName, roles, operations);
     }

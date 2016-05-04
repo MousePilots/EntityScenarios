@@ -27,7 +27,7 @@ public final class ScenarioGraphs extends HasSeal{
     
     private ScenarioGraphs(){}
     
-    public final ScenarioGraphBuilder builder(String scenario){
+    public ScenarioGraphBuilder builder(String scenario){
         assertNotSealed();
         return new ScenarioGraphBuilder(scenario);
     }
@@ -38,7 +38,7 @@ public final class ScenarioGraphs extends HasSeal{
         
         private ScenarioGraphBuilder(String scenario){
             synchronized(INSTANCE){
-                if(get(scenario)!=null){
+                if(ScenarioGraphs.this.get(scenario)!=null){
                     throw new IllegalStateException("duplicate scenario " + scenario);
                 }
                 this.scenarioGraph = new ScenarioGraph(scenario);
@@ -66,7 +66,7 @@ public final class ScenarioGraphs extends HasSeal{
             return scenarioGraph;
         }
         
-        public final class VertexBuilder{
+        public class VertexBuilder{
             private final Vertex vertex;
 
             private VertexBuilder(ManagedTypeES managedType){
@@ -86,7 +86,7 @@ public final class ScenarioGraphs extends HasSeal{
 
                 @Override
                 public VertexBuilder build() {
-                    vertex.addTypeLevelAuthorization(super.buildAuthorization());
+                    vertex.addTypeLevelAuthorization(super.doBuildAuthorization());
                     return VertexBuilder.this;
                 }
 
@@ -102,7 +102,7 @@ public final class ScenarioGraphs extends HasSeal{
                 
                 @Override
                 public VertexBuilder build() {
-                    vertex.addAttributeLevelAuthorization(attribute, super.buildAuthorization());
+                    vertex.addAttributeLevelAuthorization(attribute, super.doBuildAuthorization());
                     return VertexBuilder.this;
                 }
                 
