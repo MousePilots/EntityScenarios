@@ -16,6 +16,7 @@ import org.mousepilots.es.core.util.GwtIncompatible;
  * @param <E> type of the entity/embeddable on which the attribute is defined
  * @param <A> the attribute-javatype
  * @param <AD> the attribute-type
+ * @param <MS>
  */
 public interface UpdateAttribute<E, A, AD extends AttributeES<? super E, A>, MS> extends Serializable {
 

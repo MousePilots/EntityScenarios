@@ -17,6 +17,7 @@ import org.mousepilots.es.core.command.attribute.value.Value;
 import org.mousepilots.es.core.command.attribute.value.ValueFactory;
 import org.mousepilots.es.core.model.PluralAttributeES;
 import org.mousepilots.es.core.model.TypeES;
+import org.mousepilots.es.core.model.proxy.collection.Observable;
 import org.mousepilots.es.core.scenario.ServerContext;
 import org.mousepilots.es.core.util.GwtIncompatible;
 
@@ -36,11 +37,18 @@ public final class UpdateCollection<E,EL,A extends Collection<EL>, AD extends Pl
     
     private LinkedList<Value<EL, EL, ?, ?>> serializableValues;
     
+    private A getDelegateCollection(Update<E, ?, A, AD, ?> update) {
+        final Observable<A, ?> observable = (Observable<A,?>) getAttributeValueOnClient(update);
+        return observable.getDelegate();
+    }
+
+    private UpdateCollection(){}
+    
     public UpdateCollection(TypeES<EL> elementType, CollectionOperation operation, Collection<EL> collection, Collection<EL> values){
         if(operation==CollectionOperation.ADD){
             Embeddables.assertIfEmbeddableThenCreated(elementType, (Collection) values);
         }
-        this.collectionOperation = collectionOperation;
+        this.collectionOperation = operation;
         this.values = operation.getNet(collection, values);
         this.serializableValues = ValueFactory.create(elementType, values, LinkedList::new);
     }
@@ -51,12 +59,13 @@ public final class UpdateCollection<E,EL,A extends Collection<EL>, AD extends Pl
     
     @Override
     public void executeOnClient(Update<E, ?, A, AD, ?> update){
-        collectionOperation.execute(getAttributeValueOnClient(update), values);
+        collectionOperation.execute(getDelegateCollection(update), values);
     }
+
 
     @Override
     public void undo(Update<E, ?, A, AD, ?> update) {
-        collectionOperation.inverse().execute(getAttributeValueOnClient(update), values);
+        collectionOperation.inverse().execute(getDelegateCollection(update), values);
     }
 
     @Override @GwtIncompatible
@@ -71,7 +80,7 @@ public final class UpdateCollection<E,EL,A extends Collection<EL>, AD extends Pl
 
     @Override @GwtIncompatible
     public void executeOnServer(Update<E, ?, A, AD, ?> update, ServerContext serverContext) {
-        collectionOperation.execute(getAttributeValueOnServer(update), getModificationOnServer(serverContext));
+        collectionOperation.execute(getNonNullAttributeValueOnServer(update), getModificationOnServer(serverContext));
     }
     
     @Override

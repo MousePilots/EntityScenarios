@@ -35,51 +35,51 @@ public class ObservableMap<K, V> extends Observable<Map<K, V>, MapObserver> impl
 
     @Override
     public int size() {
-        return subject.size();
+        return getDelegate().size();
     }
 
     @Override
     public boolean isEmpty() {
-        return subject.isEmpty();
+        return getDelegate().isEmpty();
     }
 
     @Override
     public boolean containsKey(Object key) {
-        return subject.containsKey(key);
+        return getDelegate().containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        return subject.containsValue(value);
+        return getDelegate().containsValue(value);
     }
 
     @Override
     public V get(Object key) {
-        return subject.get(key);
+        return getDelegate().get(key);
     }
 
     @Override
     public final V put(K key, V value) {
-        fire(l -> l.onPut(subject, key, value));
-        return subject.put(key, value);
+        fire(l -> l.onPut(getDelegate(), key, value));
+        return getDelegate().put(key, value);
     }
 
     @Override
     public final V remove(Object key) {
-        fire(l -> l.onRemove(createUnmodifiable(subject), key));
-        return subject.remove(key);
+        fire(l -> l.onRemove(createUnmodifiable(getDelegate()), key));
+        return getDelegate().remove(key);
     }
 
     @Override
     public final void putAll(Map<? extends K, ? extends V> m) {
-        fire(l -> l.onPutAll(createUnmodifiable(subject), m));
-        subject.putAll(m);
+        fire(l -> l.onPutAll(createUnmodifiable(getDelegate()), m));
+        getDelegate().putAll(m);
     }
 
     @Override
     public final void clear() {
-        fire(l -> l.onClear(createUnmodifiable(subject)));
-        subject.clear();
+        fire(l -> l.onClear(createUnmodifiable(getDelegate())));
+        getDelegate().clear();
     }
 
     /**
@@ -87,7 +87,7 @@ public class ObservableMap<K, V> extends Observable<Map<K, V>, MapObserver> impl
      */
     @Override
     public final Set<K> keySet() {
-        return Collections.unmodifiableSet(subject.keySet());
+        return Collections.unmodifiableSet(getDelegate().keySet());
     }
 
     /**
@@ -95,7 +95,7 @@ public class ObservableMap<K, V> extends Observable<Map<K, V>, MapObserver> impl
      */
     @Override
     public Collection<V> values() {
-        return Collections.unmodifiableCollection(subject.values());
+        return Collections.unmodifiableCollection(getDelegate().values());
     }
 
     /**
@@ -104,17 +104,17 @@ public class ObservableMap<K, V> extends Observable<Map<K, V>, MapObserver> impl
      */
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return Collections.unmodifiableSet(subject.entrySet());
+        return Collections.unmodifiableSet(getDelegate().entrySet());
     }
 
     @Override
     public boolean equals(Object o) {
-        return subject.equals(o);
+        return getDelegate().equals(o);
     }
 
     @Override
     public int hashCode() {
-        return subject.hashCode();
+        return getDelegate().hashCode();
     }
 
 }

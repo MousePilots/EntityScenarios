@@ -55,4 +55,11 @@
                 <goal>gwt:run</goal>
             </goals>
         </action>
+        <action>
+            <actionName>CUSTOM-gwt:resources</actionName>
+            <displayName>gwt:resources</displayName>
+            <goals>
+                <goal>gwt:resources</goal>
+            </goals>
+        </action>
     </actions>

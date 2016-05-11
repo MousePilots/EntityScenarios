@@ -118,7 +118,7 @@ public final class PutToMap<E, K, V> extends UpdateMap<E, K, V, Map<K,V>> {
 
     @Override @GwtIncompatible
     public void executeOnServer(Update<E, ?, Map<K, V>, MapAttributeESImpl<? super E, K, V>, ?> update, ServerContext serverContext){
-        getAttributeValueOnServer(update).keySet().removeAll(getModificationOnServer(serverContext).keySet());
+        getNonNullAttributeValueOnServer(update).keySet().removeAll(getModificationOnServer(serverContext).keySet());
     }
 
     @Override

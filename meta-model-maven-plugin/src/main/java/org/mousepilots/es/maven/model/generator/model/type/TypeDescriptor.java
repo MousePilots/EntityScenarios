@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,11 +16,14 @@ import javax.persistence.metamodel.Type.PersistenceType;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.model.impl.TypeESImpl;
+import org.mousepilots.es.core.model.impl.hv.HasCharacter;
 import org.mousepilots.es.core.model.impl.hv.HasCollection;
+import org.mousepilots.es.core.model.impl.hv.HasDate;
 import org.mousepilots.es.core.model.impl.hv.HasList;
 import org.mousepilots.es.core.model.impl.hv.HasMap;
 import org.mousepilots.es.core.model.impl.hv.HasNumber;
 import org.mousepilots.es.core.model.impl.hv.HasSet;
+import org.mousepilots.es.core.model.impl.hv.HasString;
 import org.mousepilots.es.core.util.Maps;
 import org.mousepilots.es.maven.model.generator.model.Descriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescriptor;
@@ -32,8 +36,8 @@ import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescrip
 public abstract class TypeDescriptor extends Descriptor<PersistenceType> {
 
     private static final Map<Class<? extends Object>, Class<? extends HasValue>> PRECONFIGURED_TYPE_TO_HASVALUE_TYPE = Maps.create(
-        Arrays.asList(Collection.class,     List.class,     Set.class,      Map.class,      Number.class),
-        Arrays.asList(HasCollection.class,  HasList.class,  HasSet.class,   HasMap.class,   HasNumber.class)
+        Arrays.asList(Character.class,      String.class,     Date.class,       Collection.class,     List.class,     Set.class,      Map.class,      Number.class),
+        Arrays.asList(HasCharacter.class,   HasString.class,  HasDate.class,    HasCollection.class,  HasList.class,  HasSet.class,   HasMap.class,   HasNumber.class)
     );
 
     private static final Set<TypeDescriptor> INSTANCES = new TreeSet<>();

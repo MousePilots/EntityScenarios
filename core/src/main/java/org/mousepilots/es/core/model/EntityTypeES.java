@@ -13,18 +13,4 @@ import javax.persistence.metamodel.EntityType;
  */
 public interface EntityTypeES<T> extends IdentifiableTypeES<T>, EntityType<T>, BindableES<T> {
 
-    @Override
-    default BindableType getBindableType() {
-        return BindableType.ENTITY_TYPE;
-    }
-
-    @Override
-    default Class<T> getBindableJavaType() {
-        return getJavaType();
-    }
-    
-    @Override
-    default PersistenceType getPersistenceType(){
-        return PersistenceType.ENTITY;
-    }    
 }

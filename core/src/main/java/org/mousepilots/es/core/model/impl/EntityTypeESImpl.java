@@ -65,6 +65,20 @@ public final class EntityTypeESImpl<T> extends IdentifiableTypeESImpl<T> impleme
         super(ordinal, javaType, metamodelClass, superTypeOrdinal, subTypeOrdinals, hasValueConstructor, javaTypeConstructor, getOwners, proxyTypeConstructor, proxyType, attributeOrdinals, declaredAttributes, associationOrdinals, idClassAttributeOrdinals, idAttributeOrdinal, idTypeOrdinal, declaredIdAttributeOrdinal, versionAttributeOrdinal, declaredVersionAttributeOrdinal);
         this.name = name;
     }
+    @Override
+    public BindableType getBindableType() {
+        return BindableType.ENTITY_TYPE;
+    }
+
+    @Override
+    public Class<T> getBindableJavaType() {
+        return getJavaType();
+    }
+    
+    @Override
+    public PersistenceType getPersistenceType(){
+        return PersistenceType.ENTITY;
+    }    
 
     @Override
     public String getName() {

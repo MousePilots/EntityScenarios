@@ -18,6 +18,7 @@ import org.mousepilots.es.core.model.TypeVisitor;
 import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
 import org.mousepilots.es.core.model.impl.ManagedTypeESImpl;
 import org.mousepilots.es.core.model.proxy.Proxy;
+import org.mousepilots.es.core.model.proxy.ProxyAspect;
 import org.mousepilots.es.core.model.proxy.collection.Observer;
 
 /**
@@ -56,10 +57,11 @@ public abstract class PluralAttributeObserver<E,EL,C,AD extends PluralAttributeE
         }
     };
 
-    protected final void createandExecute(UpdateAttribute<E, C, AD, ?> updateAttribute){
-        final ManagedTypeESImpl<E> type = proxy.__getProxyAspect().getType();
+    protected final void createAndExecute(UpdateAttribute<E, C, AD, ?> updateAttribute){
+        final ProxyAspect<E> proxyAspect = proxy.__getProxyAspect();
+        final ManagedTypeESImpl<E> type = proxyAspect.getType();
         final Update<E, ?, C, AD, ?> update = type.accept(UPDATE_CREATOR, updateAttribute);
-        update.executeOnClient();
+        proxyAspect.doUnmanaged(() -> update.executeOnClient());
     }
 
     protected PluralAttributeObserver(){}    

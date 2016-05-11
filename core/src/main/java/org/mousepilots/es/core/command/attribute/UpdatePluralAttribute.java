@@ -5,7 +5,9 @@
  */
 package org.mousepilots.es.core.command.attribute;
 
+import org.mousepilots.es.core.command.Update;
 import org.mousepilots.es.core.command.UpdateAttribute;
+import org.mousepilots.es.core.model.MemberES;
 import org.mousepilots.es.core.model.PluralAttributeES;
 
 /**
@@ -15,9 +17,20 @@ import org.mousepilots.es.core.model.PluralAttributeES;
  * @param <A>
  * @param <EL>
  * @param <AD>
+ * @param <MS>
  */
-public interface UpdatePluralAttribute<E, EL, A, AD extends PluralAttributeES<? super E,A,EL>,MS> extends UpdateAttribute<E,A,AD,MS>{
-    
-    
-    
+public interface UpdatePluralAttribute<E, EL, A, AD extends PluralAttributeES<? super E, A, EL>, MS> extends UpdateAttribute<E, A, AD, MS> {
+
+    default A getNonNullAttributeValueOnServer(Update<E, ?, A, AD, ?> update) {
+        final AD attribute = update.getAttribute();
+        final MemberES<? super E, A> javaMember = attribute.getJavaMember();
+        final E realSubject = update.getRealSubject();
+        A retval = javaMember.get(realSubject);
+        if(retval==null){
+            retval = attribute.createEmpty();
+            javaMember.set(realSubject,retval);
+        }
+        return retval;
+    }
+
 }

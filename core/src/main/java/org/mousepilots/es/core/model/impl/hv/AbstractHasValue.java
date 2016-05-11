@@ -14,7 +14,7 @@ import org.mousepilots.es.core.model.HasValue;
  * @param <T>
  */
 public abstract class AbstractHasValue<T> implements HasValue<T>{
-
+    
     @Override
     public boolean equals(Object obj){
         if(obj==null || getClass()!=obj.getClass()){

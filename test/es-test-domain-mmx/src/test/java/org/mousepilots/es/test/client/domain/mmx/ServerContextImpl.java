@@ -5,6 +5,7 @@
  */
 package org.mousepilots.es.test.client.domain.mmx;
 
+import org.mousepilots.es.test.server.domain.mmx.JPA;
 import javax.persistence.EntityManager;
 import org.mousepilots.es.core.scenario.AbstractServerContext;
 

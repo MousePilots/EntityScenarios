@@ -93,6 +93,17 @@ public class Maps
       }
       return retval;
    }
+   
+   public static <E,K,V> Map<K,V> create(Collection<E> elements, Function<E,K> keyGen, Function<E,V> valueGen){
+      final Map<K, V> retval = new HashMap<>();
+      for(E element : elements){
+          final V put = retval.put(keyGen.apply(element), valueGen.apply(element));
+          if(put!=null){
+              throw new IllegalArgumentException("duplicate key encountered for element " + element);
+          }
+      }
+      return retval;
+   }
 
    public static <K, V, M extends Map<K, V>> V getOrCreate(M map, K key, Constructor<V> constructor)
    {

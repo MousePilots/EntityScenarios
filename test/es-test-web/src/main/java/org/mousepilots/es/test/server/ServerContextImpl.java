@@ -5,8 +5,6 @@
  */
 package org.mousepilots.es.test.server;
 
-import java.util.Collection;
-import java.util.Collections;
 import javax.persistence.EntityManager;
 import org.mousepilots.es.core.scenario.AbstractServerContext;
 
@@ -22,8 +20,6 @@ public class ServerContextImpl extends AbstractServerContext{
         this.entityManager = entityManager;
     }
 
-    
-    
     @Override
     public String getUserName() {
         return null;
@@ -33,8 +29,6 @@ public class ServerContextImpl extends AbstractServerContext{
     public boolean isUserInRole(String role) {
         return true;
     }
-
-    
 
     @Override
     public EntityManager getEntityManager() {

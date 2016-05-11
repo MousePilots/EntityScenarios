@@ -18,6 +18,8 @@ import org.mousepilots.es.core.util.GwtIncompatible;
 /**
  *
  * @author geenenju
+ * @param <E>
+ * @param <A>
  */
 public final class UpdateSingularAttribute<E,A> implements UpdateAttribute<E, A, SingularAttributeES<? super E, A>, A>{
     
@@ -25,6 +27,8 @@ public final class UpdateSingularAttribute<E,A> implements UpdateAttribute<E, A,
     
     private Value<A, A, ?, ?> serializableValue;
 
+    private UpdateSingularAttribute(){}
+    
     public UpdateSingularAttribute(SingularAttributeES<? super E, A> attribute, Proxy<E> proxy, A newValue) {
         this.oldValue = attribute.getJavaMember().get(proxy.__subject());
         this.newValue = newValue;

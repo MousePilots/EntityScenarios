@@ -9,11 +9,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jse-version>1.8</jse-version>
         <jee-version>7.0</jee-version>
-        <jpa-version>2.1.0</jpa-version>
         <bean-validation-version>1.0.0.GA</bean-validation-version>
-        <eclipselink-version>2.6.1</eclipselink-version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <hibernate-version>4.3.11.Final</hibernate-version>
         <gwt.version>2.8.0-SNAPSHOT</gwt.version>
         <gwt.plugin.version>2.8.0-beta1</gwt.plugin.version>
     </properties>
@@ -26,38 +25,31 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>javax</groupId>
-                <artifactId>javaee-api</artifactId>
-                <version>${jee-version}</version>
+                <groupId>org.hibernate.javax.persistence</groupId>
+                <artifactId>hibernate-jpa-2.1-api</artifactId>
+                <version>1.0.0.Final</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.persistence</groupId>
-                <artifactId>eclipselink</artifactId>
-                <version>${eclipselink-version}</version>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>${hibernate-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-jpamodelgen</artifactId>
+                <version>${hibernate-version}</version>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.persistence</groupId>
-                <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
-                <version>${eclipselink-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.persistence</groupId>
-                <artifactId>javax.persistence</artifactId>
-                <version>${jpa-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.persistence</groupId>
-                <artifactId>javax.persistence</artifactId>
-                <version>${jpa-version}</version>
-                <classifier>sources</classifier>
-            </dependency>
+            </dependency>           
             <dependency>
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
                 <version>${bean-validation-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>4.3.2.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
@@ -70,7 +62,7 @@
                 <version>3.4</version>
                 <scope>provided</scope>
             </dependency>
-             <dependency>
+            <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.11</version>

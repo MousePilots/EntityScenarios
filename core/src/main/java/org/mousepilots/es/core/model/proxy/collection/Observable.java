@@ -24,12 +24,12 @@ public abstract class Observable<D,O extends Observer> implements Serializable{
      
      private ArrayList<O> listeners = new ArrayList<>();
      
-     protected D subject;
+     private D delegate;
      
      protected Observable(){}
      
      protected Observable(D delegate) {
-          this.subject = delegate;
+          this.delegate = delegate;
      }
      
      protected abstract D createUnmodifiable(D delegate);
@@ -47,6 +47,13 @@ public abstract class Observable<D,O extends Observer> implements Serializable{
                p.apply(listener);
           }
      }
+
+    /**
+     * @return the delegate
+     */
+    public D getDelegate() {
+        return delegate;
+    }
      
      
 }

@@ -37,42 +37,42 @@ public class ObservableList<E> extends AbstractObservableCollection<E, List<E>, 
     @Override
     public final boolean addAll(int index, Collection<? extends E> c) {
         this.fire(l->l.onAddAll(createUnmodifiable(this), index, c));
-        return subject.addAll(index, c);
+        return getDelegate().addAll(index, c);
 
     }
 
     @Override
     public E get(int index) {
-        return subject.get(index);
+        return getDelegate().get(index);
     }
 
     @Override
     public final E set(int index, E element){
         this.fire(l->l.onSet(createUnmodifiable(this), index, element));
-        return subject.set(index, element);
+        return getDelegate().set(index, element);
     }
 
     @Override
     public final void add(int index, E element) {
         this.fire(l->l.onSet(createUnmodifiable(this), index, element));
-        subject.add(index, element);
+        getDelegate().add(index, element);
 
     }
 
     @Override
     public final E remove(int index) {
         this.fire(l->l.onRemove(createUnmodifiable(this), index));
-        return subject.remove(index);
+        return getDelegate().remove(index);
     }
 
     @Override
     public int indexOf(Object o) {
-        return subject.indexOf(o);
+        return getDelegate().indexOf(o);
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return subject.lastIndexOf(o);
+        return getDelegate().lastIndexOf(o);
     }
 
     /**
@@ -105,7 +105,7 @@ public class ObservableList<E> extends AbstractObservableCollection<E, List<E>, 
 
     @GwtIncompatible @Override
     public void sort(Comparator<? super E> c) {
-        this.subject.sort(c);
+        this.getDelegate().sort(c);
     }
     
     

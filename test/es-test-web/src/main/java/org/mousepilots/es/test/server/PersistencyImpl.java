@@ -7,7 +7,6 @@ package org.mousepilots.es.test.server;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.util.List;
-import javax.inject.Inject;
 import javax.servlet.annotation.WebServlet;
 import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.model.HasValue;
@@ -20,8 +19,7 @@ import org.mousepilots.es.test.client.Persistency;
 @WebServlet("/Main/persistency")
 public class PersistencyImpl extends RemoteServiceServlet implements Persistency {
     
-    @Inject
-    PersistencyBean delegate;
+    PersistencyBean delegate = new PersistencyBean();
 
     @Override
     public void submit(List<Command> commands) {

@@ -30,14 +30,14 @@ public final class MapObserverImpl<E,K,V> extends PluralAttributeObserver<E,V,Ma
     public void onClear(Map<K, V> subject) {
         if(!subject.isEmpty()){
             final RemoveFromMap<E, K, V> removeFromMap = new RemoveFromMap<>(getAttribute(),subject,subject.keySet());
-            createandExecute(removeFromMap);
+            createAndExecute(removeFromMap);
         }
     }
 
     @Override
     public void onRemove(Map<K, V> subject, Object o) {
         final RemoveFromMap<E, K, V> removeFromMap = new RemoveFromMap<>(getAttribute(),subject,Collections.singleton((K) o));
-        createandExecute(removeFromMap);
+        createAndExecute(removeFromMap);
     }
 
     @Override
@@ -50,7 +50,7 @@ public final class MapObserverImpl<E,K,V> extends PluralAttributeObserver<E,V,Ma
     @Override
     public void onPutAll(Map<K, V> subject, Map<? extends K, ? extends V> putAlls) {
         final PutToMap<E,K,V> putToMap = new PutToMap<E,K,V>(getAttribute(),subject,(Map<K, V>) putAlls);
-        createandExecute(putToMap);
+        createAndExecute(putToMap);
         
     }
     

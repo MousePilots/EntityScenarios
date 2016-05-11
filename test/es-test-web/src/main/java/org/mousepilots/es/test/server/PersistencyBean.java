@@ -6,34 +6,25 @@
 package org.mousepilots.es.test.server;
 
 import java.util.List;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityTransaction;
 import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.model.EntityTypeES;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
-import org.mousepilots.es.test.domain.MetamodelImpl;
 import org.mousepilots.es.test.client.Persistency;
+import org.mousepilots.es.test.server.domain.mmx.JPA;
 
 /**
  *
  * @author geenenju
  */
-@Stateless
-@LocalBean
 public class PersistencyBean implements Persistency{
     
-    static {
-        MetamodelImpl.init();
-    }
-    
-    @PersistenceContext
-    EntityManager entityManager;
 
     @Override
     public <T> HasValue<T> get(int typeOrdinal, HasValue id) {
+        final EntityManager entityManager = JPA.createEntityManager();
         final EntityTypeES<T> entityType = (EntityTypeES) AbstractMetamodelES.getInstance().getType(typeOrdinal);
         final Class<T> javaType = entityType.getJavaType();
         final T entity = entityManager.find(javaType, id.getValue());
@@ -42,8 +33,13 @@ public class PersistencyBean implements Persistency{
 
     @Override
     public void submit(List<Command> commands){
-        final ServerContextImpl serverContextImpl = new ServerContextImpl(entityManager);
-        commands.forEach(c -> c.executeOnServer(serverContextImpl));
+        final EntityManager entityManager = JPA.createEntityManager();
+        final EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+        final ServerContextImpl serverContext = new ServerContextImpl(entityManager);
+        commands.forEach(c -> c.executeOnServer(serverContext));
+        transaction.commit();
+        entityManager.close();
     }
     
 }

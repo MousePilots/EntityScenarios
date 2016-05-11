@@ -7,7 +7,6 @@ package org.mousepilots.es.core.command;
 
 import org.mousepilots.es.core.model.impl.ref.SerializableReference;
 import org.mousepilots.es.core.model.AttributeES;
-import org.mousepilots.es.core.model.HasAttribute;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
 import org.mousepilots.es.core.model.proxy.Proxy;
@@ -46,7 +45,7 @@ import org.mousepilots.es.core.util.GwtIncompatible;
  * @param <AD>
  * @param <SR>
  */
-public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends AttributeES<? super E, A>, SR extends SerializableReference> extends AbstractCommand<E, TD> implements SubjectResolver<E>, HasAttribute{
+public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends AttributeES<? super E, A>, SR extends SerializableReference> extends AbstractCommand<E, TD> implements SubjectResolver<E>{
 
     private int attributeOrdinal;
 
@@ -92,7 +91,6 @@ public abstract class Update<E, TD extends ManagedTypeES<E>, A, AD extends Attri
         return updateAttribute;
     }
 
-    @Override
     public final AD getAttribute() {
         return (AD) AbstractMetamodelES.getInstance().getAttribute(attributeOrdinal);
     }

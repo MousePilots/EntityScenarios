@@ -85,7 +85,7 @@ public final class RemoveFromMap<E, K, V>  extends UpdateMap<E, K, V, Set<K>> {
 
     @Override @GwtIncompatible
     public void executeOnServer(Update<E, ?, Map<K, V>, MapAttributeESImpl<? super E, K, V>, ?> update, ServerContext serverContext) {
-        final Map<K, V> map = getAttributeValueOnServer(update);
+        final Map<K, V> map = getNonNullAttributeValueOnServer(update);
         final Set<K> keySet = map.keySet();
         keySet.removeAll(getModificationOnServer(serverContext));
     }
