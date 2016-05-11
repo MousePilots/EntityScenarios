@@ -3,28 +3,32 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mousepilots.es.test.junit.type;
+package org.mousepilots.es.test.shared;
 
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.logging.Level;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.model.impl.ManagedTypeESImpl;
 import org.mousepilots.es.core.model.proxy.Proxy;
-import org.mousepilots.es.test.shared.AbstractTest;
 
 /**
  *
  * @author geenenju
  */
 public class TypeTest extends AbstractTest{
+
+    public TypeTest() {
+        super(TypeTest.class);
+    }
+    
+    
     
     @Test
     public void testManagedTypes(){
         final Set<ManagedTypeESImpl> entityTypes = (Set) getMetaModel().getManagedTypes();
-        getLogger().log(Level.INFO, "testing {0} managed types", entityTypes.size());
+        getLogger().info("testing " + entityTypes.size() + " managed types");
         for(ManagedTypeESImpl managedType : entityTypes){
             Assert.assertTrue(managedType==getMetaModel().managedType(managedType.getJavaType()));
             if(managedType.getProxyJavaType()!=null){

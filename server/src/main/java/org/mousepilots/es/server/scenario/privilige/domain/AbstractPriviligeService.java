@@ -38,7 +38,7 @@ public abstract class AbstractPriviligeService implements PriviligeService{
     @Override
     public Map<CRUD,Map<ManagedTypeES, Set<AttributeES>>> getPriviliges(String scenario, Context context){
         Map<CRUD,Map<ManagedTypeES,Set<AttributeES>>> retval = new EnumMap(CRUD.class);
-        for(Privilige privilige : AbstractPriviligeService.this.getPriviliges(scenario, EnumSet.of(CRUD.READ), context)){
+        for(Privilige privilige : AbstractPriviligeService.this.getPriviliges(scenario, EnumSet.allOf(CRUD.class), context)){
             final Map<ManagedTypeES, Set<AttributeES>> typeToAttributes = Maps.getOrCreate(
                 retval,
                 privilige.getOperation(),

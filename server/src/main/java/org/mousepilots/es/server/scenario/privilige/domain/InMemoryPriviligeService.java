@@ -163,6 +163,6 @@ public class InMemoryPriviligeService extends AbstractPriviligeService{
     
     public static Builder inScenario(String scenario){
         Objects.requireNonNull(scenario, "scenario is required");
-        return INSTANCE.new Builder(scenario);
+        return getInstance().new Builder(scenario);
     }
 }

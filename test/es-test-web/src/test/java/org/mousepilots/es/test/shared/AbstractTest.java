@@ -6,6 +6,7 @@
 package org.mousepilots.es.test.shared;
 
 import java.util.logging.Logger;
+import junit.framework.TestCase;
 import org.mousepilots.es.core.model.EntityManagerES;
 import org.mousepilots.es.core.model.EntityManagerFactory;
 import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
@@ -16,14 +17,18 @@ import org.mousepilots.es.test.domain.MetamodelImpl;
  *
  * @author geenenju
  */
-public class AbstractTest{
+public abstract class AbstractTest extends TestCase{
     
     static {
         MetamodelImpl.init();
     }
 
+    protected AbstractTest(Class<? extends AbstractTest> clazz){
+        super(clazz.getSimpleName());
+    }
+    
     private final EntityManagerFactory entityManagerFactory = new EntityManagerFactoryImpl();
-
+    
     protected final EntityManagerES createEntityManager(){
         return entityManagerFactory.createEntityManager();
     }

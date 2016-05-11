@@ -15,10 +15,10 @@ import org.mousepilots.es.core.model.HasValue;
  *
  * @author jgeenen
  */
-@RemoteServiceRelativePath("persistency")
-public interface Persistency extends RemoteService{
+@RemoteServiceRelativePath("scenario")
+public interface ScenarioService extends RemoteService{
     
-    <T> HasValue<T> get(int typeOrdinal, HasValue id);
+    HasValue get(int typeOrdinal, HasValue id);
      
     void submit(List<Command> commands);
 }

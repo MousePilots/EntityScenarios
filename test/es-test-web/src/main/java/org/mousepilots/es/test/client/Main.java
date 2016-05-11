@@ -43,8 +43,6 @@ import org.mousepilots.es.test.domain.entities.Manager_ES;
  */
 public class Main implements EntryPoint {
 
-    private static final PersistencyAsync PERSISTENCE_ASYNC = GWT.create(Persistency.class);
-    
     @Override
     public void onModuleLoad() {
         MetamodelImpl.init();
@@ -54,7 +52,7 @@ public class Main implements EntryPoint {
         final ManagerAccount account = entityManager.create(ManagerAccount_ES.__TYPE);
         manager.setAccount(account);
         final List<Command> commands = entityManager.getTransaction().getCommands();
-        PERSISTENCE_ASYNC.submit(commands, new AsyncCallback<Void>() {
+        ScenarioServiceAsync.Util.getInstance().submit(commands, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable caught) {
                 Window.alert(caught.getMessage() );

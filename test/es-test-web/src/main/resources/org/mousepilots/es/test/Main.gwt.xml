@@ -3,5 +3,8 @@
     <inherits name="org.mousepilots.es.Core"/>
     <inherits name="org.mousepilots.es.test.Domain"/>
     <entry-point class="org.mousepilots.es.test.client.Main" />
+    <servlet path='/Main/scenario' class='org.mousepilots.es.test.server.ScenarioServiceImpl'/>
     <source path="client"/>
+    <source path="shared"/>
+    <set-property name="user.agent" value="safari,gecko1_8"/>
  </module>

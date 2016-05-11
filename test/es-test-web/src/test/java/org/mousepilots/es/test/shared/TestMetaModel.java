@@ -38,13 +38,18 @@ import org.mousepilots.es.test.domain.entities.ManagerAccount_ES;
  * @author jgeenen
  */
 
-public class TestMetaModel {
+public class TestMetaModel extends AbstractTest{
 
     private static final MetamodelES METAMODEL;
     static {
         MetamodelImpl.init();
         METAMODEL = MetamodelImpl.INSTANCE;
     }
+
+    public TestMetaModel() {
+        super(TestMetaModel.class);
+    }
+    
     
     
     private final AttributeVisitor<Void, Void> attributeTester = new AttributeVisitor<Void, Void>(){
@@ -94,8 +99,6 @@ public class TestMetaModel {
         }
     };
 
-    
-    @Test
     public void testMetaModel(){
         final Set<ManagedTypeESImpl<?>> managedTypes = (Set) METAMODEL.getManagedTypes();
         EntityManagerFactory entityManagerFactory = new EntityManagerFactoryImpl();

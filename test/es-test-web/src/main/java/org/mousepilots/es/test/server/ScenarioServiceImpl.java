@@ -10,16 +10,16 @@ import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.model.HasValue;
-import org.mousepilots.es.test.client.Persistency;
+import org.mousepilots.es.test.client.ScenarioService;
 
 /**
  *
  * @author jgeenen
  */
-@WebServlet("/Main/persistency")
-public class PersistencyImpl extends RemoteServiceServlet implements Persistency {
+@WebServlet("/Main/scenario")
+public class ScenarioServiceImpl extends RemoteServiceServlet implements ScenarioService {
     
-    PersistencyBean delegate = new PersistencyBean();
+    ScenarioServiceBean delegate = new ScenarioServiceBean();
 
     @Override
     public void submit(List<Command> commands) {
@@ -27,8 +27,8 @@ public class PersistencyImpl extends RemoteServiceServlet implements Persistency
     }
 
     @Override
-    public <T> HasValue<T> get(int typeOrdinal, HasValue id) {
-        return delegate.<T>get(typeOrdinal, id);
+    public HasValue get(int typeOrdinal, HasValue id) {
+        return delegate.get(typeOrdinal, id);
     }
     
     

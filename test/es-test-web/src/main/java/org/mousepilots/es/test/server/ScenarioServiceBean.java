@@ -12,22 +12,22 @@ import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.model.EntityTypeES;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
-import org.mousepilots.es.test.client.Persistency;
 import org.mousepilots.es.test.server.domain.mmx.JPA;
+import org.mousepilots.es.test.client.ScenarioService;
 
 /**
  *
  * @author geenenju
  */
-public class PersistencyBean implements Persistency{
+public class ScenarioServiceBean implements ScenarioService{
     
 
     @Override
-    public <T> HasValue<T> get(int typeOrdinal, HasValue id) {
+    public  HasValue get(int typeOrdinal, HasValue id) {
         final EntityManager entityManager = JPA.createEntityManager();
-        final EntityTypeES<T> entityType = (EntityTypeES) AbstractMetamodelES.getInstance().getType(typeOrdinal);
-        final Class<T> javaType = entityType.getJavaType();
-        final T entity = entityManager.find(javaType, id.getValue());
+        final EntityTypeES entityType = (EntityTypeES) AbstractMetamodelES.getInstance().getType(typeOrdinal);
+        final Class javaType = entityType.getJavaType();
+        final Object entity = entityManager.find(javaType, id.getValue());
         return entityType.wrap(entity);
     }
 

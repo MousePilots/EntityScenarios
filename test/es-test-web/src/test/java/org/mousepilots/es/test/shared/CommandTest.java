@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mousepilots.es.test.junit.type;
+package org.mousepilots.es.test.shared;
 
 import java.util.List;
 import java.util.Set;
@@ -24,9 +24,13 @@ import org.mousepilots.es.test.shared.AbstractTest;
  * @author geenenju
  */
 public class CommandTest extends AbstractTest{
+
+    public CommandTest() {
+        super(CommandTest.class);
+    }
     
     
-    @Test
+    
     public void testCreateAndDeleteEntityWithGeneratedId(){
         final long startTime = System.currentTimeMillis();
         final Set<EntityTypeESImpl<?>> entityTypes = (Set) getMetaModel().getEntities();
