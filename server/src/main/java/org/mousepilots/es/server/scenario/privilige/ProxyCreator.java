@@ -3,13 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mousepilots.es.server.scenario.privilige.domain;
+package org.mousepilots.es.server.scenario.privilige;
 
-import org.mousepilots.es.server.scenario.privilige.domain.PriviligeService;
+import org.mousepilots.es.core.scenario.priviliges.Priviliges;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,18 +31,11 @@ import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.model.TypeVisitor;
 import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
-import org.mousepilots.es.core.model.impl.Constructor;
 import org.mousepilots.es.core.model.proxy.Proxy;
-import org.mousepilots.es.core.scenario.Context;
-import org.mousepilots.es.core.util.Maps;
 
 public class ProxyCreator {
 
-    private final Map<CRUD, Map<ManagedTypeES, Set<AttributeES>>> priviliges;
-
-    private Set<AttributeES> getReadableAttributes(ManagedTypeES type) {
-        return Maps.get(priviliges, CRUD.READ, type);
-    }
+    private final Priviliges priviliges;
 
     private final TypeVisitor<Object, Object> typeLevelProxyCreator = new TypeVisitor<Object, Object>() {
 
@@ -56,8 +48,8 @@ public class ProxyCreator {
                 if (instance2Proxy.containsKey(instance)) {
                     return instance2Proxy.get(instance);
                 } else {
-                    final Set<AttributeES> readableAttributes = getReadableAttributes(managedType);
-                    if (readableAttributes==null || readableAttributes.isEmpty()) {
+                    final Set<AttributeES> readableAttributes = priviliges.getAttributes(CRUD.READ, managedType);
+                    if (readableAttributes.isEmpty()) {
                         return null;
                     } else {
                         final Proxy<T> proxy = managedType.createProxy();
@@ -97,15 +89,12 @@ public class ProxyCreator {
 
     private final AttributeVisitor<Object, Object> attributeLevelDtoCreator = new AttributeVisitor<Object, Object>() {
 
-        private <C extends Collection> C visitJavaUtilCollection(
-                PluralAttributeES pluralAttribute,
-                C collection,
-                Constructor<? extends C> retvalConstructor) {
+        private <C extends Collection> C visitJavaUtilCollection(PluralAttributeES pluralAttribute,C collection) {
             if (collection == null) {
                 return null;
             } else {
                 final TypeES elementType = pluralAttribute.getElementType();
-                final C retval = retvalConstructor.invoke();
+                final C retval = (C) pluralAttribute.createEmpty();
                 for (Object element : collection) {
                     final Object serializedElement = elementType.accept(typeLevelProxyCreator, element);
                     retval.add(serializedElement);
@@ -121,17 +110,17 @@ public class ProxyCreator {
 
         @Override
         public Object visit(CollectionAttributeES a, Object arg) {
-            return visitJavaUtilCollection(a, (Collection) arg, ArrayList::new);
+            return visitJavaUtilCollection(a, (Collection) arg);
         }
 
         @Override
         public Object visit(ListAttributeES a, Object arg) {
-            return visitJavaUtilCollection(a, (List) arg, ArrayList::new);
+            return visitJavaUtilCollection(a, (List) arg);
         }
 
         @Override
         public Object visit(SetAttributeES a, Object arg) {
-            return visitJavaUtilCollection(a, (Set) arg, HashSet::new);
+            return visitJavaUtilCollection(a, (Set) arg);
         }
 
         @Override
@@ -139,7 +128,7 @@ public class ProxyCreator {
             if (arg == null) {
                 return arg;
             } else {
-                final Map map = (Map) arg, retval = new HashMap();
+                final Map map = (Map) arg, retval = a.createEmpty();
                 final Set<Entry> entrySet = map.entrySet();
                 final TypeES keyType = a.getKeyType(), elementType = a.getElementType();
                 for (Entry entry : entrySet) {
@@ -152,8 +141,8 @@ public class ProxyCreator {
         }
     };
 
-    public ProxyCreator(String scenario, Context context, PriviligeService priviligeService) {
-        this.priviliges = priviligeService.getPriviliges(scenario, context);
+    public ProxyCreator(Priviliges priviliges) {
+        this.priviliges = priviliges;
     }
 
     public final <T> Proxy<T> getProxyFor(final ManagedTypeES<T> elementType, final T instance) {
