@@ -44,14 +44,9 @@
                 <artifactId>es-meta-model-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <packageName>org.mousepilots.es.test.domain</packageName>
-                    <nonJavaBeansCompliantProperties>
-                        <propertyDefinition>
-                            <declaringClass>declaringClass</declaringClass>
-                            <name>name</name>
-                            <getter>getter</getter>
-                        </propertyDefinition>
-                    </nonJavaBeansCompliantProperties>
+                    <basePackageName>
+                        org.mousepilots.es.test.client.domain.es.impl
+                    </basePackageName>
                 </configuration>
                 <dependencies>
                     <dependency>

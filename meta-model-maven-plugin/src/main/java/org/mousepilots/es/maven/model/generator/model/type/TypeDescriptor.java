@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.TreeMap;
 import javax.persistence.metamodel.Type.PersistenceType;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.TypeES;
@@ -39,8 +39,8 @@ public abstract class TypeDescriptor extends Descriptor<PersistenceType> {
         Arrays.asList(Character.class,      String.class,     Date.class,       Collection.class,     List.class,     Set.class,      Map.class,      Number.class),
         Arrays.asList(HasCharacter.class,   HasString.class,  HasDate.class,    HasCollection.class,  HasList.class,  HasSet.class,   HasMap.class,   HasNumber.class)
     );
-
-    private static final Set<TypeDescriptor> INSTANCES = new TreeSet<>();
+    
+    private static final Map<Class,TypeDescriptor> INSTANCES = new TreeMap<>((c1,c2) -> c1.getCanonicalName().compareTo(c2.getCanonicalName()));
     private HasValueDescriptor hasValueDescriptor;
     
     
@@ -147,14 +147,14 @@ public abstract class TypeDescriptor extends Descriptor<PersistenceType> {
             Class javaType,
             int ordinal) {
         super(persistenceType, name, javaType, ordinal);
-        INSTANCES.add(this);
+        INSTANCES.put(javaType,this);
     }
 
     /**
      * @return Get all the current {@link TypeDescriptor}s.
      */
-    public static Set<TypeDescriptor> getAll() {
-        return INSTANCES;
+    public static Collection<TypeDescriptor> getAll() {
+        return INSTANCES.values();
     }
 
     public HasValueDescriptor getHasValueDescriptor() {
@@ -180,12 +180,7 @@ public abstract class TypeDescriptor extends Descriptor<PersistenceType> {
      * @return A {@link TypeDescriptor} of the specified class, or {@code null} if none was found.
      */
     public static TypeDescriptor getInstance(Class javaType){
-        for (TypeDescriptor typeDescriptor : INSTANCES){
-            if (typeDescriptor.getJavaType() == javaType) {
-                return typeDescriptor;
-            }
-        }
-        return null;
+        return INSTANCES.get(javaType);
     }
 
     /**
@@ -210,7 +205,8 @@ public abstract class TypeDescriptor extends Descriptor<PersistenceType> {
      * @return the super descriptor of this type, or {@code null} if this type has no super descriptor.
      */
     public TypeDescriptor getSuper(){
-        return getInstance(getJavaType().getSuperclass());
+        final Class superclass = getJavaType().getSuperclass();
+        return superclass==null ? null : getInstance(superclass);
     }
     
     public String getSuperTypeOrdinal(){

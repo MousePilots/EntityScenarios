@@ -49,8 +49,7 @@ public abstract class Descriptor<T> implements Comparable<Descriptor> {
      * @param javaType the java type this descriptor represents.
      * @param ordinal the ordinal for this descriptor.
      */
-    protected Descriptor(T persistenceType, String name, Class javaType,
-            int ordinal) {
+    protected Descriptor(T persistenceType, String name, Class javaType,int ordinal) {
         this.persistenceType = persistenceType;
         this.name = name;
         this.javaType = javaType;

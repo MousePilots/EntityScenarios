@@ -15,12 +15,15 @@ import org.mousepilots.es.core.model.impl.hv.AbstractHasValue;
  * @author jgeenen
  */
 public final class HasValueDescriptor<T> implements Comparable<HasValueDescriptor> {
-
+    
+    private static final String HASVALUE_SUBPACKAGE = "org.mousepilots.es.hv";
+    
     public static String getHasValueClassName() {
         return AbstractHasValue.class.getCanonicalName();
     }
 
     public static final class Factory{
+        
 
         private final Map<Class, HasValueDescriptor> valueClass2HasValueDescriptor = new HashMap<>();
 
@@ -55,7 +58,12 @@ public final class HasValueDescriptor<T> implements Comparable<HasValueDescripto
     private HasValueDescriptor(String basePackage, Class<T> valueClass) {
         this.valueClassCanonicalName = valueClass.getCanonicalName();
         this.hasValueImplClassSimpleName = "Has" + valueClass.getSimpleName() + "_ES";
-        this.packageName = String.join(".", basePackage, valueClass.getPackage().getName());
+        final TypeDescriptor typeDescriptor = TypeDescriptor.getInstance(valueClass);
+        if(typeDescriptor instanceof ManagedTypeDescriptor){
+            this.packageName = ((ManagedTypeDescriptor) typeDescriptor).getPackageName();
+        } else {
+            this.packageName = String.join(".", basePackage, valueClass.getPackage().getName());
+        }
         this.hasValueImplClassCanonicalName = String.join(".", this.packageName, this.hasValueImplClassSimpleName);
     }
 

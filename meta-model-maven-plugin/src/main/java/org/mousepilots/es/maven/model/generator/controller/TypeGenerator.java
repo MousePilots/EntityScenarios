@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +24,7 @@ import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 import org.apache.maven.plugin.logging.Log;
+import org.mousepilots.es.core.util.Maps;
 import org.mousepilots.es.maven.model.generator.model.attribute.AttributeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.CollectionAttributeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.attribute.ListAttributeDescriptor;
@@ -40,9 +40,8 @@ import org.mousepilots.es.maven.model.generator.model.type.MappedSuperclassDescr
 import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
 
 /**
- * Class that generates all the {@link TypeDescriptor}s from the supplied meta
- * models.
- *
+ * Generates the {@link TypeDescriptor}s from the existing JPA metamodel classes.
+ * @author Jurjen van Geenen
  * @author Nicky Ernste
  * @version 1.0, 14-12-2015
  */
@@ -50,22 +49,18 @@ public class TypeGenerator {
 
     private final AtomicInteger ordinal = new AtomicInteger(0);
     private final Log log;
-    private final String basicTypeBasePackageName = "org.mousepilots.es.test.client.domain.es.impl";
+    private final String basePackageName;
 
-    private static final Comparator<Class> CLASS_COMPARATOR = (Class o1, Class o2) -> o1.getCanonicalName().compareTo(o2.getCanonicalName());
+    private static final Comparator<Class> CLASS_COMPARATOR = (c1, c2) -> c1.getCanonicalName().compareTo(c2.getCanonicalName());
+    private static final Map<Class<? extends PluralAttribute>, Class> PLURAL_ATTRIBUTE_TO_COLLECTION_CLASS = Collections.unmodifiableMap(
+        Maps.create(
+            Arrays.asList(CollectionAttribute.class,ListAttribute.class,SetAttribute.class, MapAttribute.class),
+            Arrays.asList(Collection.class,         List.class,         Set.class,          Map.class)
+        )
+    );
 
-    private static final Map<Class<? extends PluralAttribute>, Class> PLURAL_ATTRIBUTE_TO_COLLECTION_CLASS;
-
-    static {
-        Map<Class<? extends PluralAttribute>, Class> pluralAttributeToCollectionClass = new HashMap<>();
-        pluralAttributeToCollectionClass.put(CollectionAttribute.class, Collection.class);
-        pluralAttributeToCollectionClass.put(ListAttribute.class, List.class);
-        pluralAttributeToCollectionClass.put(SetAttribute.class, Set.class);
-        pluralAttributeToCollectionClass.put(MapAttribute.class, Map.class);
-        PLURAL_ATTRIBUTE_TO_COLLECTION_CLASS = Collections.unmodifiableMap(pluralAttributeToCollectionClass);
-    }
-
-    public TypeGenerator(Log log) {
+    public TypeGenerator(String basePackageName, Log log) {
+        this.basePackageName = basePackageName;
         this.log = log;
     }
 
@@ -122,6 +117,7 @@ public class TypeGenerator {
                         ordinal.getAndIncrement()
                 );
             } else if(entity != null) {
+                //entity
                 final String name = entity.name();
                 td = new EntityTypeDescriptor(
                         metaModelClass, 
@@ -142,16 +138,12 @@ public class TypeGenerator {
      * @param typeDescriptors a set of all the found type descriptors.
      */
     private void addSuperDescriptors(SortedSet<TypeDescriptor> typeDescriptors) {
-        for (TypeDescriptor td : typeDescriptors){
-            td.setSuperDescriptor(td.getSuper());
-        }
+        typeDescriptors.stream().forEach( td -> td.setSuperDescriptor(td.getSuper()) );
     }
     
     private void addHasValueImpls(SortedSet<TypeDescriptor> typeDescriptors){
-        final HasValueDescriptor.Factory f = new HasValueDescriptor.Factory("org.mousepilots.es.test.domain");
-        for(TypeDescriptor td : typeDescriptors){
-            td.setHasValueDescriptor(f.getInstance(td.getJavaType()));
-        }
+        final HasValueDescriptor.Factory f = new HasValueDescriptor.Factory(basePackageName);
+        typeDescriptors.stream().forEach( td -> td.setHasValueDescriptor(f.getInstance(td.getJavaType())) );
     }
 
     /**
@@ -189,7 +181,7 @@ public class TypeGenerator {
                     if (td == null) {
                         basicTypeDescriptors.add(
                             new BasicTypeDescriptor(
-                                this.basicTypeBasePackageName, 
+                                this.basePackageName, 
                                 attributeJavaType.getSimpleName(), 
                                 attributeJavaType, 
                                 ordinal.getAndIncrement()
@@ -202,7 +194,7 @@ public class TypeGenerator {
                     final TypeDescriptor td = TypeDescriptor.getInstance(javaFieldType);
                     if (td == null) {
                         basicTypeDescriptors.add(
-                                new BasicTypeDescriptor(this.basicTypeBasePackageName, javaFieldType.getSimpleName(), javaFieldType, ordinal.getAndIncrement())
+                                new BasicTypeDescriptor(this.basePackageName, javaFieldType.getSimpleName(), javaFieldType, ordinal.getAndIncrement())
                         );
                     }
                 }
@@ -232,14 +224,11 @@ public class TypeGenerator {
 //                }
                 final Class[] attributeJavaTypes = getGenericTypes(metaModelField, getGenericTypeIndices(metaModelFieldType));
                 AttributeDescriptor ad=null;
-
                 if (metaModelFieldType == SingularAttribute.class) {
                     ad = new SingularAttributeDescriptor(metaModelField.getName(), attributeJavaTypes[0], ordinal.getAndIncrement());
                 } else if (PluralAttribute.class.isAssignableFrom(metaModelFieldType)) {
                     final Class javaFieldType = PLURAL_ATTRIBUTE_TO_COLLECTION_CLASS.get((Class<? extends PluralAttribute>) metaModelFieldType);
                     TypeDescriptor td = TypeDescriptor.getInstance(attributeJavaTypes[0]);
-                    //Possibly make type descriptor if it does not exist?
-
                     if (javaFieldType == Collection.class) {
                         ad = new CollectionAttributeDescriptor(td, metaModelField.getName(), attributeJavaTypes[0], ordinal.getAndIncrement());
                     } else if (javaFieldType == List.class) {

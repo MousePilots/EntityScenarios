@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
  */
 public final class PropertyDefinition {
     
-    public final boolean appliesTo(Class javaType){
+    public boolean appliesTo(Class javaType){
         if(javaType.getCanonicalName().equals(declaringClass.trim())){
             return true;
         } else {
@@ -73,7 +73,7 @@ public final class PropertyDefinition {
                 );
             }
         } catch (NoSuchMethodException | SecurityException ex) {
-            throw new IllegalStateException("cannot locate getter for " + this);
+            throw new IllegalStateException("cannot locate getter for " + this,ex);
         }
     }
 
@@ -84,7 +84,7 @@ public final class PropertyDefinition {
         try {
             return getDeclaringClass().getMethod(setter,getJavaType());
         } catch (NoSuchMethodException | SecurityException ex) {
-            throw new IllegalStateException("cannot locate setter for " + this);
+            throw new IllegalStateException("cannot locate setter for " + this,ex);
         }
 
     }
@@ -93,7 +93,7 @@ public final class PropertyDefinition {
         try {
             return Class.forName(javaType);
         } catch (ClassNotFoundException ex) {
-            throw new IllegalStateException("cannot load javaType for " + this);
+            throw new IllegalStateException("cannot load javaType for " + this,ex);
         }
 
     }

@@ -33,7 +33,7 @@ public class MetaModelWriter {
      */
     private final VelocityEngine velocityEngine;
 
-    public MetaModelWriter(File generatedSourceDir, Log log, String packageName) {
+    public MetaModelWriter(File generatedSourceDir, Log log) {
         this.generatedSourceDir = generatedSourceDir;
         this.log = log;
 
@@ -91,7 +91,7 @@ public class MetaModelWriter {
     private VelocityContext createContext() {
         final VelocityContext context = new VelocityContext();
         context.put("esNameAndVersion", MetaModelGeneratorMojo.ES_NAME_AND_VERSION);
-        context.put("currentDate", MetaModelGeneratorMojo.currentDate);
+        context.put("currentDate", MetaModelGeneratorMojo.CURRENT_DATE);
         return context;
     }
 
