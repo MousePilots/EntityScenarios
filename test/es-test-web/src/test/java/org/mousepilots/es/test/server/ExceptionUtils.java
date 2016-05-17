@@ -5,7 +5,9 @@
  */
 package org.mousepilots.es.test.server;
 
-import junit.framework.Assert;
+import org.junit.Assert;
+
+
 
 /**
  *

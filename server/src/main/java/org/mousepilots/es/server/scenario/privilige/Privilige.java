@@ -87,7 +87,7 @@ public class Privilige implements Serializable{
     }
     
     public ManagedTypeES getType(){
-        return typeOrdinal==null ? null : (ManagedTypeES) AbstractMetamodelES.getInstance().getType(typeOrdinal);
+        return typeOrdinal==null ? null : AbstractMetamodelES.getInstance().<ManagedTypeES>getType(typeOrdinal);
     }
     
     public void setType(ManagedTypeES type){

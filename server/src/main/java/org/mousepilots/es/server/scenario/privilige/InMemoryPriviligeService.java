@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -20,22 +21,25 @@ import org.mousepilots.es.core.command.CRUD;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.scenario.Context;
+import org.mousepilots.es.core.scenario.priviliges.PriviligeService;
+import org.mousepilots.es.core.util.PropertyUtils;
+import org.mousepilots.es.core.util.StringUtils;
 
 /**
- * In-memory, non-blocking, thread-safe JVM-singleton implementation of {@link PriviligeService}, providing a {@link Builder} for the specification of privileges during deployment
- * of your application. This implementation supports adding only of {@link Privilige}s via its {@link Builder}. After invoking {@link #seal()}, it is sealed against modification.
- * Sealing the service is mandatory before invocation of its only service-method {@link #getPriviliges(java.lang.String, org.mousepilots.es.core.scenario.Context)}. This implementation is
+ * In-memory, non-blocking, JVM-singleton implementation of {@link PriviligeService}, providing a {@link Builder} for the specification of privileges during deployment
+ * of your application. This implementation is
  * suitable if your use case satisfies the following:
  * <ol>
- * <li>Each privilege definition adds one {@link Privilige} to a {@link HashSet}. Hence the number of privileges in your application should be less than, say, 10000.</li>
+ * <li>Each privilege definition adds one {@link Privilige} to a {@link Set}. Hence the number of privileges in your application should be reasonable.</li>
  * <li>Your application doesn't require addition or removal of privileges while deployed.</li>
  * </ol>
  * 
  * <p>
- * An example of the definition of a small set of privileges is given below.
+ * An example of the definition of a small set of privileges is given below. Note that specifying usernames ({@link Builder#toUsers(java.lang.String...) }) is optional, as is specifying
+ * role names ({@link Builder#toUsersInRoles(java.lang.String...)}).
  * <pre>
 * {@code
-*InMemoryPriviligeService
+*InMemoryPriviligeService.getInstance()
 *   // privilige 1
 *   .inScenario("createAccount")
 *       .grant(CRUD.CREATE)
@@ -53,8 +57,6 @@ import org.mousepilots.es.core.scenario.Context;
 *       .on(ShoppingCart_ES.TYPE,(Set<AttributeES>) ShoppingCart_ES.TYPE.getAttributes())
 *       .toUsersInRoles("customer")
 *       .commit()
-*   //protect InMemoryPriviligeService against further modification 
-*   .seal();
 * } </pre>
 * 
 * Privilege 1 permits users having role {@code "admin"} to create an {@code Account}. Privilege 2 permits any user to read {@code Product}s. Privilege 3 permits customers to create a shopping cart.
@@ -69,38 +71,21 @@ public class InMemoryPriviligeService extends AbstractPriviligeService{
 
     private static final InMemoryPriviligeService INSTANCE = new InMemoryPriviligeService();
     
+    private final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
+    
     public static InMemoryPriviligeService getInstance() {
         return INSTANCE;
     }
 
-    private InMemoryPriviligeService(){}
+    private final AtomicLong privilegeIdGenerator = new AtomicLong(0);
     
-    private boolean sealed = false;
+    private final Set<Privilige> priviliges = new ConcurrentSkipListSet<>( (p0,p1) -> p0.getId().compareTo(p1.getId()) );
     
-    private final AtomicLong idGenerator = new AtomicLong(0);
     
-    private final Set<Privilige> priviliges = new HashSet<>();
-    
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-    
-    private void assertSealed(boolean sealed){
-        if(this.sealed!=sealed){
-            throw new IllegalStateException(this + " is " + (this.sealed ? " not " : "") + "sealed against modification(s)");
-        }
-    }
-    
-    public synchronized InMemoryPriviligeService seal(){
-        this.sealed = true;
-        return this;
-    }
-    
-    public boolean isSealed(){
-        return this.sealed;
-    }
+    protected InMemoryPriviligeService(){}
     
     @Override
     protected Set<Privilige> collect(final String scenario, Set<CRUD> operations, Context context){
-        assertSealed(true);
         final Predicate<Privilige> predicate = p   ->  
                 p.getScenario().equals(scenario) && 
                 operations.contains( p.getOperation() ) &&
@@ -116,9 +101,6 @@ public class InMemoryPriviligeService extends AbstractPriviligeService{
     
     public class Builder{
         
-        private static final String EITHER_USERS_OR_ROLES = "you should either specify users or roles but not both";
-        
-
         private final String scenario;
         
         private CRUD operation;
@@ -130,16 +112,14 @@ public class InMemoryPriviligeService extends AbstractPriviligeService{
         private final Set<String> userNames = new HashSet<>();
         
         private final Set<String> roleNames = new HashSet<>();
-        
 
         private Builder(String scenario) {
-            Objects.requireNonNull(scenario);
-            assertSealed(false);
+            Objects.requireNonNull(scenario,"scenario is required");
             this.scenario = scenario;
         }
         
         /**
-         * Mandatory: specifies the operation to be granted. Your next call shall be either 
+         * Mandatory: sets (or overwrites) the operation to be granted. Your next call shall be either 
          * <ul>
          * <li>{@link #on(org.mousepilots.es.core.model.ManagedTypeES, org.mousepilots.es.core.model.AttributeES...)}, or,</li>
          * <li>{@link #on(org.mousepilots.es.core.model.ManagedTypeES, java.util.Collection)}</li>
@@ -188,15 +168,7 @@ public class InMemoryPriviligeService extends AbstractPriviligeService{
             }
             return this;
         }
-        
-        private Builder addIfOtherIsEmpty(Set<String> toAddTo, Set<String> other, String errorMessage, String... values){
-            if(other.isEmpty()){
-                toAddTo.addAll(Arrays.asList(values));
-            } else {
-                throw new IllegalStateException(errorMessage);
-            }
-            return this;
-        }
+
         
         /**
          * Optional: grants the privilege under construction only to the specified users.
@@ -204,7 +176,8 @@ public class InMemoryPriviligeService extends AbstractPriviligeService{
          * @return {@code this}
          */
         public Builder toUsers(String... userNames){
-            return addIfOtherIsEmpty(this.userNames, this.roleNames, EITHER_USERS_OR_ROLES, userNames);
+            this.userNames.addAll(Arrays.asList(userNames));
+            return this;
         }
 
         /**
@@ -213,29 +186,40 @@ public class InMemoryPriviligeService extends AbstractPriviligeService{
          * @return {@code this}
          */
         public Builder toUsersInRoles(String... roleNames){
-            return addIfOtherIsEmpty(this.roleNames, this.userNames, EITHER_USERS_OR_ROLES, roleNames);        }
+            this.roleNames.addAll(Arrays.asList(roleNames));
+            return this;
+        }
         
         /**
          * Stores the {@link Privilige} being built into the {@link InMemoryPriviligeService}.
          * @return 
          */
         public InMemoryPriviligeService commit(){
-            synchronized(InMemoryPriviligeService.this){
-                assertSealed(false);
-                Privilige privilige = new Privilige();
-                privilige.setScenario(scenario);
-                privilige.setId(idGenerator.getAndIncrement());
-                privilige.setOperation(operation);
-                privilige.setType(type);
-                privilige.setAttributes(attributes);
-                privilige.setUserNames(userNames);
-                privilige.setRoleNames(roleNames);
-                validator.validate(privilige, Default.class);
-                if(!InMemoryPriviligeService.this.priviliges.add(privilige)){
-                    throw new IllegalStateException("duplicate privilige specification for scenario " + scenario + ":" + privilige);
-                } 
-                return InMemoryPriviligeService.this;
-            }
+            Privilige p0 = new Privilige();
+            p0.setScenario(scenario);
+            p0.setId(privilegeIdGenerator.getAndIncrement());
+            p0.setOperation(operation);
+            p0.setType(type);
+            p0.setAttributes(attributes);
+            p0.setUserNames(userNames);
+            p0.setRoleNames(roleNames);
+            VALIDATOR.validate(p0, Default.class);
+            InMemoryPriviligeService.this.priviliges.forEach(
+                p1 ->   
+                PropertyUtils.assertNotEquals(
+                    p0, 
+                    p1, 
+                    () -> new IllegalStateException("duplicate privilige " + p0), 
+                    Privilige::getScenario, 
+                    Privilige::getOperation, 
+                    Privilige::getTypeOrdinal, 
+                    Privilige::getAttributeOrdinals, 
+                    Privilige::getUserNames, 
+                    Privilige::getRoleNames
+                )
+            );
+            InMemoryPriviligeService.this.priviliges.add(p0);
+            return InMemoryPriviligeService.this;
         }
     }
     
@@ -244,8 +228,8 @@ public class InMemoryPriviligeService extends AbstractPriviligeService{
      * @param scenario
      * @return the {@link Builder} for further specification of the {@link Privilige} to be granted
      */
-    public static Builder inScenario(String scenario){
-        Objects.requireNonNull(scenario, "scenario is required");
-        return getInstance().new Builder(scenario);
+    public Builder inScenario(String scenario){
+        StringUtils.requireNullOrEmpty(scenario, "scenario must not be null or empty");
+        return new Builder(scenario);
     }
 }
