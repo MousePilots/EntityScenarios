@@ -28,7 +28,9 @@ public class ScenarioServiceBean implements ScenarioService{
         final EntityTypeES entityType = (EntityTypeES) AbstractMetamodelES.getInstance().getType(typeOrdinal);
         final Class javaType = entityType.getJavaType();
         final Object entity = entityManager.find(javaType, id.getValue());
-        return entityType.wrap(entity);
+        final HasValue wrapped = entityType.wrap(entity);
+        entityManager.close();
+        return wrapped;
     }
 
     @Override
