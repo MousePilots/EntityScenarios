@@ -36,9 +36,9 @@ public class ObservableList<E> extends AbstractObservableCollection<E, List<E>, 
 
     @Override
     public final boolean addAll(int index, Collection<? extends E> c) {
-        this.fire(l->l.onAddAll(createUnmodifiable(this), index, c));
-        return getDelegate().addAll(index, c);
-
+        return isDelegateSizeChangedAfterRunning(
+            () -> this.fire(l->l.onAddAll(createUnmodifiable(this), index, c))
+        );
     }
 
     @Override
@@ -48,21 +48,21 @@ public class ObservableList<E> extends AbstractObservableCollection<E, List<E>, 
 
     @Override
     public final E set(int index, E element){
+        final E oldElement = get(index);
         this.fire(l->l.onSet(createUnmodifiable(this), index, element));
-        return getDelegate().set(index, element);
+        return oldElement;
     }
 
     @Override
     public final void add(int index, E element) {
         this.fire(l->l.onSet(createUnmodifiable(this), index, element));
-        getDelegate().add(index, element);
-
     }
 
     @Override
     public final E remove(int index) {
+        final E removed = get(index);
         this.fire(l->l.onRemove(createUnmodifiable(this), index));
-        return getDelegate().remove(index);
+        return removed;
     }
 
     @Override

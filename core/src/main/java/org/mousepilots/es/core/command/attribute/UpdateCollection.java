@@ -37,6 +37,8 @@ public final class UpdateCollection<E,EL,A extends Collection<EL>, AD extends Pl
     
     private LinkedList<Value<EL, EL, ?, ?>> serializableValues;
     
+    private boolean valuesInitializedOnServer=false;
+    
     private A getDelegateCollection(Update<E, ?, A, AD, ?> update) {
         final Observable<A, ?> observable = (Observable<A,?>) getAttributeValueOnClient(update);
         return observable.getDelegate();
@@ -70,7 +72,7 @@ public final class UpdateCollection<E,EL,A extends Collection<EL>, AD extends Pl
 
     @Override @GwtIncompatible
     public List<EL> getModificationOnServer(ServerContext serverContext) {
-        if(values==null){
+        if(!valuesInitializedOnServer){
             final List<EL> modifiableValues = new ArrayList<>(serializableValues.size());
             Value.collectServerValues(serverContext, serializableValues, modifiableValues);
             this.values = Collections.unmodifiableList(modifiableValues);

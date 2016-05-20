@@ -20,6 +20,13 @@ abstract class AbstractObservableCollection<E,C extends Collection<E>,O extends 
      protected AbstractObservableCollection(C delegate) {
           super(delegate);
      }
+     
+     protected final boolean isDelegateSizeChangedAfterRunning(Runnable r){
+         final C delegate = getDelegate();
+         final int oldSize = delegate.size();
+         r.run();
+         return oldSize!=delegate.size();
+     }
 
      @Override
      public int size() {
@@ -73,14 +80,16 @@ abstract class AbstractObservableCollection<E,C extends Collection<E>,O extends 
 
      @Override
      public boolean add(E e){
-          fire(l->l.onAdd(createUnmodifiable(getDelegate()),e));
-          return getDelegate().add(e);
+         return isDelegateSizeChangedAfterRunning(
+            ()  ->  fire(l->l.onAdd(createUnmodifiable(getDelegate()),e))
+         );
      }
 
      @Override
      public boolean remove(Object o){
-          fire(l->l.onRemove(createUnmodifiable(getDelegate()),o));
-          return getDelegate().remove(o);
+         return isDelegateSizeChangedAfterRunning(
+            ()  ->  fire(l->l.onRemove(createUnmodifiable(getDelegate()),o))
+         );
      }
 
      @Override
@@ -90,28 +99,28 @@ abstract class AbstractObservableCollection<E,C extends Collection<E>,O extends 
 
      @Override
      public boolean addAll(Collection<? extends E> c) {
-          fire(l->l.onAddAll(createUnmodifiable(getDelegate()),c));
-          return getDelegate().addAll(c);
+         return isDelegateSizeChangedAfterRunning(
+            ()  ->  fire(l->l.onAddAll(createUnmodifiable(getDelegate()),c))
+         );
      }
 
      @Override
      public boolean removeAll(Collection<?> c) {
-          fire(l->l.onRemoveAll(createUnmodifiable(getDelegate()),c));
-          return getDelegate().removeAll(c);
-
+         return isDelegateSizeChangedAfterRunning(
+            ()  ->  fire(l->l.onRemoveAll(createUnmodifiable(getDelegate()),c))
+         );
      }
 
      @Override
      public boolean retainAll(Collection<?> c) {
-          fire(l->l.onRetainAll(createUnmodifiable(getDelegate()),c));
-          return getDelegate().retainAll(c);
-
+         return isDelegateSizeChangedAfterRunning(
+            ()  ->  fire(l->l.onRetainAll(createUnmodifiable(getDelegate()),c))
+         );
      }
 
      @Override
      public void clear() {
-          fire(l->l.onClear(createUnmodifiable(getDelegate())));
-          getDelegate().clear();
+        fire(l->l.onClear(createUnmodifiable(getDelegate())));
      }
      
      

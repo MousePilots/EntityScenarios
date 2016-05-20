@@ -60,26 +60,26 @@ public class ObservableMap<K, V> extends Observable<Map<K, V>, MapObserver> impl
 
     @Override
     public final V put(K key, V value) {
+        final V oldValue = get(key);
         fire(l -> l.onPut(getDelegate(), key, value));
-        return getDelegate().put(key, value);
+        return oldValue;
     }
 
     @Override
     public final V remove(Object key) {
+        final V value = get(key);
         fire(l -> l.onRemove(createUnmodifiable(getDelegate()), key));
-        return getDelegate().remove(key);
+        return value;
     }
 
     @Override
     public final void putAll(Map<? extends K, ? extends V> m) {
         fire(l -> l.onPutAll(createUnmodifiable(getDelegate()), m));
-        getDelegate().putAll(m);
     }
 
     @Override
     public final void clear() {
         fire(l -> l.onClear(createUnmodifiable(getDelegate())));
-        getDelegate().clear();
     }
 
     /**
@@ -109,7 +109,7 @@ public class ObservableMap<K, V> extends Observable<Map<K, V>, MapObserver> impl
 
     @Override
     public boolean equals(Object o) {
-        return getDelegate().equals(o);
+        return this==o;
     }
 
     @Override

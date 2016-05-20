@@ -42,7 +42,7 @@ public class PluralAttributes {
     
     public static <E,C> void set(Proxy<E> proxy, int pluralAttributeOrdinal, OwnedSetter<C> superSetter, C value){
         if(proxy.__getProxyAspect().isManagedMode()){
-            throw new UnsupportedOperationException("setting plural attributes on proxies is unsupported in managed mode");
+            throw new UnsupportedOperationException("setting plural attributes on proxies is unsupported in managed mode. Use the getter and modify the collection or map instead.");
         } 
         if(value instanceof Observable){
             throw new UnsupportedOperationException("directly setting instances of " + Observable.class + " is unsupported");
@@ -50,7 +50,7 @@ public class PluralAttributes {
         if(value==null){
             value = PluralAttributes.<E,C>getAttribute(pluralAttributeOrdinal).createEmpty();
         }
-        superSetter.set(createObservable(getAttribute(pluralAttributeOrdinal), proxy, value, superSetter));
+        createObservable(getAttribute(pluralAttributeOrdinal), proxy, value, superSetter);
     }
     
 }
