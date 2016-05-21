@@ -1,0 +1,12 @@
+/core/target/
+/maven-model-generator-plugin/target/
+/meta-model-maven-plugin/target/
+/server/target/
+/test/domain/target/
+/test/web/target/
+/test/es-test-domain-mmx/target/
+/test/es-test-web/target/
+/test/es-test-domain/target/
+/test/es-test-web/gwt-unitCache/
+/test/es-test-web/${webAppDirectory}/org.mousepilots.es.test.Main.JUnit/
+/test/es-test-web/${webAppDirectory}/WEB-INF/deploy/org.mousepilots.es.test.Main.JUnit/
