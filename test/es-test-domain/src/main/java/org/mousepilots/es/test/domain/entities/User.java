@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -16,13 +18,14 @@ import org.mousepilots.es.test.domain.Person;
 
 /**
  * Entity testing all the collection types and arities.
+ *
  * @author Nicky Ernste
  * @version 1.0, 1-12-2015
  */
 @Entity
 @Table(name = "Users")
-public abstract class User<A extends Account> extends Person{
-    
+public abstract class User<A extends Account> extends Person {
+
     private static final long serialVersionUID = 1L;
     private String userName;
 
@@ -31,32 +34,32 @@ public abstract class User<A extends Account> extends Person{
 
     @ElementCollection
     private List<Address> addresses;
+
     @ElementCollection
     private List<String> emailAddresses;
+
     @OneToMany(targetEntity = User.class)
     private Set<User> subordinates;
+
     @OneToOne
     private WorkEnvironment workEnvironment;
-    @ManyToMany(targetEntity = Role.class)
-    private Collection<Role> roles;
 
     @ManyToMany
+    @JoinTable(
+        name = "USER_ROLE",
+        joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"),
+        inverseJoinColumns = @JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")
+    )
+    private Collection<Role> roles;
+
+    @JoinTable(
+        name = "USER_PREVIOUSROLE",
+        joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID")
+    )
+    @OneToMany
     private Collection<Role> previousRoles;
 
     public User() {
-    }
-
-    public User(String userName, List<Address> addresses,
-            List<String> emailAddresses, Set<User> subordinates,
-            WorkEnvironment workEnvironment, Collection<Role> roles,
-            String firstName, String infix, String lastName, int age, String sex) {
-        super(firstName, infix, lastName, age, sex);
-        this.userName = userName;
-        this.addresses = addresses;
-        this.emailAddresses = emailAddresses;
-        this.subordinates = subordinates;
-        this.workEnvironment = workEnvironment;
-        this.roles = roles;
     }
 
     public A getAccount() {
@@ -68,7 +71,7 @@ public abstract class User<A extends Account> extends Person{
     }
 
     @ProvidesOwners
-    public Set<String> getOwners(){
+    public Set<String> getOwners() {
         return Collections.singleton(userName);
     }
 
@@ -119,8 +122,6 @@ public abstract class User<A extends Account> extends Person{
     public void setPreviousRoles(Collection<Role> previousRoles) {
         this.previousRoles = previousRoles;
     }
-
-
 
     public Set<User> getSubordinates() {
         return subordinates;

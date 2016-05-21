@@ -89,7 +89,17 @@
             <artifactId>derby</artifactId>
             <version>10.12.1.1</version>
             <scope>runtime</scope>
-        </dependency>        
+        </dependency>    
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.21</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -120,7 +130,7 @@
                     <runTarget>index.html</runTarget>
                     <htmlunit>FF38</htmlunit>
                     <generateDirectory>${project.build.directory}/generated-sources</generateDirectory>
-                     <!--<style>DETAILED</style>--> 
+                    <!--<style>DETAILED</style>--> 
                     <!--<noServer>true</noServer>-->
                     <hostedWebapp>${webappDirectory}</hostedWebapp>
                     <extraParam>true</extraParam>

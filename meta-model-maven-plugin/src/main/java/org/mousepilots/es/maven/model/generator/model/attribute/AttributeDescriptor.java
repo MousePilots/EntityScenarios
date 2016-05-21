@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +36,7 @@ import org.mousepilots.es.core.model.impl.AssociationESImpl;
 import org.mousepilots.es.core.model.impl.AttributeESImpl;
 import org.mousepilots.es.core.model.impl.PropertyMember;
 import org.mousepilots.es.core.util.LazyValue;
+import org.mousepilots.es.core.util.Maps;
 import org.mousepilots.es.core.util.StringUtils;
 
 /**
@@ -58,6 +60,12 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
     }
     private static final Set<AttributeDescriptor> INSTANCES = new TreeSet<>();
     
+    private static final Map<Class,Class> PRIMITIVE_TO_BOXED = Maps.create(
+            Arrays.asList(  boolean.class,  byte.class, short.class,    char.class,     int.class,      long.class, float.class,    double.class), 
+            Arrays.asList(  Boolean.class,  Byte.class, Short.class,    Character.class,Integer.class,  Long.class, Float.class,    Double.class));
+    
+    private static final Map<Class,Class> BOXED_TO_PRIMITIVE = Maps.invert(PRIMITIVE_TO_BOXED);
+
     private TypeDescriptor declaringTypeDescriptor;
     
     /**
@@ -129,14 +137,25 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
     public Method getSetterMethod() {
         final Class declaringJavaType = getDeclaringTypeDescriptor().getJavaType();
         final List<String> expectedNames = Arrays.asList(new String[]{"set" + getterSetterSuffix()});
-        for (String expectedName : expectedNames) {
-            try {
-                return declaringJavaType.getMethod(expectedName, getJavaTypeDescriptor().getJavaType());
-            } catch (NoSuchMethodException ex) {
-                System.out.println(ex);
-            } catch (SecurityException ex) {
-                Logger.getLogger(AttributeDescriptor.class.getName())
-                        .log(Level.SEVERE, null, ex);
+        //try javaType first to prevent unnecessary warnings
+        final Set<Class> eligbleTypes = new LinkedHashSet<>();
+        final Class javaType = getJavaTypeDescriptor().getJavaType();
+        eligbleTypes.add(javaType);
+        if(PRIMITIVE_TO_BOXED.containsKey(javaType)){
+            eligbleTypes.add(PRIMITIVE_TO_BOXED.get(javaType));
+        }
+        if(BOXED_TO_PRIMITIVE.containsKey(javaType)){
+            eligbleTypes.add(BOXED_TO_PRIMITIVE.get(javaType));
+        }
+        for(Class eligibleType : eligbleTypes){
+            for (String expectedName : expectedNames) {
+                try {
+                    return declaringJavaType.getMethod(expectedName, eligibleType);
+                } catch (NoSuchMethodException ex) {
+                    Logger.getLogger(AttributeDescriptor.class.getName()).log(Level.WARNING, "cannot find method {0} with parameter {1} on {2}", new Object[]{expectedName, eligibleType, declaringJavaType});
+                } catch (SecurityException ex) {
+                    Logger.getLogger(AttributeDescriptor.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
         return null;

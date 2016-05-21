@@ -1,6 +1,8 @@
 package org.mousepilots.es.test.domain;
 
 import java.util.Objects;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -16,18 +18,18 @@ public abstract class Person extends BaseEntity {
     private String infix;
     private String lastName;
     private int age;
-    private String sex;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     public Person() {
     }
 
-    public Person(String firstName, String infix, String lastName, int age,
-            String sex) {
+    public Person(String firstName, String infix, String lastName, int age,  Gender sex) {
         this.firstName = firstName;
         this.infix = infix;
         this.lastName = lastName;
         this.age = age;
-        this.sex = sex;
+        this.gender = sex;
     }
 
     public String getFirstName() {
@@ -62,12 +64,12 @@ public abstract class Person extends BaseEntity {
         this.age = age;
     }
 
-    public String getSex() {
-        return sex;
+    public Gender getGender() {
+        return gender;
     }
 
-    public void setSex(String sex) {
-        this.sex = sex;
+    public void setGender(Gender gender) {
+        this.gender = gender;
     }
 
     @Override

@@ -29,8 +29,6 @@ public class CommandTest extends AbstractTest{
         super(CommandTest.class);
     }
     
-    
-    
     public void testCreateAndDeleteEntityWithGeneratedId(){
         final long startTime = System.currentTimeMillis();
         final Set<EntityTypeESImpl<?>> entityTypes = (Set) getMetaModel().getEntities();

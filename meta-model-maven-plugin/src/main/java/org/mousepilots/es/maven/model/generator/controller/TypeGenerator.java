@@ -51,8 +51,7 @@ public class TypeGenerator {
     private final Log log;
     private final String basePackageName;
 
-    private static final Comparator<Class> CLASS_COMPARATOR = (c1, c2) -> c1.getCanonicalName().compareTo(c2.getCanonicalName());
-    private static final Map<Class<? extends PluralAttribute>, Class> PLURAL_ATTRIBUTE_TO_COLLECTION_CLASS = Collections.unmodifiableMap(
+        private static final Map<Class<? extends PluralAttribute>, Class> PLURAL_ATTRIBUTE_TO_COLLECTION_CLASS = Collections.unmodifiableMap(
         Maps.create(
             Arrays.asList(CollectionAttribute.class,ListAttribute.class,SetAttribute.class, MapAttribute.class),
             Arrays.asList(Collection.class,         List.class,         Set.class,          Map.class)
@@ -92,7 +91,7 @@ public class TypeGenerator {
      * @throws IllegalStateException The persistence type cannot be determined.
      */
     private void addManagedTypeDescriptors(final SortedSet<TypeDescriptor> typeDescriptors, Set<Class<?>> jpaMetaModelClasses) throws IllegalStateException {
-        final TreeSet<Class> sortedMetaModelClasses = new TreeSet<>(CLASS_COMPARATOR);
+        final TreeSet<Class> sortedMetaModelClasses = new TreeSet<>( (c1, c2) -> c1.getCanonicalName().compareTo(c2.getCanonicalName()) );
         sortedMetaModelClasses.addAll(jpaMetaModelClasses);
         for (Class<?> metaModelClass : sortedMetaModelClasses) {
             final Class javaType = metaModelClass.getAnnotation(StaticMetamodel.class).value();

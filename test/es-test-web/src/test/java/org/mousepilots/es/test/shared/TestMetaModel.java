@@ -2,8 +2,7 @@ package org.mousepilots.es.test.shared;
 
 
 import java.util.Set;
-import junit.framework.Assert;
-import org.junit.Test;
+import org.junit.Assert;
 import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.command.CreateEntity;
 import org.mousepilots.es.core.model.AssociationES;
