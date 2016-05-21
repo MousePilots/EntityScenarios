@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>test</artifactId>
+        <artifactId>es-test</artifactId>
         <groupId>org.mousepilots</groupId>
         <version>0.1-SNAPSHOT</version>
     </parent>
@@ -20,7 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>org.mousepilots</groupId>
-            <artifactId>es-server</artifactId>
+            <artifactId>es-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -29,6 +29,24 @@
             <version>${project.version}</version>
             <scope>provided</scope>
             <classifier>sources</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.mousepilots</groupId>
+            <artifactId>es-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mousepilots</groupId>
+            <artifactId>es-test-core</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mousepilots</groupId>
+            <artifactId>es-test-core</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mousepilots</groupId>
@@ -87,19 +105,8 @@
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
-            <version>10.12.1.1</version>
             <scope>runtime</scope>
-        </dependency>    
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.21</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.21</version>
-        </dependency>
+        </dependency>        
     </dependencies>
     <build>
         <plugins>
@@ -130,7 +137,7 @@
                     <runTarget>index.html</runTarget>
                     <htmlunit>FF38</htmlunit>
                     <generateDirectory>${project.build.directory}/generated-sources</generateDirectory>
-                    <!--<style>DETAILED</style>--> 
+                     <!--<style>DETAILED</style>--> 
                     <!--<noServer>true</noServer>-->
                     <hostedWebapp>${webappDirectory}</hostedWebapp>
                     <extraParam>true</extraParam>

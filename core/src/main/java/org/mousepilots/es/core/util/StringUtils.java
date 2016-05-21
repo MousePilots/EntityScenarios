@@ -3,6 +3,7 @@ package org.mousepilots.es.core.util;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Utilities class for Strings.
@@ -39,6 +40,13 @@ public class StringUtils {
      */
     public static boolean isNullOrEmpty(String str){
         return str == null || str.trim().equals("");
+    }
+    
+    public static void requireNullOrEmpty(String s, String errorMessage){
+        Objects.requireNonNull(s, errorMessage);
+        if(s.isEmpty()){
+            throw new IllegalArgumentException(errorMessage);
+        }
     }
     
     /**

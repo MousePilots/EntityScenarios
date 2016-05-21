@@ -5,12 +5,16 @@
  */
 package org.mousepilots.es.test.shared;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
+import javax.persistence.metamodel.Type;
 import junit.framework.TestCase;
 import org.mousepilots.es.core.model.EntityManagerES;
 import org.mousepilots.es.core.model.EntityManagerFactory;
 import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
 import org.mousepilots.es.core.model.impl.EntityManagerFactoryImpl;
+import org.mousepilots.es.core.model.impl.ManagedTypeESImpl;
 import org.mousepilots.es.test.domain.MetamodelImpl;
 
 /**
@@ -39,6 +43,10 @@ public abstract class AbstractTest extends TestCase{
 
     protected final AbstractMetamodelES getMetaModel() {
         return MetamodelImpl.INSTANCE;
+    }
+    
+    protected Set<ManagedTypeESImpl> getManagedTypes(){
+        return (Set) getMetaModel().getManagedTypes();
     }
 
 }

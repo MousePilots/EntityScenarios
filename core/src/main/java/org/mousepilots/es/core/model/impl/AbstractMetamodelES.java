@@ -76,11 +76,12 @@ public abstract class AbstractMetamodelES implements MetamodelES {
     /**
      * Get a specific type by its ordinal.
      *
+     * @param <T>
      * @param ordinal The ordinal of the type to get.
      * @return The {@link TypeES} instance for the specified {@code ordinal}, or {@code null} if no type with the specified {@code ordinal} exists.
      */
-    public TypeES getType(int ordinal) {
-        return ordinalToType.get(ordinal);
+    public <T extends TypeES> T getType(int ordinal) {
+        return (T) ordinalToType.get(ordinal);
     }
 
 

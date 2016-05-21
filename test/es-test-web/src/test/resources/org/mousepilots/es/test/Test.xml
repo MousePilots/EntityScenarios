@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='Test'>
+    <inherits name="org.mousepilots.es.test.Main"/>
+    <source path="client"/>
+    <source path="shared"/>
+ </module>

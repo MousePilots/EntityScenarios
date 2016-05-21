@@ -6,12 +6,22 @@
         <artifactId>EntityScenarios</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>test</artifactId>
+    <artifactId>es-test</artifactId>
     <packaging>pom</packaging>
     <name>es-test</name>
     <modules>
         <module>es-test-domain</module>
         <module>es-test-domain-mmx</module>
         <module>es-test-web</module>
+        <module>es-test-core</module>
     </modules>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derby</artifactId>
+                <version>10.12.1.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
