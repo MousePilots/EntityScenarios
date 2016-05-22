@@ -5,10 +5,8 @@
  */
 package org.mousepilots.es.test.shared;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
-import javax.persistence.metamodel.Type;
 import junit.framework.TestCase;
 import org.mousepilots.es.core.model.EntityManagerES;
 import org.mousepilots.es.core.model.EntityManagerFactory;

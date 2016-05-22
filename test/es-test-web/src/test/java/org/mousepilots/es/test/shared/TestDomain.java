@@ -34,14 +34,19 @@ import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.test.domain.Gender;
 import org.mousepilots.es.test.domain.embeddables.Address;
 import org.mousepilots.es.test.domain.embeddables.Address_ES;
+import org.mousepilots.es.test.domain.entities.BasicMap;
+import org.mousepilots.es.test.domain.entities.BasicMap_ES;
 import org.mousepilots.es.test.domain.entities.Employee;
 import org.mousepilots.es.test.domain.entities.Employee_ES;
 import org.mousepilots.es.test.domain.entities.Manager;
 import org.mousepilots.es.test.domain.entities.ManagerAccount;
 import org.mousepilots.es.test.domain.entities.ManagerAccount_ES;
 import org.mousepilots.es.test.domain.entities.Manager_ES;
+import org.mousepilots.es.test.domain.entities.Phone;
+import org.mousepilots.es.test.domain.entities.Phone_ES;
 import org.mousepilots.es.test.domain.entities.Role;
 import org.mousepilots.es.test.domain.entities.Role_ES;
+import org.mousepilots.es.test.domain.entities.User;
 import org.mousepilots.es.test.domain.entities.WorkEnvironment;
 import org.mousepilots.es.test.domain.entities.WorkEnvironment_ES;
 import org.mousepilots.es.test.server.ScenarioServiceBean;
@@ -220,6 +225,24 @@ public class TestDomain extends AbstractTest {
             }
         }
     };
+    
+    private Address createAddress(final EntityManagerImpl entityManagerES, int i) {
+        final Address a = entityManagerES.create(Address_ES.__TYPE);
+        a.setCity("city " + i);
+        a.setCountry("country " + i);
+        a.setHouseNumber(String.valueOf(i));
+        a.setStreet("street " + i);
+        a.setZipCode("zipcode " + i);
+        return a;
+    }
+    
+    private Phone createPhone(final EntityManagerImpl entityManagerES, User owner, int i) {
+        final Phone p = entityManagerES.create(Phone_ES.__TYPE);
+        p.setPhoneNumber(String.valueOf(i));
+        p.setOwner(owner);
+        return p;
+    }
+    
 
     public void testCreateDomain() {
         final EntityManagerImpl entityManagerES = (EntityManagerImpl) JPA.createEntityManagerES();
@@ -260,18 +283,28 @@ public class TestDomain extends AbstractTest {
         bill.setAccount(account);
 
         for (int i = 0; i < 5; i++) {
-            final Address a = entityManagerES.create(Address_ES.__TYPE);
-            a.setCity("city " + i);
-            a.setCountry("country " + i);
-            a.setHouseNumber(String.valueOf(i));
-            a.setStreet("street " + i);
-            a.setZipCode("zipcode " + i);
+            Address a = createAddress(entityManagerES, i);
             if (i < 4) {
                 bill.getAddresses().add(a);
             } else {
                 bill.setManagerAddress(a);
             }
         }
+        
+        final BasicMap basicMap = entityManagerES.create(BasicMap_ES.__TYPE);
+        for(int i=0;i<5;i++){
+            basicMap.getBasicBasic().put("key" + i, "value" + i);
+        }
+        for(int i=0;i<5;i++){
+            Address a = createAddress(entityManagerES, i);
+            basicMap.getBasicEmbeddable().put("key" + i,a);
+        }
+        for(int i=0;i<5;i++){
+            final Phone p = createPhone(entityManagerES, i%2==0 ? john : bill, i);
+            basicMap.getBasicEntity().put("key"+i, p);
+        }
+        
+        
         final List<Command> commands = entityManagerES.getTransaction().getCommands();
         this.scenarioServiceBean.submit(commands);
         for (Command command : commands) {
@@ -284,4 +317,5 @@ public class TestDomain extends AbstractTest {
         }
 
     }
+
 }

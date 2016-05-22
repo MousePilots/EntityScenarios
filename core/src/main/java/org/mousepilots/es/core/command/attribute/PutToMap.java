@@ -21,6 +21,7 @@ import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.model.impl.Getter;
 import org.mousepilots.es.core.model.impl.MapAttributeESImpl;
 import org.mousepilots.es.core.model.proxy.Proxy;
+import org.mousepilots.es.core.model.proxy.collection.ObservableMap;
 import org.mousepilots.es.core.scenario.ServerContext;
 import org.mousepilots.es.core.util.GwtIncompatible;
 
@@ -28,20 +29,19 @@ import org.mousepilots.es.core.util.GwtIncompatible;
  *
  * @author geenenju
  */
-public final class PutToMap<E, K, V> extends UpdateMap<E, K, V, Map<K,V>> {
+public final class PutToMap<E, K, V> extends UpdateMap<E, K, V, Map<K, V>> {
 
     private transient Map<K, V> putAlls = null;
 
     private transient Map<K, V> replaced = null;
-    
+
     private Map<Value<K, K, ?, ?>, Value<V, V, ?, ?>> putAllValues;
-    
+
     /**
      *
      * @param <T>
      * @param entries
-     * @param keyOrValueGetter a function for extracting either
-     * {@link Entry#getKey()} or {@link Entry#getValue()}
+     * @param keyOrValueGetter a function for extracting either {@link Entry#getKey()} or {@link Entry#getValue()}
      */
     protected final <T> void asserAllNewEmbeddables(Set<? extends Entry<K, V>> entries, Getter<Entry<K, V>, Proxy<T>> keyOrValueGetter) {
         for (Entry<K, V> entry : entries) {
@@ -50,11 +50,12 @@ public final class PutToMap<E, K, V> extends UpdateMap<E, K, V, Map<K,V>> {
         }
     }
 
-    private PutToMap(){}
-    
-    
-    PutToMap(MapAttributeESImpl<? super E, K, V> attribute, final Map<K, V> map, final Map<K,V> putAlls) {
+    private PutToMap() {
+    }
+
+    PutToMap(MapAttributeESImpl<? super E, K, V> attribute, final Map<K, V> map, final Map<K, V> putAlls) {
         super();
+        this.putAlls = putAlls;
         final Set<Entry<K, V>> putAllEntries = putAlls.entrySet();
         final TypeES<K> keyType = attribute.getKeyType();
         final TypeES<V> valueType = attribute.getElementType();
@@ -68,9 +69,9 @@ public final class PutToMap<E, K, V> extends UpdateMap<E, K, V, Map<K,V>> {
         for (Entry<K, V> entry : putAllEntries) {
             final K key = entry.getKey();
             final V newValue = entry.getValue();
-            if(map.containsKey(key)){
+            if (map.containsKey(key)) {
                 final V oldValue = map.get(key);
-                if (Objects.equals(oldValue, newValue)){
+                if (Objects.equals(oldValue, newValue)) {
                     //no new entry
                     continue;
                 } else {
@@ -83,49 +84,41 @@ public final class PutToMap<E, K, V> extends UpdateMap<E, K, V, Map<K,V>> {
         }
     }
 
+
     @Override
     public void executeOnClient(Update<E, ?, Map<K, V>, MapAttributeESImpl<? super E, K, V>, ?> update) {
-        getAttributeValueOnClient(update).putAll(putAlls);
+        getDelegate(update).putAll(putAlls);
     }
 
     @Override
     public void undo(Update<E, ?, Map<K, V>, MapAttributeESImpl<? super E, K, V>, ?> update) {
-        final Map<K, V> map = getAttributeValueOnClient(update);
-        map.keySet().removeAll(putAlls.keySet());
-        map.putAll(replaced);
+        final Map<K, V> delegate = getDelegate(update);
+        delegate.keySet().removeAll(putAlls.keySet());
+        delegate.putAll(replaced);
     }
-    
-    /**
-     * 
-     * @param serverContext
-     * @return the entries put by {@code this}
-     */
-    @Override @GwtIncompatible
-    public Map<K, V> getModificationOnServer(ServerContext serverContext) {
-        if(putAlls==null){
-            final Map<K,V> modifiableServerValues = new HashMap<>();
-            for(Entry<Value<K, K, ?, ?>, Value<V, V, ?, ?>> entry : this.putAllValues.entrySet()){
-                final K key = entry.getKey().getServerValue(serverContext);
-                final V value = entry.getValue().getServerValue(serverContext);
-                modifiableServerValues.put(key, value);
-            }
-            this.putAlls = Collections.unmodifiableMap(modifiableServerValues);
-        }
-        return putAlls;
-    }
-    
-    
 
     @Override @GwtIncompatible
-    public void executeOnServer(Update<E, ?, Map<K, V>, MapAttributeESImpl<? super E, K, V>, ?> update, ServerContext serverContext){
-        getNonNullAttributeValueOnServer(update).keySet().removeAll(getModificationOnServer(serverContext).keySet());
+    protected Map<K, V> doGetModificationOnServer(ServerContext serverContext) {
+        final Map<K, V> modificationOnServer = new HashMap<>();
+        for (Entry<Value<K, K, ?, ?>, Value<V, V, ?, ?>> entry : this.putAllValues.entrySet()) {
+            final K key = entry.getKey().getServerValue(serverContext);
+            final V value = entry.getValue().getServerValue(serverContext);
+            modificationOnServer.put(key, value);
+        }
+        return Collections.unmodifiableMap(modificationOnServer);
+
+    }
+
+    @Override
+    @GwtIncompatible
+    public void executeOnServer(Update<E, ?, Map<K, V>, MapAttributeESImpl<? super E, K, V>, ?> update, ServerContext serverContext) {
+        final Map<K, V> modificationOnServer = getModificationOnServer(serverContext);
+        getNonNullAttributeValueOnServer(update).putAll(modificationOnServer);
     }
 
     @Override
     public <R, A> R accept(UpdateAttributeVisitor<R, A> visitor, A arg) {
         return visitor.visit(this, arg);
     }
-
-    
 
 }

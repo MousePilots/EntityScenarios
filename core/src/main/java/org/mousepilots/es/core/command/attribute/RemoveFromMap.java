@@ -30,8 +30,6 @@ public final class RemoveFromMap<E, K, V>  extends UpdateMap<E, K, V, Set<K>> {
     
     private LinkedList<Value<K,K,?,?>> removals = new LinkedList<>();
     
-    private transient Set<K> modification;
-
     private RemoveFromMap(){}
     
     /**
@@ -57,32 +55,25 @@ public final class RemoveFromMap<E, K, V>  extends UpdateMap<E, K, V, Set<K>> {
     
     @Override
     public void executeOnClient(Update<E, ?, Map<K, V>, MapAttributeESImpl<? super E, K, V>, ?> update) {
-        final Map<K, V> map = getAttributeValueOnClient(update);
+        final Map<K, V> map = getDelegate(update);
         map.keySet().removeAll(clientRemoved.keySet());
     }
 
     @Override
     public void undo(Update<E, ?, Map<K, V>, MapAttributeESImpl<? super E, K, V>, ?> update) {
-        getAttributeValueOnClient(update).putAll(clientRemoved);
+         getDelegate(update).putAll(clientRemoved);
     }
 
-    /**
-     * 
-     * @param serverContext
-     * @return the set of keys (to be) removed from the map by {@code this}
-     */
     @Override @GwtIncompatible
-    public Set<K> getModificationOnServer(ServerContext serverContext) {
-        if(modification==null){
-            final Set<K> modifiableModification = new HashSet<>();
-            for(Value<K,K,?,?> removal : this.removals){
-                modifiableModification.add(removal.getServerValue(serverContext));
-            }
-            this.modification = Collections.unmodifiableSet(modifiableModification);
+    protected Set<K> doGetModificationOnServer(ServerContext serverContext) {
+        final Set<K> modification = new HashSet<>();
+        for(Value<K,K,?,?> removal : this.removals){
+            modification.add(removal.getServerValue(serverContext));
         }
-        return modification;
+        return Collections.unmodifiableSet(modification);
     }
 
+    
     @Override @GwtIncompatible
     public void executeOnServer(Update<E, ?, Map<K, V>, MapAttributeESImpl<? super E, K, V>, ?> update, ServerContext serverContext) {
         final Map<K, V> map = getNonNullAttributeValueOnServer(update);

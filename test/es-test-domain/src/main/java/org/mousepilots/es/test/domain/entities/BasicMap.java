@@ -6,6 +6,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyClass;
+import javax.persistence.MapKeyColumn;
 import org.mousepilots.es.test.domain.embeddables.Address;
 
 /**

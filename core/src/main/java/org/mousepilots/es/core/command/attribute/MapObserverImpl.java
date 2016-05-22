@@ -49,7 +49,7 @@ public final class MapObserverImpl<E,K,V> extends PluralAttributeObserver<E,V,Ma
 
     @Override
     public void onPutAll(Map<K, V> subject, Map<? extends K, ? extends V> putAlls) {
-        final PutToMap<E,K,V> putToMap = new PutToMap<E,K,V>(getAttribute(),subject,(Map<K, V>) putAlls);
+        final PutToMap<E,K,V> putToMap = new PutToMap<>(getAttribute(),subject,(Map<K, V>) putAlls);
         createAndExecute(putToMap);
         
     }

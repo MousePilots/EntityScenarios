@@ -3,14 +3,10 @@ package org.mousepilots.es.core.model.impl;
 import java.util.Arrays;
 import java.util.Collection;
 import org.mousepilots.es.core.model.AssociationES;
-import org.mousepilots.es.core.model.HasValue;
-import org.mousepilots.es.core.model.ManagedTypeES;
-import org.mousepilots.es.core.model.MemberES;
 import org.mousepilots.es.core.model.PluralAttributeES;
 import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.model.proxy.collection.Observable;
-import org.mousepilots.es.core.util.IdentifiableTypeUtils;
 import org.mousepilots.es.core.util.StringUtils;
 
 /**

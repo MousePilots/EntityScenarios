@@ -11,3 +11,4 @@
 /test/es-test-web/${webAppDirectory}/org.mousepilots.es.test.Main.JUnit/
 /test/es-test-web/${webAppDirectory}/WEB-INF/deploy/org.mousepilots.es.test.Main.JUnit/
 /.idea
+/test/es-test-core/target/
