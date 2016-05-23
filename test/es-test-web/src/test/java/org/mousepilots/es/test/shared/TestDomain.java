@@ -5,12 +5,12 @@
  */
 package org.mousepilots.es.test.shared;
 
-import com.google.gwt.thirdparty.guava.common.base.Objects;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.model.AttributeES;
@@ -34,10 +34,16 @@ import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.test.domain.Gender;
 import org.mousepilots.es.test.domain.embeddables.Address;
 import org.mousepilots.es.test.domain.embeddables.Address_ES;
+import org.mousepilots.es.test.domain.embeddables.PhoneType;
+import org.mousepilots.es.test.domain.embeddables.PhoneType_ES;
 import org.mousepilots.es.test.domain.entities.BasicMap;
 import org.mousepilots.es.test.domain.entities.BasicMap_ES;
+import org.mousepilots.es.test.domain.entities.EmbeddableMap;
+import org.mousepilots.es.test.domain.entities.EmbeddableMap_ES;
 import org.mousepilots.es.test.domain.entities.Employee;
 import org.mousepilots.es.test.domain.entities.Employee_ES;
+import org.mousepilots.es.test.domain.entities.EntityMap;
+import org.mousepilots.es.test.domain.entities.EntityMap_ES;
 import org.mousepilots.es.test.domain.entities.Manager;
 import org.mousepilots.es.test.domain.entities.ManagerAccount;
 import org.mousepilots.es.test.domain.entities.ManagerAccount_ES;
@@ -126,7 +132,7 @@ public class TestDomain extends AbstractTest {
 
         @Override
         public Boolean visit(BasicTypeES t, Pair p) {
-            return Objects.equal(p.a, p.b);
+            return Objects.equals(p.a, p.b);
         }
 
         private boolean visitManagedType(ManagedTypeES t, Pair p) {
@@ -303,6 +309,42 @@ public class TestDomain extends AbstractTest {
             final Phone p = createPhone(entityManagerES, i%2==0 ? john : bill, i);
             basicMap.getBasicEntity().put("key"+i, p);
         }
+        
+        final EmbeddableMap embeddableMap = entityManagerES.create(EmbeddableMap_ES.__TYPE);
+        for(int i=0; i<5; i++){
+            PhoneType phoneType = entityManagerES.create(PhoneType_ES.__TYPE);
+            phoneType.setType("type" + i);
+            embeddableMap.getEmbeddableBasic().put(phoneType, "value" + i);
+        }
+        for(int i=0; i<5; i++){
+            PhoneType phoneType = entityManagerES.create(PhoneType_ES.__TYPE);
+            phoneType.setType("type" + i);
+            final Address address = createAddress(entityManagerES, i);
+            embeddableMap.getEmbeddableEmbeddable().put(phoneType, address);
+        }
+
+        for(int i=0; i<5; i++){
+            PhoneType phoneType = entityManagerES.create(PhoneType_ES.__TYPE);
+            phoneType.setType("type" + i);
+            final Phone phone = entityManagerES.create(Phone_ES.__TYPE);
+            phone.setOwner(i%2==0 ? john : bill);
+            phone.setPhoneNumber(String.valueOf(i));
+            embeddableMap.getEmbeddableEntity().put(phoneType, phone);
+        }
+        
+        final EntityMap entityMap = entityManagerES.create(EntityMap_ES.__TYPE);
+        for(int i=0; i<5; i++){
+            final Phone phone = entityManagerES.create(Phone_ES.__TYPE);
+            phone.setOwner(i%2==0 ? john : bill);
+            phone.setPhoneNumber(String.valueOf(i));
+            entityMap.getEntityBasic().put(phone, String.valueOf(i));
+            
+            PhoneType phoneType = entityManagerES.create(PhoneType_ES.__TYPE);
+            phoneType.setType("type" + i);
+            entityMap.getEntityEmbeddable().put(phone, createAddress(entityManagerES, i));
+            entityMap.getEntityEntity().put(phone, phone);
+        }
+        
         
         
         final List<Command> commands = entityManagerES.getTransaction().getCommands();
