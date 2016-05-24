@@ -25,6 +25,7 @@ import org.mousepilots.es.core.model.ManagedTypeES;
 import org.mousepilots.es.core.model.MapAttributeES;
 import org.mousepilots.es.core.model.MappedSuperclassTypeES;
 import org.mousepilots.es.core.model.MemberES;
+import org.mousepilots.es.core.model.MetamodelES;
 import org.mousepilots.es.core.model.PluralAttributeES;
 import org.mousepilots.es.core.model.SetAttributeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
@@ -36,6 +37,8 @@ import org.mousepilots.es.core.model.proxy.Proxy;
 public class ProxyCreator {
 
     private final Priviliges priviliges;
+    
+    private static final MetamodelES METAMODEL = AbstractMetamodelES.getInstance();
 
     private final TypeVisitor<Object, Object> typeLevelProxyCreator = new TypeVisitor<Object, Object>() {
 
@@ -53,12 +56,15 @@ public class ProxyCreator {
                         return null;
                     } else {
                         final Proxy<T> proxy = managedType.createProxy();
+                        proxy.__getProxyAspect().setManagedMode(false);
                         instance2Proxy.put(instance, proxy);
                         for (AttributeES attribute : readableAttributes) {
-                            final MemberES javaMember = attribute.getJavaMember();
-                            final Object instanceAttributeValue = javaMember.get(instance);
-                            final Object proxyAttributeValue = attribute.accept(attributeLevelDtoCreator, instanceAttributeValue);
-                            javaMember.set(proxy, proxyAttributeValue);
+                            if(!attribute.isReadOnly()){
+                                final MemberES javaMember = attribute.getJavaMember();
+                                final Object instanceAttributeValue = javaMember.get(instance);
+                                final Object proxyAttributeValue = attribute.accept(attributeLevelDtoCreator, instanceAttributeValue);
+                                javaMember.set(proxy, proxyAttributeValue);
+                            }
                         }
                         return proxy;
                     }      
@@ -93,11 +99,9 @@ public class ProxyCreator {
             if (collection == null) {
                 return null;
             } else {
-                final TypeES elementType = pluralAttribute.getElementType();
                 final C retval = (C) pluralAttribute.createEmpty();
                 for (Object element : collection) {
-                    final Object serializedElement = elementType.accept(typeLevelProxyCreator, element);
-                    retval.add(serializedElement);
+                    retval.add(serialize(element));
                 }
                 return retval;
             }
@@ -105,7 +109,7 @@ public class ProxyCreator {
 
         @Override
         public Object visit(SingularAttributeES a, Object arg) {
-            return a.getType().accept(typeLevelProxyCreator, arg);
+            return serialize(arg);
         }
 
         @Override
@@ -130,10 +134,9 @@ public class ProxyCreator {
             } else {
                 final Map map = (Map) arg, retval = a.createEmpty();
                 final Set<Entry> entrySet = map.entrySet();
-                final TypeES keyType = a.getKeyType(), elementType = a.getElementType();
                 for (Entry entry : entrySet) {
-                    final Object key   = keyType.accept(typeLevelProxyCreator, entry.getKey());
-                    final Object value = elementType.accept(typeLevelProxyCreator, entry.getValue());
+                    final Object key   = serialize(entry.getKey());
+                    final Object value = serialize(entry.getValue());
                     retval.put(key, value);
                 }
                 return retval;
@@ -144,21 +147,30 @@ public class ProxyCreator {
     public ProxyCreator(Priviliges priviliges) {
         this.priviliges = priviliges;
     }
+    
+    public final <T> T serialize(T value){
+        if(value==null){
+            return null;
+        } else {
+            final TypeES<T> type = (TypeES<T>) METAMODEL.type(value.getClass());
+            return (T) type.accept(typeLevelProxyCreator, value);
+        }
+    }
 
-    public final <T> Proxy<T> getProxyFor(final ManagedTypeES<T> elementType, final T instance) {
+    public final <T> Proxy<T> getProxyFor(final T instance) {
         if (instance == null) {
             return null;
         } else {
-            final ManagedTypeES managedType = AbstractMetamodelES.getInstance().managedType(instance.getClass());
+            final ManagedTypeES managedType = METAMODEL.managedType(instance.getClass());
             final Proxy<T> dto = (Proxy<T>) managedType.accept(typeLevelProxyCreator, instance);
             return dto;
         }
     }
 
-    public final <T> ArrayList<Proxy<T>> getProxiesFor(final ManagedTypeES<T> elementType, final List<T> instances) {
+    public final <T> ArrayList<Proxy<T>> getProxiesFor(final List<T> instances) {
         ArrayList<Proxy<T>> retval = new ArrayList<>(instances.size());
         for (T instance : instances) {
-            retval.add(getProxyFor(elementType, instance));
+            retval.add(getProxyFor(instance));
         }
         return retval;
     }

@@ -31,7 +31,7 @@ public class PropertyUtils {
     }
     
     public static <T,R extends RuntimeException> void assertNotEquals(T t1, T t2, Producer<R> runtimeExceptionProducer, Function<T,?>... getters) throws R{
-        if(!equals(t1, t2, getters)){
+        if(equals(t1, t2, getters)){
             throw runtimeExceptionProducer.produce();
         }
     }

@@ -5,6 +5,10 @@
  */
 package org.mousepilots.es.core.model;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Predicate;
+
 /**
  *
  * @author jgeenen
@@ -41,10 +45,39 @@ public interface EntityManagerES{
 
      <E> E create(EmbeddableTypeES<E> type);
 
+    /**
+     * Finds the instance of (a subclass of) the {@code identifiableJavaType} with the specified {@code id}. The search also 
+     * considers subclasses of the {@code identifiableJavaType}.
+     * @param <T>
+     * @param identifiableJavaType
+     * @param id
+     * @return 
+     */
+    <T> T find(Class<T> identifiableJavaType, Object id);
     
-    <T> T find(Class<T> entityClass, Object primaryKey);
-     
-     public EntityTransaction getTransaction();
+    /**
+     * Selects all instances of (subclasses of) the {@code identifiableJavaType} satisfying the specified
+     * {@code restrictions}, optionally sorting the result-list with the {@code sorter}.
+     * @param <T>
+     * @param identifiableJavaType
+     * @param restrictions optional
+     * @param sorter optional - for sorting the result-list
+     * @return 
+     */
+    <T> List<T> select(IdentifiableTypeES<T> identifiableJavaType, Predicate<T> restrictions,Comparator<T> sorter);
+
+    /**
+     * Selects all instances of (subclasses of) the {@code identifiableJavaClass} satisfying the specified
+     * {@code restrictions}, optionally sorting the result-list with the {@code sorter}.
+     * @param <T>
+     * @param identifiableJavaClass
+     * @param restrictions optional
+     * @param sorter optional - for sorting the result-list
+     * @return 
+     */    
+    <T> List<T> select(Class<T> identifiableJavaClass, Predicate<T> restrictions, Comparator<T> sorter);
+    
+    EntityTransaction getTransaction();
 
     void remove(Object entity);
 
@@ -53,5 +86,8 @@ public interface EntityManagerES{
     MetamodelES getMetamodel();
 
     EntityManagerFactory getEntityManagerFactory();
+
+    <T> T find(final IdentifiableTypeES<T> identifiableType, Object primaryKey);
+
 
 }

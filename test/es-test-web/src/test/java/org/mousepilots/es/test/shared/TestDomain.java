@@ -12,12 +12,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.EntityManager;
+import org.junit.Assert;
+import org.mousepilots.es.core.command.CRUD;
 import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.AttributeVisitor;
 import org.mousepilots.es.core.model.BasicTypeES;
 import org.mousepilots.es.core.model.CollectionAttributeES;
 import org.mousepilots.es.core.model.EmbeddableTypeES;
+import org.mousepilots.es.core.model.EntityManagerES;
 import org.mousepilots.es.core.model.EntityTypeES;
 import org.mousepilots.es.core.model.ListAttributeES;
 import org.mousepilots.es.core.model.ManagedTypeES;
@@ -31,6 +35,10 @@ import org.mousepilots.es.core.model.TypeVisitor;
 import org.mousepilots.es.core.model.impl.EntityManagerImpl;
 import org.mousepilots.es.core.model.impl.ManagedTypeESImpl;
 import org.mousepilots.es.core.model.proxy.Proxy;
+import org.mousepilots.es.core.scenario.Context;
+import org.mousepilots.es.core.scenario.priviliges.Priviliges;
+import org.mousepilots.es.server.scenario.privilige.InMemoryPriviligeService;
+import org.mousepilots.es.server.scenario.privilige.ProxyCreator;
 import org.mousepilots.es.test.domain.Gender;
 import org.mousepilots.es.test.domain.embeddables.Address;
 import org.mousepilots.es.test.domain.embeddables.Address_ES;
@@ -53,6 +61,7 @@ import org.mousepilots.es.test.domain.entities.Phone_ES;
 import org.mousepilots.es.test.domain.entities.Role;
 import org.mousepilots.es.test.domain.entities.Role_ES;
 import org.mousepilots.es.test.domain.entities.User;
+import org.mousepilots.es.test.domain.entities.User_ES;
 import org.mousepilots.es.test.domain.entities.WorkEnvironment;
 import org.mousepilots.es.test.domain.entities.WorkEnvironment_ES;
 import org.mousepilots.es.test.server.ScenarioServiceBean;
@@ -72,7 +81,6 @@ public class TestDomain extends AbstractTest {
         return m==null || m.isEmpty();
     }
     
-
     private static class Pair {
 
         private final Object a, b;
@@ -250,7 +258,7 @@ public class TestDomain extends AbstractTest {
     }
     
 
-    public void testCreateDomain() {
+    private void doTestCreates() {
         final EntityManagerImpl entityManagerES = (EntityManagerImpl) JPA.createEntityManagerES();
         final Role manager = entityManagerES.create(Role_ES.__TYPE);
         manager.setName("manager");
@@ -357,7 +365,52 @@ public class TestDomain extends AbstractTest {
             final Boolean equal = (Boolean) type.accept(typeValueComparator, pair);
             assertTrue(proxy + " and " + subject + " are not equal w.r.t. their basic-typed singular attributes", equal);
         }
+        //this.entityCreations.addAll(commands.stream().filter(c -> c instanceof CreateEntity).collect(Collectors.toList()));
+    }
+    
+    private void doTestUpdates(){
+        final InMemoryPriviligeService priviligeService = InMemoryPriviligeService.getInstance();
+        final Set<ManagedTypeES<?>> managedTypes = (Set) getMetaModel().getManagedTypes();
+        final String scenario = "doTestUpdates";
+        for(ManagedTypeES type : managedTypes){
+            priviligeService.inScenario(scenario).grant(CRUD.READ).on(type, type.getAttributes()).commit();
+        }
+        final EntityManager em = JPA.createEntityManager();
+        final Priviliges priviliges = priviligeService.getPriviliges(scenario, new Context(){
+            @Override
+            public String getUserName() {
+                return "bill"; //To change body of generated methods, choose Tools | Templates.
+            }
 
+            @Override
+            public boolean isUserInRole(String role) {
+                return false;
+            }
+
+            @Override
+            public Object getEntityManager() {
+                return em;
+            }
+            
+        });
+        ProxyCreator proxyCreator = new ProxyCreator(priviliges);
+        Employee john = em.createQuery("SELECT e FROM Employee e WHERE e.userName='john'", Employee.class).getSingleResult();
+        Manager  bill = em.createQuery("SELECT m FROM Manager  m WHERE m.userName='bill'", Manager.class).getSingleResult();
+        final Proxy<Manager>  billProxy = proxyCreator.getProxyFor(bill);
+        final Proxy<Employee> johnProxy = proxyCreator.getProxyFor(john);
+        Assert.assertTrue(billProxy.__subject().getSubordinates().contains(johnProxy.__subject()));
+        Assert.assertTrue(johnProxy.__subject().getManager()==billProxy);
+        final EntityManagerImpl entityManagerES = (EntityManagerImpl) createEntityManager();
+        entityManagerES.manageAll(Arrays.asList(billProxy,johnProxy));
+        final List<User> allUsers = entityManagerES.select(User_ES.__TYPE, u->true, (u1,u2)->u1.getUserName().compareTo(u2.getUserName()));
+        Assert.assertTrue(allUsers.contains(billProxy));
+        Assert.assertTrue(allUsers.contains(johnProxy));
+        
+    }
+    
+    public void testAll(){
+        doTestCreates();
+        doTestUpdates();
     }
 
 }

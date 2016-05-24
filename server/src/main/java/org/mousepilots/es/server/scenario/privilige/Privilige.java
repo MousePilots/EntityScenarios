@@ -154,6 +154,11 @@ public class Privilige implements Serializable{
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "Privilige{" + "id=" + id + ", scenario=" + scenario + ", operation=" + operation + ", typeOrdinal=" + typeOrdinal + ", attributeOrdinals=" + attributeOrdinals + ", userNames=" + userNames + ", roleNames=" + roleNames + '}';
+    }
     
     
     

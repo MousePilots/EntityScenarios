@@ -34,6 +34,7 @@ public class CollectionAttributeESImpl<T, E> extends PluralAttributeESImpl<T, Co
         return retval;
     }
 
+    @Override
     public final <R, A> R accept(AttributeVisitor<R, A> visitor, A arg) {
         return visitor.visit(this, arg);
     }
