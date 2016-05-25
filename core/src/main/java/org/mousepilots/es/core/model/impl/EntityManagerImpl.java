@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.function.Predicate;
+import javax.persistence.EntityExistsException;
 import org.mousepilots.es.core.command.Command;
 import org.mousepilots.es.core.command.CreateEmbeddable;
 import org.mousepilots.es.core.command.CreateEntity;
@@ -39,86 +40,88 @@ import org.mousepilots.es.core.model.MapAttributeES;
 import org.mousepilots.es.core.model.PluralAttributeES;
 import org.mousepilots.es.core.model.SetAttributeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
+import org.mousepilots.es.core.model.TypeES;
+import org.mousepilots.es.core.model.impl.container.Containerizer;
 
 /**
  *
  * @author jgeenen
  */
 @Framework
-public class EntityManagerImpl implements EntityManagerES {
-
+public class EntityManagerImpl implements EntityManagerES{
+    
+    private final Containerizer containerizer;
+    
     private final EntityManagerFactoryImpl entityManagerFactory;
 
     private final Map<Class, Map<Object, Proxy>> entityClass2id2entity = new HashMap<>();
 
     private final EntityTransactionImpl entityTransaction = new EntityTransactionImpl();
 
+    private final AttributeVisitor<Void,Proxy> attributeManager = new AttributeVisitor<Void, Proxy>() {
+        
+        private Void visit(TypeES type, Object value){
+            if(value!=null && type instanceof ManagedTypeES){
+                manage((Proxy) value);
+            }
+            return null;
+        }
+        
+        private Void visitAll(TypeES elementType, Collection values){
+            if(elementType instanceof ManagedTypeES && values!=null && !values.isEmpty()){
+                for(Proxy proxy : (Collection<Proxy>) values){
+                    manage(proxy);
+                }
+            }
+            return null;
+        }
+        private Void visitJavaUtilCollection(PluralAttributeES a, Proxy arg) {
+            return visitAll(a.getElementType(), (Collection) a.getJavaMember().get(arg));
+        }
+        
+        @Override
+        public Void visit(SingularAttributeES a, Proxy arg) {
+            return visit(a.getType(), a.getJavaMember().get(arg));
+        }
+
+        @Override
+        public Void visit(CollectionAttributeES a, Proxy arg) {
+            return visitJavaUtilCollection(a, arg);
+        }
+
+
+        @Override
+        public Void visit(ListAttributeES a, Proxy arg) {
+            return visitJavaUtilCollection(a, arg);
+        }
+
+        @Override
+        public Void visit(SetAttributeES a, Proxy arg) {
+            return visitJavaUtilCollection(a, arg);
+        }
+
+        @Override
+        public Void visit(MapAttributeES a, Proxy arg) {
+            final Map map = (Map) a.getJavaMember().get(arg);
+            if(map!=null && !map.isEmpty()){
+                visitAll(a.getKeyType(), map.keySet());
+                visitAll(a.getElementType(), map.values());
+            }
+            return null;
+        }
+    };
     protected EntityManagerImpl(EntityManagerFactoryImpl entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
+        this.containerizer = new Containerizer();
     }
-
-    private final AttributeVisitor<Void, Proxy> attributeManager = new AttributeVisitor<Void, Proxy>() {
-
-        private Void visitJavaUtilCollection(PluralAttributeES pluralAttribute, Proxy owner) {
-            if (pluralAttribute.getElementType() instanceof ManagedTypeES) {
-                final Collection<Proxy> attributeValue = (Collection<Proxy>) pluralAttribute.getJavaMember().get(owner);
-                if(attributeValue!=null){
-                    manageAll(attributeValue);
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public Void visit(SingularAttributeES a, Proxy owner) {
-            if (a.getType() instanceof ManagedTypeES) {
-                final Proxy attributeValue = (Proxy) a.getJavaMember().get(owner);
-                if(attributeValue!=null){
-                    manage(attributeValue);
-                }
-            }
-            return null;
-        }
-
-
-        @Override
-        public Void visit(CollectionAttributeES a, Proxy owner) {
-            return visitJavaUtilCollection(a, owner);
-        }
-
-        @Override
-        public Void visit(ListAttributeES a, Proxy owner) {
-            return visitJavaUtilCollection(a, owner);
-        }
-
-        @Override
-        public Void visit(SetAttributeES a, Proxy owner) {
-            return visitJavaUtilCollection(a, owner);
-        }
-
-        @Override
-        public Void visit(MapAttributeES a, Proxy owner) {
-            final Map attributeValue = (Map) a.getJavaMember().get(owner);
-            if (attributeValue != null) {
-                if (a.getKeyType() instanceof ManagedTypeES) {
-                    manageAll(attributeValue.keySet());
-                }
-                if (a.getElementType() instanceof ManagedTypeES) {
-                    manageAll(attributeValue.values());
-                }
-
-            }
-            return null;
-        }
-
-    };
-
-    public void manage(Proxy proxy) {
-        final ProxyAspect proxyAspect = proxy.__getProxyAspect();
-        if (proxyAspect.getEntityManager() != this) {
+    
+    
+    public <T> void manage(Proxy<T> proxy){
+        final ProxyAspect<T> proxyAspect = proxy.__getProxyAspect();
+        if(proxyAspect.getEntityManager()==null){
             proxyAspect.setEntityManager(this);
-            final ManagedTypeES type = proxyAspect.getType();
-            if (type instanceof EntityTypeESImpl) {
+            final ManagedTypeES<T> type = proxyAspect.getType();
+            if(type instanceof EntityTypeESImpl){
                 final EntityTypeESImpl entityType = (EntityTypeESImpl) type;
                 final Object id = entityType.getId().getJavaMember().get(proxy.__subject());
                 final Map<Object, Proxy> id2entity = Maps.getOrCreate(
@@ -128,16 +131,17 @@ public class EntityManagerImpl implements EntityManagerES {
                 id2entity.put(id, proxy);
             }
             final Set<AttributeES> attributes = (Set) type.getAttributes();
-            for (AttributeES attribute : attributes) {
+            for(AttributeES attribute : attributes){
                 attribute.accept(attributeManager, proxy);
             }
+            containerizer.containerize(proxy);
             proxyAspect.setManagedMode(true);
         }
     }
-
-    public void manageAll(final Collection<Proxy> attributeValue) {
-        for (Proxy element : attributeValue) {
-            manage(element);
+    
+    public void manageAll(Collection<Proxy<?>> proxies){
+        for(Proxy proxy : proxies){
+            manage(proxy);
         }
     }
 
@@ -145,13 +149,13 @@ public class EntityManagerImpl implements EntityManagerES {
         final ProxyAspect<T> proxyAspect = proxy.__getProxyAspect();
         proxyAspect.setManagedMode(false);
         final ManagedTypeES<T> type = proxyAspect.getType();
-        if (type instanceof EntityTypeESImpl) {
+        if(type instanceof EntityTypeESImpl){
             final EntityTypeESImpl entityType = (EntityTypeESImpl) type;
             final Object id = entityType.getId().getJavaMember().get(proxy.__subject());
             final Class<T> javaType = type.getJavaType();
             final Map<Object, Proxy> id2entity = entityClass2id2entity.get(javaType);
-            if (id2entity.containsKey(id)) {
-                if (id2entity.remove(id) == proxy) {
+            if(id2entity.containsKey(id)){
+                if(id2entity.remove(id)==proxy){
                     if (id2entity.isEmpty()) {
                         entityClass2id2entity.remove(javaType);
                     }
@@ -167,6 +171,9 @@ public class EntityManagerImpl implements EntityManagerES {
 
     @Override
     public final <E, ID> E create(EntityTypeES<E> type, ID id) {
+        if(id!=null && find(type,id)!=null){
+            throw new EntityExistsException("an entity of " + type.getJavaType() + " with id " + id + " allready exists");
+        }
         final CreateEntity<E, ID> createEntity = new CreateEntity<>(this, type, id);
         createEntity.executeOnClient();
         final Proxy<E> proxy = createEntity.getProxy();
@@ -209,8 +216,6 @@ public class EntityManagerImpl implements EntityManagerES {
         }
     }
 
-    
-    
     @Override
     public <T> T find(Class<T> identifiableJavaType, Object primaryKey){
         final IdentifiableTypeES<T> identifiableType = (IdentifiableTypeES<T>) AbstractMetamodelES.getInstance().type(identifiableJavaType);
@@ -265,11 +270,11 @@ public class EntityManagerImpl implements EntityManagerES {
 
     @Override
     public boolean contains(Object entity) {
-        if (entity == null || !(entity instanceof Proxy)) {
+        if (entity == null || !(entity instanceof Proxy) ) {
             return false;
         } else {
             Proxy proxy = (Proxy) entity;
-            return proxy.__getProxyAspect().getEntityManager() == this;
+            return proxy.__getProxyAspect().getEntityManager()==this;
         }
     }
 

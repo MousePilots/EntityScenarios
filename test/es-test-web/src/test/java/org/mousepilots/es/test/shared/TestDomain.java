@@ -13,6 +13,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import org.junit.Assert;
 import org.mousepilots.es.core.command.CRUD;
 import org.mousepilots.es.core.command.Command;
@@ -61,6 +64,7 @@ import org.mousepilots.es.test.domain.entities.Phone_ES;
 import org.mousepilots.es.test.domain.entities.Role;
 import org.mousepilots.es.test.domain.entities.Role_ES;
 import org.mousepilots.es.test.domain.entities.User;
+import org.mousepilots.es.test.domain.entities.User_;
 import org.mousepilots.es.test.domain.entities.User_ES;
 import org.mousepilots.es.test.domain.entities.WorkEnvironment;
 import org.mousepilots.es.test.domain.entities.WorkEnvironment_ES;
@@ -134,9 +138,10 @@ public class TestDomain extends AbstractTest {
         super(TestDomain.class);
     }
 
+    private final Set<Pair> visitedByTypeValueComparator = new HashSet();
+    
     private final TypeVisitor<Boolean, Pair> typeValueComparator = new TypeVisitor<Boolean, Pair>() {
 
-        private final Set<Pair> visited = new HashSet();
 
         @Override
         public Boolean visit(BasicTypeES t, Pair p) {
@@ -153,10 +158,10 @@ public class TestDomain extends AbstractTest {
                 return true;
             }
             
-            if (visited.contains(p)) {
+            if (visitedByTypeValueComparator.contains(p)) {
                 return true;
             } else {
-                visited.add(p);
+                visitedByTypeValueComparator.add(p);
                 final Set<AttributeES> attributes = t.getAttributes();
                 for (AttributeES a : attributes) {
                     final MemberES javaMember = a.getJavaMember();
@@ -259,6 +264,7 @@ public class TestDomain extends AbstractTest {
     
 
     private void doTestCreates() {
+        visitedByTypeValueComparator.clear();
         final EntityManagerImpl entityManagerES = (EntityManagerImpl) JPA.createEntityManagerES();
         final Role manager = entityManagerES.create(Role_ES.__TYPE);
         manager.setName("manager");
@@ -368,14 +374,23 @@ public class TestDomain extends AbstractTest {
         //this.entityCreations.addAll(commands.stream().filter(c -> c instanceof CreateEntity).collect(Collectors.toList()));
     }
     
+    private <U extends User> U findUser(EntityManager em, Class<U> userClass, String userName){
+        final CriteriaBuilder cb = em.getCriteriaBuilder();
+        final CriteriaQuery<U> cq = cb.createQuery(userClass);
+        final Root<U> u = cq.from(userClass);
+        cq.where(cb.equal(u.get(User_.userName),userName)).select(u);
+        return  em.createQuery(cq).getSingleResult();
+    }
+    
     private void doTestUpdates(){
+        visitedByTypeValueComparator.clear();
         final InMemoryPriviligeService priviligeService = InMemoryPriviligeService.getInstance();
         final Set<ManagedTypeES<?>> managedTypes = (Set) getMetaModel().getManagedTypes();
         final String scenario = "doTestUpdates";
         for(ManagedTypeES type : managedTypes){
             priviligeService.inScenario(scenario).grant(CRUD.READ).on(type, type.getAttributes()).commit();
         }
-        final EntityManager em = JPA.createEntityManager();
+        EntityManager em = JPA.createEntityManager();
         final Priviliges priviliges = priviligeService.getPriviliges(scenario, new Context(){
             @Override
             public String getUserName() {
@@ -389,15 +404,18 @@ public class TestDomain extends AbstractTest {
 
             @Override
             public Object getEntityManager() {
-                return em;
+                return null;
             }
             
         });
         ProxyCreator proxyCreator = new ProxyCreator(priviliges);
-        Employee john = em.createQuery("SELECT e FROM Employee e WHERE e.userName='john'", Employee.class).getSingleResult();
-        Manager  bill = em.createQuery("SELECT m FROM Manager  m WHERE m.userName='bill'", Manager.class).getSingleResult();
+        Employee john = findUser(em, Employee.class, "john");
+        Manager  bill = findUser(em, Manager.class, "bill");
         final Proxy<Manager>  billProxy = proxyCreator.getProxyFor(bill);
         final Proxy<Employee> johnProxy = proxyCreator.getProxyFor(john);
+        em.close();
+        
+        
         Assert.assertTrue(billProxy.__subject().getSubordinates().contains(johnProxy.__subject()));
         Assert.assertTrue(johnProxy.__subject().getManager()==billProxy);
         final EntityManagerImpl entityManagerES = (EntityManagerImpl) createEntityManager();
@@ -405,6 +423,27 @@ public class TestDomain extends AbstractTest {
         final List<User> allUsers = entityManagerES.select(User_ES.__TYPE, u->true, (u1,u2)->u1.getUserName().compareTo(u2.getUserName()));
         Assert.assertTrue(allUsers.contains(billProxy));
         Assert.assertTrue(allUsers.contains(johnProxy));
+        Assert.assertTrue(entityManagerES.select(User.class, u-> "bill".equals(u.getUserName()), null).size()==1);
+        Assert.assertTrue(entityManagerES.select(User.class, u-> "john".equals(u.getUserName()), null).size()==1);
+        final Manager billSubject = billProxy.__subject();
+        
+        
+        billSubject.setAge(65);
+        billSubject.getEmailAddresses().clear();
+        billSubject.getAccount().setDescription("updated description");
+        final String updated_country = "updated country";
+        billSubject.getAddresses().get(0).setCountry(updated_country);
+        final List<Command> commands = entityManagerES.getTransaction().getCommands();
+        this.scenarioServiceBean.submit(commands);
+        
+        em = JPA.createEntityManager();
+        bill = findUser(em, Manager.class, "bill");
+        Assert.assertTrue(bill.getAge()==65);
+        Assert.assertTrue(bill.getEmailAddresses()==null || bill.getEmailAddresses().isEmpty());
+        Assert.assertTrue(bill.getAccount().getDescription().equals("updated description"));
+        Assert.assertTrue(bill.getAddresses().stream().anyMatch(a -> updated_country.equals(a.getCountry())));
+
+        
         
     }
     

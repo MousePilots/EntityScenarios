@@ -11,6 +11,7 @@ import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.IdentifiableTypeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.impl.TypeESImpl;
+import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.scenario.ServerContext;
 import org.mousepilots.es.core.util.GwtIncompatible;
 import org.mousepilots.es.core.util.IdentifiableTypeUtils;
@@ -37,19 +38,25 @@ public final class IdentifiableContainer<T, I> extends Container<T, Identifiable
      }
 
 
-     public IdentifiableContainer(IdentifiableTypeES<T> type, AttributeES<? super T, ?> attribute, T entity) {
+     protected IdentifiableContainer(IdentifiableTypeES<T> type, AttributeES<? super T, ?> attribute, T identifiable) {
           super(type, attribute);
           final SingularAttributeES<? super T, I> idAttribute = (SingularAttributeES) IdentifiableTypeUtils.getIdAttribute(type);
-          final I idValue = idAttribute.getJavaMember().get(entity);
+          final I idValue = idAttribute.getJavaMember().get(identifiable);
           setId(idValue);
+     }
+     
+     protected IdentifiableContainer(Proxy<T> proxy, AttributeES<? super T, ?> attribute){
+         this((IdentifiableTypeES<T>) proxy.__getProxyAspect().getType(), attribute, proxy.__subject());
      }
 
 
-     private IdentifiableContainer(IdentifiableTypeES<T> type, AttributeES<? super T, ?> attribute, I id, Object mapKey) {
-          super(type, attribute);
-          setId(id);
-          setMapKey(mapKey);
-
+     private IdentifiableContainer(IdentifiableContainer<T, I> prototype) {
+         super(prototype.getType(), prototype.getAttribute());
+         setId(prototype.getId());
+         final Object mapKey = prototype.getMapKey();
+         if(mapKey!=null){
+             setMapKey(mapKey);
+         }
      }
 
      public I getId() {
@@ -70,7 +77,7 @@ public final class IdentifiableContainer<T, I> extends Container<T, Identifiable
 
      @Override
      public Container copy() {
-          return new IdentifiableContainer<>(getType(), getAttribute(), getId(), copyMapKey());
+         return new IdentifiableContainer(this);
      }
 
 }

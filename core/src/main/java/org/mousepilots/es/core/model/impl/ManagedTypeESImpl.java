@@ -419,7 +419,7 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T> implements Mana
     public T shallowClone(T instance) {
         final T shallowClone = this.createInstance();
         for (SingularAttributeES<? super T, ?> singularAttribute : singularAttributes) {
-            if (!singularAttribute.isAssociation()) {
+            if(!singularAttribute.isAssociation()) {
                 final MemberES javaMember = singularAttribute.getJavaMember();
                 final Object simpleAttributeValue = javaMember.get(instance);
                 javaMember.set(shallowClone, simpleAttributeValue);

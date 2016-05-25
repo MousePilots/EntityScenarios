@@ -35,116 +35,103 @@ import org.mousepilots.es.core.util.GwtIncompatible;
  */
 public abstract class Container<T, MT extends ManagedTypeES<T>, A extends AttributeES> extends HasTypeAndAttribute<MT, A> {
 
-     protected static final TypeVisitor<HasValue, Object> MAP_KEY_COPIER = new TypeVisitor<HasValue, Object>() {
+    protected static final TypeVisitor<HasValue, Object> MAP_KEY_COPIER = new TypeVisitor<HasValue, Object>() {
 
-          private HasValue visitIdentifiable(IdentifiableTypeESImpl t, Object key) {
-               return key == null ? null : t.wrap(key);
-          }
+        private HasValue visitIdentifiable(IdentifiableTypeESImpl t, Object key) {
+            return key == null ? null : t.wrap(key);
+        }
 
-          @Override
-          public HasValue visit(BasicTypeES t, Object key) {
-               if (key == null) {
-                    return null;
-               } else {
-                    final BasicTypeESImpl basicTypeESImpl = (BasicTypeESImpl) t;
-                    return basicTypeESImpl.wrap(key);
-               }
-          }
+        @Override
+        public HasValue visit(BasicTypeES t, Object key) {
+            if (key == null) {
+                return null;
+            } else {
+                final BasicTypeESImpl basicTypeESImpl = (BasicTypeESImpl) t;
+                return basicTypeESImpl.wrap(key);
+            }
+        }
 
-          @Override
-          public HasValue visit(EmbeddableTypeES t, Object key) {
-               if (key == null) {
-                    return null;
-               } else {
-                    final EmbeddableTypeESImpl embeddableTypeES = (EmbeddableTypeESImpl) t;
-                    final Object copy = embeddableTypeES.shallowClone(key);
-                    return embeddableTypeES.wrap(copy);
-               }
-          }
+        @Override
+        public HasValue visit(EmbeddableTypeES t, Object key) {
+            if (key == null) {
+                return null;
+            } else {
+                final EmbeddableTypeESImpl embeddableTypeES = (EmbeddableTypeESImpl) t;
+                final Object copy = embeddableTypeES.shallowClone(key);
+                return embeddableTypeES.wrap(copy);
+            }
+        }
 
-          @Override
-          public HasValue visit(MappedSuperclassTypeES t, Object key) {
-               return visitIdentifiable((IdentifiableTypeESImpl) t, key);
-          }
+        @Override
+        public HasValue visit(MappedSuperclassTypeES t, Object key) {
+            return visitIdentifiable((IdentifiableTypeESImpl) t, key);
+        }
 
-          @Override
-          public HasValue visit(EntityTypeES t, Object key) {
-               return visitIdentifiable((IdentifiableTypeESImpl) t, key);
-          }
-     };
+        @Override
+        public HasValue visit(EntityTypeES t, Object key) {
+            return visitIdentifiable((IdentifiableTypeESImpl) t, key);
+        }
+    };
 
-     protected Container() {
-          super();
-     }
+    protected Container() {
+        super();
+    }
 
-     private HasValue mapKey;
+    private HasValue mapKey;
 
-     protected Container(int typeOrdinal, int attributeOrdinal) {
-          super(attributeOrdinal, typeOrdinal);
-     }
+    protected Container(int typeOrdinal, int attributeOrdinal) {
+        super(attributeOrdinal, typeOrdinal);
+    }
 
-     protected Container(MT type, AttributeES attribute) {
-          super(type.getOrdinal(), attribute.getOrdinal());
-     }
+    protected Container(MT type, AttributeES attribute) {
+        super(attribute.getOrdinal(),type.getOrdinal());
+    }
 
-     Container getParent() {
-          return null;
-     }
+    Container getParent() {
+        return null;
+    }
 
-     /**
-      *
-      * @param <K>
-      * @param type
-      * @param attribute
-      * @param mapKey use if and only if the container wrapAttribute is a
- {@link MapAttributeES} {@code &&} the next container in line represents
-      * a value thereof
-      */
-     protected <K> Container(MT type, MapAttributeES<? super MT, ? super K, ?> attribute, K mapKey) {
-          super(type.getOrdinal(), attribute.getOrdinal());
-          setMapKey(mapKey);
-     }
+    protected final Object getMapKey() {
+        return mapKey == null ? null : mapKey.getValue();
+    }
 
-     protected final Object getMapKey() {
-          return mapKey == null ? null : mapKey.getValue();
-     }
+    protected final void setMapKey(Object mapKey) {
+        MapAttributeES attribute = (MapAttributeES) getAttribute();
+        final TypeESImpl keyType = (TypeESImpl) attribute.getKeyType();
+        this.mapKey = keyType.wrap(mapKey);
+    }
 
-     protected final void setMapKey(Object mapKey) {
-          MapAttributeES attribute = (MapAttributeES) getAttribute();
-          final TypeESImpl keyType = (TypeESImpl) attribute.getKeyType();
-          this.mapKey = keyType.wrap(mapKey);
-     }
+    protected final Object copyMapKey() throws IllegalArgumentException {
+        final A attribute = getAttribute();
+        final TypeES mapKeyType = attribute.getType();
+        return (HasValue) mapKeyType.accept(Container.MAP_KEY_COPIER, getMapKey());
+    }
 
-     protected final Object copyMapKey() throws IllegalArgumentException {
-          final A attribute = getAttribute();
-          final TypeES mapKeyType = attribute.getType();
-          return (HasValue) mapKeyType.accept(Container.MAP_KEY_COPIER, getMapKey());
-     }
+    /**
+     * Collects the path starting from some {@link IdentifiableContainer} up to
+     * and including {@code this}. I.e. the first container in the list is an
+     * {@link IdentifiableContainer}, followed by one or more
+     * {@link EmbeddableContainer}, the last one of which is {code this.}
+     *
+     * @return the path starting from some {@link IdentifiableContainer} up to
+     * and including {@code this}
+     */
+    protected final List<Container> collectPath() {
+        final LinkedList<Container> retval = new LinkedList<>();
+        for (Container container = this; container != null; container = container.getParent()) {
+            retval.addFirst(container);
+        }
+        return retval;
+    }
 
-     /**
-      * Collects the path starting from some {@link IdentifiableContainer} up to
-      * and including {@code this}. I.e. the first container in the list is an
-      * {@link IdentifiableContainer}, followed by one or more
-      * {@link EmbeddableContainer}, the last one of which is {code this.}
-      *
-      * @return the path starting from some {@link IdentifiableContainer} up to
-      * and including {@code this}
-      */
-     protected final List<Container> collectPath() {
-          final LinkedList<Container> retval = new LinkedList<>();
-          for (Container container = this; container != null; container = container.getParent()) {
-               retval.addFirst(container);
-          }
-          return retval;
-     }
-     
-     /**
-      * Resolves the managed instance corresponding to {@code this} on the server
-      * @param serverContext
-      * @return the managed instance corresponding to {@code this} 
-      */
-     @GwtIncompatible
-     public abstract T resolve(ServerContext serverContext);
+    /**
+     * Resolves the managed instance corresponding to {@code this} on the server
+     *
+     * @param serverContext
+     * @return the managed instance corresponding to {@code this}
+     */
+    @GwtIncompatible
+    public abstract T resolve(ServerContext serverContext);
 
-     public abstract Container copy();
+    public abstract Container copy();
 }

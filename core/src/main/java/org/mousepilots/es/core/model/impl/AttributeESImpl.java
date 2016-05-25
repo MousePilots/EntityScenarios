@@ -53,7 +53,9 @@ public abstract class AttributeESImpl<X, Y> implements AttributeES<X, Y> {
         }
         this.persistentAttributeType = persistentAttributeType;
         this.javaMember = javaMember;
-        this.associations.put(AssociationTypeES.VALUE, valueAssociation);
+        if(valueAssociation!=null){
+            this.associations.put(AssociationTypeES.VALUE, valueAssociation);
+        }
     }
 
     @Override

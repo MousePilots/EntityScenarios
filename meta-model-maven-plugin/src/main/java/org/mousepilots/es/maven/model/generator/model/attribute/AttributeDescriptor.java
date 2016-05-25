@@ -59,15 +59,15 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
         ANNOTATION_TO_PERSISTENT_ATTRIBUTE_TYPE.put(Embedded.class, Attribute.PersistentAttributeType.EMBEDDED);
     }
     private static final Set<AttributeDescriptor> INSTANCES = new TreeSet<>();
-    
-    private static final Map<Class,Class> PRIMITIVE_TO_BOXED = Maps.create(
-            Arrays.asList(  boolean.class,  byte.class, short.class,    char.class,     int.class,      long.class, float.class,    double.class), 
-            Arrays.asList(  Boolean.class,  Byte.class, Short.class,    Character.class,Integer.class,  Long.class, Float.class,    Double.class));
-    
-    private static final Map<Class,Class> BOXED_TO_PRIMITIVE = Maps.invert(PRIMITIVE_TO_BOXED);
+
+    private static final Map<Class, Class> PRIMITIVE_TO_BOXED = Maps.create(
+            Arrays.asList(boolean.class, byte.class, short.class, char.class, int.class, long.class, float.class, double.class),
+            Arrays.asList(Boolean.class, Byte.class, Short.class, Character.class, Integer.class, Long.class, Float.class, Double.class));
+
+    private static final Map<Class, Class> BOXED_TO_PRIMITIVE = Maps.invert(PRIMITIVE_TO_BOXED);
 
     private TypeDescriptor declaringTypeDescriptor;
-    
+
     /**
      * Create a new instance of this descriptor.
      *
@@ -99,14 +99,14 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
     protected String getDeclaredVariableName() {
         return getName();
     }
-    
-
 
     /**
      * Try to find a getter method for this attribute.
      *
-     * @return A {@link Method} that represents the get method for this attribute.
-     * @throws IllegalStateException If no getter method could be found. Which could mean the JavaBeans naming convention was not used.
+     * @return A {@link Method} that represents the get method for this
+     * attribute.
+     * @throws IllegalStateException If no getter method could be found. Which
+     * could mean the JavaBeans naming convention was not used.
      */
     public Method getGetterMethod() {
         final List<String> expectedNames;
@@ -131,8 +131,10 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
     /**
      * Try to find a setter method for this attribute.
      *
-     * @return A {@link Method} representing the setter method for this attribute or {@code null} if no setter was found. When no setter is found it could mean that this attribute is read only, or
-     * that the JavaBeans naming convention was not followed.
+     * @return A {@link Method} representing the setter method for this
+     * attribute or {@code null} if no setter was found. When no setter is found
+     * it could mean that this attribute is read only, or that the JavaBeans
+     * naming convention was not followed.
      */
     public Method getSetterMethod() {
         final Class declaringJavaType = getDeclaringTypeDescriptor().getJavaType();
@@ -141,13 +143,13 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
         final Set<Class> eligbleTypes = new LinkedHashSet<>();
         final Class javaType = getJavaTypeDescriptor().getJavaType();
         eligbleTypes.add(javaType);
-        if(PRIMITIVE_TO_BOXED.containsKey(javaType)){
+        if (PRIMITIVE_TO_BOXED.containsKey(javaType)) {
             eligbleTypes.add(PRIMITIVE_TO_BOXED.get(javaType));
         }
-        if(BOXED_TO_PRIMITIVE.containsKey(javaType)){
+        if (BOXED_TO_PRIMITIVE.containsKey(javaType)) {
             eligbleTypes.add(BOXED_TO_PRIMITIVE.get(javaType));
         }
-        for(Class eligibleType : eligbleTypes){
+        for (Class eligibleType : eligbleTypes) {
             for (String expectedName : expectedNames) {
                 try {
                     return declaringJavaType.getMethod(expectedName, eligibleType);
@@ -173,9 +175,11 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
     }
 
     /**
-     * Check if this attribute is read only. Read-only meaning there is no way to set the value of this attribute.
+     * Check if this attribute is read only. Read-only meaning there is no way
+     * to set the value of this attribute.
      *
-     * @return {@code true} if this attribute is read only, {@code false} otherwise.
+     * @return {@code true} if this attribute is read only, {@code false}
+     * otherwise.
      */
     public boolean isReadOnly() {
         return getSetterMethod() == null;
@@ -184,7 +188,8 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
     /**
      * Check if this attribute is a collection.
      *
-     * @return {@code true} if this attribute is a collection, {@code false} otherwise.
+     * @return {@code true} if this attribute is a collection, {@code false}
+     * otherwise.
      */
     public boolean isCollection() {
         return Map.class.isAssignableFrom(getJavaType())
@@ -194,7 +199,8 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
     /**
      * Check if the attribute is part of an association with another attribute.
      *
-     * @return {@code true} if this attribute is part of an association, {@code false} otherwise.
+     * @return {@code true} if this attribute is part of an association,
+     * {@code false} otherwise.
      */
     public boolean isAssociation() {
         for (TypeDescriptor typeDescriptor : TypeDescriptor.getAll()) {
@@ -206,9 +212,12 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
     }
 
     /**
-     * Gets the super attribute for this attribute. A super attribute is an attribute with the same name, declared on a super class of {@code this} declaring type.
+     * Gets the super attribute for this attribute. A super attribute is an
+     * attribute with the same name, declared on a super class of {@code this}
+     * declaring type.
      *
-     * @return the super attribute for this attribute if existent. Otherwise {@code null}.
+     * @return the super attribute for this attribute if existent. Otherwise
+     * {@code null}.
      */
     public AttributeDescriptor getSuper() {
         TypeDescriptor aSuper = getDeclaringTypeDescriptor().getSuper();
@@ -221,10 +230,10 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
 
     private final LazyValue<AssociationDescriptor> valueAssociationDesciptor = new LazyValue<>(() -> {
         return this.createAssociation(AssociationTypeES.VALUE);
-    }),
-            keyAssociationDesciptor = new LazyValue<>(() -> {
-                return this.createAssociation(AssociationTypeES.KEY);
-            });
+    });
+    private final LazyValue<AssociationDescriptor> keyAssociationDesciptor = new LazyValue<>(() -> {
+        return this.createAssociation(AssociationTypeES.KEY);
+    });
 
     public final AssociationDescriptor getAssociation(AssociationTypeES associationType) {
         switch (associationType) {
@@ -241,15 +250,22 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
      * Get the association this attribute has with another attribute.
      *
      * @param associationType The type of association you want to get.
-     * @return An {@link AssociationDescriptor} describing the association of this attribute with another. or {@code null} if the persistence type of the attribute is Basic. Or {@code null} if the
-     * {@code associationType} is {@code KEY} but {@code this} is not an instance of {@link MapAttributeDescriptor}.
-     * @throws IllegalStateException If the owning side of a bidirectional association could not be found.
+     * @return An {@link AssociationDescriptor} describing the association of
+     * this attribute with another. or {@code null} if the persistence type of
+     * the attribute is Basic. Or {@code null} if the {@code associationType} is
+     * {@code KEY} but {@code this} is not an instance of
+     * {@link MapAttributeDescriptor}.
+     * @throws IllegalStateException If the owning side of a bidirectional
+     * association could not be found.
      */
     private AssociationDescriptor createAssociation(AssociationTypeES associationType) {
         /* references sub-types. Implementations could be spread over sub-types,
          but then those would have to refer to one another
          e.g. OneToMany <--> ManyToOne*/
         final Attribute.PersistentAttributeType persistentAttributeType = getPersistentAttributeType();
+        if(getJavaType()==String.class){
+            System.out.println("String");
+        }
         switch (associationType) {
             case KEY: {
                 if (this instanceof MapAttributeDescriptor) {
@@ -290,7 +306,8 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
                     }
                     case EMBEDDED: {
                         //Expecting a single value attribute.
-                        return new AssociationDescriptor(this, persistentAttributeType, true, TypeDescriptor.getInstance(getJavaType(), EmbeddableTypeDescriptor.class), null, null);
+                        final EmbeddableTypeDescriptor embeddableTypeDescriptor = TypeDescriptor.getInstance(getJavaType(), EmbeddableTypeDescriptor.class);
+                        return new AssociationDescriptor(this, persistentAttributeType, true, embeddableTypeDescriptor, null, null);
                     }
                     case MANY_TO_MANY: {
                         final ManyToMany manyToMany = getAnnotation(ManyToMany.class);
@@ -411,7 +428,8 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
     /**
      * Get the name of the getter method for this attribute.
      *
-     * @return the name of the getter method or {@code null} if the getter method was not found.
+     * @return the name of the getter method or {@code null} if the getter
+     * method was not found.
      */
     public String getGetterMethodName() {
         final Method getterMethod = getGetterMethod();
@@ -421,7 +439,8 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
     /**
      * Get the name of the setter method for this attribute if it exists.
      *
-     * @return the name of the setter method or {@code null} if the attribute is read only.
+     * @return the name of the setter method or {@code null} if the attribute is
+     * read only.
      */
     public String getSetterMethodName() {
         final Method setterMethod = getSetterMethod();
@@ -464,7 +483,8 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
     /**
      * Try to get the {@link Field} for this attribute.
      *
-     * @return The {@link Field} for this attribute, or {@code null} if the field could not be found.
+     * @return The {@link Field} for this attribute, or {@code null} if the
+     * field could not be found.
      */
     public Field getField() {
         for (Class clazz = getDeclaringTypeDescriptor().getJavaType(); clazz != Object.class; clazz = clazz.getSuperclass()) {
@@ -481,7 +501,8 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
     /**
      * @param <T> A type that extends {@link Annotation}.
      * @param annotationClass The annotation to look for.
-     * @return the first attribute found which is annotated with {@code annotationClass}
+     * @return the first attribute found which is annotated with
+     * {@code annotationClass}
      */
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
         AnnotatedElement[] elements = new AnnotatedElement[]{getField(), getGetterMethod()};
@@ -495,7 +516,8 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
     }
 
     /**
-     * @return the persistent attribute type based on the annotation for this attribute.
+     * @return the persistent attribute type based on the annotation for this
+     * attribute.
      */
     public final Attribute.PersistentAttributeType getPersistentAttributeType() {
         for (Map.Entry<Class<? extends Annotation>, Attribute.PersistentAttributeType> entry : ANNOTATION_TO_PERSISTENT_ATTRIBUTE_TYPE.entrySet()) {
@@ -511,7 +533,8 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
     public abstract Class< ? extends AttributeESImpl> getImplementationClass();
 
     /**
-     * @return the {@code this}' generic java-type, obtained from {@code this} field or getter
+     * @return the {@code this}' generic java-type, obtained from {@code this}
+     * field or getter
      */
     public final Type getGenericJavaType() {
         final Field field = getField();
@@ -533,14 +556,14 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
             final String retval
                     = "new " + AssociationESImpl.class.getCanonicalName() + "<>("
                     + String.join(
-                        ", ",
-                        a.getOrdinal().toString(),
-                        a.getSourceAttribute().getOrdinal().toString(),
-                        a.getTargetTypeDescriptor().getOrdinal().toString(),
-                        inverse == null ? "null" : inverse.getOrdinal().toString(),
-                        a.isOwner().toString(),
-                        AssociationTypeES.class.getCanonicalName() + "." + associationType.name(),
-                        Attribute.PersistentAttributeType.class.getCanonicalName() + "." + a.getPersistentAttributeType().name()
+                            ", ",
+                            a.getOrdinal().toString(),
+                            a.getSourceAttribute().getOrdinal().toString(),
+                            a.getTargetTypeDescriptor().getOrdinal().toString(),
+                            inverse == null ? "null" : inverse.getOrdinal().toString(),
+                            a.isOwner().toString(),
+                            AssociationTypeES.class.getCanonicalName() + "." + associationType.name(),
+                            Attribute.PersistentAttributeType.class.getCanonicalName() + "." + a.getPersistentAttributeType().name()
                     )
                     + ")";
             return retval;

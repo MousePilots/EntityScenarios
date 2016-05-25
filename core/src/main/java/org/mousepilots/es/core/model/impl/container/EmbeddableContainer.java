@@ -5,21 +5,19 @@
  */
 package org.mousepilots.es.core.model.impl.container;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Objects;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.EmbeddableTypeES;
 import org.mousepilots.es.core.model.HasValue;
-import org.mousepilots.es.core.model.IdentifiableTypeES;
+import org.mousepilots.es.core.model.MapAttributeES;
 import org.mousepilots.es.core.model.impl.EmbeddableTypeESImpl;
 import org.mousepilots.es.core.model.impl.MapAttributeESImpl;
 import org.mousepilots.es.core.model.impl.TypeESImpl;
 import org.mousepilots.es.core.scenario.ServerContext;
 import org.mousepilots.es.core.util.StringUtils;
-import org.mousepilots.es.core.model.EntityManagerES;
+import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.util.GwtIncompatible;
 
 /**
@@ -37,13 +35,16 @@ public final class EmbeddableContainer<E> extends Container<E,EmbeddableTypeES<E
         super();
     }
 
+    protected EmbeddableContainer(Proxy<E> embeddable, AttributeES< ? super E,?> attribute){
+        this((EmbeddableTypeES<E>)embeddable.__getProxyAspect().getType(),attribute,embeddable.__subject());
+    }
 
-    public EmbeddableContainer(EmbeddableTypeES<E> embeddableType, AttributeES< ? super E,?> attribute, E embeddable) {
+    protected EmbeddableContainer(EmbeddableTypeES<E> embeddableType, AttributeES< ? super E,?> attribute, E embeddable) {
         super(embeddableType,attribute);
         EmbeddableTypeESImpl t = (EmbeddableTypeESImpl) embeddableType;
         this.container = t.wrap(embeddable);
     }
-    
+
     public E getEmbeddable(){
         return container.getValue();
     }

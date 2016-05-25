@@ -46,7 +46,9 @@ public final class MapAttributeESImpl<T, K, V> extends PluralAttributeESImpl<T, 
             AssociationES keyAssociation) {
         super(name, ordinal, typeOrdinal, declaringTypeOrdinal, superOrdinal, subOrdinals, persistentAttributeType, javaMember, valueAssociation, elementTypeOrdinal);
         this.keyTypeOrdinal = keyTypeOrdinal;
-        this.associations.put(AssociationTypeES.KEY, keyAssociation);
+        if(keyAssociation!=null){
+            this.associations.put(AssociationTypeES.KEY, keyAssociation);
+        }
     }
 
     @Override
