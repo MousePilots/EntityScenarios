@@ -139,7 +139,7 @@ public class EntityManagerImpl implements EntityManagerES{
         }
     }
     
-    public void manageAll(Collection<Proxy<?>> proxies){
+    public void manageAll(Collection<Proxy> proxies){
         for(Proxy proxy : proxies){
             manage(proxy);
         }

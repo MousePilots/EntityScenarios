@@ -47,10 +47,10 @@ public class Containerizer {
         }
 
         private Void visitJavaUtilCollection(PluralAttributeES a, Proxy parent) {
-            final Collection value = (Collection) a.getJavaMember().get(parent);
+            final Collection collection = (Collection) a.getJavaMember().get(parent);
             final TypeES elementType = a.getElementType();
-            if (value != null && !value.isEmpty() && elementType instanceof ManagedTypeES) {
-                final Collection<Proxy> children = value;
+            if (collection != null && !collection.isEmpty() && elementType instanceof ManagedTypeES) {
+                final Collection<Proxy> children = collection;
                 if (elementType instanceof EmbeddableTypeES) {
                     final Container container = createContainer(parent, a);
                     for (Proxy child : children) {

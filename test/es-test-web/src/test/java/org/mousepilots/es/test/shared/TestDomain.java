@@ -5,8 +5,10 @@
  */
 package org.mousepilots.es.test.shared;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -19,12 +21,12 @@ import javax.persistence.criteria.Root;
 import org.junit.Assert;
 import org.mousepilots.es.core.command.CRUD;
 import org.mousepilots.es.core.command.Command;
+import org.mousepilots.es.core.command.CreateEntity;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.AttributeVisitor;
 import org.mousepilots.es.core.model.BasicTypeES;
 import org.mousepilots.es.core.model.CollectionAttributeES;
 import org.mousepilots.es.core.model.EmbeddableTypeES;
-import org.mousepilots.es.core.model.EntityManagerES;
 import org.mousepilots.es.core.model.EntityTypeES;
 import org.mousepilots.es.core.model.ListAttributeES;
 import org.mousepilots.es.core.model.ManagedTypeES;
@@ -40,8 +42,10 @@ import org.mousepilots.es.core.model.impl.ManagedTypeESImpl;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.scenario.Context;
 import org.mousepilots.es.core.scenario.priviliges.Priviliges;
+import org.mousepilots.es.core.util.Maps;
 import org.mousepilots.es.server.scenario.privilige.InMemoryPriviligeService;
 import org.mousepilots.es.server.scenario.privilige.ProxyCreator;
+import org.mousepilots.es.test.domain.BaseEntity;
 import org.mousepilots.es.test.domain.Gender;
 import org.mousepilots.es.test.domain.embeddables.Address;
 import org.mousepilots.es.test.domain.embeddables.Address_ES;
@@ -76,6 +80,10 @@ import org.mousepilots.es.test.server.domain.mmx.JPA;
  * @author AP34WV
  */
 public class TestDomain extends AbstractTest {
+    
+    private Map<ManagedTypeES,Set> createdIds = new HashMap<>();
+    
+    private static final String UPDATED="updated";
     
     private static boolean isNullOrEmpty(Collection c){
         return c==null || c.isEmpty();
@@ -134,8 +142,45 @@ public class TestDomain extends AbstractTest {
 
     private final ScenarioServiceBean scenarioServiceBean = new ScenarioServiceBean();
 
+    private final String scenario = "testScenario";
+    
+    private final Priviliges priviliges;
+    
     public TestDomain() {
         super(TestDomain.class);
+        final InMemoryPriviligeService priviligeService = InMemoryPriviligeService.getInstance();
+        final Set<ManagedTypeES<?>> managedTypes = (Set) getMetaModel().getManagedTypes();
+        for(ManagedTypeES type : managedTypes){
+            priviligeService.inScenario(scenario).grant(CRUD.READ).on(type, type.getAttributes()).commit();
+            priviligeService.inScenario(scenario).grant(CRUD.CREATE).on(type, type.getAttributes()).commit();
+            priviligeService.inScenario(scenario).grant(CRUD.UPDATE).on(type, type.getAttributes()).commit();
+            priviligeService.inScenario(scenario).grant(CRUD.DELETE).on(type).commit();
+        }
+        
+        priviliges = priviligeService.getPriviliges(scenario, new Context(){
+            @Override
+            public String getUserName() {
+                return "bill"; //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public boolean isUserInRole(String role) {
+                return false;
+            }
+
+            @Override
+            public Object getEntityManager() {
+                return null;
+            }
+            
+        });
+    }
+    
+    private <T> List<T> selectAll(EntityManager entityManager, Class<T> entity){
+        final CriteriaQuery<T> cq = entityManager.getCriteriaBuilder().createQuery(entity);
+        final Root<T> from = cq.from(entity);
+        cq.select(from);
+        return entityManager.createQuery(cq).getResultList();
     }
 
     private final Set<Pair> visitedByTypeValueComparator = new HashSet();
@@ -370,6 +415,10 @@ public class TestDomain extends AbstractTest {
             Pair pair = new Pair(proxy,subject);
             final Boolean equal = (Boolean) type.accept(typeValueComparator, pair);
             assertTrue(proxy + " and " + subject + " are not equal w.r.t. their basic-typed singular attributes", equal);
+            if(command instanceof CreateEntity){
+                CreateEntity createEntity = (CreateEntity) command;
+                Maps.getOrCreate(this.createdIds, createEntity.getType(), HashSet::new).add(createEntity.getServerId());
+            }
         }
         //this.entityCreations.addAll(commands.stream().filter(c -> c instanceof CreateEntity).collect(Collectors.toList()));
     }
@@ -384,30 +433,7 @@ public class TestDomain extends AbstractTest {
     
     private void doTestUpdates(){
         visitedByTypeValueComparator.clear();
-        final InMemoryPriviligeService priviligeService = InMemoryPriviligeService.getInstance();
-        final Set<ManagedTypeES<?>> managedTypes = (Set) getMetaModel().getManagedTypes();
-        final String scenario = "doTestUpdates";
-        for(ManagedTypeES type : managedTypes){
-            priviligeService.inScenario(scenario).grant(CRUD.READ).on(type, type.getAttributes()).commit();
-        }
         EntityManager em = JPA.createEntityManager();
-        final Priviliges priviliges = priviligeService.getPriviliges(scenario, new Context(){
-            @Override
-            public String getUserName() {
-                return "bill"; //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public boolean isUserInRole(String role) {
-                return false;
-            }
-
-            @Override
-            public Object getEntityManager() {
-                return null;
-            }
-            
-        });
         ProxyCreator proxyCreator = new ProxyCreator(priviliges);
         Employee john = findUser(em, Employee.class, "john");
         Manager  bill = findUser(em, Manager.class, "bill");
@@ -442,14 +468,58 @@ public class TestDomain extends AbstractTest {
         Assert.assertTrue(bill.getEmailAddresses()==null || bill.getEmailAddresses().isEmpty());
         Assert.assertTrue(bill.getAccount().getDescription().equals("updated description"));
         Assert.assertTrue(bill.getAddresses().stream().anyMatch(a -> updated_country.equals(a.getCountry())));
+    }
+    
+    private void doTestBasicMapUpdates(){
+        for(int round=0; round<1; round++){
+            final EntityManager em = JPA.createEntityManager();
+            final EntityManagerImpl entityManager = createEntityManager();
+            final List<BaseEntity> selections = new ArrayList<>();
+            for(Class<? extends BaseEntity> c: Arrays.asList(BasicMap.class,EmbeddableMap.class,EntityMap.class)){
+                selections.addAll(selectAll(em, c));
+            }
+            ProxyCreator proxyCreator = new ProxyCreator(priviliges);
+            final Collection proxies = proxyCreator.getProxiesFor(selections);
+            em.close();
+            entityManager.manageAll(proxies);
 
-        
-        
+            final String updated_value = "updated_value";
+            final String updated_zipcode = "updated_zipcode";
+            final String updated_number = "updated_number";
+            
+            switch(round){
+                case 0 : {
+                    for(BasicMap basicMap : entityManager.select(BasicMap_ES.__TYPE, null, null)){
+                        for(String key : new HashSet<>(basicMap.getBasicBasic().keySet()))
+                        {
+                            basicMap.getBasicBasic().put(key, updated_value);
+                        }
+                        basicMap.getBasicEmbeddable().values().forEach(a -> a.setZipCode(updated_zipcode));
+                        basicMap.getBasicEntity().values().forEach((Phone p) -> p.setPhoneNumber(updated_number));
+                        final List<Command> commands = entityManager.getTransaction().getCommands();
+                        scenarioServiceBean.submit(commands);
+                    }
+                    break;
+                }
+                case 1 : {
+                    for(BasicMap basicMap : entityManager.select(BasicMap_ES.__TYPE, null, null)){
+                        assertTrue(basicMap.getBasicBasic().values().stream().allMatch(s -> updated_value.equals(s)));
+                        assertTrue(basicMap.getBasicEmbeddable().values().stream().allMatch(a -> updated_zipcode.equals(a.getZipCode())));
+                        assertTrue(basicMap.getBasicEntity().values().stream().allMatch(p -> updated_number.equals(p.getPhoneNumber())));
+                    }
+                    break;
+                    
+                }
+            }
+            
+        }
     }
     
     public void testAll(){
         doTestCreates();
         doTestUpdates();
+        doTestBasicMapUpdates();
+        
     }
 
 }

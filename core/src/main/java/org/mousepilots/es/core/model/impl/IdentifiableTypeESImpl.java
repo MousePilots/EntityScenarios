@@ -1,6 +1,7 @@
 package org.mousepilots.es.core.model.impl;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.persistence.metamodel.SingularAttribute;
@@ -10,6 +11,7 @@ import org.mousepilots.es.core.model.IdentifiableTypeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.model.proxy.Proxy;
+import org.mousepilots.es.core.util.IdentifiableTypeUtils;
 
 /**
  * @author Nicky Ernste
@@ -160,10 +162,11 @@ public abstract class IdentifiableTypeESImpl<T> extends ManagedTypeESImpl<T>
     public final boolean hasVersionAttribute() {
         return versionAttributeOrdinal!=null;
     }
-    
-    
-    
-    
-    
+
+    @Override
+    public final int hash(Proxy<T> proxy) {
+        final Object id = IdentifiableTypeUtils.getId(this, proxy.__subject());
+        return Objects.hash(proxy.getClass(),id);
+    }
     
 }

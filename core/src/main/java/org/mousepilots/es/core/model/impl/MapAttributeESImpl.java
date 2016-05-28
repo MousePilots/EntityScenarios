@@ -26,7 +26,7 @@ public final class MapAttributeESImpl<T, K, V> extends PluralAttributeESImpl<T, 
 
     @Override
     protected Map<K, V> createObserved(Proxy<T> proxy, Map<K, V> value) {
-        ObservableMap<K, V> retval = new ObservableMap<>();
+        ObservableMap<K, V> retval = new ObservableMap<>(value);
         retval.addListener(new MapObserverImpl(proxy, this));
         return retval;
     }

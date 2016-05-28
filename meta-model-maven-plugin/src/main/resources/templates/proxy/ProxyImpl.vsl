@@ -1,6 +1,8 @@
 ## Velocity Template.
 package ${td.getPackageName()};
 
+import org.mousepilots.es.core.model.impl.ManagedTypeESImpl;
+
 /**
  * Client-side {@link org.mousepilots.es.core.model.proxy.Proxy} for {@link ${td.getJavaTypeCanonicalName()}}
  */
@@ -24,4 +26,16 @@ ${ad.getProxySetterDeclaration($td)}
 
 #end
 #end
+
+    @Override
+    public boolean equals(Object obj) {
+        return this==obj;
+    }
+
+    @Override
+    public int hashCode(){
+        ManagedTypeESImpl type = (ManagedTypeESImpl) ${td.getMetaModelExtensionClassCanonicalName()}.${td.getDeclaredVariableName()};
+        return type.hash(this);
+    }
+
 }

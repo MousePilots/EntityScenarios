@@ -8,10 +8,10 @@ package org.mousepilots.es.test.shared;
 import java.util.Set;
 import java.util.logging.Logger;
 import junit.framework.TestCase;
-import org.mousepilots.es.core.model.EntityManagerES;
 import org.mousepilots.es.core.model.EntityManagerFactory;
 import org.mousepilots.es.core.model.impl.AbstractMetamodelES;
 import org.mousepilots.es.core.model.impl.EntityManagerFactoryImpl;
+import org.mousepilots.es.core.model.impl.EntityManagerImpl;
 import org.mousepilots.es.core.model.impl.ManagedTypeESImpl;
 import org.mousepilots.es.test.domain.MetamodelImpl;
 
@@ -31,8 +31,8 @@ public abstract class AbstractTest extends TestCase{
     
     private final EntityManagerFactory entityManagerFactory = new EntityManagerFactoryImpl();
     
-    protected final EntityManagerES createEntityManager(){
-        return entityManagerFactory.createEntityManager();
+    protected final EntityManagerImpl createEntityManager(){
+        return (EntityManagerImpl) entityManagerFactory.createEntityManager();
     }
     
     protected final Logger getLogger() {

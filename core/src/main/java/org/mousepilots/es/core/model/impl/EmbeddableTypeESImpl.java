@@ -1,10 +1,13 @@
 package org.mousepilots.es.core.model.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
+import java.util.SortedSet;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.EmbeddableTypeES;
 import org.mousepilots.es.core.model.HasValue;
+import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.TypeVisitor;
 import org.mousepilots.es.core.model.proxy.Proxy;
 
@@ -57,4 +60,20 @@ public class EmbeddableTypeESImpl<T> extends ManagedTypeESImpl<T> implements Emb
     public final <R, A> R accept(TypeVisitor<R, A> v, A arg) {
         return v.visit(this, arg);
     }
+
+    @Override
+    public final int hash(Proxy<T> proxy) {
+        final SortedSet<SingularAttributeES<? super T, ?>> fullyAccessibleSingularBasicAttributes = getFullyAccessibleSingularBasicAttributes();
+        final Object[] hashInputs = new Object[fullyAccessibleSingularBasicAttributes.size()+1];
+        hashInputs[0] = proxy.getClass();
+        int i=1;
+        final T subject = proxy.__subject();
+        for(SingularAttributeES<? super T,?> a: fullyAccessibleSingularBasicAttributes){
+            hashInputs[i++] = a.getJavaMember().get(subject);
+        }
+        return Arrays.hashCode(hashInputs);
+    }
+    
+    
+    
 }

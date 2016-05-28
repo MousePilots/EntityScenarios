@@ -1,10 +1,14 @@
 package org.mousepilots.es.core.model.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -13,6 +17,7 @@ import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import org.mousepilots.es.core.model.AttributeES;
 import org.mousepilots.es.core.model.AttributeVisitor;
+import org.mousepilots.es.core.model.BasicTypeES;
 import org.mousepilots.es.core.model.CollectionAttributeES;
 import org.mousepilots.es.core.model.HasValue;
 import org.mousepilots.es.core.model.ListAttributeES;
@@ -24,6 +29,7 @@ import org.mousepilots.es.core.model.SetAttributeES;
 import org.mousepilots.es.core.model.SingularAttributeES;
 import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.util.CollectionUtils;
+import org.mousepilots.es.core.util.StringUtils;
 
 /**
  * @author Jurjen van Geenen
@@ -45,6 +51,7 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T> implements Mana
     private final SortedSet<AttributeES<? super T, ?>> attributes = new TreeSet<>();
     private final SortedSet<AttributeES<T, ?>> declaredAttributes = new TreeSet<>();
     private final SortedSet<SingularAttributeES<? super T, ?>> singularAttributes = new TreeSet<>();
+    private final SortedSet<SingularAttributeES<? super T, ?>> fullyAccessibleSingularBasicAttributes = new TreeSet<>();
     private final SortedSet<SingularAttributeES<T, ?>> declaredSingularAttributes = new TreeSet<>();
     private final SortedSet<CollectionAttributeES<? super T, ?>> collectionAttributes = new TreeSet<>();
     private final SortedSet<CollectionAttributeES<T, ?>> declaredCollectionAttributes = new TreeSet<>();
@@ -85,6 +92,9 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T> implements Mana
         @Override
         public Void visit(SingularAttributeES a, Void arg) {
             registerDefault(a, declaredSingularAttributes, singularAttributes);
+            if(a.getType() instanceof BasicTypeES && !a.isReadOnly()){
+                CollectionUtils.ensureAdded(fullyAccessibleSingularBasicAttributes, a);
+            }
             return null;
         }
 
@@ -222,6 +232,10 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T> implements Mana
         return (SortedSet) Collections.unmodifiableSortedSet(singularAttributes);
     }
 
+    public final SortedSet<SingularAttributeES<? super T, ?>> getFullyAccessibleSingularBasicAttributes() {
+        return Collections.unmodifiableSortedSet(fullyAccessibleSingularBasicAttributes);
+    }
+    
     @Override
     public final SortedSet<SingularAttribute<T, ?>> getDeclaredSingularAttributes() {
         return (SortedSet) Collections.unmodifiableSortedSet(this.declaredSingularAttributes);
@@ -432,5 +446,7 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T> implements Mana
     public final Class getMetamodelClass() {
         return metamodelClass;
     }
+    
+    public abstract int hash(Proxy<T> proxy);
 
 }
