@@ -108,31 +108,31 @@ public class ProxyCreator {
         }
 
         @Override
-        public Object visit(SingularAttributeES a, Object arg) {
-            return serialize(arg);
+        public Object visit(SingularAttributeES a, Object attributeValue) {
+            return serialize(attributeValue);
         }
 
         @Override
-        public Object visit(CollectionAttributeES a, Object arg) {
-            return visitJavaUtilCollection(a, (Collection) arg);
+        public Object visit(CollectionAttributeES a, Object attributeValue) {
+            return visitJavaUtilCollection(a, (Collection) attributeValue);
         }
 
         @Override
-        public Object visit(ListAttributeES a, Object arg) {
-            return visitJavaUtilCollection(a, (List) arg);
+        public Object visit(ListAttributeES a, Object attributeValue) {
+            return visitJavaUtilCollection(a, (List) attributeValue);
         }
 
         @Override
-        public Object visit(SetAttributeES a, Object arg) {
-            return visitJavaUtilCollection(a, (Set) arg);
+        public Object visit(SetAttributeES a, Object attributeValue) {
+            return visitJavaUtilCollection(a, (Set) attributeValue);
         }
 
         @Override
-        public Object visit(MapAttributeES a, Object arg) {
-            if (arg == null) {
-                return arg;
+        public Object visit(MapAttributeES a, Object attributeValue) {
+            if (attributeValue == null) {
+                return attributeValue;
             } else {
-                final Map map = (Map) arg, retval = a.createEmpty();
+                final Map map = (Map) attributeValue, retval = a.createEmpty();
                 final Set<Entry> entrySet = map.entrySet();
                 for (Entry entry : entrySet) {
                     final Object key   = serialize(entry.getKey());

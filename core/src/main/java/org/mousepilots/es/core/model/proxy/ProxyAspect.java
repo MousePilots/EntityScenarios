@@ -21,7 +21,7 @@ import org.mousepilots.es.core.util.Framework;
  * @param <T> the java-type {@code this} of the managed instance {@code this} is a proxy-aspect for
  */
 @Framework
-public final class ProxyAspect<T>{
+public final class ProxyAspect<T> {
 
     private int typeOrdinal;
 
@@ -106,7 +106,7 @@ public final class ProxyAspect<T>{
     }
 
     public void setEntityManager(EntityManagerImpl entityManager) {
-        if (this.entityManager == null || entityManager==null) {
+        if (this.entityManager == null || entityManager == null) {
             this.entityManager = entityManager;
         } else {
             throw new IllegalStateException("this' managed type instance is allready managed by " + this.entityManager);
@@ -121,7 +121,7 @@ public final class ProxyAspect<T>{
         this.managedMode = managedMode;
     }
 
-    public void doUnmanaged(Runnable r){
+    public void doUnmanaged(Runnable r) {
         boolean wasManagedMode = isManagedMode();
         setManagedMode(false);
         r.run();

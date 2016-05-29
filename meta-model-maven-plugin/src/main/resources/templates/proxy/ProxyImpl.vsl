@@ -37,5 +37,10 @@ ${ad.getProxySetterDeclaration($td)}
         ManagedTypeESImpl type = (ManagedTypeESImpl) ${td.getMetaModelExtensionClassCanonicalName()}.${td.getDeclaredVariableName()};
         return type.hash(this);
     }
+    @Override
+    public String toString(){
+        ManagedTypeESImpl type = (ManagedTypeESImpl) ${td.getMetaModelExtensionClassCanonicalName()}.${td.getDeclaredVariableName()};
+        return type.toString(this);
+    }
 
 }

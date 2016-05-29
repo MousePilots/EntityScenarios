@@ -27,8 +27,8 @@ import org.mousepilots.es.core.model.proxy.ProxyAspect;
 import org.mousepilots.es.core.util.Framework;
 
 /**
- * Sets  {@link ProxyAspect#container} on {@link Proxy}-instances of existing embeddables. This enables
- * their remote update.
+ * Sets {@link ProxyAspect#container} on {@link Proxy}-instances of existing embeddables. This enables their remote update.
+ *
  * @author AP34WV
  */
 @Framework
@@ -39,7 +39,7 @@ public class Containerizer {
     private final AttributeVisitor<Void, Proxy> attributeValueContainerSetter = new AttributeVisitor<Void, Proxy>() {
 
         private Container createContainer(Proxy parent, AttributeES a) {
-            if(parent.__getProxyAspect().getType() instanceof EmbeddableTypeES){
+            if (parent.__getProxyAspect().getType() instanceof EmbeddableTypeES) {
                 return new EmbeddableContainer(parent, a);
             } else {
                 return new IdentifiableContainer(parent, a);
@@ -54,7 +54,10 @@ public class Containerizer {
                 if (elementType instanceof EmbeddableTypeES) {
                     final Container container = createContainer(parent, a);
                     for (Proxy child : children) {
-                        child.__getProxyAspect().setContainer(container);
+                        final ProxyAspect aspect = child.__getProxyAspect();
+                        if (aspect.getContainer() == null) {
+                            aspect.setContainer(container);
+                        }
                     }
                 }
                 containerize(children);
@@ -69,9 +72,13 @@ public class Containerizer {
             final TypeES type = a.getType();
             if (value != null && type instanceof ManagedTypeES) {
                 final Proxy child = (Proxy) value;
-                if(type instanceof EmbeddableTypeES){
-                    final Container container = createContainer(parent, a);
-                    child.__getProxyAspect().setContainer(container);
+                if (type instanceof EmbeddableTypeES) {
+                    final ProxyAspect aspect = child.__getProxyAspect();
+                    if (aspect.getContainer() == null) {
+                        final Container container = createContainer(parent, a);
+                        aspect.setContainer(container);
+                    }
+
                 }
                 containerize(child);
 
@@ -97,29 +104,35 @@ public class Containerizer {
         @Override
         public Void visit(MapAttributeES a, Proxy parent) {
             final Map map = (Map) a.getJavaMember().get(parent);
-            if (map!=null && !map.isEmpty()) {
-                
+            if (map != null && !map.isEmpty()) {
+
                 //handle keys
                 final TypeES keyType = a.getKeyType();
                 if (keyType instanceof ManagedTypeES) {
                     final Set<Proxy> keys = (Set<Proxy>) map.keySet();
-                    if(keyType instanceof EmbeddableTypeES){
+                    if (keyType instanceof EmbeddableTypeES) {
                         final Container keyContainer = createContainer(parent, a);
                         for (Proxy key : keys) {
-                            key.__getProxyAspect().setContainer(keyContainer);
+                            final ProxyAspect aspect = key.__getProxyAspect();
+                            if(aspect.getContainer()==null){
+                                aspect.setContainer(keyContainer);
+                            }
                         }
                     }
                     containerize(keys);
                 }
-                
+
                 //handle values
                 final TypeES valueType = a.getElementType();
                 if (valueType instanceof ManagedTypeES) {
-                    if(valueType instanceof EmbeddableTypeES){
+                    if (valueType instanceof EmbeddableTypeES) {
                         for (Map.Entry<Object, Proxy> entry : (Set<Map.Entry>) map.entrySet()) {
-                            final Container valueContainer = createContainer(parent, a);
-                            valueContainer.setMapKey(entry.getKey());
-                            entry.getValue().__getProxyAspect().setContainer(valueContainer);
+                            final ProxyAspect proxyAspect = entry.getValue().__getProxyAspect();
+                            if(proxyAspect.getContainer()==null){
+                                final Container valueContainer = createContainer(parent, a);
+                                valueContainer.setMapKey(entry.getKey());
+                                proxyAspect.setContainer(valueContainer);
+                            }
                         }
                     }
                     containerize(map.values());
@@ -129,13 +142,13 @@ public class Containerizer {
         }
     };
 
-    public <T> void containerize(Proxy<T> proxy) {
-        if (!visited.contains(proxy)) {
-            visited.add(proxy);
-            final ManagedTypeESImpl<T> proxyType = proxy.__getProxyAspect().getType();
+    public <T> void containerize(Proxy<T> parent) {
+        if (!visited.contains(parent)) {
+            visited.add(parent);
+            final ManagedTypeESImpl<T> proxyType = parent.__getProxyAspect().getType();
             final SortedSet<AttributeES<? super T, ?>> attributes = (SortedSet) proxyType.getAttributes();
             for (AttributeES attribute : attributes) {
-                attribute.accept(attributeValueContainerSetter, proxy);
+                attribute.accept(attributeValueContainerSetter, parent);
             }
         }
     }

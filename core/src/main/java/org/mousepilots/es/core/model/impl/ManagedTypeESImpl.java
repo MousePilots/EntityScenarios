@@ -448,5 +448,10 @@ public abstract class ManagedTypeESImpl<T> extends TypeESImpl<T> implements Mana
     }
     
     public abstract int hash(Proxy<T> proxy);
+    
+    public final String toString(Proxy<T> proxy){
+        final T subject = proxy.__subject();
+        return getProxyJavaType().getSimpleName() + "[" + StringUtils.join(this.fullyAccessibleSingularBasicAttributes, a -> a.getName() + "=" + a.getJavaMember().get(subject), ", ") + "]";
+    }
 
 }
