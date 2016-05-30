@@ -21,7 +21,6 @@ import org.mousepilots.es.core.model.TypeES;
 import org.mousepilots.es.core.model.impl.Getter;
 import org.mousepilots.es.core.model.impl.MapAttributeESImpl;
 import org.mousepilots.es.core.model.proxy.Proxy;
-import org.mousepilots.es.core.model.proxy.collection.ObservableMap;
 import org.mousepilots.es.core.scenario.ServerContext;
 import org.mousepilots.es.core.util.GwtIncompatible;
 
@@ -33,7 +32,7 @@ public final class PutToMap<E, K, V> extends UpdateMap<E, K, V, Map<K, V>> {
 
     private transient Map<K, V> putAlls = null;
 
-    private transient Map<K, V> replaced = null;
+    private transient Map<K, V> replaced = new HashMap<>();
 
     private Map<Value<K, K, ?, ?>, Value<V, V, ?, ?>> putAllValues;
 
