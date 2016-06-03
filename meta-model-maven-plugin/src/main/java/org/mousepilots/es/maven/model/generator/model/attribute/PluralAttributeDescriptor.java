@@ -7,6 +7,7 @@ import javax.persistence.metamodel.PluralAttribute.CollectionType;
 import org.mousepilots.es.core.command.attribute.PluralAttributes;
 import org.mousepilots.es.core.util.StringUtils;
 import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
+import org.mousepilots.es.maven.model.generator.plugin.PropertyDefinition;
 
 /**
  * Descriptor of the {@link javax.persistence.metamodel.PluralAttribute} of JPA.
@@ -24,8 +25,8 @@ public abstract class PluralAttributeDescriptor extends AttributeDescriptor{
      * @param ordinal the ordinal of this plural attribute.
      * @param javaType the java type of this plural attribute.
      */
-    public PluralAttributeDescriptor(TypeDescriptor elementType, String name, Class javaType,int ordinal) {
-        super(name, javaType, ordinal);
+    public PluralAttributeDescriptor(TypeDescriptor elementType, String name, Class javaType,int ordinal, PropertyDefinition customDefinition) {
+        super(name, javaType, ordinal,customDefinition);
         this.elementType = elementType;
     }
 

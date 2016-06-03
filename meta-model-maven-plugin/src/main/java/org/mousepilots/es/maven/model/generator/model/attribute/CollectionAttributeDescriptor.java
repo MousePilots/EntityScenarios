@@ -7,6 +7,7 @@ import org.mousepilots.es.core.model.CollectionAttributeES;
 import org.mousepilots.es.core.model.impl.AttributeESImpl;
 import org.mousepilots.es.core.model.impl.CollectionAttributeESImpl;
 import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
+import org.mousepilots.es.maven.model.generator.plugin.PropertyDefinition;
 
 /**
  * Descriptor of the {@link javax.persistence.metamodel.CollectionAttribute} of JPA.
@@ -38,8 +39,8 @@ public class CollectionAttributeDescriptor extends PluralAttributeDescriptor {
      * @param javaType the java type of this collection attribute.
      */
     public CollectionAttributeDescriptor(TypeDescriptor elementType,
-            String name, Class javaType, int ordinal) {
-        super(elementType, name, javaType, ordinal);
+            String name, Class javaType, int ordinal, PropertyDefinition customDefinition) {
+        super(elementType, name, javaType, ordinal, customDefinition);
     }
 
     @Override

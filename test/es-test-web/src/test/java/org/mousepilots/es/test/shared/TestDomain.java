@@ -5,7 +5,6 @@
  */
 package org.mousepilots.es.test.shared;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -43,9 +44,9 @@ import org.mousepilots.es.core.model.proxy.Proxy;
 import org.mousepilots.es.core.scenario.Context;
 import org.mousepilots.es.core.scenario.priviliges.Priviliges;
 import org.mousepilots.es.core.util.Maps;
+import org.mousepilots.es.server.scenario.privilige.EntityGraphCreator;
 import org.mousepilots.es.server.scenario.privilige.InMemoryPriviligeService;
 import org.mousepilots.es.server.scenario.privilige.ProxyCreator;
-import org.mousepilots.es.test.domain.BaseEntity;
 import org.mousepilots.es.test.domain.Gender;
 import org.mousepilots.es.test.domain.embeddables.Address;
 import org.mousepilots.es.test.domain.embeddables.Address_ES;
@@ -80,19 +81,19 @@ import org.mousepilots.es.test.server.domain.mmx.JPA;
  * @author AP34WV
  */
 public class TestDomain extends AbstractTest {
-    
-    private Map<ManagedTypeES,Set> createdIds = new HashMap<>();
-    
-    private static final String UPDATED="updated";
-    
-    private static boolean isNullOrEmpty(Collection c){
-        return c==null || c.isEmpty();
+
+    private Map<ManagedTypeES, Set> createdIds = new HashMap<>();
+
+    private static final String UPDATED = "updated";
+
+    private static boolean isNullOrEmpty(Collection c) {
+        return c == null || c.isEmpty();
     }
-    
-    private static boolean isNullOrEmpty(Map m){
-        return m==null || m.isEmpty();
+
+    private static boolean isNullOrEmpty(Map m) {
+        return m == null || m.isEmpty();
     }
-    
+
     private static class Pair {
 
         private final Object a, b;
@@ -130,34 +131,34 @@ public class TestDomain extends AbstractTest {
             }
             return true;
         }
-        
-        boolean isNullEqual(){
-            return (a==null) == (b==null);
+
+        boolean isNullEqual() {
+            return (a == null) == (b == null);
         }
-        
-        boolean isNull(){
-            return a==null && b==null;
+
+        boolean isNull() {
+            return a == null && b == null;
         }
     }
 
     private final ScenarioServiceBean scenarioServiceBean = new ScenarioServiceBean();
 
     private final String scenario = "testScenario";
-    
+
     private final Priviliges priviliges;
-    
+
     public TestDomain() {
         super(TestDomain.class);
         final InMemoryPriviligeService priviligeService = InMemoryPriviligeService.getInstance();
         final Set<ManagedTypeES<?>> managedTypes = (Set) getMetaModel().getManagedTypes();
-        for(ManagedTypeES type : managedTypes){
+        for (ManagedTypeES type : managedTypes) {
             priviligeService.inScenario(scenario).grant(CRUD.READ).on(type, type.getAttributes()).commit();
             priviligeService.inScenario(scenario).grant(CRUD.CREATE).on(type, type.getAttributes()).commit();
             priviligeService.inScenario(scenario).grant(CRUD.UPDATE).on(type, type.getAttributes()).commit();
             priviligeService.inScenario(scenario).grant(CRUD.DELETE).on(type).commit();
         }
-        
-        priviliges = priviligeService.getPriviliges(scenario, new Context(){
+
+        priviliges = priviligeService.getPriviliges(scenario, new Context() {
             @Override
             public String getUserName() {
                 return "bill"; //To change body of generated methods, choose Tools | Templates.
@@ -172,21 +173,21 @@ public class TestDomain extends AbstractTest {
             public Object getEntityManager() {
                 return null;
             }
-            
+
         });
     }
-    
-    private <T> List<T> selectAll(EntityManager entityManager, Class<T> entity){
+
+    private <T> List<T> selectAll(EntityManager entityManager, Class<T> entity) {
+        //final EntityGraph<T> fetchgraph = new EntityGraphCreator().create(getMetaModel().managedType(entity), priviliges, CRUD.READ, entityManager);
         final CriteriaQuery<T> cq = entityManager.getCriteriaBuilder().createQuery(entity);
         final Root<T> from = cq.from(entity);
         cq.select(from);
-        return entityManager.createQuery(cq).getResultList();
+        return entityManager.createQuery(cq)/*.setHint("javax.persistence.fetchgraph", fetchgraph)*/.getResultList();
     }
 
     private final Set<Pair> visitedByTypeValueComparator = new HashSet();
-    
-    private final TypeVisitor<Boolean, Pair> typeValueComparator = new TypeVisitor<Boolean, Pair>() {
 
+    private final TypeVisitor<Boolean, Pair> typeValueComparator = new TypeVisitor<Boolean, Pair>() {
 
         @Override
         public Boolean visit(BasicTypeES t, Pair p) {
@@ -194,15 +195,15 @@ public class TestDomain extends AbstractTest {
         }
 
         private boolean visitManagedType(ManagedTypeES t, Pair p) {
-            
-            if(!p.isNullEqual()){
+
+            if (!p.isNullEqual()) {
                 return false;
             }
-            
-            if(p.isNull()){
+
+            if (p.isNull()) {
                 return true;
             }
-            
+
             if (visitedByTypeValueComparator.contains(p)) {
                 return true;
             } else {
@@ -246,14 +247,14 @@ public class TestDomain extends AbstractTest {
                 return (Boolean) a.getType().accept(typeValueComparator, p);
             }
         }
-        
-        private boolean visitJavaUtilCollection(PluralAttributeES a, Pair p){
-            final Collection va = (Collection) p.a,vb= (Collection) p.b;
-            if(isNullOrEmpty(va)==isNullOrEmpty(vb)){
-                if(isNullOrEmpty(va) && isNullOrEmpty(vb)){
+
+        private boolean visitJavaUtilCollection(PluralAttributeES a, Pair p) {
+            final Collection va = (Collection) p.a, vb = (Collection) p.b;
+            if (isNullOrEmpty(va) == isNullOrEmpty(vb)) {
+                if (isNullOrEmpty(va) && isNullOrEmpty(vb)) {
                     return true;
                 } else {
-                    return va.size()==vb.size();
+                    return va.size() == vb.size();
                 }
             } else {
                 return false;
@@ -278,18 +279,18 @@ public class TestDomain extends AbstractTest {
         @Override
         public Boolean visit(MapAttributeES a, Pair p) {
             Map va = (Map) p.a, vb = (Map) p.b;
-            if(isNullOrEmpty(va)==isNullOrEmpty(vb)){
-                if(isNullOrEmpty(va) && isNullOrEmpty(vb)){
+            if (isNullOrEmpty(va) == isNullOrEmpty(vb)) {
+                if (isNullOrEmpty(va) && isNullOrEmpty(vb)) {
                     return true;
                 } else {
-                    return va.size()==vb.size();
+                    return va.size() == vb.size();
                 }
             } else {
                 return false;
             }
         }
     };
-    
+
     private Address createAddress(final EntityManagerImpl entityManagerES, int i) {
         final Address a = entityManagerES.create(Address_ES.__TYPE);
         a.setCity("city " + i);
@@ -299,14 +300,13 @@ public class TestDomain extends AbstractTest {
         a.setZipCode("zipcode " + i);
         return a;
     }
-    
+
     private Phone createPhone(final EntityManagerImpl entityManagerES, User owner, int i) {
         final Phone p = entityManagerES.create(Phone_ES.__TYPE);
         p.setPhoneNumber(String.valueOf(i));
         p.setOwner(owner);
         return p;
     }
-    
 
     private void doTestCreates() {
         visitedByTypeValueComparator.clear();
@@ -355,105 +355,101 @@ public class TestDomain extends AbstractTest {
                 bill.setManagerAddress(a);
             }
         }
-        
+
         final BasicMap basicMap = entityManagerES.create(BasicMap_ES.__TYPE);
-        for(int i=0;i<5;i++){
+        for (int i = 0; i < 5; i++) {
             basicMap.getBasicBasic().put("key" + i, "value" + i);
         }
-        for(int i=0;i<5;i++){
+        for (int i = 0; i < 5; i++) {
             Address a = createAddress(entityManagerES, i);
-            basicMap.getBasicEmbeddable().put("key" + i,a);
+            basicMap.getBasicEmbeddable().put("key" + i, a);
         }
-        for(int i=0;i<5;i++){
-            final Phone p = createPhone(entityManagerES, i%2==0 ? john : bill, i);
-            basicMap.getBasicEntity().put("key"+i, p);
+        for (int i = 0; i < 5; i++) {
+            final Phone p = createPhone(entityManagerES, i % 2 == 0 ? john : bill, i);
+            basicMap.getBasicEntity().put("key" + i, p);
         }
-        
+
         final EmbeddableMap embeddableMap = entityManagerES.create(EmbeddableMap_ES.__TYPE);
-        for(int i=0; i<5; i++){
+        for (int i = 0; i < 5; i++) {
             PhoneType phoneType = entityManagerES.create(PhoneType_ES.__TYPE);
             phoneType.setType("type" + i);
             embeddableMap.getEmbeddableBasic().put(phoneType, "value" + i);
         }
-        for(int i=0; i<5; i++){
+        for (int i = 0; i < 5; i++) {
             PhoneType phoneType = entityManagerES.create(PhoneType_ES.__TYPE);
             phoneType.setType("type" + i);
             final Address address = createAddress(entityManagerES, i);
             embeddableMap.getEmbeddableEmbeddable().put(phoneType, address);
         }
 
-        for(int i=0; i<5; i++){
+        for (int i = 0; i < 5; i++) {
             PhoneType phoneType = entityManagerES.create(PhoneType_ES.__TYPE);
             phoneType.setType("type" + i);
             final Phone phone = entityManagerES.create(Phone_ES.__TYPE);
-            phone.setOwner(i%2==0 ? john : bill);
+            phone.setOwner(i % 2 == 0 ? john : bill);
             phone.setPhoneNumber(String.valueOf(i));
             embeddableMap.getEmbeddableEntity().put(phoneType, phone);
         }
-        
+
         final EntityMap entityMap = entityManagerES.create(EntityMap_ES.__TYPE);
-        for(int i=0; i<5; i++){
+        for (int i = 0; i < 5; i++) {
             final Phone phone = entityManagerES.create(Phone_ES.__TYPE);
-            phone.setOwner(i%2==0 ? john : bill);
+            phone.setOwner(i % 2 == 0 ? john : bill);
             phone.setPhoneNumber(String.valueOf(i));
             entityMap.getEntityBasic().put(phone, String.valueOf(i));
-            
+
             PhoneType phoneType = entityManagerES.create(PhoneType_ES.__TYPE);
             phoneType.setType("type" + i);
             entityMap.getEntityEmbeddable().put(phone, createAddress(entityManagerES, i));
             entityMap.getEntityEntity().put(phone, phone);
         }
-        
-        
-        
+
         final List<Command> commands = entityManagerES.getTransaction().getCommands();
         this.scenarioServiceBean.submit(commands);
         for (Command command : commands) {
             final Proxy proxy = command.getProxy();
             final Object subject = command.getRealSubject();
             final ManagedTypeESImpl type = proxy.__getProxyAspect().getType();
-            Pair pair = new Pair(proxy,subject);
+            Pair pair = new Pair(proxy, subject);
             final Boolean equal = (Boolean) type.accept(typeValueComparator, pair);
             assertTrue(proxy + " and " + subject + " are not equal w.r.t. their basic-typed singular attributes", equal);
-            if(command instanceof CreateEntity){
+            if (command instanceof CreateEntity) {
                 CreateEntity createEntity = (CreateEntity) command;
                 Maps.getOrCreate(this.createdIds, createEntity.getType(), HashSet::new).add(createEntity.getServerId());
             }
         }
         //this.entityCreations.addAll(commands.stream().filter(c -> c instanceof CreateEntity).collect(Collectors.toList()));
     }
-    
-    private <U extends User> U findUser(EntityManager em, Class<U> userClass, String userName){
+
+    private <U extends User> U findUser(EntityManager em, Class<U> userClass, String userName) {
         final CriteriaBuilder cb = em.getCriteriaBuilder();
         final CriteriaQuery<U> cq = cb.createQuery(userClass);
         final Root<U> u = cq.from(userClass);
-        cq.where(cb.equal(u.get(User_.userName),userName)).select(u);
-        return  em.createQuery(cq).getSingleResult();
+        cq.where(cb.equal(u.get(User_.userName), userName)).select(u);
+        return em.createQuery(cq).getSingleResult();
     }
-    
-    private void doTestUpdates(){
+
+    private void doTestUpdates() {
         visitedByTypeValueComparator.clear();
         EntityManager em = JPA.createEntityManager();
         ProxyCreator proxyCreator = new ProxyCreator(priviliges);
         Employee john = findUser(em, Employee.class, "john");
-        Manager  bill = findUser(em, Manager.class, "bill");
-        final Proxy<Manager>  billProxy = proxyCreator.getProxyFor(bill);
+        Manager bill = findUser(em, Manager.class, "bill");
+        final Proxy<Manager> billProxy = proxyCreator.getProxyFor(bill);
         final Proxy<Employee> johnProxy = proxyCreator.getProxyFor(john);
         em.close();
-        
-        
+
         Assert.assertTrue(billProxy.__subject().getSubordinates().contains(johnProxy.__subject()));
-        Assert.assertTrue(johnProxy.__subject().getManager()==billProxy);
+        Assert.assertTrue(johnProxy.__subject().getManager() == billProxy);
         final EntityManagerImpl entityManagerES = (EntityManagerImpl) createEntityManager();
-        entityManagerES.manageAll(Arrays.asList(billProxy,johnProxy));
-        final List<User> allUsers = entityManagerES.select(User_ES.__TYPE, u->true, (u1,u2)->u1.getUserName().compareTo(u2.getUserName()));
+        entityManagerES.manageAll(Arrays.asList(billProxy, johnProxy));
+        final List<User> allUsers = entityManagerES.select(User_ES.__TYPE, u -> true, (u1, u2) -> u1.getUserName().compareTo(u2.getUserName()));
         Assert.assertTrue(allUsers.contains(billProxy));
         Assert.assertTrue(allUsers.contains(johnProxy));
-        Assert.assertTrue(entityManagerES.select(User.class, u-> "bill".equals(u.getUserName()), null).size()==1);
-        Assert.assertTrue(entityManagerES.select(User.class, u-> "john".equals(u.getUserName()), null).size()==1);
+        Assert.assertTrue(entityManagerES.select(User.class, u -> "bill".equals(u.getUserName()), null).size() == 1);
+        Assert.assertTrue(entityManagerES.select(User.class, u -> "john".equals(u.getUserName()), null).size() == 1);
         final Manager billSubject = billProxy.__subject();
-        
-        
+
         billSubject.setAge(65);
         billSubject.getEmailAddresses().clear();
         billSubject.getAccount().setDescription("updated description");
@@ -461,65 +457,141 @@ public class TestDomain extends AbstractTest {
         billSubject.getAddresses().get(0).setCountry(updated_country);
         final List<Command> commands = entityManagerES.getTransaction().getCommands();
         this.scenarioServiceBean.submit(commands);
-        
+
         em = JPA.createEntityManager();
         bill = findUser(em, Manager.class, "bill");
-        Assert.assertTrue(bill.getAge()==65);
-        Assert.assertTrue(bill.getEmailAddresses()==null || bill.getEmailAddresses().isEmpty());
+        Assert.assertTrue(bill.getAge() == 65);
+        Assert.assertTrue(bill.getEmailAddresses() == null || bill.getEmailAddresses().isEmpty());
         Assert.assertTrue(bill.getAccount().getDescription().equals("updated description"));
         Assert.assertTrue(bill.getAddresses().stream().anyMatch(a -> updated_country.equals(a.getCountry())));
     }
-    
-    private void doTestBasicMapUpdates(){
-        for(int round=0; round<1; round++){
+
+    private void doTestBasicMapUpdates() {
+        for (int round = 0; round < 1; round++) {
             final EntityManager em = JPA.createEntityManager();
             final EntityManagerImpl entityManager = createEntityManager();
-            final List<BaseEntity> selections = new ArrayList<>();
-            for(Class<? extends BaseEntity> c: Arrays.asList(BasicMap.class,EmbeddableMap.class,EntityMap.class)){
-                selections.addAll(selectAll(em, c));
-            }
             ProxyCreator proxyCreator = new ProxyCreator(priviliges);
-            final Collection proxies = proxyCreator.getProxiesFor(selections);
+            final Collection proxies = proxyCreator.getProxiesFor(selectAll(em, BasicMap.class));
             em.close();
             entityManager.manageAll(proxies);
 
             final String updated_value = "updated_value";
             final String updated_zipcode = "updated_zipcode";
             final String updated_number = "updated_number";
-            
-            switch(round){
-                case 0 : {
-                    for(BasicMap basicMap : entityManager.select(BasicMap_ES.__TYPE, null, null)){
-                        for(String key : new HashSet<>(basicMap.getBasicBasic().keySet()))
-                        {
+
+            switch (round) {
+                case 0: {
+                    final String some_new_key = "some_new_key";
+                    for (BasicMap basicMap : entityManager.select(BasicMap_ES.__TYPE, null, null)) {
+                        for (String key : new HashSet<>(basicMap.getBasicBasic().keySet())) {
                             basicMap.getBasicBasic().put(key, updated_value);
                         }
+                        basicMap.getBasicBasic().put(some_new_key, updated_value);
                         basicMap.getBasicEmbeddable().values().forEach(a -> a.setZipCode(updated_zipcode));
+                        Address newAddress = createAddress(entityManager, Integer.MAX_VALUE);
+                        newAddress.setZipCode(updated_zipcode);
+                        basicMap.getBasicEmbeddable().put(some_new_key, newAddress);
+                        
                         basicMap.getBasicEntity().values().forEach((Phone p) -> p.setPhoneNumber(updated_number));
                         final List<Command> commands = entityManager.getTransaction().getCommands();
                         scenarioServiceBean.submit(commands);
                     }
                     break;
                 }
-                case 1 : {
-                    for(BasicMap basicMap : entityManager.select(BasicMap_ES.__TYPE, null, null)){
+                case 1: {
+                    for (BasicMap basicMap : entityManager.select(BasicMap_ES.__TYPE, null, null)) {
                         assertTrue(basicMap.getBasicBasic().values().stream().allMatch(s -> updated_value.equals(s)));
                         assertTrue(basicMap.getBasicEmbeddable().values().stream().allMatch(a -> updated_zipcode.equals(a.getZipCode())));
                         assertTrue(basicMap.getBasicEntity().values().stream().allMatch(p -> updated_number.equals(p.getPhoneNumber())));
                     }
                     break;
-                    
+
                 }
             }
-            
+        }
+    }
+
+    private void doTestEmbeddableMapUpdates() {
+        for (int round = 0; round < 1; round++) {
+            final EntityManager em = JPA.createEntityManager();
+            final EntityManagerImpl entityManager = createEntityManager();
+            ProxyCreator proxyCreator = new ProxyCreator(priviliges);
+            final Collection proxies = proxyCreator.getProxiesFor(selectAll(em, EmbeddableMap.class));
+            em.close();
+            entityManager.manageAll(proxies);
+
+            final String updated_value = "updated_value";
+            final String updated_zipcode = "updated_zipcode";
+            final String updated_number = "updated_number";
+
+            switch (round) {
+                case 0: {
+                    final AtomicInteger i = new AtomicInteger(0);
+                    for (EmbeddableMap embeddableMap : entityManager.select(EmbeddableMap_ES.__TYPE, null, null)){
+                        embeddableMap.getEmbeddableEmbeddable().values().forEach((Address a) -> a.setZipCode(updated_zipcode + "_" + i.getAndIncrement()));
+                        embeddableMap.getEmbeddableEntity().values().forEach((Phone p) -> p.setPhoneNumber(updated_number + "_" + i.getAndIncrement()));
+                        final List<Command> commands = entityManager.getTransaction().getCommands();
+                        scenarioServiceBean.submit(commands);
+                    }
+                    break;
+                }
+                case 1: {
+                    for (EmbeddableMap embeddableMap : entityManager.select(EmbeddableMap_ES.__TYPE, null, null)) {
+                        assertTrue(embeddableMap.getEmbeddableEmbeddable().values().stream().allMatch(a -> a.getZipCode().startsWith(updated_zipcode)));
+                        assertTrue(embeddableMap.getEmbeddableEntity().values().stream().allMatch(p -> p.getPhoneNumber().startsWith(updated_number)));
+                    }
+                    break;
+
+                }
+            }
+
         }
     }
     
-    public void testAll(){
+    private void doTestEntityMapUpdates() {
+        for (int round = 0; round < 1; round++) {
+            final EntityManager em = JPA.createEntityManager();
+            final EntityManagerImpl entityManager = createEntityManager();
+            ProxyCreator proxyCreator = new ProxyCreator(priviliges);
+            final Collection proxies = proxyCreator.getProxiesFor(selectAll(em, EntityMap.class));
+            em.close();
+            entityManager.manageAll(proxies);
+
+            final String updated_value = "updated_value";
+            final String updated_zipcode = "updated_zipcode";
+            final String updated_number = "updated_number";
+
+            switch (round) {
+                case 0: {
+                    final AtomicInteger i = new AtomicInteger(0);
+                    for (EntityMap entityMap : entityManager.select(EntityMap_ES.__TYPE, null, null)){
+                        entityMap.getEntityBasic().keySet().forEach((Phone p) -> p.setPhoneNumber(updated_number));
+                        entityMap.getEntityEmbeddable().values().forEach((Address a) -> a.setZipCode(updated_zipcode + "_" + i.getAndIncrement()));
+                        final List<Command> commands = entityManager.getTransaction().getCommands();
+                        scenarioServiceBean.submit(commands);
+                    }
+                    break;
+                }
+//                case 1: {
+//                    for (EmbeddableMap embeddableMap : entityManager.select(EmbeddableMap_ES.__TYPE, null, null)) {
+//                        assertTrue(embeddableMap.getEmbeddableEmbeddable().values().stream().allMatch(a -> a.getZipCode().startsWith(updated_zipcode)));
+//                        assertTrue(embeddableMap.getEmbeddableEntity().values().stream().allMatch(p -> p.getPhoneNumber().startsWith(updated_number)));
+//                    }
+//                    break;
+//
+//                }
+            }
+
+        }
+    }
+    
+
+    public void testAll() {
         doTestCreates();
         doTestUpdates();
         doTestBasicMapUpdates();
-        
+        doTestEmbeddableMapUpdates();
+
     }
 
 }

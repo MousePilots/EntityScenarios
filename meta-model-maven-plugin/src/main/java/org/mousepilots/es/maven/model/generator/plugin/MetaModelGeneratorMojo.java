@@ -17,6 +17,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.mousepilots.es.core.model.Generator;
 import org.mousepilots.es.maven.model.generator.controller.TypeGenerator;
 import org.mousepilots.es.maven.model.generator.model.Descriptor;
 import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
@@ -58,11 +59,14 @@ public class MetaModelGeneratorMojo extends AbstractMojo {
     private String basePackageName;
     
     /**
-     * Allows you to specify a list of properties which do not comply with the Java Beans Standard. The getters and/or setters
-     * of such properties cannot be found automatically by the plugin.
+     * Allows you to customize a list of {@link PropertyDefinition}s for properties which: 
+     * <ul>
+     * <li>do not comply with the Java Beans Standards, or,</li>
+     * <li>require the specification of a {@link Generator}</li>
+     * </ul>
      */
     @Parameter
-    private List<PropertyDefinition> nonJavaBeansCompliantProperties;
+    private List<PropertyDefinition> customPropertyDefinitions;
 
     /**
      * Contains an in-memory representation of the reflections xml report of the domain project
@@ -107,9 +111,6 @@ public class MetaModelGeneratorMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if(nonJavaBeansCompliantProperties!=null){
-            nonJavaBeansCompliantProperties.forEach(p -> getLog().info(p.toString()));
-        }
         if (executed) {
             return;
         } else {
@@ -129,7 +130,7 @@ public class MetaModelGeneratorMojo extends AbstractMojo {
         SortedSet<TypeDescriptor> generatedTypes = null;
         try {
             final TypeGenerator generator = new TypeGenerator(basePackageName, getLog());
-            generatedTypes = generator.generate(jpaMetaModelClasses);
+            generatedTypes = generator.generate(jpaMetaModelClasses, customPropertyDefinitions);
         } catch (IllegalStateException ex) {
             getLog().error("Generator failed to generate types.", ex);
             throw new MojoFailureException("Generator failed to generate types", ex);

@@ -7,6 +7,7 @@ import org.mousepilots.es.core.model.ListAttributeES;
 import org.mousepilots.es.core.model.impl.AttributeESImpl;
 import org.mousepilots.es.core.model.impl.ListAttributeESImpl;
 import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
+import org.mousepilots.es.maven.model.generator.plugin.PropertyDefinition;
 
 /**
  * Descriptor for the {@link javax.persistence.metamodel.ListAttribute} of JPA.
@@ -23,8 +24,8 @@ public class ListAttributeDescriptor extends PluralAttributeDescriptor {
      * @param javaType the java type of this list attribute.
      */
     public ListAttributeDescriptor(TypeDescriptor elementType, String name,
-            Class javaType, int ordinal) {
-        super(elementType, name, javaType, ordinal);
+            Class javaType, int ordinal, PropertyDefinition customDefinition) {
+        super(elementType, name, javaType, ordinal, customDefinition);
     }
 
     @Override

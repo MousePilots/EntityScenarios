@@ -5,6 +5,7 @@
  */
 package org.mousepilots.es.core.command.attribute;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +41,8 @@ public final class PutToMap<E, K, V> extends UpdateMap<E, K, V, Map<K, V>> {
      *
      * @param <T>
      * @param entries
-     * @param keyOrValueGetter a function for extracting either {@link Entry#getKey()} or {@link Entry#getValue()}
+     * @param keyOrValueGetter a function for extracting either
+     * {@link Entry#getKey()} or {@link Entry#getValue()}
      */
     protected final <T> void asserAllNewEmbeddables(Set<? extends Entry<K, V>> entries, Getter<Entry<K, V>, Proxy<T>> keyOrValueGetter) {
         for (Entry<K, V> entry : entries) {
@@ -59,7 +61,11 @@ public final class PutToMap<E, K, V> extends UpdateMap<E, K, V, Map<K, V>> {
         final TypeES<K> keyType = attribute.getKeyType();
         final TypeES<V> valueType = attribute.getElementType();
         if (keyType instanceof EmbeddableTypeES) {
-            asserAllNewEmbeddables(putAllEntries, e -> (Proxy<K>) e.getKey());
+            for (Proxy<K> key : (Collection<Proxy<K>>) putAlls.keySet()) {
+                if (!key.__getProxyAspect().isCreated() && !map.containsKey((K) key)) {
+                    throw new IllegalStateException(key + "is no new or pre-existing key");
+                }
+            }
         }
         if (valueType instanceof EmbeddableTypeES) {
             asserAllNewEmbeddables(putAllEntries, e -> (Proxy<V>) e.getValue());
@@ -83,7 +89,6 @@ public final class PutToMap<E, K, V> extends UpdateMap<E, K, V, Map<K, V>> {
         }
     }
 
-
     @Override
     public void executeOnClient(Update<E, ?, Map<K, V>, MapAttributeESImpl<? super E, K, V>, ?> update) {
         getDelegate(update).putAll(putAlls);
@@ -96,7 +101,8 @@ public final class PutToMap<E, K, V> extends UpdateMap<E, K, V, Map<K, V>> {
         delegate.putAll(replaced);
     }
 
-    @Override @GwtIncompatible
+    @Override
+    @GwtIncompatible
     protected Map<K, V> doGetModificationOnServer(ServerContext serverContext) {
         final Map<K, V> modificationOnServer = new HashMap<>();
         for (Entry<Value<K, K, ?, ?>, Value<V, V, ?, ?>> entry : this.putAllValues.entrySet()) {

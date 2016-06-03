@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +39,7 @@ import org.mousepilots.es.core.model.impl.PropertyMember;
 import org.mousepilots.es.core.util.LazyValue;
 import org.mousepilots.es.core.util.Maps;
 import org.mousepilots.es.core.util.StringUtils;
+import org.mousepilots.es.maven.model.generator.plugin.PropertyDefinition;
 
 /**
  * Descriptor of the {@link javax.persistence.metamodel.Attribute} of JPA.
@@ -68,16 +70,24 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
 
     private TypeDescriptor declaringTypeDescriptor;
 
+    private final PropertyDefinition customPropertyDefinition;
+
     /**
      * Create a new instance of this descriptor.
      *
      * @param name the name of this attribute.
      * @param javaType the java type of this attribute.
      * @param ordinal the ordinal for this attribute.
+     * @param customDefinition
      */
-    public AttributeDescriptor(String name, Class javaType, int ordinal) {
+    protected AttributeDescriptor(String name, Class javaType, int ordinal, PropertyDefinition customDefinition) {
         super(name, javaType, ordinal);
+        this.customPropertyDefinition = customDefinition;
         INSTANCES.add(this);
+    }
+
+    protected final PropertyDefinition getCustomPropertyDefinition() {
+        return customPropertyDefinition;
     }
 
     /**
@@ -109,13 +119,19 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
      * could mean the JavaBeans naming convention was not used.
      */
     public Method getGetterMethod() {
+        if (customPropertyDefinition != null) {
+            final Method getter = customPropertyDefinition.getGetter();
+            if (getter != null) {
+                return getter;
+            }
+        }
         final List<String> expectedNames;
         final Class declaringJavaType = getDeclaringTypeDescriptor().getJavaType();
         final String suffix = getterSetterSuffix();
         if (getJavaType() == Boolean.class || getJavaType() == boolean.class) {
-            expectedNames = Arrays.asList(new String[]{"get" + suffix, "is" + suffix});
+            expectedNames = Arrays.asList("get" + suffix, "is" + suffix);
         } else {
-            expectedNames = Arrays.asList(new String[]{"get" + suffix});
+            expectedNames = Arrays.asList("get" + suffix, "is" + suffix);
         }
         for (String expectedName : expectedNames) {
             try {
@@ -137,6 +153,12 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
      * naming convention was not followed.
      */
     public Method getSetterMethod() {
+        if (customPropertyDefinition != null) {
+            final Method setter = customPropertyDefinition.getSetter();
+            if (setter != null) {
+                return setter;
+            }
+        }
         final Class declaringJavaType = getDeclaringTypeDescriptor().getJavaType();
         final List<String> expectedNames = Arrays.asList(new String[]{"set" + getterSetterSuffix()});
         //try javaType first to prevent unnecessary warnings
@@ -204,7 +226,7 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
      */
     public boolean isAssociation() {
         for (TypeDescriptor typeDescriptor : TypeDescriptor.getAll()) {
-            if (typeDescriptor.getJavaType().isAssignableFrom(getJavaType())) {
+            if (typeDescriptor instanceof ManagedTypeDescriptor && typeDescriptor.getJavaType().isAssignableFrom(getJavaType())) {
                 return true;
             }
         }
@@ -263,9 +285,6 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
          but then those would have to refer to one another
          e.g. OneToMany <--> ManyToOne*/
         final Attribute.PersistentAttributeType persistentAttributeType = getPersistentAttributeType();
-        if(getJavaType()==String.class){
-            System.out.println("String");
-        }
         switch (associationType) {
             case KEY: {
                 if (this instanceof MapAttributeDescriptor) {
@@ -528,8 +547,10 @@ public abstract class AttributeDescriptor extends Descriptor<Attribute.Persisten
         return Attribute.PersistentAttributeType.BASIC;
     }
 
+    @Override
     public abstract Class< ? extends AttributeES> getDeclaredClass();
 
+    @Override
     public abstract Class< ? extends AttributeESImpl> getImplementationClass();
 
     /**

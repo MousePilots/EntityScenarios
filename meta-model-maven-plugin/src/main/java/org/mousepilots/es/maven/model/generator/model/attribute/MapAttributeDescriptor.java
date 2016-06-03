@@ -8,6 +8,7 @@ import org.mousepilots.es.core.model.MapAttributeES;
 import org.mousepilots.es.core.model.impl.AttributeESImpl;
 import org.mousepilots.es.core.model.impl.MapAttributeESImpl;
 import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
+import org.mousepilots.es.maven.model.generator.plugin.PropertyDefinition;
 
 /**
  * Descriptor of the {@link javax.persistence.metamodel.MapAttribute} of JPA.
@@ -27,8 +28,8 @@ public class MapAttributeDescriptor extends PluralAttributeDescriptor {
      * @param ordinal the ordinal of this map attribute.
      */
     public MapAttributeDescriptor(TypeDescriptor elementType, String name,
-            Class keyJavaType, Class valueJavaType, int ordinal) {
-        super(elementType, name, valueJavaType, ordinal);
+            Class keyJavaType, Class valueJavaType, int ordinal, PropertyDefinition customDefinition) {
+        super(elementType, name, valueJavaType, ordinal, customDefinition);
         this.keyJavaType = keyJavaType;
     }
 

@@ -6,7 +6,7 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +38,7 @@ import org.mousepilots.es.maven.model.generator.model.type.HasValueDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.ManagedTypeDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.MappedSuperclassDescriptor;
 import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
+import org.mousepilots.es.maven.model.generator.plugin.PropertyDefinition;
 
 /**
  * Generates the {@link TypeDescriptor}s from the existing JPA metamodel classes.
@@ -71,13 +72,13 @@ public class TypeGenerator {
      * with {@link StaticMetamodel}
      * @return a set of descriptors that represent the found models.
      */
-    public SortedSet<TypeDescriptor> generate(Set<Class<?>> jpaMetaModelClasses) {
+    public SortedSet<TypeDescriptor> generate(Set<Class<?>> jpaMetaModelClasses, List<PropertyDefinition> customPropertyDefinitions) {
         final SortedSet<TypeDescriptor> retval = new TreeSet<>();
         addManagedTypeDescriptors(retval, jpaMetaModelClasses); //Step 1
         addSuperDescriptors(retval); //Step 2
         addSubTypes(retval); //Step 3
         addBasicTypeDescriptors(retval, jpaMetaModelClasses); //Step 4
-        addAttributeTypeDescriptors(retval, jpaMetaModelClasses); //Step 5
+        addAttributeTypeDescriptors(jpaMetaModelClasses, customPropertyDefinitions); //Step 5
         addHasValueImpls(retval);
         return retval;
     }
@@ -210,32 +211,39 @@ public class TypeGenerator {
      * @param jpaMetaModelClasses The JPA meta model classes that are found in
      * the domain project.
      */
-    private void addAttributeTypeDescriptors(final SortedSet<TypeDescriptor> managedTypeDescriptors, Set<Class<?>> jpaMetaModelClasses) {
+    private void addAttributeTypeDescriptors(Set<Class<?>> jpaMetaModelClasses, List<PropertyDefinition> customPropertyDefinitions) {
+        final Map<Class,Map<String,PropertyDefinition>> declaringClass2propertyName2propertyDefinition = new HashMap<>();
+        if(customPropertyDefinitions!=null){
+            customPropertyDefinitions.forEach(
+                pd ->   Maps.getOrCreate(
+                            declaringClass2propertyName2propertyDefinition, 
+                            pd.getDeclaringClass(), 
+                            HashMap::new)
+                        .put(pd.getName(), pd)
+            );
+        }
         for (Class<?> metaModelClass : jpaMetaModelClasses) {
             final SortedSet<AttributeDescriptor> declaredAttributes = new TreeSet<>();
             final Class<?> declaringJavaType = metaModelClass.getAnnotation(StaticMetamodel.class).value();
             final ManagedTypeDescriptor declaringTypeDescriptor = TypeDescriptor.getInstance(declaringJavaType, ManagedTypeDescriptor.class);
             for (Field metaModelField : metaModelClass.getDeclaredFields()) {
+                final PropertyDefinition customPropertyDefinition = Maps.get(declaringClass2propertyName2propertyDefinition, declaringJavaType, metaModelField.getName());
                 final Class<?> metaModelFieldType = metaModelField.getType();
-//                if(!Attribute.class.isAssignableFrom(metaModelClass)){
-//                    log.info("ignoring metamodel field " + metaModelField + " since it is not assignable from " + Attribute.class);
-//                    continue;
-//                }
                 final Class[] attributeJavaTypes = getGenericTypes(metaModelField, getGenericTypeIndices(metaModelFieldType));
-                AttributeDescriptor ad=null;
+                final AttributeDescriptor ad;
                 if (metaModelFieldType == SingularAttribute.class) {
-                    ad = new SingularAttributeDescriptor(metaModelField.getName(), attributeJavaTypes[0], ordinal.getAndIncrement());
-                } else if (PluralAttribute.class.isAssignableFrom(metaModelFieldType)) {
+                    ad = new SingularAttributeDescriptor(metaModelField.getName(), attributeJavaTypes[0], ordinal.getAndIncrement(),customPropertyDefinition);
+                } else {
                     final Class javaFieldType = PLURAL_ATTRIBUTE_TO_COLLECTION_CLASS.get((Class<? extends PluralAttribute>) metaModelFieldType);
-                    TypeDescriptor td = TypeDescriptor.getInstance(attributeJavaTypes[0]);
+                    final TypeDescriptor td = TypeDescriptor.getInstance(attributeJavaTypes[0]);
                     if (javaFieldType == Collection.class) {
-                        ad = new CollectionAttributeDescriptor(td, metaModelField.getName(), attributeJavaTypes[0], ordinal.getAndIncrement());
+                        ad = new CollectionAttributeDescriptor(td, metaModelField.getName(), attributeJavaTypes[0], ordinal.getAndIncrement(),customPropertyDefinition);
                     } else if (javaFieldType == List.class) {
-                        ad = new ListAttributeDescriptor(td, metaModelField.getName(), attributeJavaTypes[0], ordinal.getAndIncrement());
+                        ad = new ListAttributeDescriptor(td, metaModelField.getName(), attributeJavaTypes[0], ordinal.getAndIncrement(),customPropertyDefinition);
                     } else if (javaFieldType == Map.class) {
-                        ad = new MapAttributeDescriptor(td, metaModelField.getName(), attributeJavaTypes[1], attributeJavaTypes[0], ordinal.getAndIncrement());
+                        ad = new MapAttributeDescriptor(td, metaModelField.getName(), attributeJavaTypes[1], attributeJavaTypes[0], ordinal.getAndIncrement(),customPropertyDefinition);
                     } else if (javaFieldType == Set.class){
-                        ad = new SetAttributeDescriptor(td, metaModelField.getName(), attributeJavaTypes[0], ordinal.getAndIncrement());
+                        ad = new SetAttributeDescriptor(td, metaModelField.getName(), attributeJavaTypes[0], ordinal.getAndIncrement(),customPropertyDefinition);
                     } else {
                         throw new IllegalStateException("unkown javaType for " + metaModelField);
                     }

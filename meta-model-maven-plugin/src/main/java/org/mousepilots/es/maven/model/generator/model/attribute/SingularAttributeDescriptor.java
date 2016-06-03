@@ -17,6 +17,7 @@ import org.mousepilots.es.core.model.impl.AttributeESImpl;
 import org.mousepilots.es.core.model.impl.DescendingLongGenerator;
 import org.mousepilots.es.core.model.impl.SingularAttributeESImpl;
 import org.mousepilots.es.maven.model.generator.model.type.TypeDescriptor;
+import org.mousepilots.es.maven.model.generator.plugin.PropertyDefinition;
 
 /**
  * Descriptor of the {@link javax.persistence.metamodel.SingularAttribute} of JPA.
@@ -32,12 +33,14 @@ public final class SingularAttributeDescriptor extends AttributeDescriptor {
      * @param name the name of this plural attribute.
      * @param ordinal the ordinal of this plural attribute.
      * @param javaType the java type of this plural attribute.
+     * @param customDefinition customDefinition
      */
     public SingularAttributeDescriptor(
             String name, 
             Class javaType,
-            int ordinal) {
-        super(name, javaType, ordinal);
+            int ordinal,
+            PropertyDefinition customDefinition) {
+        super(name, javaType, ordinal,customDefinition);
     }
 
 
